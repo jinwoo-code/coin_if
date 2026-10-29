@@ -1,0 +1,787 @@
+{
+  "id": "civil-servant",
+  "family": "공안·공무",
+  "archetype": "exam",
+  "curated": true,
+  "majors": [
+    "행정",
+    "법",
+    "정치",
+    "사회",
+    "경제",
+    "경영",
+    "인문"
+  ],
+  "readiness": [],
+  "certs": [
+    "한국사1급",
+    "한국사2급"
+  ],
+  "name": "9급 행정직 공무원",
+  "short": "공무원",
+  "subtitle": "시험 준비부터 시작",
+  "color": "#F26B1D",
+  "onColor": "#14171F",
+  "badge": "B",
+  "fitValues": {
+    "안정": 0.95,
+    "성장": 0.35,
+    "돈": 0.35,
+    "여유": 0.7,
+    "인정": 0.4,
+    "자율": 0.25,
+    "기여": 0.8,
+    "관계": 0.6
+  },
+  "fitTraits": {
+    "O": 2,
+    "C": 4,
+    "E": 3,
+    "A": 4,
+    "N": 2
+  },
+  "fitInterests": {
+    "C": 5,
+    "S": 4
+  },
+  "thirdPathReason": "안정과 여유를 중요하게 본다고 답했어요. 정년이 보장되고 생활 리듬이 일정한 길이에요.",
+  "prepCost": 20,
+  "hoursPerWeek": 41,
+  "startSkill": "examPower",
+  "facts": [
+    {
+      "label": "2026 국가직 9급 공채 경쟁률",
+      "value": "28.6대 1 (3,802명 선발, 108,718명 지원)",
+      "source": "인사혁신처 발표",
+      "year": "2026년 2월",
+      "url": "https://www.twig24.com/news/2026/02/08/20260208500146"
+    },
+    {
+      "label": "행정직군 경쟁률",
+      "value": "27.4대 1",
+      "source": "인사혁신처 발표",
+      "year": "2026년",
+      "url": "https://www.twig24.com/news/2026/02/08/20260208500146"
+    },
+    {
+      "label": "시험 일정",
+      "value": "국가직 필기 4월 4일 · 지방직 필기 6월 20일",
+      "source": "인사혁신처·행정안전부",
+      "year": "2026년",
+      "url": "https://www.twig24.com/news/2026/02/08/20260208500146"
+    },
+    {
+      "label": "합격자 평균 준비 기간",
+      "value": "1년 8개월, 73.3%가 2년 안에 합격",
+      "source": "이대중 외 「7급, 9급 공무원시험 합격자 실태에 관한 연구」(2016 조사)",
+      "year": "2025년 보도",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+    },
+    {
+      "label": "하루 평균 공부 시간",
+      "value": "합격자 10.2시간 · 수험생 8.7시간",
+      "source": "같은 연구",
+      "year": "2016 조사",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+    },
+    {
+      "label": "9급 1호봉 봉급",
+      "value": "월 213.3만원 (초임 연 총보수 약 3,428만원)",
+      "source": "인사혁신처 2026 봉급표",
+      "year": "2026년",
+      "url": "https://jab-guyver.co.kr/7339"
+    },
+    {
+      "label": "공무원 직무 만족도",
+      "value": "5점 중 3.43 · 이직 고려 이유 1위 '낮은 보수' 61.9%",
+      "source": "한국행정연구원 공직생활실태조사",
+      "year": "2025년",
+      "url": "https://www.newsis.com/view/NISX20260407_0003581248"
+    },
+    {
+      "label": "재직 5년 미만 퇴직자",
+      "value": "12,013명 (전체 일반퇴직의 59.3%)",
+      "source": "공무원연금공단",
+      "year": "2024년",
+      "url": "https://www.insight.co.kr/news/544754"
+    }
+  ],
+  "npcs": [
+    {
+      "name": "최 주무관",
+      "role": "선배",
+      "persona": "10년차. 원칙을 중시하고 일을 꼼꼼히 알려 준다."
+    },
+    {
+      "name": "민원인",
+      "role": "고객",
+      "persona": "급하고 날카롭다. 사정이 딱한 경우도 많다."
+    },
+    {
+      "name": "스터디원 정",
+      "role": "수험 동료",
+      "persona": "같이 공부하는 친구. 서로 의지하지만 성적이 비교된다."
+    }
+  ],
+  "events": [
+    {
+      "id": "study-start",
+      "title": "수험 생활을 시작했다",
+      "kind": "neutral",
+      "weight": 1,
+      "text": "인강을 결제하고 하루 공부 계획을 세웠다. 독서실 자리도 잡았다.",
+      "choices": [
+        {
+          "text": "스터디를 만들어 서로 관리한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3,
+            "relation": 3
+          }
+        },
+        {
+          "text": "혼자 인강으로 버틴다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "stress": 8,
+        "skill": 3
+      },
+      "chance": 1,
+      "maxMonth": 0,
+      "evidence": {
+        "label": "합격자 평균 준비 기간 1년 8개월",
+        "source": "이대중 외(2016 조사, 2025 보도)",
+        "url": "https://v.daum.net/v/738XCOSgCW"
+      }
+    },
+    {
+      "id": "study-grind",
+      "title": "다시 책상 앞에 앉았다",
+      "kind": "neutral",
+      "weight": 3,
+      "text": "독서실과 집만 오가는 날이 이어졌다. 스터디원 정과 매일 아침 공부 인증을 주고받았다.",
+      "choices": [
+        {
+          "text": "모의고사 점수를 기록하며 약한 과목을 판다",
+          "tone": "push",
+          "effect": {
+            "skill": 3,
+            "stress": 3
+          }
+        },
+        {
+          "text": "컨디션 관리를 우선한다",
+          "tone": "safe",
+          "effect": {
+            "stress": -3
+          }
+        }
+      ],
+      "effect": {
+        "skill": 2,
+        "stress": 2
+      },
+      "repeatable": true,
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "needsNoJob": true,
+      "evidence": {
+        "label": "합격자 하루 평균 10.2시간 공부",
+        "source": "이대중 외(2016 조사)",
+        "url": "https://v.daum.net/v/738XCOSgCW"
+      }
+    },
+    {
+      "id": "mock-exam",
+      "title": "모의고사 점수가 처음으로 커트라인을 넘었다",
+      "kind": "good",
+      "weight": 1.2,
+      "text": "합격선 근처라는 말을 처음 들었다. 스터디원 정이 진심으로 축하해 줬다.",
+      "choices": [
+        {
+          "text": "이 기세로 공부량을 늘린다",
+          "tone": "push",
+          "effect": {
+            "skill": 3,
+            "stress": 3
+          }
+        },
+        {
+          "text": "페이스를 유지한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": 10,
+        "skill": 3
+      },
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "minMonth": 4
+    },
+    {
+      "id": "friend-hired",
+      "title": "친구가 대기업에 합격했다",
+      "kind": "bad",
+      "weight": 1.2,
+      "text": "단톡방에 합격 인증이 올라왔다. 축하한다고 쓰고 한참 화면을 봤다.",
+      "choices": [
+        {
+          "text": "자극 받아서 더 집중한다",
+          "tone": "push",
+          "effect": {
+            "skill": 2,
+            "stress": 4
+          }
+        },
+        {
+          "text": "오늘은 공부를 쉰다",
+          "tone": "safe",
+          "effect": {
+            "stress": -2
+          }
+        }
+      ],
+      "effect": {
+        "stress": 8,
+        "satisfaction": -8
+      },
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "minMonth": 3
+    },
+    {
+      "id": "family-pressure",
+      "title": "명절에 친척들이 물었다",
+      "kind": "bad",
+      "weight": 1.5,
+      "text": "\"아직도 공부하니?\" 대답 대신 웃었다. 돌아오는 길이 길었다.",
+      "choices": [
+        {
+          "text": "올해 안에 끝낸다고 다짐한다",
+          "tone": "push",
+          "effect": {
+            "stress": 4
+          }
+        },
+        {
+          "text": "다음 명절엔 안 간다",
+          "tone": "safe",
+          "effect": {
+            "relation": -4
+          }
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -6
+      },
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "calendar": [
+        1,
+        2,
+        9,
+        10
+      ],
+      "minMonth": 6
+    },
+    {
+      "id": "exam-pass-national",
+      "title": "국가직 시험에 합격했다",
+      "kind": "good",
+      "weight": 1,
+      "text": "발표 날, 수험번호를 몇 번이고 다시 확인했다. 합격이었다.",
+      "choices": [
+        {
+          "text": "발령 전까지 실무 공부를 해 둔다",
+          "tone": "push",
+          "sets": "passed",
+          "effect": {
+            "skill": 2
+          }
+        },
+        {
+          "text": "발령 전까지 푹 쉰다",
+          "tone": "safe",
+          "sets": "passed",
+          "effect": {
+            "stress": -10
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 25,
+        "stress": -20
+      },
+      "chance": 0.16,
+      "warmup": 16,
+      "factors": [
+        "examPower",
+        "persistence"
+      ],
+      "calendar": [
+        5
+      ],
+      "minMonth": 5,
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "branch": "luck",
+      "branchLabel": "국가직 합격",
+      "evidence": {
+        "label": "2026 국가직 9급 경쟁률 28.6대 1",
+        "source": "인사혁신처(2026)",
+        "url": "https://www.twig24.com/news/2026/02/08/20260208500146"
+      }
+    },
+    {
+      "id": "exam-pass-local",
+      "title": "지방직 시험에 합격했다",
+      "kind": "good",
+      "weight": 1,
+      "text": "국가직에서 아쉽게 떨어지고 두 달 뒤였다. 이번엔 이름이 있었다.",
+      "choices": [
+        {
+          "text": "발령 전까지 실무 공부를 해 둔다",
+          "tone": "push",
+          "sets": "passed",
+          "effect": {
+            "skill": 2
+          }
+        },
+        {
+          "text": "발령 전까지 푹 쉰다",
+          "tone": "safe",
+          "sets": "passed",
+          "effect": {
+            "stress": -10
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 25,
+        "stress": -20
+      },
+      "chance": 0.16,
+      "warmup": 16,
+      "factors": [
+        "examPower",
+        "persistence"
+      ],
+      "calendar": [
+        7
+      ],
+      "minMonth": 6,
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "branch": "luck",
+      "branchLabel": "지방직 합격",
+      "evidence": {
+        "label": "지방직 9급 필기 6월 20일 전국 동시 시행",
+        "source": "행정안전부(2026)"
+      }
+    },
+    {
+      "id": "exam-fail",
+      "title": "시험에 떨어졌다",
+      "kind": "bad",
+      "weight": 1,
+      "text": "발표 날, 커트라인에 몇 점 모자랐다. 스터디원 정은 붙었다.",
+      "choices": [
+        {
+          "text": "오답을 분석해서 다음 시험을 준비한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "한 달은 쉬면서 마음을 추스른다",
+          "tone": "safe",
+          "effect": {
+            "stress": -6
+          }
+        }
+      ],
+      "effect": {
+        "stress": 12,
+        "satisfaction": -10
+      },
+      "chance": 1,
+      "calendar": [
+        5,
+        7
+      ],
+      "minMonth": 5,
+      "requires": [
+        "study-start"
+      ],
+      "excludes": [
+        "passed",
+        "switched"
+      ],
+      "repeatable": true,
+      "evidence": {
+        "label": "합격자 하루 평균 10.2시간 공부",
+        "source": "이대중 외(2016 조사)",
+        "url": "https://v.daum.net/v/738XCOSgCW"
+      }
+    },
+    {
+      "id": "keep-going",
+      "title": "1년이 넘었는데 아직이다",
+      "kind": "bad",
+      "weight": 4,
+      "text": "처음 계획한 기간이 지났다. 통장 잔고와 나이를 같이 세게 됐다.",
+      "choices": [
+        {
+          "text": "딱 1년만 더 한다",
+          "tone": "push",
+          "sets": "one-more",
+          "label": "1년 더",
+          "effect": {
+            "stress": 4
+          }
+        },
+        {
+          "text": "일반 기업 취업으로 방향을 바꾼다",
+          "tone": "change",
+          "sets": "switched",
+          "label": "취업으로 전향",
+          "effect": {
+            "stress": -6
+          }
+        },
+        {
+          "text": "알바를 하면서 천천히 계속한다",
+          "tone": "safe",
+          "sets": "more-work",
+          "label": "알바 병행"
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -8
+      },
+      "requires": [
+        "exam-fail"
+      ],
+      "excludes": [
+        "passed",
+        "switched",
+        "keep-going"
+      ],
+      "minMonth": 12,
+      "branch": "choice",
+      "branchLabel": "계속할지 고민",
+      "evidence": {
+        "label": "합격자 73.3%가 2년 안에 합격",
+        "source": "이대중 외(2016 조사)",
+        "url": "https://v.daum.net/v/738XCOSgCW"
+      }
+    },
+    {
+      "id": "first-post",
+      "title": "첫 발령을 받았다",
+      "kind": "good",
+      "weight": 1,
+      "text": "주민센터로 발령이 났다. 첫날 최 주무관이 자리 배치부터 알려 줬다.",
+      "choices": [
+        {
+          "text": "업무 매뉴얼을 먼저 다 읽는다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "선배가 하는 걸 보며 따라 한다",
+          "tone": "safe",
+          "effect": {
+            "relation": 3
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 10
+      },
+      "chance": 0.3,
+      "requires": [
+        "passed"
+      ],
+      "needsNoJob": true,
+      "hires": true,
+      "branchLabel": "첫 발령",
+      "tiers": [
+        {
+          "id": "g9",
+          "group": "g9",
+          "label": "9급 공무원",
+          "salary": 3428,
+          "weight": 1
+        }
+      ],
+      "evidence": {
+        "label": "9급 1호봉 월 213.3만원, 초임 연 총보수 약 3,428만원",
+        "source": "인사혁신처(2026)",
+        "url": "https://jab-guyver.co.kr/7339"
+      }
+    },
+    {
+      "id": "first-pay",
+      "title": "첫 월급을 받았다",
+      "kind": "neutral",
+      "weight": 3,
+      "text": "통장에 찍힌 숫자를 보고 잠깐 멈췄다. 생각보다 적었다.",
+      "choices": [
+        {
+          "text": "적금부터 든다",
+          "tone": "push",
+          "effect": {
+            "money": 50
+          }
+        },
+        {
+          "text": "고생한 나에게 선물을 산다",
+          "tone": "safe",
+          "effect": {
+            "money": -40,
+            "satisfaction": 4
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": -4
+      },
+      "needsJob": true,
+      "maxMonth": 120,
+      "tags": [
+        "낮은연봉"
+      ],
+      "evidence": {
+        "label": "이직 고려 이유 1위 '낮은 보수' 61.9%",
+        "source": "한국행정연구원(2025)",
+        "url": "https://www.newsis.com/view/NISX20260407_0003581248"
+      }
+    },
+    {
+      "id": "complaint",
+      "title": "민원 응대가 몰린 한 달",
+      "kind": "bad",
+      "weight": 1.5,
+      "text": "등본 한 장 때문에 30분 동안 언성이 높아졌다. 민원인은 끝까지 사과하지 않았다.",
+      "choices": [
+        {
+          "text": "응대 매뉴얼을 다시 정리한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "최 주무관에게 넘기고 숨을 돌린다",
+          "tone": "safe",
+          "effect": {
+            "relation": -2
+          }
+        }
+      ],
+      "effect": {
+        "stress": 12,
+        "satisfaction": -6
+      },
+      "needsJob": true,
+      "tags": [
+        "민원"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "event-duty",
+      "title": "주말 행사에 동원됐다",
+      "kind": "bad",
+      "weight": 1.5,
+      "text": "구청 축제 부스 지원으로 토요일이 사라졌다.",
+      "choices": [
+        {
+          "text": "웃으면서 끝까지 한다",
+          "tone": "push",
+          "effect": {
+            "relation": 4,
+            "stress": 3
+          }
+        },
+        {
+          "text": "다음엔 빠지겠다고 미리 말한다",
+          "tone": "safe",
+          "effect": {
+            "relation": -3
+          }
+        }
+      ],
+      "effect": {
+        "stress": 7,
+        "satisfaction": -4
+      },
+      "needsJob": true,
+      "tags": [
+        "주말근무"
+      ]
+    },
+    {
+      "id": "on-time",
+      "title": "6시 정시 퇴근이 자리 잡았다",
+      "kind": "good",
+      "weight": 1.5,
+      "text": "저녁이 생겼다. 운동을 등록했다.",
+      "choices": [
+        {
+          "text": "퇴근 후 자격증 공부를 시작한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "저녁은 온전히 쉰다",
+          "tone": "safe",
+          "effect": {
+            "stress": -6
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 10,
+        "stress": -8
+      },
+      "needsJob": true,
+      "minTenure": 3
+    },
+    {
+      "id": "routine-work",
+      "title": "같은 일이 반복됐다",
+      "kind": "neutral",
+      "weight": 2.5,
+      "text": "매일 비슷한 서류를 처리했다. 익숙해진 만큼 지루해졌다.",
+      "choices": [
+        {
+          "text": "업무를 자동화할 엑셀 서식을 만든다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "그냥 루틴대로 한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": -3
+      },
+      "needsJob": true,
+      "tags": [
+        "반복업무"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "transfer",
+      "title": "원하던 부서로 옮겼다",
+      "kind": "good",
+      "weight": 1,
+      "text": "인사 발령에 이름이 있었다. 새 부서는 일이 많지만 배울 게 많다.",
+      "choices": [
+        {
+          "text": "새 업무를 빨리 익힌다",
+          "tone": "push",
+          "effect": {
+            "skill": 4
+          }
+        },
+        {
+          "text": "천천히 적응한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": 10,
+        "stress": 4
+      },
+      "needsJob": true,
+      "minTenure": 18
+    },
+    {
+      "id": "quit-thought",
+      "title": "그만두고 싶어졌다",
+      "kind": "bad",
+      "weight": 1.1,
+      "text": "월급, 민원, 반복되는 일. 입직 동기 한 명이 사표를 냈다는 소식을 들었다.",
+      "choices": [
+        {
+          "text": "버티면서 다른 부서 전보를 노린다",
+          "tone": "push",
+          "label": "버팀",
+          "effect": {
+            "stress": 3
+          }
+        },
+        {
+          "text": "퇴직하고 다른 길을 찾는다",
+          "tone": "change",
+          "quits": true,
+          "sets": "switched",
+          "label": "퇴직",
+          "effect": {
+            "stress": -14
+          }
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -10
+      },
+      "needsJob": true,
+      "minTenure": 6,
+      "branch": "choice",
+      "branchLabel": "퇴직 고민",
+      "evidence": {
+        "label": "재직 5년 미만 퇴직자 12,013명(2024)",
+        "source": "공무원연금공단",
+        "url": "https://www.insight.co.kr/news/544754"
+      }
+    }
+  ]
+}

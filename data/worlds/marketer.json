@@ -1,0 +1,606 @@
+{
+  "id": "marketer",
+  "family": "사회·경영",
+  "archetype": "open",
+  "curated": true,
+  "majors": [
+    "경영",
+    "마케팅",
+    "광고",
+    "홍보",
+    "미디어",
+    "신문방송",
+    "심리",
+    "소비자"
+  ],
+  "readiness": [
+    "sns",
+    "portfolio"
+  ],
+  "certs": [
+    "구글애널리틱스",
+    "검색광고마케터",
+    "사회조사분석사"
+  ],
+  "name": "브랜드 마케터",
+  "short": "마케터",
+  "subtitle": "소비재 회사 마케팅팀",
+  "color": "#7B4DDB",
+  "onColor": "#FFFFFF",
+  "badge": "D",
+  "fitValues": {
+    "안정": 0.4,
+    "성장": 0.75,
+    "돈": 0.55,
+    "여유": 0.35,
+    "인정": 0.8,
+    "자율": 0.6,
+    "기여": 0.35,
+    "관계": 0.7
+  },
+  "fitTraits": {
+    "O": 5,
+    "C": 3,
+    "E": 4,
+    "A": 3,
+    "N": 3
+  },
+  "fitInterests": {
+    "E": 5,
+    "A": 4,
+    "S": 3
+  },
+  "thirdPathReason": "상상력이 풍부하고 사람들과 어울리는 걸 좋아한다고 답했어요. 아이디어가 바로 결과로 보이는 길이에요.",
+  "prepCost": 5,
+  "hoursPerWeek": 45,
+  "startSkill": "jobReady",
+  "facts": [
+    {
+      "label": "대졸 정규직 신입 초임(규모별)",
+      "value": "300인 이상 5,001만원 · 30~299인 3,595만원 · 5~29인 3,070만원 · 5인 미만 2,731만원",
+      "source": "한국경영자총협회 「대졸 초임 분석」",
+      "year": "2023년 기준",
+      "url": "https://www.inews24.com/view/1803165"
+    },
+    {
+      "label": "졸업 후 첫 취업까지 평균",
+      "value": "11.2개월",
+      "source": "통계청 경제활동인구조사 청년층 부가조사",
+      "year": "2026년 5월",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+    },
+    {
+      "label": "첫 일자리 평균 근속기간",
+      "value": "1년 6.8개월",
+      "source": "통계청 경제활동인구조사 청년층 부가조사",
+      "year": "2026년 5월",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+    },
+    {
+      "label": "첫 직장을 그만둔 이유 1위",
+      "value": "보수·근로시간 등 근로여건 불만족 44.4%",
+      "source": "통계청 경제활동인구조사 청년층 부가조사",
+      "year": "2026년 5월",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+    }
+  ],
+  "npcs": [
+    {
+      "name": "오 팀장",
+      "role": "상사",
+      "persona": "트렌드에 밝고 성과 지표로 말한다."
+    },
+    {
+      "name": "디자이너 강",
+      "role": "협업자",
+      "persona": "취향이 확실하다. 설득하면 최고의 결과를 낸다."
+    },
+    {
+      "name": "대행사 담당자",
+      "role": "외부 파트너",
+      "persona": "일정이 늘 빠듯하다."
+    }
+  ],
+  "events": [
+    {
+      "id": "apply-mkt",
+      "title": "자기소개서를 열 번째 고쳤다",
+      "kind": "neutral",
+      "weight": 3,
+      "text": "마케팅 직무 공고마다 질문이 달랐다. 경험을 숫자로 쓰라는 말이 계속 걸렸다.",
+      "choices": [
+        {
+          "text": "내 SNS 계정을 키워 성과를 만든다",
+          "tone": "push",
+          "effect": {
+            "skill": 3,
+            "stress": 3
+          }
+        },
+        {
+          "text": "있는 경험을 잘 포장한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "stress": 4
+      },
+      "repeatable": true,
+      "needsNoJob": true,
+      "excludes": [
+        "switched"
+      ]
+    },
+    {
+      "id": "mkt-intern",
+      "title": "체험형 인턴에 붙었다",
+      "kind": "good",
+      "weight": 1,
+      "text": "3개월짜리 마케팅 인턴이었다. 정규직 전환은 없지만 이력서에 쓸 게 생긴다.",
+      "choices": [
+        {
+          "text": "들어가서 캠페인 하나를 끝까지 맡는다",
+          "tone": "push",
+          "sets": "mkt-intern",
+          "label": "인턴 감",
+          "effect": {
+            "skill": 8,
+            "money": 300
+          }
+        },
+        {
+          "text": "본 공채 준비에 집중한다",
+          "tone": "safe",
+          "label": "공채 집중"
+        }
+      ],
+      "effect": {
+        "satisfaction": 6
+      },
+      "needsNoJob": true,
+      "excludes": [
+        "switched",
+        "mkt-intern"
+      ],
+      "minMonth": 1,
+      "branch": "choice",
+      "branchLabel": "인턴 제안"
+    },
+    {
+      "id": "got-mkt",
+      "title": "마케터로 합격했다",
+      "kind": "good",
+      "weight": 1,
+      "text": "최종 면접에서 내가 키운 계정 얘기를 했다. 다음 주 출근이다.",
+      "choices": [
+        {
+          "text": "입사 전에 브랜드 SNS를 다 훑어본다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "남은 기간은 쉰다",
+          "tone": "safe",
+          "effect": {
+            "stress": -6
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 18,
+        "stress": -12
+      },
+      "chance": 0.065,
+      "factors": [
+        "jobReady",
+        "region",
+        "school"
+      ],
+      "hires": true,
+      "afterGrad": true,
+      "tiers": [
+        {
+          "id": "large",
+          "group": "big",
+          "label": "300인 이상 회사",
+          "salary": 5001,
+          "weight": 0.12
+        },
+        {
+          "id": "mid",
+          "group": "big",
+          "label": "30~299인 회사",
+          "salary": 3595,
+          "weight": 0.45
+        },
+        {
+          "id": "small",
+          "group": "small",
+          "label": "5~29인 회사",
+          "salary": 3070,
+          "weight": 0.33
+        },
+        {
+          "id": "micro",
+          "group": "small",
+          "label": "5인 미만 회사",
+          "salary": 2731,
+          "weight": 0.1
+        }
+      ],
+      "needsNoJob": true,
+      "excludes": [
+        "switched"
+      ],
+      "repeatable": true,
+      "branch": "luck",
+      "branchLabel": "합격",
+      "evidence": {
+        "label": "신입 초임: 300인 이상 5,001만원, 30~299인 3,595만원",
+        "source": "한국경영자총협회(2023)",
+        "url": "https://www.inews24.com/view/1803165"
+      }
+    },
+    {
+      "id": "long-hunt-mkt",
+      "title": "1년 가까이 취업이 안 됐다",
+      "kind": "bad",
+      "weight": 4,
+      "text": "마케팅 직무는 경력직 공고만 보였다.",
+      "choices": [
+        {
+          "text": "대행사·작은 회사도 지원한다",
+          "tone": "push",
+          "sets": "lowered",
+          "label": "작은 회사도 지원"
+        },
+        {
+          "text": "다른 직무로 넓힌다",
+          "tone": "change",
+          "sets": "switched",
+          "label": "다른 직무로"
+        },
+        {
+          "text": "지금 기준을 유지한다",
+          "tone": "safe",
+          "label": "기준 유지"
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -8
+      },
+      "needsNoJob": true,
+      "excludes": [
+        "switched",
+        "long-hunt-mkt"
+      ],
+      "minMonth": 9,
+      "branch": "choice",
+      "branchLabel": "긴 구직",
+      "evidence": {
+        "label": "청년 첫 취업까지 평균 11.2개월",
+        "source": "통계청 청년층 부가조사(2026)",
+        "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+      }
+    },
+    {
+      "id": "got-agency",
+      "title": "광고 대행사에 합격했다",
+      "kind": "good",
+      "weight": 1,
+      "text": "작은 대행사였다. 바로 실무에 들어간다고 했다.",
+      "choices": [
+        {
+          "text": "일단 들어가서 포트폴리오를 쌓는다",
+          "tone": "push"
+        },
+        {
+          "text": "조건을 따져 보고 들어간다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": 10,
+        "stress": -6
+      },
+      "chance": 0.12,
+      "factors": [
+        "jobReady"
+      ],
+      "hires": true,
+      "afterGrad": true,
+      "tiers": [
+        {
+          "id": "small",
+          "group": "small",
+          "label": "5~29인 회사",
+          "salary": 3070,
+          "weight": 0.33
+        },
+        {
+          "id": "micro",
+          "group": "small",
+          "label": "5인 미만 회사",
+          "salary": 2731,
+          "weight": 0.1
+        }
+      ],
+      "needsNoJob": true,
+      "requires": [
+        "lowered"
+      ],
+      "excludes": [
+        "switched"
+      ],
+      "repeatable": true,
+      "branch": "luck",
+      "branchLabel": "대행사 합격",
+      "evidence": {
+        "label": "신입 초임: 300인 이상 5,001만원, 30~299인 3,595만원",
+        "source": "한국경영자총협회(2023)",
+        "url": "https://www.inews24.com/view/1803165"
+      }
+    },
+    {
+      "id": "weekly-content",
+      "title": "주간 콘텐츠 마감",
+      "kind": "neutral",
+      "weight": 3,
+      "text": "매주 목요일 콘텐츠 마감이 돌아왔다.",
+      "choices": [
+        {
+          "text": "이번 주는 새 포맷을 시도한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3,
+            "stress": 2
+          }
+        },
+        {
+          "text": "반응 좋았던 포맷을 반복한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "skill": 1
+      },
+      "needsJob": true,
+      "repeatable": true
+    },
+    {
+      "id": "campaign-flop",
+      "title": "캠페인 성과가 목표의 절반이었다",
+      "kind": "bad",
+      "weight": 1.5,
+      "text": "오 팀장이 대시보드를 띄워 놓고 말없이 숫자만 짚었다.",
+      "choices": [
+        {
+          "text": "원인 분석 보고서를 자원해서 쓴다",
+          "tone": "push",
+          "effect": {
+            "skill": 5,
+            "stress": 4
+          }
+        },
+        {
+          "text": "다음 캠페인에서 만회한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "stress": 12,
+        "satisfaction": -8
+      },
+      "needsJob": true,
+      "tags": [
+        "실적압박"
+      ]
+    },
+    {
+      "id": "viral",
+      "title": "올린 콘텐츠가 터졌다",
+      "kind": "good",
+      "weight": 1,
+      "text": "새벽에 올린 영상 조회수가 하루 만에 100만을 넘었다.",
+      "choices": [
+        {
+          "text": "후속 기획을 바로 올린다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "팀과 성과를 나눈다",
+          "tone": "safe",
+          "effect": {
+            "relation": 5
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 16,
+        "skill": 4
+      },
+      "needsJob": true
+    },
+    {
+      "id": "launch-crunch",
+      "title": "신제품 출시 주간",
+      "kind": "bad",
+      "weight": 1.5,
+      "text": "출시 일주일 전, 대행사 일정이 밀렸다. 주말 촬영이 잡혔다.",
+      "choices": [
+        {
+          "text": "직접 현장에 나가 챙긴다",
+          "tone": "push",
+          "effect": {
+            "skill": 3,
+            "stress": 4
+          }
+        },
+        {
+          "text": "대행사에 맡기고 결과만 본다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -3
+      },
+      "needsJob": true,
+      "tags": [
+        "주말근무",
+        "야근"
+      ]
+    },
+    {
+      "id": "mkt-raise",
+      "title": "연봉 협상 시즌",
+      "kind": "neutral",
+      "weight": 2,
+      "text": "1년치 성과를 정리해서 오 팀장과 면담했다.",
+      "choices": [
+        {
+          "text": "성과를 숫자로 정리해 인상을 요구한다",
+          "tone": "push",
+          "raise": 6,
+          "effect": {
+            "stress": 4
+          }
+        },
+        {
+          "text": "회사가 제시한 대로 받는다",
+          "tone": "safe",
+          "raise": 3
+        }
+      ],
+      "effect": {
+        "satisfaction": 2
+      },
+      "needsJob": true,
+      "minTenure": 10,
+      "calendar": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "mkt-offer",
+      "title": "다른 회사에서 연락이 왔다",
+      "kind": "neutral",
+      "weight": 1.4,
+      "text": "헤드헌터에게서 연봉을 더 주겠다는 제안이 왔다. 지금 팀에 정은 들었다.",
+      "choices": [
+        {
+          "text": "옮긴다",
+          "tone": "change",
+          "sets": "moved",
+          "raise": 15,
+          "label": "이직함",
+          "effect": {
+            "stress": 6,
+            "satisfaction": 4
+          }
+        },
+        {
+          "text": "지금 회사에 남는다",
+          "tone": "safe",
+          "label": "남음",
+          "effect": {
+            "relation": 3
+          }
+        }
+      ],
+      "effect": {},
+      "needsJob": true,
+      "minTenure": 12,
+      "branch": "choice",
+      "branchLabel": "이직 제안",
+      "evidence": {
+        "label": "청년 첫 일자리 평균 근속 1년 6.8개월",
+        "source": "통계청 청년층 부가조사(2026)",
+        "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+      }
+    },
+    {
+      "id": "mkt-burnout",
+      "title": "번아웃이 왔다",
+      "kind": "bad",
+      "weight": 1.2,
+      "text": "아침에 눈을 떠도 출근할 생각만 하면 숨이 막혔다. 몇 주째 주말에도 쉬지 못했다.",
+      "choices": [
+        {
+          "text": "버티면서 일을 줄여 달라고 말한다",
+          "tone": "push",
+          "effect": {
+            "stress": -4
+          },
+          "label": "버팀"
+        },
+        {
+          "text": "퇴사하고 쉬면서 다시 찾는다",
+          "tone": "change",
+          "quits": true,
+          "label": "퇴사함",
+          "effect": {
+            "stress": -20
+          }
+        },
+        {
+          "text": "병가·휴가를 내고 쉰다",
+          "tone": "safe",
+          "effect": {
+            "stress": -14,
+            "money": -50
+          },
+          "label": "잠시 쉼"
+        }
+      ],
+      "effect": {
+        "stress": 14,
+        "satisfaction": -12
+      },
+      "needsJob": true,
+      "minTenure": 8,
+      "branch": "choice",
+      "branchLabel": "번아웃",
+      "tags": [
+        "야근"
+      ],
+      "evidence": {
+        "label": "첫 직장 그만둔 이유 1위: 보수·근로시간 불만족 44.4%",
+        "source": "통계청 청년층 부가조사(2026)",
+        "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+      }
+    },
+    {
+      "id": "mkt-mentor",
+      "title": "디자이너 강가 밥을 사 줬다",
+      "kind": "good",
+      "weight": 1,
+      "text": "힘들어 보였는지 디자이너 강가 퇴근길에 밥을 사 주며 자기 신입 때 얘기를 해 줬다.",
+      "choices": [
+        {
+          "text": "고민을 솔직하게 털어놓는다",
+          "tone": "push",
+          "effect": {
+            "relation": 6
+          }
+        },
+        {
+          "text": "고맙다고만 하고 가볍게 넘긴다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "relation": 6,
+        "stress": -6
+      },
+      "needsJob": true
+    }
+  ]
+}

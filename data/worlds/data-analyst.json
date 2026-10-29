@@ -1,0 +1,656 @@
+{
+  "id": "data-analyst",
+  "family": "공학·IT",
+  "archetype": "public",
+  "curated": true,
+  "majors": [
+    "통계",
+    "데이터",
+    "컴퓨터",
+    "산업공학",
+    "수학",
+    "경제",
+    "경영"
+  ],
+  "readiness": [
+    "dataTool",
+    "coding"
+  ],
+  "certs": [
+    "ADsP",
+    "SQLD",
+    "빅데이터분석기사",
+    "컴활1급"
+  ],
+  "name": "공공기관 데이터 분석가",
+  "short": "데이터 분석가",
+  "subtitle": "공공기관 데이터 직무",
+  "color": "#13A57B",
+  "onColor": "#14171F",
+  "badge": "C",
+  "fitValues": {
+    "안정": 0.75,
+    "성장": 0.7,
+    "돈": 0.55,
+    "여유": 0.55,
+    "인정": 0.5,
+    "자율": 0.45,
+    "기여": 0.7,
+    "관계": 0.5
+  },
+  "fitTraits": {
+    "O": 4,
+    "C": 4,
+    "E": 2,
+    "A": 3,
+    "N": 3
+  },
+  "fitInterests": {
+    "I": 5,
+    "C": 4
+  },
+  "thirdPathReason": "안정을 중요하게 보면서도 새로운 걸 배우고 싶어 했어요. 공공기관 데이터 직무는 두 가지를 함께 가질 수 있는 길이에요.",
+  "prepCost": 15,
+  "hoursPerWeek": 42,
+  "startSkill": "jobReady",
+  "facts": [
+    {
+      "label": "공공기관 신입 평균 연봉",
+      "value": "4,099만원 (전년 3,961만원)",
+      "source": "인크루트, 2026 공공기관 채용정보박람회 참여 139곳 분석",
+      "year": "2026년",
+      "url": "https://www.wikitree.co.kr/articles/1115572"
+    },
+    {
+      "label": "졸업 후 첫 취업까지 평균",
+      "value": "11.2개월",
+      "source": "통계청 경제활동인구조사 청년층 부가조사",
+      "year": "2026년 5월",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+    },
+    {
+      "label": "첫 일자리 평균 근속기간",
+      "value": "1년 6.8개월",
+      "source": "통계청 경제활동인구조사 청년층 부가조사",
+      "year": "2026년 5월",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+    }
+  ],
+  "npcs": [
+    {
+      "name": "한 차장",
+      "role": "상사",
+      "persona": "보고서 숫자에 엄격하다. 근거를 좋아한다."
+    },
+    {
+      "name": "현업 담당자 윤",
+      "role": "협업자",
+      "persona": "데이터를 잘 모르지만 결과를 빨리 원한다."
+    },
+    {
+      "name": "동기 서",
+      "role": "동료",
+      "persona": "통계 전공. 같이 공부하자고 먼저 말 걸어 준다."
+    }
+  ],
+  "events": [
+    {
+      "id": "ncs-start",
+      "title": "NCS 필기 준비를 시작했다",
+      "kind": "neutral",
+      "weight": 1,
+      "text": "공공기관 채용 일정표를 붙여 놓고, 의사소통·수리·문제해결 문제집을 샀다.",
+      "choices": [
+        {
+          "text": "SQLD·ADsP도 같이 준비한다",
+          "tone": "push",
+          "effect": {
+            "skill": 4,
+            "stress": 4
+          }
+        },
+        {
+          "text": "필기부터 하나씩 한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "skill": 3,
+        "stress": 5
+      },
+      "chance": 1,
+      "maxMonth": 0
+    },
+    {
+      "id": "ncs-grind",
+      "title": "문제집 한 권을 끝냈다",
+      "kind": "neutral",
+      "weight": 3,
+      "text": "시간 재고 푸는 연습을 했다. 수리 영역에서 시간이 계속 모자랐다.",
+      "choices": [
+        {
+          "text": "약한 유형만 모아 다시 푼다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "다음 권으로 넘어간다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "skill": 2
+      },
+      "repeatable": true,
+      "needsNoJob": true,
+      "excludes": [
+        "switched"
+      ]
+    },
+    {
+      "id": "cert-pass",
+      "title": "데이터 자격증에 붙었다",
+      "kind": "good",
+      "weight": 1.2,
+      "text": "ADsP 합격 문자가 왔다. 이력서 자격증 칸이 하나 늘었다.",
+      "choices": [
+        {
+          "text": "SQLD도 바로 신청한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "필기 공부로 돌아간다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": 8,
+        "skill": 5
+      },
+      "needsNoJob": true,
+      "minMonth": 2
+    },
+    {
+      "id": "pub-fail",
+      "title": "필기에서 떨어졌다",
+      "kind": "bad",
+      "weight": 1,
+      "text": "상반기 공채 필기 결과가 나왔다. 합격선까지 몇 문제였다.",
+      "choices": [
+        {
+          "text": "다음 공채까지 모의고사를 매주 푼다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "민간 기업도 같이 지원한다",
+          "tone": "change",
+          "sets": "private",
+          "effect": {
+            "stress": -3
+          }
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -8
+      },
+      "chance": 1,
+      "calendar": [
+        5,
+        11
+      ],
+      "minMonth": 4,
+      "needsNoJob": true,
+      "excludes": [
+        "switched"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "got-public",
+      "title": "공공기관에 합격했다",
+      "kind": "good",
+      "weight": 1,
+      "text": "최종 합격. 본사는 지방 혁신도시에 있다.",
+      "choices": [
+        {
+          "text": "이사 준비를 바로 시작한다",
+          "tone": "push"
+        },
+        {
+          "text": "가족과 먼저 상의한다",
+          "tone": "safe",
+          "effect": {
+            "relation": 3
+          }
+        }
+      ],
+      "effect": {
+        "satisfaction": 22,
+        "stress": -15
+      },
+      "chance": 0.12,
+      "warmup": 10,
+      "factors": [
+        "jobReady"
+      ],
+      "calendar": [
+        5,
+        11
+      ],
+      "minMonth": 4,
+      "needsNoJob": true,
+      "excludes": [
+        "switched"
+      ],
+      "hires": true,
+      "afterGrad": true,
+      "repeatable": true,
+      "tiers": [
+        {
+          "id": "public",
+          "group": "public",
+          "label": "공공기관",
+          "salary": 4099,
+          "weight": 1
+        }
+      ],
+      "tags": [
+        "지방근무"
+      ],
+      "branch": "luck",
+      "branchLabel": "공공기관 합격",
+      "evidence": {
+        "label": "공공기관 신입 평균 연봉 4,099만원",
+        "source": "인크루트(2026)",
+        "url": "https://www.wikitree.co.kr/articles/1115572"
+      }
+    },
+    {
+      "id": "got-private",
+      "title": "민간 기업 데이터 직무에 합격했다",
+      "kind": "good",
+      "weight": 1,
+      "text": "공공기관 대신 지원한 회사에서 먼저 연락이 왔다.",
+      "choices": [
+        {
+          "text": "일단 들어가서 경력을 쌓는다",
+          "tone": "push"
+        },
+        {
+          "text": "공공기관을 계속 노리며 다닌다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": 14,
+        "stress": -10
+      },
+      "chance": 0.06,
+      "factors": [
+        "jobReady",
+        "region",
+        "school"
+      ],
+      "requires": [
+        "private"
+      ],
+      "needsNoJob": true,
+      "hires": true,
+      "afterGrad": true,
+      "repeatable": true,
+      "tiers": [
+        {
+          "id": "large",
+          "group": "big",
+          "label": "300인 이상 회사",
+          "salary": 5001,
+          "weight": 0.12
+        },
+        {
+          "id": "mid",
+          "group": "big",
+          "label": "30~299인 회사",
+          "salary": 3595,
+          "weight": 0.45
+        },
+        {
+          "id": "small",
+          "group": "small",
+          "label": "5~29인 회사",
+          "salary": 3070,
+          "weight": 0.33
+        },
+        {
+          "id": "micro",
+          "group": "small",
+          "label": "5인 미만 회사",
+          "salary": 2731,
+          "weight": 0.1
+        }
+      ],
+      "branch": "luck",
+      "branchLabel": "민간 기업 합격",
+      "evidence": {
+        "label": "신입 초임: 300인 이상 5,001만원, 30~299인 3,595만원",
+        "source": "한국경영자총협회(2023)",
+        "url": "https://www.inews24.com/view/1803165"
+      }
+    },
+    {
+      "id": "long-prep",
+      "title": "1년 넘게 필기만 붙잡고 있다",
+      "kind": "bad",
+      "weight": 4,
+      "text": "공채 시즌이 두 번 지나갔다.",
+      "choices": [
+        {
+          "text": "한 번 더 공채를 본다",
+          "tone": "push",
+          "label": "한 번 더"
+        },
+        {
+          "text": "민간 기업으로 넓힌다",
+          "tone": "change",
+          "sets": "private",
+          "label": "민간 기업도 지원"
+        },
+        {
+          "text": "다른 길을 찾는다",
+          "tone": "change",
+          "sets": "switched",
+          "label": "다른 길로"
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -8
+      },
+      "needsNoJob": true,
+      "minMonth": 12,
+      "excludes": [
+        "switched",
+        "long-prep"
+      ],
+      "branch": "choice",
+      "branchLabel": "긴 준비"
+    },
+    {
+      "id": "dashboard",
+      "title": "정기 보고용 대시보드를 고쳤다",
+      "kind": "neutral",
+      "weight": 3,
+      "text": "매달 나가는 지표 보고서였다. 숫자 하나가 계속 안 맞았다.",
+      "choices": [
+        {
+          "text": "원본 데이터부터 다시 확인한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "지난달 방식대로 맞춘다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "skill": 1
+      },
+      "needsJob": true,
+      "repeatable": true,
+      "tags": [
+        "반복업무"
+      ]
+    },
+    {
+      "id": "audit",
+      "title": "국정감사 자료 요청이 쏟아졌다",
+      "kind": "bad",
+      "weight": 3,
+      "text": "의원실 요구 자료가 하루에 열 건씩 왔다. 일주일 내내 밤 10시에 퇴근했다.",
+      "choices": [
+        {
+          "text": "요청을 자동으로 뽑는 쿼리를 만든다",
+          "tone": "push",
+          "effect": {
+            "skill": 5
+          }
+        },
+        {
+          "text": "하나씩 손으로 처리한다",
+          "tone": "safe",
+          "effect": {
+            "stress": 4
+          }
+        }
+      ],
+      "effect": {
+        "stress": 14,
+        "satisfaction": -6
+      },
+      "needsJob": true,
+      "calendar": [
+        9,
+        10
+      ],
+      "tags": [
+        "야근"
+      ]
+    },
+    {
+      "id": "model-win",
+      "title": "내 분석이 정책 보고서에 들어갔다",
+      "kind": "good",
+      "weight": 1.2,
+      "text": "한 차장이 보고서 맨 앞에 내 그래프를 넣었다.",
+      "choices": [
+        {
+          "text": "다음 분석 과제를 자원한다",
+          "tone": "push",
+          "effect": {
+            "skill": 3
+          }
+        },
+        {
+          "text": "이번엔 조용히 기뻐한다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "satisfaction": 14,
+        "skill": 4
+      },
+      "needsJob": true,
+      "minTenure": 4
+    },
+    {
+      "id": "weekend-home",
+      "title": "주말마다 서울 집에 올라간다",
+      "kind": "bad",
+      "weight": 1.5,
+      "text": "혁신도시 원룸과 서울 본가를 오가는 생활이 이어졌다.",
+      "choices": [
+        {
+          "text": "지역에 정 붙이고 동호회를 찾는다",
+          "tone": "push",
+          "effect": {
+            "relation": 5
+          }
+        },
+        {
+          "text": "금요일마다 KTX를 탄다",
+          "tone": "safe",
+          "effect": {
+            "money": -30,
+            "stress": 2
+          }
+        }
+      ],
+      "effect": {
+        "stress": 6,
+        "relation": -5
+      },
+      "needsJob": true,
+      "requires": [
+        "got-public"
+      ],
+      "tags": [
+        "지방근무"
+      ]
+    },
+    {
+      "id": "da-raise",
+      "title": "연봉 협상 시즌",
+      "kind": "neutral",
+      "weight": 2,
+      "text": "1년치 성과를 정리해서 한 차장과 면담했다.",
+      "choices": [
+        {
+          "text": "성과를 숫자로 정리해 인상을 요구한다",
+          "tone": "push",
+          "raise": 6,
+          "effect": {
+            "stress": 4
+          }
+        },
+        {
+          "text": "회사가 제시한 대로 받는다",
+          "tone": "safe",
+          "raise": 3
+        }
+      ],
+      "effect": {
+        "satisfaction": 2
+      },
+      "needsJob": true,
+      "minTenure": 10,
+      "calendar": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "da-offer",
+      "title": "다른 회사에서 연락이 왔다",
+      "kind": "neutral",
+      "weight": 1.4,
+      "text": "헤드헌터에게서 연봉을 더 주겠다는 제안이 왔다. 지금 팀에 정은 들었다.",
+      "choices": [
+        {
+          "text": "옮긴다",
+          "tone": "change",
+          "sets": "moved",
+          "raise": 15,
+          "label": "이직함",
+          "effect": {
+            "stress": 6,
+            "satisfaction": 4
+          }
+        },
+        {
+          "text": "지금 회사에 남는다",
+          "tone": "safe",
+          "label": "남음",
+          "effect": {
+            "relation": 3
+          }
+        }
+      ],
+      "effect": {},
+      "needsJob": true,
+      "minTenure": 12,
+      "branch": "choice",
+      "branchLabel": "이직 제안",
+      "evidence": {
+        "label": "청년 첫 일자리 평균 근속 1년 6.8개월",
+        "source": "통계청 청년층 부가조사(2026)",
+        "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+      }
+    },
+    {
+      "id": "da-burnout",
+      "title": "번아웃이 왔다",
+      "kind": "bad",
+      "weight": 1.2,
+      "text": "아침에 눈을 떠도 출근할 생각만 하면 숨이 막혔다. 몇 주째 주말에도 쉬지 못했다.",
+      "choices": [
+        {
+          "text": "버티면서 일을 줄여 달라고 말한다",
+          "tone": "push",
+          "effect": {
+            "stress": -4
+          },
+          "label": "버팀"
+        },
+        {
+          "text": "퇴사하고 쉬면서 다시 찾는다",
+          "tone": "change",
+          "quits": true,
+          "label": "퇴사함",
+          "effect": {
+            "stress": -20
+          }
+        },
+        {
+          "text": "병가·휴가를 내고 쉰다",
+          "tone": "safe",
+          "effect": {
+            "stress": -14,
+            "money": -50
+          },
+          "label": "잠시 쉼"
+        }
+      ],
+      "effect": {
+        "stress": 14,
+        "satisfaction": -12
+      },
+      "needsJob": true,
+      "minTenure": 8,
+      "branch": "choice",
+      "branchLabel": "번아웃",
+      "tags": [
+        "야근"
+      ],
+      "evidence": {
+        "label": "첫 직장 그만둔 이유 1위: 보수·근로시간 불만족 44.4%",
+        "source": "통계청 청년층 부가조사(2026)",
+        "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+      }
+    },
+    {
+      "id": "da-mentor",
+      "title": "동기 서가 밥을 사 줬다",
+      "kind": "good",
+      "weight": 1,
+      "text": "힘들어 보였는지 동기 서가 퇴근길에 밥을 사 주며 자기 신입 때 얘기를 해 줬다.",
+      "choices": [
+        {
+          "text": "고민을 솔직하게 털어놓는다",
+          "tone": "push",
+          "effect": {
+            "relation": 6
+          }
+        },
+        {
+          "text": "고맙다고만 하고 가볍게 넘긴다",
+          "tone": "safe"
+        }
+      ],
+      "effect": {
+        "relation": 6,
+        "stress": -6
+      },
+      "needsJob": true
+    }
+  ]
+}
