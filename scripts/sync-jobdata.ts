@@ -20,23 +20,30 @@ async function main() {
   const facts: Record<string, Fact[]> = JSON.parse(readFileSync("data/jobdata/extra-facts.json", "utf8"));
   const market: Record<string, unknown> = {};
 
-  // 직업정보: 연봉 구간·전망별 직업 목록을 한 번씩 받아 두고 이름으로 찾는다.
-  const band = new Map<string, string>();
-  const prospect = new Map<string, string>();
-  for (const k of Object.keys(w24.SAL_BANDS)) for (const j of (await w24.jobsByCondition(k, undefined)) ?? []) band.set(j.name, w24.SAL_BANDS[k]);
-  for (const k of Object.keys(w24.PROSPECTS)) for (const j of (await w24.jobsByCondition(undefined, k)) ?? []) prospect.set(j.name, w24.PROSPECTS[k]);
-  console.log(`직업정보: 연봉 구간 ${band.size}개, 전망 ${prospect.size}개 직업`);
+  const { JOBCODES } = await import("../data/jobcodes");
+  const man = (n: number) => `${n.toLocaleString("ko-KR")}만원`;
 
   for (const w of WORLDS) {
     const got: Fact[] = [];
     const kw = w.short.replace(/[·(].*$/, "").trim();
 
-    // 1) 직업정보: 이름이 비슷한 직업의 평균 연봉 구간·전망
-    const jobs = (await w24.searchJobs(kw)) ?? [];
-    const hit = jobs.find((j) => band.has(j.name) || prospect.has(j.name));
-    if (hit) {
-      if (band.has(hit.name)) got.push({ label: `${hit.name} 평균 연봉`, value: band.get(hit.name)!, source: "고용24 직업정보", year: today });
-      if (prospect.has(hit.name)) got.push({ label: `${hit.name} 일자리 전망`, value: prospect.get(hit.name)!, source: "고용24 직업정보", year: today });
+    // 1) 직업정보 상세: 정해 둔 직업(data/jobcodes.ts)의 임금 분위·만족도·재직자 전망
+    const jc = JOBCODES[w.id];
+    const d = jc ? await w24.jobDetail(jc.code) : null;
+    if (jc && d) {
+      const yr = d.salYear ? `${d.salYear}` : today;
+      if (d.salMid)
+        got.push({
+          label: `${jc.name} 연봉(재직자 전체, 경력 포함 · 신입 아님)`,
+          value: `가운데 ${man(d.salMid)}${d.salLow && d.salHigh ? ` (하위 25% ${man(d.salLow)} ~ 상위 25% ${man(d.salHigh)})` : ""}`,
+          source: "고용24 직업정보",
+          year: yr,
+        });
+      if (d.satisfaction !== null) got.push({ label: `${jc.name} 직업 만족도`, value: `${d.satisfaction}점(100점 만점, 재직자 응답)`, source: "고용24 직업정보", year: yr });
+      const up = d.prospect.filter((p) => p.name.includes("증가")).reduce((s, p) => s + p.ratio, 0);
+      const down = d.prospect.filter((p) => p.name.includes("감소")).reduce((s, p) => s + p.ratio, 0);
+      if (d.prospect.length)
+        got.push({ label: `${jc.name} 5년 뒤 일자리 전망(재직자 응답)`, value: `늘 것 ${up}% · 줄 것 ${down}% · 비슷 ${Math.max(0, 100 - up - down)}%`, source: "고용24 직업정보", year: d.prospect[0].year || yr });
     }
 
     // 2) 채용정보: 지금 올라온 신입 공고 수와 제시 연봉(시험·대학원·창업은 공고가 의미 없어서 뺀다)

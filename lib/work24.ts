@@ -115,17 +115,31 @@ export async function searchJobs(keyword: string) {
   return list<Record<string, string>>(root.jobList).map((j) => ({ code: j.jobCd, name: j.jobNm, groupCode: j.jobClcd, group: j.jobClcdNM }));
 }
 
-// 평균 연봉 구간·전망 조건으로 직업 목록 → 직업마다 연봉 구간과 전망을 알 수 있다.
-// (직업 상세 API 문서가 아직 없어서, 조건 검색 결과를 모아 '이 직업은 어느 구간'인지 역으로 찾는다.)
-export const SAL_BANDS: Record<string, string> = { "10": "3천만원 미만", "20": "3~4천만원", "30": "4~5천만원", "40": "5천만원 이상" };
-export const PROSPECTS: Record<string, string> = { "1": "증가", "2": "다소 증가", "3": "유지", "4": "다소 감소", "5": "감소" };
+// ---------- 직업정보(상세: 임금·만족도·전망) ----------
 
-export async function jobsByCondition(avgSal?: string, prospect?: string) {
+// 진로의 직업코드(data/jobcodes.ts)로 임금 분위·직업 만족도·재직자 전망을 받는다.
+// - 임금은 '재직자 전체'(경력 포함) 분위라서 신입 연봉이 아니다. 화면에도 그렇게 적는다.
+// - 전망 서술(jobProspect)은 2016년 자료를 인용해 오래돼서 쓰지 않고, 재직자 응답 비율(jobSumProspect)만 쓴다.
+export async function jobDetail(code: string) {
   if (!KEYS.job) return null;
-  const data = await call("wk/callOpenApiSvcInfo212L01.do", { authKey: KEYS.job, returnType: "XML", target: "JOBCD", srchType: "C", avgSal, prospect }, "xml", 3600 * 24);
-  const root = data?.jobsList;
+  const data = await call("wk/callOpenApiSvcInfo212D04.do", { authKey: KEYS.job, returnType: "XML", target: "JOBDTL", jobGb: "1", jobCd: code, dtlGb: "4" }, "xml", 3600 * 24 * 7);
+  const root = data?.salProspect;
   if (!root) return null;
-  return list<Record<string, string>>(root.jobList).map((j) => ({ code: j.jobCd, name: j.jobNm }));
+  // 예: "조사년도:2025년, 임금 하위(25%) 6700만원, 평균(50%) 9150만원, 상위(25%) 10900만원"
+  const sal = String(root.sal ?? "");
+  const num = (re: RegExp) => {
+    const m = sal.match(re);
+    return m ? Number(m[1]) : null;
+  };
+  const prospect = list<Record<string, string>>(root.jobSumProspect).map((p) => ({ name: p.jobProspectNm, ratio: Number(p.jobProspectRatio), year: p.jobProspectInqYr }));
+  return {
+    salYear: num(/조사년도:(\d{4})/),
+    salLow: num(/하위\(25%\)\s*(\d+)만원/),
+    salMid: num(/평균\(50%\)\s*(\d+)만원/),
+    salHigh: num(/상위\(25%\)\s*(\d+)만원/),
+    satisfaction: root.jobSatis ? Number(root.jobSatis) : null, // 0~100
+    prospect: prospect.filter((p) => Number.isFinite(p.ratio)),
+  };
 }
 
 // ---------- 학과정보(목록) ----------
