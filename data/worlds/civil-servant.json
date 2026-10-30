@@ -104,6 +104,12 @@
       "source": "공무원연금공단",
       "year": "2024년",
       "url": "https://www.insight.co.kr/news/544754"
+    },
+    {
+      "label": "준비생 전체 중 결국 합격하는 비율",
+      "value": "공개 통계 없음. 합격자의 준비 기간(평균 1년 8개월, 2년 안 73.3%)에 맞춘 모델 값이라, 이 세계의 '3년 안 합격' 비율은 가정값이에요",
+      "source": "가정",
+      "year": "2026년 10월 보정"
     }
   ],
   "npcs": [
@@ -336,8 +342,8 @@
         "satisfaction": 25,
         "stress": -20
       },
-      "chance": 0.16,
-      "warmup": 16,
+      "chance": 0.25,
+      "warmup": 12,
       "factors": [
         "examPower",
         "persistence"
@@ -389,8 +395,8 @@
         "satisfaction": 25,
         "stress": -20
       },
-      "chance": 0.16,
-      "warmup": 16,
+      "chance": 0.25,
+      "warmup": 12,
       "factors": [
         "examPower",
         "persistence"
@@ -504,6 +510,112 @@
         "keep-going"
       ],
       "minMonth": 12,
+      "branch": "choice",
+      "branchLabel": "계속할지 고민",
+      "evidence": {
+        "label": "합격자 73.3%가 2년 안에 합격",
+        "source": "이대중 외(2016 조사)",
+        "url": "https://v.daum.net/v/738XCOSgCW"
+      }
+    },
+    {
+      "id": "keep-going-2",
+      "title": "2년이 넘었는데 아직이다",
+      "kind": "bad",
+      "weight": 4,
+      "text": "두 번째 해도 지나갔다. 같이 시작한 사람들 중 절반은 이미 그만뒀다.",
+      "choices": [
+        {
+          "text": "딱 1년만 더 한다",
+          "tone": "push",
+          "sets": "one-more",
+          "label": "1년 더",
+          "effect": {
+            "stress": 4
+          }
+        },
+        {
+          "text": "일반 기업 취업으로 방향을 바꾼다",
+          "tone": "change",
+          "sets": "switched",
+          "label": "취업으로 전향",
+          "effect": {
+            "stress": -6
+          }
+        },
+        {
+          "text": "알바를 하면서 천천히 계속한다",
+          "tone": "safe",
+          "sets": "more-work",
+          "label": "알바 병행"
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -8
+      },
+      "requires": [
+        "keep-going"
+      ],
+      "excludes": [
+        "passed",
+        "switched",
+        "keep-going-2"
+      ],
+      "minMonth": 24,
+      "branch": "choice",
+      "branchLabel": "계속할지 고민",
+      "evidence": {
+        "label": "합격자 73.3%가 2년 안에 합격",
+        "source": "이대중 외(2016 조사)",
+        "url": "https://v.daum.net/v/738XCOSgCW"
+      }
+    },
+    {
+      "id": "keep-going-3",
+      "title": "3년이 넘었는데 아직이다",
+      "kind": "bad",
+      "weight": 4,
+      "text": "세 번째 해다. 이제는 그만두는 것도 용기라는 말이 자꾸 떠오른다.",
+      "choices": [
+        {
+          "text": "딱 1년만 더 한다",
+          "tone": "push",
+          "sets": "one-more",
+          "label": "1년 더",
+          "effect": {
+            "stress": 4
+          }
+        },
+        {
+          "text": "일반 기업 취업으로 방향을 바꾼다",
+          "tone": "change",
+          "sets": "switched",
+          "label": "취업으로 전향",
+          "effect": {
+            "stress": -6
+          }
+        },
+        {
+          "text": "알바를 하면서 천천히 계속한다",
+          "tone": "safe",
+          "sets": "more-work",
+          "label": "알바 병행"
+        }
+      ],
+      "effect": {
+        "stress": 10,
+        "satisfaction": -8
+      },
+      "requires": [
+        "keep-going-2"
+      ],
+      "excludes": [
+        "passed",
+        "switched",
+        "keep-going-3"
+      ],
+      "minMonth": 36,
       "branch": "choice",
       "branchLabel": "계속할지 고민",
       "evidence": {
