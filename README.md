@@ -12,7 +12,7 @@
    npm install
    ```
 3. AI 키 넣기(없어도 돌아간다):
-   - [Google AI Studio](https://aistudio.google.com/apikey)에서 무료 키를 받는다.
+   - [Google AI Studio](https://aistudio.google.com/apikey)에서 키를 받는다. **결제를 연결한 유료 등급 키만 쓴다.** 무료 등급은 입력 내용이 구글 서비스 개선에 쓰일 수 있는데, 우리는 학생의 인터뷰 답변을 보내기 때문이다.
    - `.env.example`을 복사해서 `.env.local`을 만들고 `GEMINI_API_KEY=` 뒤에 키를 붙여 넣는다.
    - 키가 없으면 **목업 모드**로 돌아간다. 화면 위에 노란 안내가 뜨고, 미리 써 둔 문장으로 전체 흐름을 볼 수 있다.
 4. 실행:
@@ -22,6 +22,24 @@
    브라우저에서 http://localhost:3000 을 연다. 폰 화면 기준으로 만들었으니 개발자 도구에서 모바일 보기로 보면 좋다.
 
 > `.env.local`은 절대 GitHub에 올리지 않는다(이미 `.gitignore`에 들어 있다).
+
+## 1-1. 로그인·DB(Supabase, 선택)
+
+키가 없으면 로그인 버튼이 안 보이고 지금처럼 브라우저 저장(`lib/store.ts`)만으로 돈다. '예시 인물로 바로 보기'는 로그인과 상관없이 항상 된다(발표 백업).
+
+1. [supabase.com](https://supabase.com)에서 New project(Region: Northeast Asia (Seoul)).
+2. SQL Editor에 `supabase/migrations/0001_init.sql`을 통째로 붙여 넣고 Run.
+3. Project Settings → API에서 `.env.local`에 넣기:
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`(공개해도 되는 값)
+   - `SUPABASE_SERVICE_ROLE_KEY`(서버 전용. RLS를 건너뛰므로 브라우저 코드·`NEXT_PUBLIC_`에 절대 넣지 않는다. `lib/supabase/admin.ts`는 `server-only`라 브라우저에서 import하면 빌드가 실패한다)
+4. Authentication → URL Configuration
+   - Site URL: `https://coinif.vercel.app`
+   - Redirect URLs: `http://localhost:3000/auth/callback`, `https://coinif.vercel.app/auth/callback`
+5. Authentication → Sign In / Providers
+   - Email: 켜져 있으면 매직링크가 된다(무료 플랜 기본 메일은 시간당 몇 통으로 제한. 시연 전에 미리 로그인해 둘 것).
+   - Google: [Google Cloud 콘솔](https://console.cloud.google.com/apis/credentials)에서 OAuth 클라이언트(웹)를 만들고, 승인된 리디렉션 URI에 Supabase가 보여 주는 `https://<프로젝트>.supabase.co/auth/v1/callback`을 넣는다. 받은 Client ID·Secret을 Supabase Google 설정에 붙여 넣는다.
+
+흐름: 로그인 → `/welcome`에서 수집·이용 동의(`/privacy` 초안) → 이 기기의 결과를 계정으로 옮길지 묻기 → 이후 저장할 때마다 계정에도 올라감(`lib/sync.ts`). 빈 기기에서 로그인하면 가장 최근 결과를 내려받는다.
 
 ## 2. 디자인 원칙
 
@@ -172,6 +190,7 @@ docs/현직자-인터뷰-질문지.md
    - `GEMINI_API_KEY` (없으면 목업 모드). `GEMINI_FAST_MODEL`, `GEMINI_SMART_MODEL`은 넣지 않으면 기본값.
    - `WORK24_KEY_WANTED`, `WORK24_KEY_TRAINING`, `WORK24_KEY_MAJOR`, `WORK24_KEY_PROGRAM`, `WORK24_KEY_CODE`, `WORK24_KEY_DUTY`, `WORK24_KEY_JOB`
    - `CAREERNET_KEY`
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`(로그인을 쓸 때. `NEXT_PUBLIC_` 값은 빌드에 들어가므로 넣은 뒤 다시 배포)
 4. Deploy. 나온 주소를 폰으로 열면 된다.
 
 설정은 코드에 들어 있다.
@@ -187,7 +206,8 @@ docs/현직자-인터뷰-질문지.md
 - [ ] `/deepen` → '가치관 28' 탭에 문항이 뜨고, 제출하면 '커리어넷 결과지 보기'가 열리는지. 안 되면 Logs에서 `[커리어넷 실패]` 검색
 - [ ] `/report`에 고용센터 프로그램이 뜨는지, `/talk` 대화가 되는지
 - [ ] Logs의 `[토큰]` 줄로 한 번 돌릴 때 드는 토큰 확인
-- [ ] 브라우저 개발자 도구 Network·페이지 소스에서 키 문자열이 안 보이는지(키는 서버에만 있어야 한다)
+- [ ] 브라우저 개발자 도구 Network·페이지 소스에서 키 문자열이 안 보이는지(키는 서버에만 있어야 한다). 특히 service role 키
+- [ ] 로그인: Google·이메일 링크 둘 다 → 동의 화면 → 시뮬레이션 후 Supabase Table Editor의 `simulations`에 행이 생기는지
 - [ ] 실제 폰(데이터·와이파이 둘 다)으로 열어 보기. 홈 화면에 추가해 두면 발표 때 바로 열 수 있다
 
 발표장 와이파이가 불안하면 키를 빼고 목업 모드로 시연하는 게 안전하다. 목업 모드도 흐름은 똑같이 돈다.

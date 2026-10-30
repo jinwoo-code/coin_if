@@ -1,5 +1,5 @@
 // 브라우저에 진행 상황을 저장한다(로그인 없이 데모가 돌도록).
-// 나중에 DB를 붙일 때 이 파일만 바꾸면 된다.
+// 로그인하면 lib/sync.ts가 onWrite로 저장을 듣고 계정에도 올린다. 이 파일은 브라우저 저장만 맡는다.
 "use client";
 import { normalizeProfile } from "./profile";
 import type { Multiverse, Profile, Report, Selection, SimEvent } from "./types";
@@ -13,7 +13,11 @@ const KEYS = {
   lines: `cr:${VERSION}:lines`,
   active: `cr:${VERSION}:active`,
   report: `cr:${VERSION}:report`,
+  localOnly: `cr:${VERSION}:localOnly`, // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
 } as const;
+
+// 저장할 때마다 부르는 함수(계정 동기화). 하나만 둔다.
+let onWrite: (() => void) | null = null;
 
 function read<T>(key: string): T | null {
   try {
@@ -31,6 +35,7 @@ function write(key: string, value: unknown) {
   } catch {
     // 저장이 막힌 환경(시크릿 창 등)에서는 조용히 넘어간다.
   }
+  onWrite?.();
 }
 
 // 세계선별 장면: { [worldId]: { [lineId]: SimEvent[] } }
@@ -58,6 +63,11 @@ export const store = {
   setActive: (worldId: string, lineId: string) => write(KEYS.active, { ...(read<Record<string, string>>(KEYS.active) ?? {}), [worldId]: lineId }),
   getReport: () => read<Report>(KEYS.report),
   setReport: (r: Report | null) => write(KEYS.report, r),
+  isLocalOnly: () => read<boolean>(KEYS.localOnly) === true,
+  setLocalOnly: (on: boolean) => write(KEYS.localOnly, on ? true : null),
+  onWrite: (fn: (() => void) | null) => {
+    onWrite = fn;
+  },
   // 시뮬레이션 결과만 지운다(프로필·선택은 남김)
   clearResults: () => {
     write(KEYS.multiverses, null);

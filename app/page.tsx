@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AccountButton } from "@/components/account";
 import { DEMO_PROFILE, demoSelection } from "@/lib/demo";
 import { store } from "@/lib/store";
 
@@ -72,6 +73,7 @@ export default function Home() {
 
   function startDemo() {
     store.reset();
+    store.setLocalOnly(true); // 예시 인물은 계정에 올리지 않는다
     store.setProfile(DEMO_PROFILE);
     store.setSelection(demoSelection());
     router.push("/simulate");
@@ -89,6 +91,9 @@ export default function Home() {
             <circle cx="9" cy="12" r="3" fill="#fff" stroke="#14171F" strokeWidth="2" />
           </svg>
           진로 리허설
+        </span>
+        <span className="ml-auto">
+          <AccountButton />
         </span>
       </header>
 
@@ -144,6 +149,9 @@ export default function Home() {
             ))}
           </ol>
           <p className="mt-10 text-cap text-muted">결과는 미래 예측이 아니라 선택을 돕는 리허설이에요. 결정은 언제나 직접 해요.</p>
+          <Link href="/privacy" className="mt-2 inline-block text-cap text-muted underline underline-offset-4 hover:text-ink">
+            개인정보 처리방침(초안)
+          </Link>
         </div>
       </section>
     </div>

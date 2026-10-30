@@ -243,6 +243,7 @@ export default function InterviewPage() {
 
   function confirm() {
     if (!profile) return;
+    store.setLocalOnly(false); // 내 인터뷰 결과는 로그인돼 있으면 계정에 올린다
     store.setProfile(profile);
     // 새 인터뷰를 마치면 예전 시뮬레이션 결과는 지운다.
     store.clearResults();
