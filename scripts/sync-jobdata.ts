@@ -56,8 +56,8 @@ async function main() {
     }
 
     // 3) 직무정보: 이 일에서 실제로 하는 일(NCS 능력단위)
-    const duties = (await w24.dutiesFor(`${w.name} 업무`, 4)) ?? [];
-    if (duties.length) got.push({ label: "실제로 하는 일(NCS 능력단위)", value: duties.map((d) => d.name).join(", "), source: "고용24 직무정보", year: today });
+    const duties = (await w24.dutiesFor(w.id, 4)) ?? [];
+    if (duties.length) got.push({ label: `실제로 하는 일(NCS ${[...new Set(duties.map((d) => d.job))].join(", ")} 능력단위)`, value: duties.map((d) => d.name).join(", "), source: "고용24 직무정보", year: today });
 
     // 4) 국비 훈련과정: 이 분야 과정의 6개월 취업률(국비 교육 갈림길의 근거)
     if (["open", "portfolio", "trade"].includes(w.archetype)) {

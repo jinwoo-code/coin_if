@@ -257,7 +257,8 @@ interface Live {
   regionLabel?: string;
   wanted?: { total: number; salaryMedian: number | null; salarySample: number; items: { id: string; company: string; title: string; sal: string; region: string; url: string }[] } | null;
   duties?: { name: string; def: string }[];
-  training?: { total: number; top: { title: string; org: string; rate6: number | null; url: string }[] } | null;
+  ncs?: string;
+  training?: { total: number; top: { title: string; org: string; start?: string; rate6: number | null; url: string }[] } | null;
   at?: string;
 }
 
@@ -320,7 +321,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
       ) : null}
       {live.duties?.length ? (
         <div className="mt-4">
-          <p className="label">실제로 하는 일(NCS)</p>
+          <p className="label">실제로 하는 일(NCS {live.ncs})</p>
           <ul className="mt-1.5 flex flex-wrap gap-1.5">
             {live.duties.map((d) => (
               <li key={d.name} title={d.def} className="rounded-full bg-ground px-3 py-1 text-cap">
@@ -339,7 +340,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
                 <a href={t.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
                   {t.title}
                 </a>
-                <span className="num text-cap text-muted"> · 6개월 취업률 {t.rate6}%</span>
+                <span className="num text-cap text-muted">{t.rate6 !== null && t.rate6 > 0 ? ` · 6개월 취업률 ${t.rate6}%` : t.start ? ` · ${t.start} 시작` : ""}</span>
               </li>
             ))}
           </ul>

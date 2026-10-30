@@ -2,6 +2,7 @@
 // 키는 .env.local에만 두고 브라우저로 보내지 않는다. 키가 없거나 호출이 실패하면 null을 돌려줘서 앱이 멈추지 않게 한다.
 // 요청 주소와 파라미터는 고용24 Open API 문서(2026.10 기준)를 그대로 따른다.
 import { XMLParser } from "fast-xml-parser";
+import { NCS } from "@/data/ncs";
 
 const BASE = "https://www.work24.go.kr/cm/openApi/call";
 
@@ -34,7 +35,11 @@ async function call(path: string, params: Record<string, string | number | undef
     const res = await fetch(url, { next: { revalidate } } as RequestInit);
     const text = await res.text();
     if (!res.ok) throw new Error(`${res.status} ${text.slice(0, 200)}`);
-    return as === "json" ? JSON.parse(text) : parser.parse(text);
+    const data = as === "json" ? JSON.parse(text) : parser.parse(text);
+    // 키 권한 문제 등은 HTTP 200에 <GO24><error>…</error></GO24>로 온다(예: 채용정보 '개인회원은 사용할 수 없는 OPEN-API입니다.')
+    const apiError = data?.GO24?.error;
+    if (apiError) throw new Error(String(apiError));
+    return data;
   } catch (err) {
     console.error(`[고용24 실패] ${path}`, err instanceof Error ? err.message : err);
     return null;
@@ -140,13 +145,24 @@ export async function searchMajors(keyword: string) {
 
 // ---------- 직무정보(표준직무기술서, JSON) ----------
 
-export async function dutiesFor(jobCont: string, limit = 5) {
+// 진로의 NCS 직무(data/ncs.ts)에 속한 능력단위 = '실제로 하는 일'. 정해 둔 직무가 없으면 빈 배열(엉뚱한 직무를 보여 주지 않는다).
+export async function dutiesFor(worldId: string, limit = 4) {
   if (!KEYS.duty) return null;
-  const data = await call("wk/callOpenApiSvcInfo215L01.do", { authKey: KEYS.duty, jobCont, limit, returnType: "JSON" }, "json", 3600 * 24 * 7);
-  if (!data || data.message_cd) return null;
-  // result는 { "능력단위명": {...} } 형태
-  const result = (data.result ?? {}) as Record<string, Record<string, string>>;
-  return Object.values(result).map((u) => ({ name: u.job_sdvn, def: u.ablt_def, field: `${u.job_lcfn} > ${u.job_mcn} > ${u.job_scfn}` }));
+  const duties = NCS[worldId] ?? [];
+  if (!duties.length) return [];
+  const results = await Promise.all(
+    duties.map((d) => call("wk/callOpenApiSvcInfo215L01.do", { authKey: KEYS.duty, jobCont: d.q, limit: 60, returnType: "JSON" }, "json", 3600 * 24 * 7)),
+  );
+  if (results.every((r) => !r || r.message_cd)) return null;
+  const units = new Map<string, { name: string; def: string; job: string; field: string }>();
+  results.forEach((data, i) => {
+    // result는 { "능력단위명": { job_sdvn: 직무(세분류), ablt_def: 정의, ... } } 형태
+    const result = (data?.result ?? {}) as Record<string, Record<string, string>>;
+    for (const [unit, u] of Object.entries(result)) {
+      if (u.job_sdvn === duties[i].name && !units.has(unit)) units.set(unit, { name: unit, def: u.ablt_def, job: u.job_sdvn, field: `${u.job_lcfn} > ${u.job_mcn} > ${u.job_scfn} > ${u.job_sdvn}` });
+    }
+  });
+  return [...units.values()].slice(0, limit);
 }
 
 // ---------- 국민내일배움카드 훈련과정 ----------
