@@ -1,8 +1,9 @@
 // 검사 깊이별 단계 목록(설계 근거: docs/검사-설계-근거.md '검사 깊이').
-// 빠르게 = 꼭 필요한 것만(화면 15개 이하). 표준 = 빠르게 + 경험·제약 + IPIP 50 + 흥미 24.
+// 빠르게 = 꼭 필요한 것만(화면 15개 이하), 상황 질문은 학습용 6 + 채점용 3.
+// 표준 = 빠르게 + 경험·제약 + IPIP 50 + 흥미 24 + 상황 질문 나머지 9(채점용 3 포함, 18개 전부).
 // 한 화면에 문항 여러 개를 묶어 화면 수를 줄인다. 이미 답한 단계는 빼서 깊이를 올려도 다시 묻지 않는다.
 import { BFI_ITEMS } from "./bfi";
-import { IPIP50, RIASEC24, SJT } from "./tests";
+import { IPIP50, pickHoldout, QUICK_HOLDOUT, RIASEC24, SJT } from "./tests";
 import type { DepthMode, Profile } from "./types";
 
 export type TextKey = "dilemma" | "experiences" | "constraints";
@@ -42,26 +43,30 @@ const scalePages = (test: "ipip" | "riasec", ids: string[], size: number): Step[
   return parts.map((ids, i) => ({ kind: "scale", test, ids, part: i + 1, parts: parts.length }));
 };
 
-const QUICK: Step[] = [
-  { kind: "basic" },
-  { kind: "depth" },
-  DILEMMA,
-  { kind: "spec" },
-  { kind: "values" },
-  { kind: "bfi", ids: BFI_ITEMS.slice(0, 5).map((i) => i.id) },
-  { kind: "life" },
-  { kind: "bfi", ids: BFI_ITEMS.slice(5).map((i) => i.id) },
-  ...chunk(SJT.map((q) => q.id), 3).map((ids) => ({ kind: "sjt" as const, ids })),
-  { kind: "wants" },
-];
+const sjtPages = (ids: string[]): Step[] => chunk(ids, 3).map((ids) => ({ kind: "sjt" as const, ids }));
 
-const STANDARD_EXTRA: Step[] = [EXPERIENCES, ...scalePages("ipip", IPIP50.map((i) => i.id), 10), ...scalePages("riasec", RIASEC24.map((i) => i.id), 8), CONSTRAINTS];
+// holdout: 이 사람의 채점용 문항(앞 3개는 빠르게에서, 나머지는 표준에서 묻는다). 화면에서는 다른 문항과 똑같이 보인다.
+export function stepsFor(mode: DepthMode, holdout: string[]): Step[] {
+  const train = SJT.filter((q) => q.role === "train").map((q) => q.id);
+  const quickHoldout = holdout.slice(0, QUICK_HOLDOUT);
+  const rest = SJT.filter((q) => q.role === "pool" && !quickHoldout.includes(q.id)).map((q) => q.id);
+  const quick: Step[] = [
+    { kind: "basic" },
+    { kind: "depth" },
+    DILEMMA,
+    { kind: "spec" },
+    { kind: "values" },
+    { kind: "bfi", ids: BFI_ITEMS.slice(0, 5).map((i) => i.id) },
+    { kind: "life" },
+    { kind: "bfi", ids: BFI_ITEMS.slice(5).map((i) => i.id) },
+    ...sjtPages([...train, ...quickHoldout]),
+    { kind: "wants" },
+  ];
+  if (mode === "quick") return quick;
+  return [...quick, EXPERIENCES, ...scalePages("ipip", IPIP50.map((i) => i.id), 10), ...scalePages("riasec", RIASEC24.map((i) => i.id), 8), ...sjtPages(rest), CONSTRAINTS];
+}
 
 export const depthOrder = (m: DepthMode) => DEPTHS.findIndex((d) => d.mode === m);
-
-export function stepsFor(mode: DepthMode): Step[] {
-  return mode === "quick" ? QUICK : [...QUICK, ...STANDARD_EXTRA];
-}
 
 // 이미 답한 단계인지. 예전(v4) 프로필은 원답이 없어서 depth 개수로 본다.
 export function isAnswered(step: Step, p: Profile): boolean {
@@ -82,8 +87,10 @@ export function isAnswered(step: Step, p: Profile): boolean {
       return true; // 기본값이 있고, 프로필이 있으면 이미 지나온 단계
     case "bfi":
       return p.depth.bfiItems >= 10 || step.ids.every((id) => p.answers.bfi10?.[id] !== undefined);
-    case "sjt":
-      return step.ids.every((id) => p.answers.sjt?.[id] !== undefined) || (p.depth.behaviorItems >= 6 && !p.answers.sjt);
+    case "sjt": {
+      const old = p.depth.behaviorItems >= 6 && !p.answers.sjt; // v4: 원답 없이 s1~s6을 답한 프로필
+      return step.ids.every((id) => p.answers.sjt?.[id] !== undefined || p.holdoutPicks[id] !== undefined || (old && SJT.find((q) => q.id === id)?.role === "train"));
+    }
     case "scale": {
       const done = step.test === "ipip" ? p.depth.bfiItems >= 50 : p.depth.interestItems >= 24;
       const ans = step.test === "ipip" ? p.answers.ipip : p.answers.riasec;
@@ -93,13 +100,13 @@ export function isAnswered(step: Step, p: Profile): boolean {
 }
 
 // 깊이를 올릴 때: 깊이 고르기 + 아직 안 한 단계만
-export function remainingSteps(mode: DepthMode, p: Profile): Step[] {
-  return stepsFor(mode).filter((s) => s.kind === "depth" || !isAnswered(s, p));
+export function remainingSteps(mode: DepthMode, p: Profile, holdout: string[]): Step[] {
+  return stepsFor(mode, holdout).filter((s) => s.kind === "depth" || !isAnswered(s, p));
 }
 
 // 단계 수·입력 수(보고·테스트용). 입력 = 사용자가 답하거나 고를 수 있는 칸 수.
 export function countSteps(mode: DepthMode) {
-  const steps = stepsFor(mode);
+  const steps = stepsFor(mode, pickHoldout("count"));
   const inputs: Record<Step["kind"], (s: Step) => number> = {
     basic: () => 2,
     depth: () => 1,

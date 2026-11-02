@@ -6,7 +6,7 @@ export type DepthMode = "quick" | "standard" | "deep" | "ongoing";
 
 export interface Answers {
   bfi10?: Record<number, number>; // BFI-10 문항 번호 → 1~5
-  sjt?: Record<string, number>; // 상황 질문 id → 고른 보기 번호(학습용만)
+  sjt?: Record<string, number>; // 상황 질문 id → 고른 보기 번호(학습용만, 채점용은 holdoutPicks)
   ipip?: Record<string, number>; // IPIP 50 문항 id → 1~5
   riasec?: Record<string, number>; // 흥미 24 문항 id → 1~5
 }
@@ -99,6 +99,10 @@ export interface Profile {
   depthMode: DepthMode;
   // 검사 원답. 깊이를 올릴 때 이미 답한 건 다시 묻지 않고, 점수를 다시 계산하는 데 쓴다.
   answers: Answers;
+  // 채점용 상황 질문(사람마다 시드로 고정, lib/tests.ts pickHoldout)과 그 답. 답은 성향 점수에 넣지 않는다.
+  // TODO(분신 작업): 분신이 이 문항에서 고를 보기(tone)를 예측해 정답률·브라이어 점수를 낸다.
+  holdout: { seed: string; ids: string[] } | null;
+  holdoutPicks: Record<string, number>;
   // 어떤 검사를 했는지(입력한 정보 표시용)
   depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }

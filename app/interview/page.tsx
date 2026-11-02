@@ -10,7 +10,7 @@ import { depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey }
 import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
 import { DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS, precision } from "@/lib/profile";
 import { store } from "@/lib/store";
-import { IPIP50, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
+import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
 
@@ -158,7 +158,9 @@ const ITEM_TEXT: Record<string, string> = Object.fromEntries([...IPIP50, ...RIAS
 
 export default function InterviewPage() {
   const router = useRouter();
-  const [steps, setSteps] = useState<Step[]>(() => stepsFor("quick"));
+  // 채점용 상황 질문. 처음 정할 때 시드를 만들어 프로필에 저장한다(다시 바뀌지 않게).
+  const [holdout, setHoldout] = useState<{ seed: string; ids: string[] }>({ seed: "", ids: pickHoldout("") });
+  const [steps, setSteps] = useState<Step[]>(() => stepsFor("quick", pickHoldout("")));
   const [mode, setMode] = useState<DepthMode>("quick");
   // 깊이를 올리는 중이면 지금 프로필(이미 답한 것은 다시 묻지 않는다)
   const [base, setBase] = useState<Profile | null>(null);
@@ -188,12 +190,23 @@ export default function InterviewPage() {
   const curRef = useRef<HTMLDivElement>(null);
 
   const step = steps[index];
+  // 상황 질문 번호는 화면에 나오는 순서대로(문항 id나 채점용 여부가 드러나지 않게)
+  const sjtOrder = steps.flatMap((s) => (s.kind === "sjt" ? s.ids : []));
 
   // /interview?more=1: 지금 프로필에서 깊이 올리기. 답한 것은 그대로 가져온다.
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("more") !== "1") return;
-    const p = store.getProfile();
-    if (!p) return;
+    const fresh = () => {
+      const seed = Math.random().toString(36).slice(2, 10);
+      return { seed, ids: pickHoldout(seed) };
+    };
+    const p = new URLSearchParams(window.location.search).get("more") === "1" ? store.getProfile() : null;
+    if (!p) {
+      const h = fresh();
+      setHoldout(h);
+      setSteps(stepsFor("quick", h.ids));
+      return;
+    }
+    setHoldout(p.holdout ?? fresh()); // 예전(v4) 프로필은 여기서 처음 정한다
     setBase(p);
     setName(p.name);
     setMajor(p.major);
@@ -204,7 +217,7 @@ export default function InterviewPage() {
     });
     setValues(p.values);
     setBfi(p.answers.bfi10 ?? {});
-    setSjt(p.answers.sjt ?? {});
+    setSjt({ ...p.answers.sjt, ...p.holdoutPicks });
     setIpip(p.answers.ipip ?? {});
     setRiasec(p.answers.riasec ?? {});
     setSpec(p.spec);
@@ -237,7 +250,7 @@ export default function InterviewPage() {
 
   function chooseDepth(m: DepthMode) {
     setMode(m);
-    const list = base ? remainingSteps(m, base) : stepsFor(m);
+    const list = base ? remainingSteps(m, base, holdout.ids) : stepsFor(m, holdout.ids);
     setSteps(list);
     advance({ list });
   }
@@ -249,7 +262,11 @@ export default function InterviewPage() {
       const riasecDone = RIASEC24.every((i) => riasec[i.id] !== undefined);
       const bfiCount = Object.keys(bfi).length;
       const bigFive: BigFive = ipipDone ? (scoreScale(IPIP50, ipip, ["O", "C", "E", "A", "N"]) as BigFive) : base && (base.depth.bfiItems >= 50 || !bfiCount) ? base.bigFive : scoreBfi(bfi);
-      const behavior: Behavior = Object.keys(sjt).length || !base ? scoreSjt(sjt) : base.behavior;
+      const trainPicks = Object.fromEntries(Object.entries(sjt).filter(([id]) => !holdout.ids.includes(id)));
+      const holdoutPicks = Object.fromEntries(Object.entries(sjt).filter(([id]) => holdout.ids.includes(id)));
+      // 예전(v4) 프로필은 s1~s6 원답이 없어서 다시 셀 수 없다 → 원래 성향 점수를 그대로 쓴다
+      const legacy = base && !base.answers.sjt && base.depth.behaviorItems >= 6;
+      const behavior: Behavior = base && (legacy || !Object.keys(trainPicks).length) ? base.behavior : scoreSjt(trainPicks, holdout.ids);
       const interests: Interests | null = riasecDone ? (scoreScale(RIASEC24, riasec, ["R", "I", "A", "S", "E", "C"]) as Interests) : (base?.interests ?? null);
       const draftProfile = {
         ...base,
@@ -265,10 +282,12 @@ export default function InterviewPage() {
         interests,
         readiness,
         depthMode: base && depthOrder(base.depthMode) > depthOrder(mode) ? base.depthMode : mode,
-        answers: { bfi10: bfi, sjt, ipip, riasec },
+        answers: { bfi10: bfi, sjt: trainPicks, ipip, riasec },
+        holdout,
+        holdoutPicks,
         depth: {
           bfiItems: Math.max(base?.depth.bfiItems ?? 0, ipipDone ? 50 : bfiCount),
-          behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(sjt).length),
+          behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(trainPicks).length),
           interestItems: Math.max(base?.depth.interestItems ?? 0, riasecDone ? 24 : 0),
           spec: true,
           life: true,
@@ -685,7 +704,7 @@ export default function InterviewPage() {
                 <ol>
                   {step.ids.map((id) => {
                     const q = SJT.find((x) => x.id === id)!;
-                    return <ChoiceItem key={id} id={id} n={SJT.indexOf(q) + 1} text={q.text} options={q.options.map((o) => o.text)} value={sjt[id]} onPick={(i) => setSjt((cur) => ({ ...cur, [id]: i }))} />;
+                    return <ChoiceItem key={id} id={`sjt-q${sjtOrder.indexOf(id) + 1}`} n={sjtOrder.indexOf(id) + 1} text={q.text} options={q.options.map((o) => o.text)} value={sjt[id]} onPick={(i) => setSjt((cur) => ({ ...cur, [id]: i }))} />;
                   })}
                 </ol>
               </section>

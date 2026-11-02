@@ -2,7 +2,10 @@
 // 1) IPIP Big-Five Factor Markers 50문항(Goldberg, 1992; ipip.ori.org, 공개 문항). 한국어는 우리가 옮겼다(공식 번역본 아님).
 // 2) 직업 흥미 간이 검사 24문항: 홀랜드 RIASEC 6유형을 우리가 직접 쓴 문항으로 잰다(표준화 검사 아님).
 //    인터뷰의 표준 깊이(lib/assessment.ts)에서 묻는다. 커리어넷 흥미검사는 중·고등학생용이라 쓰지 않는다.
-// 3) 상황 질문 6개: 실제로 어떻게 행동하는지(끈기·위험 감수·스트레스 대처·도움 요청)를 본다.
+// 3) 상황 질문 18개: 실제로 어떻게 행동하는지(끈기·위험 감수·스트레스 대처·도움 요청)를 본다.
+//    s1~s6은 늘 학습용(성향 점수에 씀). s7~s18 중 6개는 사람마다 시드로 골라 채점용(holdout)으로 떼어 둔다.
+//    채점용 답은 성향 점수에 넣지 않고, 나중에 분신이 같은 문항에서 뭘 고를지 맞히는지 재는 데 쓴다(docs/검사-설계-근거.md '닮은 정도 측정').
+import { seededRandom } from "./engine";
 import type { Behavior, BigFive, Interests } from "./types";
 
 export interface ScaleItem {
@@ -110,74 +113,233 @@ export function scoreScale<T extends string>(items: ScaleItem[], answers: Record
 
 // ---------- 상황 질문 ----------
 
+// tone: 엔진 갈림길 선택(lib/engine.ts decide)과 같은 뜻. push 더 밀어붙임 / change 바꿈 / safe 신중함
+export type Tone = "push" | "change" | "safe";
+
 export interface SjtItem {
   id: string;
+  // train: 늘 학습용. pool: 사람마다 시드로 학습용 또는 채점용(holdout)이 된다(sjtHoldout).
+  role: "train" | "pool";
   text: string;
-  options: { text: string; score: Partial<Behavior> }[];
+  options: { text: string; score: Partial<Behavior>; tone: Tone }[];
 }
 
 export const SJT: SjtItem[] = [
   {
     id: "s1",
+    role: "train",
     text: "석 달 준비한 시험에 떨어졌다. 다음 날 나는?",
     options: [
-      { text: "바로 오답을 정리하고 다음 시험을 접수한다", score: { persistence: 5, coping: 4 } },
-      { text: "일주일쯤 쉬고 다시 시작한다", score: { persistence: 3.5, coping: 4 } },
-      { text: "이 길이 맞는지부터 다시 생각한다", score: { persistence: 2, risk: 3.5 } },
-      { text: "한동안 아무것도 손에 안 잡힌다", score: { persistence: 1.5, coping: 1.5 } },
+      { text: "바로 오답을 정리하고 다음 시험을 접수한다", score: { persistence: 5, coping: 4 }, tone: "push" },
+      { text: "일주일쯤 쉬고 다시 시작한다", score: { persistence: 3.5, coping: 4 }, tone: "safe" },
+      { text: "이 길이 맞는지부터 다시 생각한다", score: { persistence: 2, risk: 3.5 }, tone: "change" },
+      { text: "한동안 아무것도 손에 안 잡힌다", score: { persistence: 1.5, coping: 1.5 }, tone: "safe" },
     ],
   },
   {
     id: "s2",
+    role: "train",
     text: "연봉은 20% 높은데 처음 들어 보는 스타트업에서 오라고 한다.",
     options: [
-      { text: "바로 옮긴다", score: { risk: 5 } },
-      { text: "회사를 알아보고 괜찮으면 옮긴다", score: { risk: 3.5 } },
-      { text: "지금 있는 곳이 낫다", score: { risk: 1.5 } },
+      { text: "바로 옮긴다", score: { risk: 5 }, tone: "change" },
+      { text: "회사를 알아보고 괜찮으면 옮긴다", score: { risk: 3.5 }, tone: "change" },
+      { text: "지금 있는 곳이 낫다", score: { risk: 1.5 }, tone: "safe" },
     ],
   },
   {
     id: "s3",
+    role: "train",
     text: "팀 과제를 하다 막혔다.",
     options: [
-      { text: "아는 사람에게 바로 물어본다", score: { social: 5 } },
-      { text: "검색해서 혼자 끝까지 해결한다", score: { social: 2, persistence: 4 } },
-      { text: "일단 미뤄 두고 마감 직전에 한다", score: { social: 2, persistence: 1.5 } },
+      { text: "아는 사람에게 바로 물어본다", score: { social: 5 }, tone: "push" },
+      { text: "검색해서 혼자 끝까지 해결한다", score: { social: 2, persistence: 4 }, tone: "push" },
+      { text: "일단 미뤄 두고 마감 직전에 한다", score: { social: 2, persistence: 1.5 }, tone: "safe" },
     ],
   },
   {
     id: "s4",
+    role: "train",
     text: "일이 몰려 일주일째 잠을 제대로 못 잤다.",
     options: [
-      { text: "운동이나 취미로 푼다", score: { coping: 5 } },
-      { text: "친구에게 털어놓는다", score: { coping: 4, social: 4.5 } },
-      { text: "그냥 꾹 참고 버틴다", score: { coping: 2.5, persistence: 4 } },
-      { text: "다 놓아 버리고 싶어진다", score: { coping: 1.5 } },
+      { text: "운동이나 취미로 푼다", score: { coping: 5 }, tone: "safe" },
+      { text: "친구에게 털어놓는다", score: { coping: 4, social: 4.5 }, tone: "safe" },
+      { text: "그냥 꾹 참고 버틴다", score: { coping: 2.5, persistence: 4 }, tone: "push" },
+      { text: "다 놓아 버리고 싶어진다", score: { coping: 1.5 }, tone: "change" },
     ],
   },
   {
     id: "s5",
+    role: "train",
     text: "새해에 세운 공부 계획, 3월쯤의 나는?",
     options: [
-      { text: "계획대로 하고 있다", score: { persistence: 5 } },
-      { text: "반쯤은 하고 있다", score: { persistence: 3 } },
-      { text: "이미 잊었다", score: { persistence: 1.5 } },
+      { text: "계획대로 하고 있다", score: { persistence: 5 }, tone: "push" },
+      { text: "반쯤은 하고 있다", score: { persistence: 3 }, tone: "safe" },
+      { text: "이미 잊었다", score: { persistence: 1.5 }, tone: "safe" },
     ],
   },
   {
     id: "s6",
+    role: "train",
     text: "아무도 안 해 본 방식으로 과제를 해 볼 기회가 생겼다.",
     options: [
-      { text: "재밌겠다, 해 본다", score: { risk: 4.5 } },
-      { text: "반만 새롭게 해 본다", score: { risk: 3 } },
-      { text: "검증된 방식대로 한다", score: { risk: 1.5 } },
+      { text: "재밌겠다, 해 본다", score: { risk: 4.5 }, tone: "change" },
+      { text: "반만 새롭게 해 본다", score: { risk: 3 }, tone: "safe" },
+      { text: "검증된 방식대로 한다", score: { risk: 1.5 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s7",
+    role: "pool",
+    text: "첫 직장(알바) 석 달째, 생각했던 일과 많이 다르다.",
+    options: [
+      { text: "1년은 채워 보고 판단한다", score: { persistence: 4.5, risk: 2 }, tone: "push" },
+      { text: "다니면서 다른 곳을 알아본다", score: { risk: 3.5, persistence: 3 }, tone: "change" },
+      { text: "바로 그만두고 다시 찾는다", score: { risk: 5, persistence: 1.5 }, tone: "change" },
+      { text: "선배나 상사에게 고민을 털어놓는다", score: { social: 5 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s8",
+    role: "pool",
+    text: "자격증 실기 시험에 두 번 떨어졌다.",
+    options: [
+      { text: "바로 세 번째 시험을 접수한다", score: { persistence: 5 }, tone: "push" },
+      { text: "학원이나 스터디를 찾아 방법을 바꾼다", score: { persistence: 4, social: 4 }, tone: "push" },
+      { text: "다른 자격증으로 방향을 바꾼다", score: { risk: 3.5, persistence: 2 }, tone: "change" },
+      { text: "당분간 시험은 쉰다", score: { persistence: 1.5, coping: 3 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s9",
+    role: "pool",
+    text: "같이 준비하던 친구가 먼저 붙었다(취업했다).",
+    options: [
+      { text: "축하하고 내 계획대로 계속한다", score: { coping: 4.5, persistence: 4 }, tone: "push" },
+      { text: "친구에게 어떻게 준비했는지 물어본다", score: { social: 5 }, tone: "push" },
+      { text: "며칠은 아무것도 하기 싫다", score: { coping: 1.5 }, tone: "safe" },
+      { text: "나도 빨리 아무 데나 들어가야겠다고 생각한다", score: { risk: 4, coping: 2 }, tone: "change" },
+    ],
+  },
+  {
+    id: "s10",
+    role: "pool",
+    text: "졸업이 다가오는데 원하던 곳에서 연락이 없다.",
+    options: [
+      { text: "원하던 쪽을 1년 더 준비한다", score: { persistence: 4.5, risk: 3.5 }, tone: "push" },
+      { text: "지원 범위를 넓혀 일단 취업한다", score: { risk: 2 }, tone: "safe" },
+      { text: "아예 다른 분야를 알아본다", score: { risk: 4.5 }, tone: "change" },
+      { text: "학교 취업센터나 교수님께 상담을 받는다", score: { social: 5 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s11",
+    role: "pool",
+    text: "과제(프로젝트) 마감 일주일 전, 중요한 부분이 크게 잘못된 걸 알았다.",
+    options: [
+      { text: "밤을 새서라도 다시 고친다", score: { persistence: 5, coping: 2.5 }, tone: "push" },
+      { text: "팀이나 교수님께 바로 알리고 마감 조정을 부탁한다", score: { social: 5, coping: 4 }, tone: "safe" },
+      { text: "고칠 수 있는 만큼만 고치고 낸다", score: { persistence: 2.5, coping: 4 }, tone: "safe" },
+      { text: "이참에 방식을 통째로 바꿔 본다", score: { risk: 4.5 }, tone: "change" },
+    ],
+  },
+  {
+    id: "s12",
+    role: "pool",
+    text: "모아 둔 돈이 두 달 치밖에 안 남았다.",
+    options: [
+      { text: "알바를 늘리고 준비는 계속한다", score: { persistence: 4.5 }, tone: "push" },
+      { text: "가족에게 도움을 요청한다", score: { social: 4.5 }, tone: "safe" },
+      { text: "준비를 멈추고 일단 바로 취업한다", score: { risk: 2 }, tone: "change" },
+      { text: "생활비를 줄이며 버틴다", score: { coping: 3.5, persistence: 3.5 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s13",
+    role: "pool",
+    text: "팀 과제에서 한 사람이 계속 일을 안 한다.",
+    options: [
+      { text: "직접 이야기해서 역할을 다시 나눈다", score: { social: 4.5, coping: 4 }, tone: "push" },
+      { text: "그 몫까지 내가 해 버린다", score: { persistence: 4.5, social: 1.5 }, tone: "push" },
+      { text: "교수님(팀장)께 알린다", score: { social: 4 }, tone: "safe" },
+      { text: "신경 쓰지 않고 내 몫만 한다", score: { coping: 3.5, social: 2 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s14",
+    role: "pool",
+    text: "하고 싶은 일은 연봉이 낮고, 연봉이 높은 일은 흥미가 없다.",
+    options: [
+      { text: "하고 싶은 일을 고른다", score: { risk: 4 }, tone: "push" },
+      { text: "연봉이 높은 일을 고른다", score: { risk: 1.5 }, tone: "safe" },
+      { text: "연봉 높은 일을 하면서 하고 싶은 일을 준비한다", score: { persistence: 4, risk: 2.5 }, tone: "safe" },
+      { text: "둘 다 아닌 다른 길을 찾아본다", score: { risk: 4 }, tone: "change" },
+    ],
+  },
+  {
+    id: "s15",
+    role: "pool",
+    text: "면접에서 예상 못 한 질문에 말이 막혔다. 끝나고 나서 나는?",
+    options: [
+      { text: "그 질문의 답을 정리해 다음 면접에 대비한다", score: { persistence: 4.5, coping: 4.5 }, tone: "push" },
+      { text: "친구에게 이야기하며 털어 낸다", score: { social: 4.5, coping: 4 }, tone: "safe" },
+      { text: "하루 종일 그 장면이 떠오른다", score: { coping: 1.5 }, tone: "safe" },
+      { text: "이 분야가 나랑 안 맞나 싶다", score: { coping: 2, persistence: 2 }, tone: "change" },
+    ],
+  },
+  {
+    id: "s16",
+    role: "pool",
+    text: "지방(해외) 근무 기회가 생겼다. 경력엔 좋지만 아는 사람이 없다.",
+    options: [
+      { text: "바로 간다", score: { risk: 5 }, tone: "change" },
+      { text: "먼저 다녀온 사람을 찾아 물어본다", score: { social: 4.5, risk: 3 }, tone: "change" },
+      { text: "조건을 더 알아보고 정한다", score: { risk: 3 }, tone: "safe" },
+      { text: "지금 자리에 남는다", score: { risk: 1.5 }, tone: "safe" },
+    ],
+  },
+  {
+    id: "s17",
+    role: "pool",
+    text: "300만 원짜리 6개월 교육 과정이 취업에 도움이 된다고 한다. 모은 돈이 딱 그만큼이다.",
+    options: [
+      { text: "바로 등록한다", score: { risk: 4.5 }, tone: "push" },
+      { text: "수료생 후기를 찾아보고 정한다", score: { risk: 3, social: 3.5 }, tone: "safe" },
+      { text: "지금 하던 준비를 계속하고 돈은 아껴 둔다", score: { risk: 1.5, persistence: 4 }, tone: "safe" },
+      { text: "국비 지원 과정을 찾아본다", score: { risk: 2, social: 3.5 }, tone: "change" },
+    ],
+  },
+  {
+    id: "s18",
+    role: "pool",
+    text: "1년 넘게 준비했는데 계속 안 된다. 주변에서 다른 길을 권한다.",
+    options: [
+      { text: "1년만 더 해 본다", score: { persistence: 5, risk: 3 }, tone: "push" },
+      { text: "준비하면서 다른 길도 같이 알아본다", score: { persistence: 3, risk: 3 }, tone: "safe" },
+      { text: "다른 길로 바꾼다", score: { risk: 4, persistence: 1.5 }, tone: "change" },
+      { text: "잠시 쉬면서 생각을 정리한다", score: { coping: 4 }, tone: "safe" },
     ],
   },
 ];
 
-export function scoreSjt(picks: Record<string, number>): Behavior {
+export const HOLDOUT_SIZE = 6;
+export const QUICK_HOLDOUT = 3; // 빠르게 모드에서 묻는 채점용 문항 수
+
+// 채점용 문항 고르기. seed는 처음 정할 때 프로필에 저장해서 다시 바뀌지 않게 한다.
+export function pickHoldout(seed: string): string[] {
+  const rand = seededRandom(`holdout:${seed}`);
+  const pool = SJT.filter((q) => q.role === "pool").map((q) => q.id);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, HOLDOUT_SIZE);
+}
+
+// 채점용 답은 성향 점수에 넣지 않는다(holdout을 넘기면 빼고 센다).
+export function scoreSjt(picks: Record<string, number>, holdout: string[] = []): Behavior {
   const acc: Record<keyof Behavior, number[]> = { persistence: [], risk: [], coping: [], social: [] };
   for (const item of SJT) {
+    if (holdout.includes(item.id)) continue;
     const i = picks[item.id];
     if (i === undefined) continue;
     const sc = item.options[i].score;

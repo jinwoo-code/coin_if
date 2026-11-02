@@ -41,6 +41,8 @@ export function normalizeProfile(p: Partial<Profile> & Pick<Profile, "name">): P
     summary: "",
     interests: null,
     depthMode: "quick",
+    holdout: null,
+    holdoutPicks: {},
     ...p,
     answers: { ...p.answers },
     readiness: { ...p.readiness },
