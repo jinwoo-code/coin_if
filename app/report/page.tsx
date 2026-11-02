@@ -153,6 +153,15 @@ function Programs({ region }: { region: string }) {
 
 // 프리미엄 리포트: 숫자는 전부 엔진 값(세계선 전체 비교), 할 일 문장만 AI.
 function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | null; mvs: Record<string, Multiverse>; ids: string[]; busy: boolean; onOpen: () => void }) {
+  // 학교 무제한이면 토큰이 줄지 않으니 버튼에 토큰 수 대신 그렇게 쓴다.
+  const [unlimited, setUnlimited] = useState(false);
+  useEffect(() => {
+    if (items || !hasSupabase()) return;
+    fetch("/api/tokens", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setUnlimited(Boolean(d.unlimited)))
+      .catch(() => setUnlimited(false));
+  }, [items]);
   if (!items)
     return (
       <section className="card p-5 sm:p-6 print:hidden" aria-labelledby="premium">
@@ -167,7 +176,7 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
         </ul>
         {hasSupabase() ? (
           <button className="btn-primary mt-5 w-full" onClick={onOpen} disabled={busy}>
-            {busy ? "만드는 중…" : "프리미엄 리포트 열기 · 토큰 5개"}
+            {busy ? "만드는 중…" : `프리미엄 리포트 열기 · ${unlimited ? "학교 무제한" : "토큰 5개"}`}
           </button>
         ) : (
           <p className="mt-4 text-cap text-muted">로그인 기능이 연결되면 열 수 있어요.</p>
