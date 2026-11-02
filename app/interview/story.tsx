@@ -37,7 +37,7 @@ export function CciForm({ answers, onChange }: { answers: Record<string, string>
         </label>
       ))}
       {hasCrisis(Object.values(answers).join(" ")) ? <CrisisNote /> : null}
-      <p className="text-cap text-muted">모두 건너뛸 수 있어요. 답한 글은 이 기기에만 저장되고 서버에는 올라가지 않아요.</p>
+      <p className="text-cap text-muted">모두 건너뛸 수 있어요. 쓴 글은 이 기기에만 저장돼요. 값을 뽑을 때 AI가 한 번 읽지만 서버에 저장하지 않아요.</p>
     </div>
   );
 }

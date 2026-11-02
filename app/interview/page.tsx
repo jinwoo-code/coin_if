@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui";
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
-import { depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey } from "@/lib/assessment";
+import { canDeepen, depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey } from "@/lib/assessment";
 import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
-import { DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS, precision } from "@/lib/profile";
+import { completeness, DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS } from "@/lib/profile";
 import { store } from "@/lib/store";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
@@ -127,29 +127,53 @@ function Bars({ b }: { b: Behavior }) {
   );
 }
 
-function Precision({ p }: { p: Profile }) {
-  const { score, missing } = precision(p);
+// 입력한 정보(체크리스트). 입력 개수는 닮은 정도가 아니라서 점수로 보여 주지 않는다.
+function InputChecklist({ p, onDeepen }: { p: Profile; onDeepen: () => void }) {
+  const { items } = completeness(p);
   return (
-    <section className="card p-5" aria-labelledby="precision">
-      <div className="flex items-baseline justify-between">
-        <h2 id="precision" className="label">
-          시뮬레이션 정확도
-        </h2>
-        <span className="num text-2xl font-extrabold">{score}%</span>
-      </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-hair" aria-hidden="true">
-        <span className="block h-full rounded-full bg-ink transition-[width] duration-700" style={{ width: `${score}%` }} />
-      </div>
-      {missing.length ? <p className="mt-3 text-sm text-muted">더 알려 줄수록 '나'에 가까운 세계가 돼요: {missing.join(", ")}</p> : null}
-      {p.depthMode === "quick" ? (
-        <Link href="/interview?more=1" className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
+    <section className="card p-5" aria-labelledby="inputs">
+      <h2 id="inputs" className="label">
+        입력한 정보
+      </h2>
+      <ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+        {items.map((i) => (
+          <li key={i.label} className={`flex items-center gap-2 ${i.done ? "" : "text-muted"}`}>
+            {i.done ? <Check aria-hidden="true" size={16} className="flex-none" /> : <span aria-hidden="true" className="h-4 w-4 flex-none rounded-full border-2 border-hair" />}
+            <span>
+              {i.label}
+              {i.optional ? " (선택)" : ""}
+              <span className="sr-only">{i.done ? " 입력함" : " 아직 안 함"}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      {canDeepen(p) ? (
+        <button className="btn-ghost mt-4 min-h-[44px] w-full text-sm" onClick={onDeepen}>
           더 정확하게 하기 <ChevronRight aria-hidden="true" size={16} />
-        </Link>
+        </button>
       ) : (
-        <Link href="/deepen" className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
+        <Link href="/deepen" className="btn-ghost mt-4 min-h-[44px] w-full text-sm">
           커리어넷 가치관 검사(선택) <ChevronRight aria-hidden="true" size={16} />
         </Link>
       )}
+    </section>
+  );
+}
+
+// 분신이 나를 얼마나 닮았는지: 채점용 상황 질문으로 잴 자리. 지금은 측정 전.
+function TwinMatch({ p }: { p: Profile }) {
+  const n = Object.keys(p.holdoutPicks).length;
+  return (
+    <section className="card p-5" aria-labelledby="twin">
+      <div className="flex items-baseline justify-between">
+        <h2 id="twin" className="label">
+          분신 닮은 정도
+        </h2>
+        <span className="text-base font-bold text-muted">측정 전</span>
+      </div>
+      <p className="mt-2 text-sm text-muted">
+        답한 상황 질문 중 {n}개는 시뮬레이션에 쓰지 않고 따로 두었어요. 분신이 이 질문에서 나와 같은 걸 고르는지로 닮은 정도를 잴 거예요. 아직 측정 기능은 준비 중이에요.
+      </p>
     </section>
   );
 }
@@ -325,19 +349,36 @@ export default function InterviewPage() {
     advance({ texts: updated });
   }
 
-  function confirm() {
+  function save() {
     if (!profile) return;
     if (!base) store.setLocalOnly(false); // 새로 만든 내 인터뷰 결과는 로그인돼 있으면 계정에 올린다(깊이 올리기는 원래 설정 그대로)
     store.setProfile(profile);
     // 내가 바뀌었으니 예전 시뮬레이션 결과는 지운다.
     store.clearResults();
+  }
+
+  function confirm() {
+    save();
     router.push("/choose");
+  }
+
+  // 지금 결과를 저장하고 깊이 올리기로(같은 주소라 새로 불러온다)
+  function deepen() {
+    save();
+    window.location.href = "/interview?more=1";
   }
 
   const runway = life.livingCost - life.support > 0 ? Math.floor(life.savings / (life.livingCost - life.support)) : null;
 
   // 지나온 대화
   const history = steps.slice(0, index).map((s, i) => {
+    if (s.kind === "consent")
+      return (
+        <div key={i} className="contents">
+          <Ai>시작하기 전에 확인해 주세요.</Ai>
+          <Me>동의했어요</Me>
+        </div>
+      );
     if (s.kind === "basic")
       return (
         <div key={i} className="contents">
@@ -501,7 +542,7 @@ export default function InterviewPage() {
       {done ? null : (
         <div className="pt-1">
           <RouteProgress total={steps.length} current={index} label="인터뷰 진행" />
-          <p className="mt-3 text-cap text-muted">답변은 나를 닮은 시뮬레이션을 만드는 데만 쓰이고, 이 기기에만 저장돼요</p>
+          <p className="mt-3 text-cap text-muted">답변은 나를 닮은 시뮬레이션을 만드는 데만 써요. 모든 질문은 건너뛰거나 나중에 지울 수 있어요</p>
           <MockNotice />
         </div>
       )}
@@ -523,7 +564,8 @@ export default function InterviewPage() {
             />
             <p className="mt-2 text-cap text-muted">틀린 부분은 눌러서 바로 고칠 수 있어요</p>
           </section>
-          <Precision p={profile} />
+          <InputChecklist p={profile} onDeepen={deepen} />
+          <TwinMatch p={profile} />
           <div className="grid gap-4 sm:grid-cols-2">
             <section className="card p-5">
               <p className="label">중요한 가치</p>
@@ -584,13 +626,45 @@ export default function InterviewPage() {
             />
           </section>
           <p className="flex items-center gap-2 text-cap text-muted">
-            <Check aria-hidden="true" size={14} /> 이 정보는 이 기기에만 저장돼요
+            <Check aria-hidden="true" size={14} /> 이 기기에 저장되고, 로그인하면 계정에도 저장돼요(이야기 원문은 이 기기에만)
           </p>
         </div>
       ) : (
         <div className="flex flex-col gap-4 py-6">
           {history}
           <div ref={curRef} className="scroll-mt-20" aria-hidden="true" />
+
+          {!thinking && !loading && step.kind === "consent" ? (
+            <>
+              <Ai>시작하기 전에 확인해 주세요.</Ai>
+              <section aria-labelledby="consent" className="card ml-[42px] animate-rise p-5">
+                <h2 id="consent" className="text-base font-bold">
+                  이렇게 받고, 이렇게 저장해요
+                </h2>
+                <ul className="mt-3 flex list-disc flex-col gap-2 pl-5 text-sm">
+                  <li>
+                    <strong>받는 것</strong>: 이름·전공, 고민, 스펙·생활 조건, 가치관, 성격·상황 질문 답. 표준을 고르면 흥미 검사와 나에 대한 이야기도 받아요.
+                  </li>
+                  <li>
+                    <strong>저장</strong>: 검사 결과는 이 기기 브라우저에 저장돼요. 로그인하면 계정(Supabase 서버)에도 저장돼요.
+                  </li>
+                  <li>
+                    <strong>이야기 원문</strong>: 로그인해도 이 기기에만 저장되고 서버로 올라가지 않아요. 값을 뽑을 때 AI가 한 번 읽지만 저장하지 않아요.
+                  </li>
+                  <li>
+                    <strong>AI</strong>: 요약과 이야기 정리에 Google Gemini를 써요.
+                  </li>
+                  <li>모든 질문은 건너뛸 수 있고, 진로 고르기·리포트 화면의 &lsquo;내 정보&rsquo;에서 언제든 지울 수 있어요.</li>
+                </ul>
+                <Link href="/privacy" className="mt-3 inline-flex min-h-[44px] items-center text-sm font-semibold underline underline-offset-4">
+                  개인정보 처리방침(초안) 보기
+                </Link>
+                <button className="btn-primary mt-2 w-full" onClick={() => advance()}>
+                  동의하고 시작
+                </button>
+              </section>
+            </>
+          ) : null}
 
           {!thinking && !loading && step.kind === "basic" ? (
             <>

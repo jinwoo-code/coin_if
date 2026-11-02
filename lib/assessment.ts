@@ -1,5 +1,5 @@
 // 검사 깊이별 단계 목록(설계 근거: docs/검사-설계-근거.md '검사 깊이').
-// 빠르게 = 꼭 필요한 것만(화면 15개 이하), 상황 질문은 학습용 6 + 채점용 3.
+// 빠르게 = 동의 + 꼭 필요한 것만(화면 15개 이하), 상황 질문은 학습용 6 + 채점용 3.
 // 표준 = 빠르게 + 경험·제약 + IPIP 50 + 흥미 24 + 상황 질문 나머지 9(채점용 3 포함, 18개 전부) + 진로 구성 인터뷰 5문항.
 // 한 화면에 문항 여러 개를 묶어 화면 수를 줄인다. 이미 답한 단계는 빼서 깊이를 올려도 다시 묻지 않는다.
 import { BFI_ITEMS } from "./bfi";
@@ -9,6 +9,7 @@ import type { DepthMode, Profile } from "./types";
 export type TextKey = "dilemma" | "experiences" | "constraints";
 
 export type Step =
+  | { kind: "consent" } // 검사 시작 전 동의(무엇을 받고 어디에 저장하는지)
   | { kind: "basic" }
   | { kind: "depth" }
   | { kind: "text"; key: TextKey; ask: string; placeholder: string; quick?: string[] }
@@ -53,6 +54,7 @@ export function stepsFor(mode: DepthMode, holdout: string[]): Step[] {
   const quickHoldout = holdout.slice(0, QUICK_HOLDOUT);
   const rest = SJT.filter((q) => q.role === "pool" && !quickHoldout.includes(q.id)).map((q) => q.id);
   const quick: Step[] = [
+    { kind: "consent" },
     { kind: "basic" },
     { kind: "depth" },
     DILEMMA,
@@ -73,6 +75,8 @@ export const depthOrder = (m: DepthMode) => DEPTHS.findIndex((d) => d.mode === m
 // 이미 답한 단계인지. 예전(v4) 프로필은 원답이 없어서 depth 개수로 본다.
 export function isAnswered(step: Step, p: Profile): boolean {
   switch (step.kind) {
+    case "consent":
+      return true; // 프로필이 있으면 이미 동의하고 시작한 것
     case "basic":
       return !!p.name;
     case "depth":
@@ -114,6 +118,7 @@ export function remainingSteps(mode: DepthMode, p: Profile, holdout: string[]): 
 export function countSteps(mode: DepthMode) {
   const steps = stepsFor(mode, pickHoldout("count"));
   const inputs: Record<Step["kind"], (s: Step) => number> = {
+    consent: () => 1,
     basic: () => 2,
     depth: () => 1,
     text: () => 1,
@@ -128,4 +133,9 @@ export function countSteps(mode: DepthMode) {
     scale: (s) => (s.kind === "scale" ? s.ids.length : 0),
   };
   return { screens: steps.length, inputs: steps.reduce((n, s) => n + inputs[s.kind](s), 0) };
+}
+
+// 더 할 수 있는 검사가 남았는지(결과·진로 고르기 화면의 "더 정확하게 하기" 버튼)
+export function canDeepen(p: Profile): boolean {
+  return remainingSteps("standard", p, p.holdout?.ids ?? pickHoldout("")).length > 1;
 }

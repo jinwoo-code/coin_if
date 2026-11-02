@@ -56,21 +56,21 @@ export function normalizeProfile(p: Partial<Profile> & Pick<Profile, "name">): P
   };
 }
 
-// 프로필 정확도(0~100): 얼마나 많은 걸 알려 줬는지
-export function precision(p: Profile): { score: number; missing: string[] } {
-  const items: [boolean, number, string][] = [
-    [p.depth.bfiItems >= 10, 10, "성격 검사"],
-    [p.depth.bfiItems >= 50, 15, "정밀 성격 검사(50문항)"],
-    [p.depth.behaviorItems >= 6, 15, "상황 질문"],
-    [p.depth.interestItems >= 24, 15, "직업 흥미 검사"],
-    [p.depth.spec || p.depth.resume, 10, "스펙 입력"],
-    [p.depth.resume, 5, "이력서"],
-    [p.depth.github, 5, "GitHub 연결"],
-    [p.experiences.length > 10, 10, "경험 이야기"],
-    [p.depth.life, 15, "생활 조건"],
+// 입력한 정보 체크리스트. 많이 입력했다고 분신이 나를 닮았다는 보장은 없어서 점수(%)로 보여 주지 않는다.
+// 닮은 정도는 채점용 상황 질문으로 따로 잰다(분신 작업, docs/검사-설계-근거.md '닮은 정도 측정').
+export function completeness(p: Profile): { items: { label: string; done: boolean; optional?: boolean }[]; missing: string[] } {
+  const items = [
+    { label: "가치관", done: p.values.length >= 4 },
+    { label: "스펙", done: p.depth.spec || p.depth.resume },
+    { label: "생활 조건", done: p.depth.life },
+    { label: "성격 10문항", done: p.depth.bfiItems >= 10 },
+    { label: "상황 질문 6개", done: p.depth.behaviorItems >= 6 },
+    { label: "성격 50문항", done: p.depth.bfiItems >= 50 },
+    { label: "흥미 검사", done: p.depth.interestItems >= 24 },
+    { label: "상황 질문 18개", done: p.depth.behaviorItems >= 12 },
+    { label: "경험 이야기", done: p.experiences.trim().length > 0 },
+    { label: "나에 대한 이야기", done: p.story !== null },
+    { label: "이력서·GitHub", done: p.depth.resume || p.depth.github, optional: true },
   ];
-  return {
-    score: items.reduce((s, [ok, w]) => s + (ok ? w : 0), 0),
-    missing: items.filter(([ok]) => !ok).map(([, , label]) => label),
-  };
+  return { items, missing: items.filter((i) => !i.done && !i.optional).map((i) => i.label) };
 }

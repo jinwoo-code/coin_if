@@ -13,6 +13,7 @@ import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
 import type { Lever, Multiverse, PremiumItem, Profile, Report, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
+import { MyData } from "@/components/my-data";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
 function downloadCheckin() {
@@ -502,6 +503,9 @@ export default function ReportPage() {
           {notice}
         </p>
       ) : null}
+      <div className="print:hidden">
+        <MyData />
+      </div>
     </Screen>
   );
 }

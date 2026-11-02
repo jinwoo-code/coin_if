@@ -1,10 +1,11 @@
 // 브라우저 저장(lib/store.ts) ↔ 계정. 로그인한 본인 행만 읽고 쓴다(RLS, anon 키 + 세션).
-// GET: 동의 여부와 계정에 저장된 프로필·시뮬레이션. POST: 브라우저의 프로필·시뮬레이션을 올린다.
+// GET: 동의 여부와 계정에 저장된 프로필·시뮬레이션. POST: 브라우저의 프로필·시뮬레이션을 올린다. DELETE: '전체 지우기'.
 import { NextResponse } from "next/server";
 import { CONSENT_VERSION } from "@/lib/consent";
 import { topLeverTitles } from "@/lib/multiverse";
 import type { Profile } from "@/lib/types";
 import { WORLDS } from "@/lib/worlds";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { currentUser, supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -81,4 +82,21 @@ async function fillLevers(sb: NonNullable<ReturnType<typeof supabaseServer>>, us
       console.error("[바꿀 수 있는 것 계산 실패]", s.career, (e as Error).message);
     }
   }
+}
+
+// 전체 지우기: 로그인한 본인의 프로필 내용·시뮬레이션·대화를 지운다. 계정·동의·토큰 원장·결제 기록은 남긴다(결제 확인에 필요).
+export async function DELETE() {
+  const sb = supabaseServer();
+  const user = await currentUser();
+  if (!sb || !user) return NextResponse.json({ error: "로그인이 필요해요" }, { status: 401 });
+  // 대화(chats)는 사용자에게 쓰기 정책이 없어서 service role로, 본인 행만 지운다
+  const chats = await supabaseAdmin()?.from("chats").delete().eq("user_id", user.id);
+  const sims = await sb.from("simulations").delete().eq("user_id", user.id);
+  const prof = await sb.from("profiles").update({ data: null }).eq("user_id", user.id);
+  const err = chats?.error ?? sims.error ?? prof.error;
+  if (err) {
+    console.error("[전체 지우기 실패]", err.message);
+    return NextResponse.json({ error: "지우지 못했어요" }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
 }

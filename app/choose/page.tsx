@@ -13,6 +13,8 @@ import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WORLDS } from "@/lib/worlds";
 import { Seg } from "../interview/form";
+import { canDeepen } from "@/lib/assessment";
+import { MyData } from "@/components/my-data";
 
 const PERIODS = [
   { months: 6, label: "6개월" },
@@ -139,7 +141,7 @@ export default function ChoosePage() {
         <p className="mt-1 text-sm text-muted">
           {profile.major ? `${waGwa(profile.major)} 내 가치관으로 먼저 추천했어요. ` : ""}진로 {WORLDS.length}개 중 2~3개를 골라 주세요.
         </p>
-        {profile.depthMode === "quick" ? (
+        {canDeepen(profile) ? (
           <Link href="/interview?more=1" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
             <span>
               <strong className="font-semibold">더 정확하게 하기</strong>
@@ -255,6 +257,7 @@ export default function ChoosePage() {
           {plan.labels[0].split(" ")[0]} {startYm.slice(5).replace(/^0/, "")}월부터 한 달씩, 진로마다 100번 살아봐요. 화면에는 {plan.size === 1 ? "한 달" : `${plan.size}개월`}씩 묶어 {plan.count}개 역으로 보여 줘요.
         </p>
       </section>
+      <MyData />
     </Screen>
   );
 }
