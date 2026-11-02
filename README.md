@@ -28,7 +28,7 @@
 키가 없으면 로그인 버튼이 안 보이고 지금처럼 브라우저 저장(`lib/store.ts`)만으로 돈다. '예시 인물로 바로 보기'는 로그인과 상관없이 항상 된다(발표 백업).
 
 1. [supabase.com](https://supabase.com)에서 New project(Region: Northeast Asia (Seoul)).
-2. SQL Editor에 `supabase/migrations/`의 `0001_init.sql` → `0002_tokens.sql` → `0003_orders.sql`을 차례로 통째로 붙여 넣고 Run.
+2. SQL Editor에 `supabase/migrations/`의 `0001_init.sql` → `0002_tokens.sql` → `0003_orders.sql` → `0004_orgs.sql`을 차례로 통째로 붙여 넣고 Run.
 3. Project Settings → API에서 `.env.local`에 넣기:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`(공개해도 되는 값)
    - `SUPABASE_SERVICE_ROLE_KEY`(서버 전용. RLS를 건너뛰므로 브라우저 코드·`NEXT_PUBLIC_`에 절대 넣지 않는다. `lib/supabase/admin.ts`는 `server-only`라 브라우저에서 import하면 빌드가 실패한다)
@@ -49,6 +49,27 @@
    - 가입 전에는 토스 문서에 공개된 테스트 키(`test_gck_docs_…`/`test_gsk_docs_…`)로도 된다. 두 키는 같은 세트여야 한다. `live_` 키는 넣지 않는다.
 2. 흐름: 상품 고르기 → `/api/pay/order`가 서버 상품표(`lib/products.ts`) 금액으로 주문을 만든다 → 토스 결제위젯 → `/tokens/success` → `/api/pay/confirm`이 주문 금액과 같은지 확인하고 시크릿 키로 승인 → 원장에 `topup:주문번호`로 적립(같은 주문은 한 번만).
 3. 테스트 결제창에서는 아무 카드사나 고르고 진행하면 승인된다(실제 청구 없음).
+
+### 대학(초대코드·관리자 대시보드)
+
+- `0004_orgs.sql`이 시범 대학 **'경기과기대 시범'(초대코드 `GTEC-DEMO`, 오늘부터 6개월)**을 만든다.
+- 학생: `/org`에서 초대코드 입력 → 계약 기간 동안 토큰이 줄지 않는다(0토큰 행으로 이용 횟수는 남음).
+- 관리자: 로그인한 뒤 SQL Editor에서 한 줄로 admin을 준다(이메일만 바꿔서).
+
+  ```sql
+  insert into memberships (user_id, org_id, role)
+  select u.id, o.id, 'admin' from auth.users u, organizations o
+  where u.email = '관리자@example.com' and o.invite_code = 'GTEC-DEMO'
+  on conflict (user_id, org_id) do update set role = 'admin';
+  ```
+
+- `/admin`: 이용 학생 수, 시뮬레이션 수, 많이 살아본 진로, 많이 막힌 길, 바꿀 수 있는 것 빈도, 이번 달 AI 비용. 숫자는 DB 함수 `org_stats` 하나로만 받고, **학생 5명 미만인 항목은 함수 안에서 뺀다**. 관리자도 학생 개인 행은 읽을 수 없다.
+- 시연용 가상 학생 30명(엔진 결과만, AI 호출 없음, 대시보드에 '시연용 가상 데이터'로 표시):
+
+  ```bash
+  npx tsx@4.19.2 --tsconfig tsconfig.json scripts/seed-demo.ts          # 넣기
+  npx tsx@4.19.2 --tsconfig tsconfig.json scripts/seed-demo.ts --remove # 지우기
+  ```
 
 흐름: 로그인 → `/welcome`에서 수집·이용 동의(`/privacy` 초안) → 이 기기의 결과를 계정으로 옮길지 묻기 → 이후 저장할 때마다 계정에도 올라감(`lib/sync.ts`). 빈 기기에서 로그인하면 가장 최근 결과를 내려받는다.
 

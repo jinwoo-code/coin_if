@@ -86,7 +86,13 @@ export default function Tokens() {
       </ul>
 
       <h2 className="mt-8 text-lg font-bold">충전</h2>
-      <p className="mt-1 text-sm text-muted">1토큰 990원. 학교가 계약했다면 초대코드로 무제한 이용할 수 있어요.</p>
+      <p className="mt-1 text-sm text-muted">
+        1토큰 990원. 학교가 계약했다면{" "}
+        <Link href="/org" className="font-semibold underline underline-offset-4">
+          초대코드
+        </Link>
+        로 무제한 이용할 수 있어요.
+      </p>
       <Checkout canPay={Boolean(info?.loggedIn && !info.unlimited && CLIENT_KEY)} />
       {!CLIENT_KEY ? <p className="mt-2 text-cap text-muted">결제 키가 설정되지 않아 충전 버튼이 꺼져 있어요.</p> : null}
     </Screen>

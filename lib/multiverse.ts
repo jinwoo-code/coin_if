@@ -341,3 +341,12 @@ export function levers(p: Profile, world: WorldTemplate, months: number, startYm
 
   return out.filter((l) => l.gain > 0.5).toSorted((a, b) => b.gain - a.gain).slice(0, 3);
 }
+
+// 대학 집계용: 바꿀 수 있는 것 상위 3개 제목(서버가 저장할 때 한 번 계산).
+export function topLeverTitles(p: Profile, world: WorldTemplate, months: number, startYm: string): string[] {
+  const { paths } = buildMultiverse(p, world, months, startYm);
+  return levers(p, world, months, startYm, paths)
+    .toSorted((a, b) => b.gain - a.gain)
+    .slice(0, 3)
+    .map((l) => l.title);
+}
