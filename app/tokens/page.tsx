@@ -1,9 +1,12 @@
 "use client";
 // 토큰 잔액·가격·충전. 토큰이 부족하면 각 화면이 ?for=기능 을 붙여 여기로 보낸다.
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { TossPaymentsWidgets } from "@tosspayments/tosspayments-sdk";
 import { Screen } from "@/components/ui";
 import { FEATURE_LABEL, PRODUCTS } from "@/lib/products";
+
+const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "";
 
 interface Info {
   loggedIn: boolean;
@@ -27,6 +30,9 @@ export default function Tokens() {
 
   return (
     <Screen title="토큰" back="/">
+      <p role="note" className="mt-2 rounded-2xl border-2 border-[#F5C400] bg-[#FFF6CC] p-4 text-center font-bold">
+        테스트 결제예요. 실제로 돈이 나가지 않아요.
+      </p>
       {need && info?.loggedIn && !info.unlimited ? (
         <p className="mt-2 rounded-2xl bg-[#FFF4E5] p-4">
           <b>{FEATURE_LABEL[need] ?? need}</b>에 토큰 {info.costs[need]}개가 필요한데 {info.balance}개 남았어요.
@@ -81,17 +87,108 @@ export default function Tokens() {
 
       <h2 className="mt-8 text-lg font-bold">충전</h2>
       <p className="mt-1 text-sm text-muted">1토큰 990원. 학교가 계약했다면 초대코드로 무제한 이용할 수 있어요.</p>
+      <Checkout canPay={Boolean(info?.loggedIn && !info.unlimited && CLIENT_KEY)} />
+      {!CLIENT_KEY ? <p className="mt-2 text-cap text-muted">결제 키가 설정되지 않아 충전 버튼이 꺼져 있어요.</p> : null}
+    </Screen>
+  );
+}
+
+// 상품을 고르면 서버가 주문(금액 포함)을 만들고, 그 금액으로 토스 결제위젯을 띄운다.
+function Checkout({ canPay }: { canPay: boolean }) {
+  const [order, setOrder] = useState<{ orderId: string; amount: number; orderName: string; customerKey: string; customerEmail?: string } | null>(null);
+  const [ready, setReady] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const widgets = useRef<TossPaymentsWidgets | null>(null);
+  const rendered = useRef(false);
+
+  async function choose(productId: string) {
+    setErr(null);
+    setReady(false);
+    setBusy(true);
+    try {
+      const res = await fetch("/api/pay/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId }) });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error ?? "주문을 만들지 못했어요.");
+      setOrder(d);
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // 주문이 바뀔 때마다 결제위젯을 새로 그린다(금액은 주문의 값 그대로).
+  useEffect(() => {
+    if (!order) return;
+    let alive = true;
+    (async () => {
+      try {
+        const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
+        const toss = await loadTossPayments(CLIENT_KEY);
+        if (!alive) return;
+        const w = (widgets.current ??= toss.widgets({ customerKey: order.customerKey }));
+        await w.setAmount({ currency: "KRW", value: order.amount });
+        // 위젯은 한 번만 그린다. 상품을 바꾸면 금액만 바꾼다.
+        if (!rendered.current) {
+          rendered.current = true;
+          await Promise.all([
+            w.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
+            w.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" }),
+          ]);
+        }
+        if (alive) setReady(true);
+      } catch (e) {
+        if (alive) setErr((e as Error).message || "결제창을 불러오지 못했어요.");
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [order]);
+
+  async function pay() {
+    if (!order || !widgets.current) return;
+    setErr(null);
+    try {
+      await widgets.current.requestPayment({
+        orderId: order.orderId,
+        orderName: order.orderName,
+        successUrl: `${window.location.origin}/tokens/success`,
+        failUrl: `${window.location.origin}/tokens/fail`,
+        customerEmail: order.customerEmail,
+      });
+    } catch (e) {
+      setErr((e as Error).message || "결제를 시작하지 못했어요.");
+    }
+  }
+
+  return (
+    <>
       <ul className="mt-3 grid gap-2">
         {PRODUCTS.map((p) => (
           <li key={p.id} className="card flex items-center justify-between p-4">
             <span className="num text-lg font-bold">{p.tokens}토큰</span>
-            <button className="btn-ghost min-h-[44px] px-5" disabled>
+            <button className="btn-ghost min-h-[44px] px-5" disabled={!canPay || busy} onClick={() => choose(p.id)} aria-label={`${p.tokens}토큰 ${p.price.toLocaleString("ko-KR")}원 충전`}>
               <span className="num">{p.price.toLocaleString("ko-KR")}원</span>
             </button>
           </li>
         ))}
       </ul>
-      <p className="mt-2 text-cap text-muted">테스트 결제는 다음 단계에서 붙어요.</p>
-    </Screen>
+      {err ? <p role="alert" className="mt-3 rounded-2xl bg-[#FDECEC] p-4 text-sm">{err}</p> : null}
+      {order ? (
+        <section className="card mt-4 p-4" aria-label="테스트 결제">
+          <p className="font-semibold">
+            {order.orderName} · <span className="num">{order.amount.toLocaleString("ko-KR")}원</span>
+          </p>
+          <p className="mt-1 text-cap text-muted">테스트 결제창이에요. 카드사를 고르고 진행해도 실제로 청구되지 않아요.</p>
+          <div id="payment-method" className="mt-2" />
+          <div id="agreement" />
+          <button className="btn-primary mt-3 w-full" disabled={!ready} onClick={pay}>
+            {ready ? "테스트 결제하기" : "결제창 불러오는 중…"}
+          </button>
+        </section>
+      ) : null}
+    </>
   );
 }

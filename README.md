@@ -28,7 +28,7 @@
 키가 없으면 로그인 버튼이 안 보이고 지금처럼 브라우저 저장(`lib/store.ts`)만으로 돈다. '예시 인물로 바로 보기'는 로그인과 상관없이 항상 된다(발표 백업).
 
 1. [supabase.com](https://supabase.com)에서 New project(Region: Northeast Asia (Seoul)).
-2. SQL Editor에 `supabase/migrations/0001_init.sql`을 통째로 붙여 넣고 Run.
+2. SQL Editor에 `supabase/migrations/`의 `0001_init.sql` → `0002_tokens.sql` → `0003_orders.sql`을 차례로 통째로 붙여 넣고 Run.
 3. Project Settings → API에서 `.env.local`에 넣기:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`(공개해도 되는 값)
    - `SUPABASE_SERVICE_ROLE_KEY`(서버 전용. RLS를 건너뛰므로 브라우저 코드·`NEXT_PUBLIC_`에 절대 넣지 않는다. `lib/supabase/admin.ts`는 `server-only`라 브라우저에서 import하면 빌드가 실패한다)
@@ -38,6 +38,17 @@
 5. Authentication → Sign In / Providers
    - Email: 켜져 있으면 매직링크가 된다(무료 플랜 기본 메일은 시간당 몇 통으로 제한. 시연 전에 미리 로그인해 둘 것).
    - Google: [Google Cloud 콘솔](https://console.cloud.google.com/apis/credentials)에서 OAuth 클라이언트(웹)를 만들고, 승인된 리디렉션 URI에 Supabase가 보여 주는 `https://<프로젝트>.supabase.co/auth/v1/callback`을 넣는다. 받은 Client ID·Secret을 Supabase Google 설정에 붙여 넣는다.
+
+### 토큰 충전(토스페이먼츠 테스트 결제)
+
+**테스트 결제만 쓴다. 실제 돈은 나가지 않는다.** `/tokens` 화면 맨 위에 노란 배너로 그렇게 적혀 있다.
+
+1. [토스페이먼츠 개발자센터](https://developers.tosspayments.com)에 가입 → API 키 → **결제위젯 연동 키**의 테스트 키 2개를 `.env.local`에 넣는다.
+   - `NEXT_PUBLIC_TOSS_CLIENT_KEY`(`test_gck_…`, 공개해도 되는 값)
+   - `TOSS_SECRET_KEY`(`test_gsk_…`, 서버 전용)
+   - 가입 전에는 토스 문서에 공개된 테스트 키(`test_gck_docs_…`/`test_gsk_docs_…`)로도 된다. 두 키는 같은 세트여야 한다. `live_` 키는 넣지 않는다.
+2. 흐름: 상품 고르기 → `/api/pay/order`가 서버 상품표(`lib/products.ts`) 금액으로 주문을 만든다 → 토스 결제위젯 → `/tokens/success` → `/api/pay/confirm`이 주문 금액과 같은지 확인하고 시크릿 키로 승인 → 원장에 `topup:주문번호`로 적립(같은 주문은 한 번만).
+3. 테스트 결제창에서는 아무 카드사나 고르고 진행하면 승인된다(실제 청구 없음).
 
 흐름: 로그인 → `/welcome`에서 수집·이용 동의(`/privacy` 초안) → 이 기기의 결과를 계정으로 옮길지 묻기 → 이후 저장할 때마다 계정에도 올라감(`lib/sync.ts`). 빈 기기에서 로그인하면 가장 최근 결과를 내려받는다.
 
@@ -191,6 +202,7 @@ docs/현직자-인터뷰-질문지.md
    - `WORK24_KEY_WANTED`, `WORK24_KEY_TRAINING`, `WORK24_KEY_MAJOR`, `WORK24_KEY_PROGRAM`, `WORK24_KEY_CODE`, `WORK24_KEY_DUTY`, `WORK24_KEY_JOB`
    - `CAREERNET_KEY`
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`(로그인을 쓸 때. `NEXT_PUBLIC_` 값은 빌드에 들어가므로 넣은 뒤 다시 배포)
+   - `NEXT_PUBLIC_TOSS_CLIENT_KEY`, `TOSS_SECRET_KEY`(충전을 쓸 때. 테스트 키만)
 4. Deploy. 나온 주소를 폰으로 열면 된다.
 
 설정은 코드에 들어 있다.
