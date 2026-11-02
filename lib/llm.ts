@@ -6,12 +6,13 @@ import { costKrw } from "./pricing";
 const apiKey = process.env.GEMINI_API_KEY;
 const client = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
-// 2.5 계열은 2026-11 기준 새 키로는 404("no longer available to new users")라서 3.5 계열을 쓴다.
+// 2.5 계열은 2026-11 기준 새 키로는 404("no longer available to new users"). 서술은 3.5 Flash-Lite, 대화·리포트는
+// 공식 가격표에 있는 3.6 Flash(3.5 Flash는 가격표에 없음, 3.8 Flash는 minimal에서 응답 없음).
 export const MODELS = {
   // 주변 인물·사건 서술처럼 양이 많은 일: 저렴한 모델
   fast: process.env.GEMINI_FAST_MODEL || "gemini-3.5-flash-lite",
   // '그때의 나' 대화, 리포트처럼 품질이 중요한 일
-  smart: process.env.GEMINI_SMART_MODEL || "gemini-3.5-flash",
+  smart: process.env.GEMINI_SMART_MODEL || "gemini-3.6-flash",
 };
 
 // 생각(thinking)은 끈다. 이미 정해진 결과를 문장으로 쓰는 일이라 필요 없고, 생각 토큰도 출력 요금이 붙는다.

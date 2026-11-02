@@ -68,8 +68,8 @@ async function main() {
     console.log("로그인한 학생의 기록이 없어 1명당 원가는 실측 없음(로그인 안 한 호출만 있음).");
   }
   if (unknown.size) console.log(`\n주의: 단가가 없는 모델 ${[...unknown].join(", ")}은 0원으로 셌어요. lib/pricing.ts에 추가해 주세요.`);
-  const assumed = [...new Set(logs.map((l) => l.model))].filter((m) => PRICES[m]?.note.startsWith("가정값"));
-  if (assumed.length) console.log(`주의: ${assumed.join(", ")}의 단가는 가정값(공식 가격표에 없음)이에요.`);
+  console.log("\n단가 근거");
+  for (const m of new Set(logs.map((l) => l.model))) if (PRICES[m]) console.log(`- ${m}: 입력 $${PRICES[m].input} / 출력 $${PRICES[m].output} (1M 토큰) · ${PRICES[m].note}`);
 }
 
 main().catch((e) => {
