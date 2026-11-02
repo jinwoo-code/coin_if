@@ -7,6 +7,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { LineBadge, MockNotice, Screen, Sheet, Typing } from "@/components/ui";
 import { euro, iGa } from "@/lib/josa";
 import { store } from "@/lib/store";
+import { runKey } from "@/lib/sync";
 import type { ChatMessage, Line, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
@@ -42,6 +43,7 @@ function TalkPage() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [scenes, setScenes] = useState<Record<string, SimEvent[]>>({});
   const [lines, setLines] = useState<Record<string, Line | undefined>>({});
+  const [runKeys, setRunKeys] = useState<Record<string, string>>({});
   const [active, setActive] = useState("");
   const [chats, setChats] = useState<Record<string, ChatMessage[]>>({});
   const [input, setInput] = useState("");
@@ -69,6 +71,7 @@ function TalkPage() {
     }
     setProfile(p);
     setSelection(s);
+    setRunKeys(Object.fromEntries(Object.values(mvs).map((m) => [m.worldId, runKey(m)])));
     setScenes(sc);
     setLines(ls);
     const want = params.get("world");
@@ -94,10 +97,20 @@ function TalkPage() {
       const res = await fetch("/api/talk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, worldId, scenes: scenes[worldId] ?? [], lineTitle: lines[worldId]?.title ?? "", months: selection.months, history, message: text }),
+        body: JSON.stringify({ profile, worldId, lineId: lines[worldId]?.id ?? "", runKey: runKeys[worldId] ?? "", scenes: scenes[worldId] ?? [], lineTitle: lines[worldId]?.title ?? "", months: selection.months, history, message: text }),
       });
+      // 토큰이 부족하면 충전 화면으로, 20마디를 넘으면 안내
+      if (res.status === 402) {
+        router.push("/tokens?for=talk");
+        return;
+      }
       const data = await res.json();
+      if (res.status === 429) {
+        setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: `${data.error}. 다른 세계선을 골라서 이어 가 줘.` }] }));
+        return;
+      }
       setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: data.reply, memory: data.memory ?? undefined }] }));
+      if (data.used === 1) window.dispatchEvent(new Event("cr:tokens")); // 첫 마디에 2토큰
     } catch {
       setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: "지금은 대답하기 어려워. 잠깐 뒤에 다시 물어봐 줘." }] }));
     } finally {

@@ -338,3 +338,13 @@ export interface Report {
   };
   todos: string[];
 }
+
+// 프리미엄 리포트: 막히는 세계선(엔진 값)과 그때 할 일(AI 문장)
+export interface PremiumItem {
+  worldId: string;
+  lineId: string;
+  line: string;
+  share: number; // 100번 중 몇 번
+  satisfied: number; // 만족하며 끝난 비율(%)
+  steps: string[];
+}

@@ -2,7 +2,7 @@
 // 로그인하면 lib/sync.ts가 onWrite로 저장을 듣고 계정에도 올린다. 이 파일은 브라우저 저장만 맡는다.
 "use client";
 import { normalizeProfile } from "./profile";
-import type { Multiverse, Profile, Report, Selection, SimEvent } from "./types";
+import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } from "./types";
 
 // 저장 형식이 바뀌면 VERSION을 올린다. 옛 데이터와 섞이지 않는다.
 const VERSION = "v4";
@@ -13,6 +13,7 @@ const KEYS = {
   lines: `cr:${VERSION}:lines`,
   active: `cr:${VERSION}:active`,
   report: `cr:${VERSION}:report`,
+  premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
   localOnly: `cr:${VERSION}:localOnly`, // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
 } as const;
 
@@ -63,6 +64,8 @@ export const store = {
   setActive: (worldId: string, lineId: string) => write(KEYS.active, { ...(read<Record<string, string>>(KEYS.active) ?? {}), [worldId]: lineId }),
   getReport: () => read<Report>(KEYS.report),
   setReport: (r: Report | null) => write(KEYS.report, r),
+  getPremium: () => read<PremiumItem[]>(KEYS.premium),
+  setPremium: (p: PremiumItem[] | null) => write(KEYS.premium, p),
   isLocalOnly: () => read<boolean>(KEYS.localOnly) === true,
   setLocalOnly: (on: boolean) => write(KEYS.localOnly, on ? true : null),
   onWrite: (fn: (() => void) | null) => {
@@ -74,6 +77,7 @@ export const store = {
     write(KEYS.lines, null);
     write(KEYS.active, null);
     write(KEYS.report, null);
+    write(KEYS.premium, null);
   },
   reset: () => {
     try {

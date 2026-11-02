@@ -175,7 +175,11 @@ export default function SimulatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profile, selection: sel }),
       });
-      if (!res.body) throw new Error("no body");
+      if (res.status === 402) {
+        router.push("/tokens?for=simulate");
+        return;
+      }
+      if (!res.ok || !res.body) throw new Error(`${res.status}`);
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
@@ -194,6 +198,7 @@ export default function SimulatePage() {
             const map = Object.fromEntries((msg.multiverses as Multiverse[]).map((m) => [m.worldId, m]));
             setMvs(map);
             store.setMultiverses(map);
+            window.dispatchEvent(new Event("cr:tokens")); // 토큰 칩 다시 읽기
           }
           if (msg.type === "step") setRows((r) => [...r, { station: msg.station, label: msg.label, events: msg.events }]);
           if (msg.type === "done") {

@@ -4,6 +4,7 @@ import { planStations } from "@/lib/calendar";
 import { buildMultiverse, replayLine } from "@/lib/multiverse";
 import { normalizeProfile } from "@/lib/profile";
 import { scenesOf } from "@/lib/scenes";
+import { paywall, refund, spend } from "@/lib/tokens";
 import { memoriesOf, narrate } from "@/lib/sim";
 import type { Profile, Selection, SimEvent } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
@@ -14,6 +15,9 @@ export const maxDuration = 300;
 
 export async function POST(req: Request) {
   const body = (await req.json()) as { profile: Profile; selection: Selection };
+  // 1토큰(로그인한 경우만. 대학 계약 기간이면 무제한). 부족하면 402 → 화면이 충전으로 보낸다.
+  const paid = await spend("simulate", null);
+  if (!paid.ok) return paywall(paid);
   const profile = normalizeProfile(body.profile);
   const { worldIds, months, startYm } = body.selection;
   const worlds = worldIds.map(getWorld);
@@ -50,6 +54,7 @@ export async function POST(req: Request) {
         send({ type: "done", lines: done });
       } catch (err) {
         console.error(err);
+        if (paid.charged && paid.userId) await refund(paid.userId, "simulate", paid.ref);
         send({ type: "error", message: "시뮬레이션 중 문제가 생겼어요. 다시 살아보기를 눌러 주세요." });
       }
       controller.close();

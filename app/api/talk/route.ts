@@ -4,6 +4,9 @@ import { generateJSON } from "@/lib/llm";
 import { getWorld } from "@/lib/worlds";
 import { memoriesOf } from "@/lib/sim";
 import { won } from "@/lib/format";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { currentUser } from "@/lib/supabase/server";
+import { paywall, spend, TALK_LIMIT } from "@/lib/tokens";
 import type { ChatMessage, Profile, SimEvent } from "@/lib/types";
 
 // 위기 신호가 보이면 시뮬레이션 대신 도움받을 곳을 안내한다.
@@ -13,9 +16,11 @@ const CRISIS_REPLY =
   "자살예방상담전화 109, 정신건강위기상담 1577-0199에 연락하면 24시간 이야기를 들어 줘. 학교 학생상담센터도 좋아.";
 
 export async function POST(req: Request) {
-  const { profile, worldId, scenes, lineTitle, months, history, message } = (await req.json()) as {
+  const { profile, worldId, lineId, runKey, scenes, lineTitle, months, history, message } = (await req.json()) as {
     profile: Profile;
     worldId: string;
+    lineId?: string;
+    runKey?: string;
     scenes: SimEvent[];
     lineTitle: string;
     months: number;
@@ -25,6 +30,22 @@ export async function POST(req: Request) {
 
   if (CRISIS_WORDS.some((w) => message.includes(w))) {
     return NextResponse.json({ reply: CRISIS_REPLY, memory: null, crisis: true });
+  }
+
+  // 로그인했으면: 세계선(이 시뮬레이션의)마다 첫 마디에 2토큰, 20마디까지. 마디 수는 서버가 DB에서 센다.
+  const user = await currentUser();
+  const admin = supabaseAdmin();
+  const chatKey = { user_id: user?.id ?? "", run_key: runKey ?? "", career: worldId, line_id: lineId ?? "" };
+  type Chat = { turns: ChatMessage[]; count: number };
+  let chat: Chat | null = null;
+  if (user && admin) {
+    const { data } = await admin.from("chats").select("turns, count").match(chatKey).maybeSingle();
+    chat = (data as Chat | null) ?? null;
+    if ((chat?.count ?? 0) >= TALK_LIMIT) return NextResponse.json({ error: `이 세계선의 대화는 ${TALK_LIMIT}마디까지예요`, limit: TALK_LIMIT }, { status: 429 });
+    if (!chat?.count) {
+      const paid = await spend("talk", `${runKey ?? ""}:${worldId}:${lineId ?? ""}`);
+      if (!paid.ok) return paywall(paid);
+    }
   }
 
   const world = getWorld(worldId);
@@ -74,5 +95,12 @@ export async function POST(req: Request) {
     fallback,
   });
 
+  if (user && admin) {
+    const turns = [...(chat?.turns ?? []), { role: "user", text: message }, { role: "self", text: result.reply, memory: result.memory ?? undefined }];
+    const count = (chat?.count ?? 0) + 1;
+    const { error } = await admin.from("chats").upsert({ ...chatKey, turns, count }, { onConflict: "user_id,run_key,career,line_id" });
+    if (error) console.error("[대화 저장 실패]", error.message);
+    return NextResponse.json({ ...result, used: count, limit: TALK_LIMIT });
+  }
   return NextResponse.json(result);
 }

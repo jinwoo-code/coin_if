@@ -1,14 +1,16 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
-import { CalendarPlus, Check, Copy } from "lucide-react";
+import { CalendarPlus, Check, Copy, Lock, Printer } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { buildMultiverse, levers } from "@/lib/multiverse";
+import { hasSupabase } from "@/lib/supabase/config";
 import { store } from "@/lib/store";
-import type { Lever, Multiverse, Profile, Report, SimEvent, WorldTemplate } from "@/lib/types";
+import { runKey } from "@/lib/sync";
+import type { Lever, Multiverse, PremiumItem, Profile, Report, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
@@ -36,7 +38,10 @@ function downloadCheckin() {
 }
 
 // 100번 살아본 결과: 관문(합격·취업), 세계선 상위 3개, 바꿀 수 있는 것
-function HundredRuns({ world, mv, items }: { world: WorldTemplate; mv: Multiverse; items: Lever[] | undefined }) {
+// 일반 리포트는 '바꿀 수 있는 것'을 2개까지, 프리미엄은 전부 보여 준다.
+const BASIC_LEVERS = 2;
+
+function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: Multiverse; items: Lever[] | undefined; premium: boolean }) {
   const st = mv.stats;
   return (
     <section className="rounded-card border border-hair bg-surface p-5" aria-label={`${world.name} 100번 살아본 결과`}>
@@ -91,7 +96,7 @@ function HundredRuns({ world, mv, items }: { world: WorldTemplate; mv: Multivers
         <p className="mt-2 text-cap text-muted">결과를 크게 바꾸는 요인은 찾지 못했어요.</p>
       ) : (
         <ol className="mt-2 flex flex-col gap-2">
-          {items.map((l) => (
+          {(premium ? items : items.slice(0, BASIC_LEVERS)).map((l) => (
             <li key={l.title} className="text-sm">
               <span className="font-semibold">{l.title}</span>
               <span className="num block text-cap text-muted">
@@ -99,6 +104,11 @@ function HundredRuns({ world, mv, items }: { world: WorldTemplate; mv: Multivers
               </span>
             </li>
           ))}
+          {!premium && items.length > BASIC_LEVERS ? (
+            <li className="flex items-center gap-1.5 text-cap text-muted">
+              <Lock aria-hidden="true" size={13} /> 프리미엄 리포트에서 {items.length - BASIC_LEVERS}개 더
+            </li>
+          ) : null}
         </ol>
       )}
       <Link href={`/multiverse?world=${world.id}`} className="btn-ghost mt-4 min-h-[44px] w-full text-sm">
@@ -140,6 +150,98 @@ function Programs({ region }: { region: string }) {
   );
 }
 
+// 프리미엄 리포트: 숫자는 전부 엔진 값(세계선 전체 비교), 할 일 문장만 AI.
+function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | null; mvs: Record<string, Multiverse>; ids: string[]; busy: boolean; onOpen: () => void }) {
+  if (!items)
+    return (
+      <section className="card p-5 sm:p-6 print:hidden" aria-labelledby="premium">
+        <h2 id="premium" className="flex items-center gap-2 text-xl font-bold">
+          <Lock aria-hidden="true" size={18} /> 프리미엄 리포트
+        </h2>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
+          <li>갈라진 세계선 전부를 나란히 비교한 표</li>
+          <li>바꿀 수 있는 것 전체(조건을 바꿔 다시 살아본 결과)</li>
+          <li>자주 막히는 길로 가고 있을 때 할 일</li>
+          <li>PDF로 저장해서 상담사에게 가져가기</li>
+        </ul>
+        {hasSupabase() ? (
+          <button className="btn-primary mt-5 w-full" onClick={onOpen} disabled={busy}>
+            {busy ? "만드는 중…" : "프리미엄 리포트 열기 · 토큰 5개"}
+          </button>
+        ) : (
+          <p className="mt-4 text-cap text-muted">로그인 기능이 연결되면 열 수 있어요.</p>
+        )}
+      </section>
+    );
+  return (
+    <section className="card p-5 sm:p-6" aria-labelledby="premium">
+      <div className="flex items-start justify-between gap-3">
+        <h2 id="premium" className="text-xl font-bold">
+          프리미엄 리포트
+        </h2>
+        <button className="chip print:hidden" onClick={() => window.print()}>
+          <Printer aria-hidden="true" size={16} /> PDF로 저장
+        </button>
+      </div>
+      {ids.map((id) => {
+        const world = getWorld(id);
+        const mv = mvs[id];
+        if (!mv) return null;
+        return (
+          <div key={id} className="mt-5 break-inside-avoid">
+            <h3 className="flex items-center gap-2 text-base font-bold">
+              <LineBadge world={world} size={22} /> {world.name}: 세계선 전체
+            </h3>
+            <div className="-mx-1 mt-2 overflow-x-auto px-1">
+              <table className="num w-full min-w-[480px] text-left text-sm">
+                <thead className="text-cap text-muted">
+                  <tr>
+                    <th className="py-1.5 pr-2 font-medium">세계선</th>
+                    <th className="py-1.5 pr-2 text-right font-medium">100번 중</th>
+                    <th className="py-1.5 pr-2 text-right font-medium">만족</th>
+                    <th className="py-1.5 pr-2 text-right font-medium">스트레스 높음</th>
+                    <th className="py-1.5 text-right font-medium">모은 돈(가운데)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mv.lines.map((l) => (
+                    <tr key={l.id} className="border-t border-hair">
+                      <td className="py-2 pr-2 font-semibold">{l.title}</td>
+                      <td className="py-2 pr-2 text-right">{l.count}번</td>
+                      <td className="py-2 pr-2 text-right">{l.satisfiedShare}%</td>
+                      <td className="py-2 pr-2 text-right">{l.stressedShare}%</td>
+                      <td className="py-2 text-right">{won(l.final.money.p50)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })}
+      <h3 className="mt-6 text-base font-bold">자주 막히는 길로 가고 있다면</h3>
+      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 세계선이에요. 할 일은 AI가 내 조건에 맞춰 쓴 제안이에요.</p>
+      <ul className="mt-3 flex flex-col gap-3">
+        {items.map((it) => (
+          <li key={`${it.worldId}/${it.lineId}`} className="break-inside-avoid rounded-2xl bg-ground p-4">
+            <p className="text-sm font-bold">
+              {getWorld(it.worldId).short} · {it.line}
+            </p>
+            <p className="num text-cap text-muted">
+              100번 중 {it.share}번 · 만족하며 끝남 {it.satisfied}%
+            </p>
+            <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm">
+              {it.steps.map((st) => (
+                <li key={st}>{st}</li>
+              ))}
+            </ol>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 const WOOP_STEPS: { key: keyof Report["woop"]; label: string }[] = [
   { key: "wish", label: "바라는 것" },
   { key: "outcome", label: "이루면 좋은 점" },
@@ -153,6 +255,8 @@ export default function ReportPage() {
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [leverMap, setLeverMap] = useState<Record<string, Lever[]>>({});
   const [report, setReport] = useState<Report | null>(null);
+  const [premium, setPremium] = useState<PremiumItem[] | null>(null);
+  const [premiumBusy, setPremiumBusy] = useState(false);
   const [done, setDone] = useState<Record<number, boolean>>({});
   const [notice, setNotice] = useState("");
 
@@ -176,6 +280,7 @@ export default function ReportPage() {
       }
       setLeverMap(out);
     }, 60);
+    setPremium(store.getPremium());
     const saved = store.getReport();
     if (saved && saved.worlds.every((w) => m[w.worldId])) {
       setReport(saved);
@@ -191,6 +296,35 @@ export default function ReportPage() {
       })
       .catch(() => setNotice("리포트를 만들지 못했어요. 새로고침해 주세요."));
   }, [router]);
+
+  // 프리미엄 리포트: 서버에서 5토큰을 빼고(같은 결과면 다시 안 뺌) '막혔을 때 할 일'을 받는다.
+  async function openPremium() {
+    const p = store.getProfile();
+    const s = store.getSelection();
+    const m = store.getMultiverses();
+    if (!p || !s || !m) return;
+    setPremiumBusy(true);
+    const active = store.getActive();
+    const scenes = Object.fromEntries(s.worldIds.map((id) => [id, store.getLine(id, active[id] ?? "") ?? []]));
+    try {
+      const res = await fetch("/api/report/premium", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile: p, multiverses: m, scenes, runKeys: Object.values(m).map(runKey) }),
+      });
+      if (res.status === 401) return router.push("/login");
+      if (res.status === 402) return router.push("/tokens?for=premium_report");
+      if (!res.ok) throw new Error(String(res.status));
+      const data = (await res.json()) as { items: PremiumItem[] };
+      store.setPremium(data.items);
+      setPremium(data.items);
+      window.dispatchEvent(new Event("cr:tokens"));
+    } catch {
+      setNotice("프리미엄 리포트를 열지 못했어요. 토큰은 빠지지 않았는지 위의 토큰 버튼에서 확인해 주세요.");
+    } finally {
+      setPremiumBusy(false);
+    }
+  }
 
   async function share() {
     if (!profile || !report) return;
@@ -271,7 +405,7 @@ export default function ReportPage() {
               </h2>
               <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 100번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
-                {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} /> : null))}
+                {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
               </div>
             </section>
 
@@ -292,6 +426,8 @@ export default function ReportPage() {
                 );
               })}
             </div>
+
+            <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} />
           </div>
 
           <div className="flex flex-col gap-5">

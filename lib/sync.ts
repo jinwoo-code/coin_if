@@ -31,7 +31,7 @@ export async function fetchStatus(): Promise<SyncStatus> {
 }
 
 // 같은 결과는 같은 키(엔진은 같은 입력이면 같은 결과를 낸다) → 여러 번 올려도 한 행
-function runKey(m: Multiverse) {
+export function runKey(m: Multiverse) {
   const s = `${m.worldId}|${m.startYm}|${m.months}|${m.stats.runs}|${JSON.stringify(m.stats.final)}|${m.lines.map((l) => `${l.id}:${l.count}`).join(",")}`;
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193) >>> 0;

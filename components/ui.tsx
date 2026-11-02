@@ -4,6 +4,7 @@ import { ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { won } from "@/lib/format";
+import { TokenChip } from "./account";
 import type { LifeState, WorldTemplate } from "@/lib/types";
 
 // ---------- 화면 틀 ----------
@@ -26,7 +27,7 @@ export function Screen({
   const width = wide ? "max-w-[1080px]" : "max-w-[560px]";
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="sticky top-0 z-20 border-b border-transparent bg-ground/90 backdrop-blur-md">
+      <header className="sticky top-0 z-20 border-b border-transparent bg-ground/90 backdrop-blur-md print:hidden">
         <div className={`mx-auto flex h-16 w-full ${width} items-center gap-2 px-3 sm:px-6`}>
           {back ? (
             <Link href={back} aria-label="뒤로 가기" className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-black/5">
@@ -34,6 +35,7 @@ export function Screen({
             </Link>
           ) : null}
           {title ? <h1 className="flex-1 truncate text-lg font-bold tracking-tight">{title}</h1> : <span className="flex-1" />}
+          <TokenChip />
           {right}
         </div>
       </header>
@@ -41,7 +43,7 @@ export function Screen({
         {children}
       </main>
       {footer ? (
-        <div className="sticky bottom-0 z-20 border-t border-hair bg-surface/95 backdrop-blur-md">
+        <div className="sticky bottom-0 z-20 border-t border-hair bg-surface/95 backdrop-blur-md print:hidden">
           <div className={`mx-auto w-full ${width} px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-3 sm:px-6`}>{footer}</div>
         </div>
       ) : null}

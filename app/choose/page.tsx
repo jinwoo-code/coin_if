@@ -7,6 +7,7 @@ import { LineBadge, Screen } from "@/components/ui";
 import { nextMonthYm, planStations } from "@/lib/calendar";
 import { waGwa } from "@/lib/josa";
 import { answerOf, READINESS } from "@/lib/readiness";
+import { CostNote } from "@/components/account";
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WORLDS } from "@/lib/worlds";
@@ -122,9 +123,12 @@ export default function ChoosePage() {
       title="진로와 기간 고르기"
       back="/interview"
       footer={
-        <button className="btn-primary w-full" disabled={chosen.length < 2} onClick={start}>
-          {chosen.length < 2 ? `진로를 ${2 - chosen.length}개 더 골라 주세요` : `${chosen.length}개 진로를 ${periodLabel} 살아보기`}
-        </button>
+        <>
+          <button className="btn-primary w-full" disabled={chosen.length < 2} onClick={start}>
+            {chosen.length < 2 ? `진로를 ${2 - chosen.length}개 더 골라 주세요` : `${chosen.length}개 진로를 ${periodLabel} 살아보기`}
+          </button>
+          <CostNote cost={1} />
+        </>
       }
     >
       <section aria-labelledby="paths" className="pt-2">
