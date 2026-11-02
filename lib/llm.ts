@@ -1,6 +1,7 @@
 // Gemini 호출을 한곳에 모은 파일. 서버(API 라우트)에서만 import한다.
 // GEMINI_API_KEY가 없으면 hasLLM()이 false가 되고, 각 API는 목업 결과를 돌려준다.
 import { GoogleGenAI } from "@google/genai";
+import { costKrw } from "./pricing";
 
 const apiKey = process.env.GEMINI_API_KEY;
 const client = apiKey ? new GoogleGenAI({ apiKey }) : null;
@@ -23,10 +24,51 @@ export function hasLLM(): boolean {
   return client !== null;
 }
 
-// 토큰 사용량을 서버 로그에 남겨 회당 원가를 잴 수 있게 한다. 생각 토큰도 출력 요금이라 같이 센다.
-function logUsage(tag: string, usage: { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number } | undefined) {
+type Usage = { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number };
+
+// 누가(로그인했으면) 어느 대학 소속으로 불렀는지. AI 호출과 동시에 찾는다.
+// 스크립트처럼 요청 밖에서 부르거나 Supabase 키가 없으면 null(기록은 콘솔에만).
+async function caller(): Promise<{ userId: string | null; orgId: string | null } | null> {
+  try {
+    const { currentUser } = await import("./supabase/server");
+    const { supabaseAdmin } = await import("./supabase/admin");
+    const admin = supabaseAdmin();
+    if (!admin) return null;
+    const user = await currentUser().catch(() => null);
+    if (!user) return { userId: null, orgId: null };
+    const today = new Date().toISOString().slice(0, 10);
+    const { data } = await admin
+      .from("memberships")
+      .select("org_id, organizations!inner(contract_start, contract_end)")
+      .eq("user_id", user.id)
+      .lte("organizations.contract_start", today)
+      .gte("organizations.contract_end", today)
+      .limit(1)
+      .maybeSingle();
+    return { userId: user.id, orgId: data?.org_id ?? null };
+  } catch {
+    return null;
+  }
+}
+
+// 토큰 사용량을 콘솔과 usage_logs에 남긴다(원가 실측). 생각 토큰도 출력 요금이라 같이 센다. 실패해도 응답은 막지 않는다.
+async function logUsage(tag: string, model: string, usage: Usage | undefined, who: Promise<Awaited<ReturnType<typeof caller>>>) {
   if (!usage) return;
-  console.log(`[토큰] ${tag} 입력 ${usage.promptTokenCount ?? 0} / 출력 ${(usage.candidatesTokenCount ?? 0) + (usage.thoughtsTokenCount ?? 0)}`);
+  const input = usage.promptTokenCount ?? 0;
+  const output = (usage.candidatesTokenCount ?? 0) + (usage.thoughtsTokenCount ?? 0);
+  const krw = costKrw(model, input, output);
+  console.log(`[토큰] ${tag} ${model} 입력 ${input} / 출력 ${output}${krw === null ? " (단가 없음)" : ` ≈ ${krw.toFixed(2)}원`}`);
+  const w = await who;
+  if (!w) return;
+  try {
+    const { supabaseAdmin } = await import("./supabase/admin");
+    const { error } = await supabaseAdmin()!
+      .from("usage_logs")
+      .insert({ user_id: w.userId, org_id: w.orgId, feature: tag.split(" ")[0], model, input_tokens: input, output_tokens: output, cost_krw: krw ?? 0 });
+    if (error) console.error("[이용 기록 실패]", error.message);
+  } catch (e) {
+    console.error("[이용 기록 실패]", (e as Error).message);
+  }
 }
 
 // JSON으로 답을 받는다. 실패하면 fallback을 돌려줘서 데모가 멈추지 않게 한다.
@@ -38,6 +80,7 @@ export async function generateJSON<T>(opts: {
   fallback: () => T;
 }): Promise<T> {
   if (!client) return opts.fallback();
+  const who = caller();
   try {
     const res = await client.models.generateContent({
       model: MODELS[opts.model],
@@ -49,7 +92,7 @@ export async function generateJSON<T>(opts: {
         thinkingConfig: thinkingOff(MODELS[opts.model]) as never,
       },
     });
-    logUsage(opts.tag, res.usageMetadata);
+    await logUsage(opts.tag, MODELS[opts.model], res.usageMetadata, who);
     const text = res.text ?? "";
     return JSON.parse(text) as T;
   } catch (err) {

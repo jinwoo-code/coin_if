@@ -71,6 +71,16 @@
   npx tsx@4.19.2 --tsconfig tsconfig.json scripts/seed-demo.ts --remove # 지우기
   ```
 
+### AI 원가 실측
+
+- AI를 부를 때마다 `usage_logs`에 기능·모델·입력/출력 토큰(생각 토큰 포함)·원가를 남긴다(`lib/llm.ts`). 로그인 안 한 호출도 user 없이 남는다.
+- 단가·환율은 `lib/pricing.ts` 한 곳(공식 가격표 값과 가정값을 구분해 적어 둠). 모르는 모델은 0원으로 세고 경고한다.
+- 표 뽑기(지난 기록도 지금 단가로 다시 계산):
+
+  ```bash
+  npx tsx@4.19.2 --tsconfig tsconfig.json scripts/cost-report.ts --days 30
+  ```
+
 흐름: 로그인 → `/welcome`에서 수집·이용 동의(`/privacy` 초안) → 이 기기의 결과를 계정으로 옮길지 묻기 → 이후 저장할 때마다 계정에도 올라감(`lib/sync.ts`). 빈 기기에서 로그인하면 가장 최근 결과를 내려받는다.
 
 ## 2. 디자인 원칙

@@ -14,7 +14,7 @@ interface Stats {
   careers?: { career: string; students: number; runs: number }[];
   stuck?: { career: string; line: string; students: number; satisfied: number }[];
   levers?: { career: string; title: string; students: number }[];
-  cost?: { calls: number; krw: number };
+  cost?: { calls: number; krw: number; users?: number };
 }
 
 const careerName = (id: string) => {
@@ -67,7 +67,11 @@ export default function Admin() {
         <Tile label="이용 학생" value={`${s.students}명`} />
         <Tile label="시뮬레이션" value={s.hidden ? "-" : `${s.simulations}회`} />
         <Tile label="이번 달 AI 비용" value={s.hidden || !s.cost?.calls ? "실측 전" : `${s.cost.krw.toLocaleString("ko-KR")}원`} />
-        <Tile label="학생 1명당" value={s.hidden || !s.cost?.calls ? "실측 전" : `${Math.round(s.cost.krw / s.students).toLocaleString("ko-KR")}원`} />
+        <Tile
+          label="AI 쓴 학생 1명당"
+          value={s.hidden || !s.cost?.calls || !s.cost.users ? "실측 전" : `${Math.round(s.cost.krw / s.cost.users).toLocaleString("ko-KR")}원`}
+          sub={s.cost?.users ? `이번 달 ${s.cost.users}명 기준` : undefined}
+        />
       </div>
 
       {s.hidden ? (
@@ -100,11 +104,12 @@ export default function Admin() {
   );
 }
 
-function Tile({ label, value }: { label: string; value: string }) {
+function Tile({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="card p-4">
       <p className="label">{label}</p>
       <p className="num mt-1 text-xl font-extrabold">{value}</p>
+      {sub ? <p className="text-cap text-muted">{sub}</p> : null}
     </div>
   );
 }
