@@ -151,6 +151,22 @@ function Programs({ region }: { region: string }) {
   );
 }
 
+// 같은 결과의 리포트 요청은 하나만 보낸다. 개발 모드(Strict Mode)는 화면을 두 번 그려 AI를 두 번 부르고, 원가 실측도 두 배가 된다.
+let reportInflight: { key: string; promise: Promise<Report> } | null = null;
+function requestReport(key: string, body: unknown): Promise<Report> {
+  if (reportInflight?.key !== key) {
+    const promise = fetch("/api/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((res) => {
+      if (!res.ok) throw new Error(String(res.status));
+      return res.json() as Promise<Report>;
+    });
+    reportInflight = { key, promise };
+    promise.catch(() => {
+      if (reportInflight?.promise === promise) reportInflight = null; // 실패하면 다시 시도할 수 있게
+    });
+  }
+  return reportInflight.promise;
+}
+
 // 프리미엄 리포트: 숫자는 전부 엔진 값(세계선 전체 비교), 할 일 문장만 AI.
 function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | null; mvs: Record<string, Multiverse>; ids: string[]; busy: boolean; onOpen: () => void }) {
   // 학교 무제한이면 토큰이 줄지 않으니 버튼에 토큰 수 대신 그렇게 쓴다.
@@ -298,8 +314,7 @@ export default function ReportPage() {
     }
     const active = store.getActive();
     const scenes: Record<string, SimEvent[]> = Object.fromEntries(s.worldIds.map((id) => [id, store.getLine(id, active[id] ?? "") ?? []]));
-    fetch("/api/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile: p, multiverses: m, scenes }) })
-      .then((res) => res.json())
+    requestReport(Object.values(m).map(runKey).sort().join("|"), { profile: p, multiverses: m, scenes })
       .then((rep: Report) => {
         store.setReport(rep);
         setReport(rep);
