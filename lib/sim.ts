@@ -25,14 +25,21 @@ interface Beat {
 const keyOf = (s: SimEvent) => `${s.worldId}|${s.lineId}|${s.station}`;
 
 // 장면들에 문장을 입힌다(조용한 장면은 그대로). 한 번에 최대 16장면.
-export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes: SimEvent[], memories: Record<string, string[]> = {}): Promise<SimEvent[]> {
+// feature는 원가 기록(usage_logs)에 남는 기능 이름: 처음 살아보기 simulate, 다른 세계선 열기 line, 갈림길 바꿔 보기 explore.
+export async function narrate(
+  profile: Profile,
+  worlds: WorldTemplate[],
+  scenes: SimEvent[],
+  memories: Record<string, string[]> = {},
+  feature: "simulate" | "line" | "explore" = "simulate",
+): Promise<SimEvent[]> {
   const targets = scenes.filter((s) => s.eventId !== "quiet");
   if (targets.length === 0) return scenes;
   const out = new Map<string, Beat>();
   for (let i = 0; i < targets.length; i += 16) {
     const chunk = targets.slice(i, i + 16);
     const beats = await generateJSON<Beat[]>({
-      tag: `narrate x${chunk.length}`,
+      tag: `${feature} narrate x${chunk.length}`,
       model: "fast",
       system:
         "너는 진로 시뮬레이션의 이야기 작가다. 이미 정해진 사건과 주인공의 선택을 현실적인 문장으로 풀어 쓴다. " +

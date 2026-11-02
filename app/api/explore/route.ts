@@ -20,6 +20,6 @@ export async function POST(req: Request) {
   const sorted = pool.toSorted((a, b) => a.final.satisfaction - b.final.satisfaction);
   const rep = sorted[Math.floor(sorted.length / 2)];
   const lineId = `explore:${body.force.eventId}:${body.force.choiceIndex ?? body.force.outcome}`;
-  const scenes = await narrate(profile, [world], scenesOf(world, rep, lineId, months, startYm, stats));
+  const scenes = await narrate(profile, [world], scenesOf(world, rep, lineId, months, startYm, stats), {}, "explore");
   return NextResponse.json({ stats, scenes, reached: hit.length });
 }

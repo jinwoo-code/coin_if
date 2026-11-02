@@ -16,6 +16,6 @@ export async function POST(req: Request) {
   const line = mv.lines.find((l) => l.id === body.lineId);
   if (!line) return NextResponse.json({ error: "없는 세계선" }, { status: 404 });
   const path = replayLine(profile, world, months, startYm, line);
-  const scenes = await narrate(profile, [world], scenesOf(world, path, line.id, months, startYm, mv.stats));
+  const scenes = await narrate(profile, [world], scenesOf(world, path, line.id, months, startYm, mv.stats), {}, "line");
   return NextResponse.json({ scenes });
 }
