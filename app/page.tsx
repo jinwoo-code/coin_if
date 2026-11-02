@@ -68,7 +68,10 @@ export default function Home() {
   const router = useRouter();
   const [hasProgress, setHasProgress] = useState(false);
   useEffect(() => {
-    setHasProgress(Boolean(store.getProfile()));
+    const check = () => setHasProgress(Boolean(store.getProfile()));
+    check();
+    window.addEventListener("cr:restored", check); // 로그인한 빈 기기에서 계정 기록을 내려받은 뒤
+    return () => window.removeEventListener("cr:restored", check);
   }, []);
 
   function startDemo() {

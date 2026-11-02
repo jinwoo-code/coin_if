@@ -19,7 +19,8 @@ export function SyncBridge() {
     fetchStatus().then((s) => {
       if (!alive || !s.user) return stopAutoSync();
       if (!s.consented) return router.replace("/welcome");
-      restore(s);
+      // 빈 기기에 계정 기록을 깔았으면 이미 그려진 화면이 다시 읽도록 알린다.
+      if (restore(s)) window.dispatchEvent(new Event("cr:restored"));
       startAutoSync();
     });
     return () => {
