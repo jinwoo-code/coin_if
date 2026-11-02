@@ -10,3 +10,6 @@ export function won(n: number) {
   }
   return `${sign}${a.toLocaleString("ko-KR")}만원`;
 }
+
+// 세계선의 '만족하며 끝남'. 다른 진로로 갈아탄 길은 그 뒤를 살아보지 않았으므로 숫자 대신 이렇게 쓴다.
+export const satText = (l: { switched?: boolean; satisfiedShare: number }) => (l.switched ? "다른 진로로 감" : `${l.satisfiedShare}%`);

@@ -20,10 +20,11 @@ export async function POST(req: Request) {
   const paid = await spend("premium_report", [...runKeys].sort().join("|"), { requireLogin: true });
   if (!paid.ok) return paywall(paid);
 
-  // 진로마다 만족하며 끝난 비율이 가장 낮은 세계선 2개 = 막히는 길(엔진 값). 너무 드문 길(100번 중 3번 미만)은 뺀다.
+  // 진로마다 만족하며 끝난 비율이 가장 낮은 세계선 2개 = 막히는 길(엔진 값). 너무 드문 길(100번 중 3번 미만)과
+  // 다른 진로로 갈아탄 길(그 뒤를 살아보지 않아 만족 비율이 의미 없음)은 뺀다.
   const stuck = ids.flatMap((id) =>
     multiverses[id].lines
-      .filter((l) => l.count >= 3)
+      .filter((l) => l.count >= 3 && !l.switched)
       .toSorted((a, b) => a.satisfiedShare - b.satisfiedShare)
       .slice(0, 2)
       .map((l) => ({ key: `${id}/${l.id}`, worldId: id, lineId: l.id, line: l.title, share: l.count, satisfied: l.satisfiedShare, stressed: l.stressedShare })),

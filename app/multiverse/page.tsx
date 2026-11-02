@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { LineBadge, MockNotice, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
+import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { buildMultiverse, levers } from "@/lib/multiverse";
 import { store } from "@/lib/store";
@@ -34,7 +35,7 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
       <dl className="num mt-2 grid grid-cols-3 gap-1 text-cap">
         <div>
           <dt className="text-muted">만족하며 끝남</dt>
-          <dd className="font-semibold">{line.satisfiedShare}%</dd>
+          <dd className="font-semibold">{satText(line)}</dd>
         </div>
         <div>
           <dt className="text-muted">모은 돈</dt>
@@ -174,7 +175,7 @@ interface Explored {
 function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
   const rows: [string, (l: Line) => string][] = [
     ["100번 중", (l) => `${l.count}번`],
-    ["만족하며 끝남", (l) => `${l.satisfiedShare}%`],
+    ["만족하며 끝남", (l) => satText(l)],
     ["스트레스 높게 끝남", (l) => `${l.stressedShare}%`],
     ["모은 돈(가운데 값)", (l) => won(l.final.money.p50)],
     ["연봉", (l) => (l.salary ? won(l.salary) : "없음")],

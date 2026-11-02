@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
+import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { buildMultiverse, levers } from "@/lib/multiverse";
 import { hasSupabase } from "@/lib/supabase/config";
@@ -78,7 +79,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
               <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-hair" aria-hidden="true">
                 <span className="block h-full rounded-full" style={{ width: `${l.count}%`, background: world.color }} />
               </span>
-              <span className="num text-cap text-muted">만족 {l.satisfiedShare}% · {won(l.final.money.p50)}</span>
+              <span className="num text-cap text-muted">{l.switched ? "다른 진로로 감" : `만족 ${l.satisfiedShare}%`} · {won(l.final.money.p50)}</span>
             </span>
           </li>
         ))}
@@ -208,7 +209,7 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
                     <tr key={l.id} className="border-t border-hair">
                       <td className="py-2 pr-2 font-semibold">{l.title}</td>
                       <td className="py-2 pr-2 text-right">{l.count}번</td>
-                      <td className="py-2 pr-2 text-right">{l.satisfiedShare}%</td>
+                      <td className="py-2 pr-2 text-right">{satText(l)}</td>
                       <td className="py-2 pr-2 text-right">{l.stressedShare}%</td>
                       <td className="py-2 text-right">{won(l.final.money.p50)}</td>
                     </tr>

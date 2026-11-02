@@ -28,7 +28,7 @@
 키가 없으면 로그인 버튼이 안 보이고 지금처럼 브라우저 저장(`lib/store.ts`)만으로 돈다. '예시 인물로 바로 보기'는 로그인과 상관없이 항상 된다(발표 백업).
 
 1. [supabase.com](https://supabase.com)에서 New project(Region: Northeast Asia (Seoul)).
-2. SQL Editor에 `supabase/migrations/`의 `0001_init.sql` → `0002_tokens.sql` → `0003_orders.sql` → `0004_orgs.sql`을 차례로 통째로 붙여 넣고 Run.
+2. SQL Editor에 `supabase/migrations/`의 `0001_init.sql` → `0002_tokens.sql` → `0003_orders.sql` → `0004_orgs.sql` → `0005_stuck_switched.sql`을 차례로 통째로 붙여 넣고 Run.
 3. Project Settings → API에서 `.env.local`에 넣기:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`(공개해도 되는 값)
    - `SUPABASE_SERVICE_ROLE_KEY`(서버 전용. RLS를 건너뛰므로 브라우저 코드·`NEXT_PUBLIC_`에 절대 넣지 않는다. `lib/supabase/admin.ts`는 `server-only`라 브라우저에서 import하면 빌드가 실패한다)

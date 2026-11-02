@@ -246,6 +246,8 @@ export interface Line {
   stressedShare: number;
   final: Record<keyof LifeState, { p10: number; p50: number; p90: number }>;
   salary: number; // 끝 연봉 가운데 값
+  // 절반 넘는 회차가 다른 진로로 갈아탄 길. 엔진은 갈아탄 뒤의 진로를 살아보지 않으므로 만족 비율을 결과로 쓰지 않는다.
+  switched?: boolean;
 }
 
 // 화면에 보여 주는 한 장면(분기 단위 역)

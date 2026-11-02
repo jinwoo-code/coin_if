@@ -37,6 +37,14 @@ function eventOf(world: WorldTemplate, id: string): EventCard | undefined {
 // 엔진 공통 사건 중 갈림길이 되는 것
 const COMMON: EventCard[] = [{ id: "broke", title: "모아 둔 돈이 바닥났다", kind: "bad", weight: 0, branch: "choice", branchLabel: "생활비가 떨어짐", text: "", effect: {}, choices: [{ text: "알바를 늘림", tone: "push", label: "알바를 늘림" }, { text: "집에 도움 요청", tone: "safe", label: "집에 도움 요청" }] }];
 
+// 이 회차가 다른 진로로 갈아탔는지(선택지에 sets: "switched")
+function didSwitch(world: WorldTemplate, path: Path) {
+  return path.choiceKeys.some((k) => {
+    const [id, i] = k.split(":");
+    return eventOf(world, id)?.choices[Number(i)]?.sets === "switched";
+  });
+}
+
 export function keyLabel(world: WorldTemplate, key: string): { label: string; cause: "luck" | "choice" } {
   const [head, idx] = key.split(":");
   const [id, tier] = head.split("@");
@@ -227,6 +235,7 @@ export function buildMultiverse(p: Profile, world: WorldTemplate, months: number
         stressedShare: share(ps, stressed),
         final,
         salary: sal.length > ps.length / 2 ? median(sal) : 0, // 절반 넘게 일하고 있을 때만 연봉을 보여 준다
+        switched: ps.filter((x) => didSwitch(world, x)).length > ps.length / 2,
       } satisfies Line;
     })
     .toSorted((a, b) => b.count - a.count);
