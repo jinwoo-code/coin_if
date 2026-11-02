@@ -6,3 +6,5 @@ node_modules
 next-env.d.ts
 .vercel
 .claude/settings.local.json
+/test-results
+/playwright-report
