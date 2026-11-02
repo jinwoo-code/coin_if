@@ -13,6 +13,8 @@ import { store } from "@/lib/store";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
+import { CciForm, StoryConfirm } from "./story";
+import type { StorySignals } from "@/lib/story";
 
 const VALUES: { key: ValueKey; hint: string }[] = [
   { key: "안정", hint: "오래 다닐 수 있는 일" },
@@ -186,6 +188,9 @@ export default function InterviewPage() {
   const [thinking, setThinking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
+  // 진로 구성 인터뷰 답(null = 아직 안 함)과 사용자가 확인한 이야기 값
+  const [cci, setCci] = useState<Record<string, string> | null>(null);
+  const [story, setStory] = useState<StorySignals | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const curRef = useRef<HTMLDivElement>(null);
 
@@ -224,6 +229,8 @@ export default function InterviewPage() {
     setLife(p.life);
     setWants(p.wants);
     setReadiness(p.readiness);
+    setCci(p.storyRaw.cci ?? null);
+    setStory(p.story);
     setImported({ resume: p.depth.resume, github: p.depth.github });
     setMode(p.depthMode);
     setSteps([{ kind: "depth" }]);
@@ -235,16 +242,18 @@ export default function InterviewPage() {
   }, [index, thinking, loading, profile]);
 
   // 다음 질문 전에 잠깐 '입력 중'을 보여 줘서 대화처럼 느끼게 한다.
-  function advance(over: { texts?: Record<TextKey, string>; list?: Step[] } = {}) {
+  // skip: 다음 단계를 건너뛸 개수(진로 구성 인터뷰를 다 건너뛰면 확인 화면도 건너뜀)
+  function advance(over: { texts?: Record<TextKey, string>; list?: Step[]; story?: StorySignals | null; skip?: number } = {}) {
     const list = over.list ?? steps;
-    if (index + 1 >= list.length) {
-      submit(over.texts ?? texts);
+    const next = index + 1 + (over.skip ?? 0);
+    if (next >= list.length) {
+      submit(over.texts ?? texts, over.story !== undefined ? over.story : story);
       return;
     }
     setThinking(true);
     window.setTimeout(() => {
       setThinking(false);
-      setIndex((i) => i + 1);
+      setIndex(next);
     }, 420);
   }
 
@@ -255,7 +264,7 @@ export default function InterviewPage() {
     advance({ list });
   }
 
-  async function submit(latestTexts: Record<TextKey, string>) {
+  async function submit(latestTexts: Record<TextKey, string>, latestStory: StorySignals | null) {
     setLoading(true);
     try {
       const ipipDone = IPIP50.every((i) => ipip[i.id] !== undefined);
@@ -285,6 +294,7 @@ export default function InterviewPage() {
         answers: { bfi10: bfi, sjt: trainPicks, ipip, riasec },
         holdout,
         holdoutPicks,
+        story: latestStory,
         depth: {
           bfiItems: Math.max(base?.depth.bfiItems ?? 0, ipipDone ? 50 : bfiCount),
           behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(trainPicks).length),
@@ -294,12 +304,14 @@ export default function InterviewPage() {
           ...imported,
         },
       };
+      // 이야기 원문은 서버로 보내지 않는다(요약 API에도). 받은 뒤 브라우저에서 다시 붙인다.
+      const storyRaw = { ...base?.storyRaw, ...(cci ? { cci } : {}) };
       const res = await fetch("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draftProfile),
+        body: JSON.stringify({ ...draftProfile, storyRaw: {} }),
       });
-      setProfile(await res.json());
+      setProfile({ ...(await res.json()), storyRaw });
     } finally {
       setLoading(false);
     }
@@ -339,7 +351,7 @@ export default function InterviewPage() {
       return (
         <div key={i} className="contents">
           <Ai>{s.ask}</Ai>
-          <Me>{texts[s.key]}</Me>
+          <Me>{texts[s.key] || "건너뛰었어요"}</Me>
         </div>
       );
     if (s.kind === "values")
@@ -384,6 +396,20 @@ export default function InterviewPage() {
         <div key={i} className="contents">
           <Ai>얼마나 자세히 할까요?</Ai>
           <Me>{DEPTHS.find((d) => d.mode === mode)?.title}</Me>
+        </div>
+      );
+    if (s.kind === "cci")
+      return (
+        <div key={i} className="contents">
+          <Ai>나에 대한 이야기</Ai>
+          <Me>{Object.keys(cci ?? {}).length ? `${Object.keys(cci ?? {}).length}개 답했어요` : "건너뛰었어요"}</Me>
+        </div>
+      );
+    if (s.kind === "story")
+      return (
+        <div key={i} className="contents">
+          <Ai>이렇게 이해했어요. 맞나요?</Ai>
+          <Me>확인했어요</Me>
         </div>
       );
     if (s.kind === "sjt" || s.kind === "bfi" || s.kind === "scale")
@@ -449,6 +475,18 @@ export default function InterviewPage() {
               <ArrowUp aria-hidden="true" size={22} />
             </button>
           </form>
+        ) : step.kind === "cci" && !thinking && !loading ? (
+          <button
+            className="btn-primary w-full"
+            onClick={() => {
+              const filled = Object.fromEntries(Object.entries(cci ?? {}).filter(([, a]) => a.trim()));
+              setCci(filled);
+              // 하나도 안 썼으면 '맞나요?' 화면도 건너뛴다
+              advance(Object.keys(filled).length ? {} : { skip: steps[index + 1]?.kind === "story" ? 1 : 0 });
+            }}
+          >
+            {Object.values(cci ?? {}).some((a) => a.trim()) ? "다음" : "건너뛰기"}
+          </button>
         ) : batchLeft !== null && !thinking && !loading ? (
           <button className="btn-primary w-full" disabled={batchLeft > 0} onClick={() => advance()}>
             {batchLeft > 0 ? `${batchLeft}문항 남았어요` : "다음"}
@@ -675,7 +713,7 @@ export default function InterviewPage() {
               <Ai>{base ? "어디까지 더 해 볼까요? 이미 답한 건 다시 묻지 않아요." : "얼마나 자세히 할까요? 자세히 할수록 나를 더 닮은 시뮬레이션이 돼요."}</Ai>
               <div role="list" className="ml-[42px] flex animate-rise flex-col gap-2">
                 {DEPTHS.map((d) => {
-                  const already = base ? depthOrder(d.mode) <= depthOrder(base.depthMode) : false;
+                  const already = base ? remainingSteps(d.mode, base, holdout.ids).length <= 1 : false; // 남은 게 깊이 고르기뿐이면 이미 한 것
                   const off = !d.ready || already;
                   return (
                     <button
@@ -694,6 +732,30 @@ export default function InterviewPage() {
                   );
                 })}
               </div>
+            </>
+          ) : null}
+
+          {!thinking && !loading && step.kind === "cci" ? (
+            <>
+              <Ai>이번엔 나에 대한 이야기예요. 진로 상담에서 쓰는 질문 다섯 개인데, 쓰고 싶은 것만 편하게 쓰면 돼요.</Ai>
+              <section aria-label="진로 구성 인터뷰" className="card ml-[42px] animate-rise p-5">
+                <CciForm answers={cci ?? {}} onChange={setCci} />
+              </section>
+            </>
+          ) : null}
+
+          {!thinking && !loading && step.kind === "story" ? (
+            <>
+              <Ai>이렇게 이해했어요. 맞나요?</Ai>
+              <section aria-label="이야기에서 뽑은 값" className="card ml-[42px] animate-rise p-5">
+                <StoryConfirm
+                  answers={cci ?? {}}
+                  onDone={(s) => {
+                    setStory(s);
+                    advance({ story: s });
+                  }}
+                />
+              </section>
             </>
           ) : null}
 

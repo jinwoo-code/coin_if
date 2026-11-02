@@ -39,7 +39,9 @@ export function runKey(m: Multiverse) {
 }
 
 export function localSnapshot() {
-  const profile = store.getProfile();
+  // 인생 이야기 원문은 이 기기에만 둔다(계정에 올리지 않음). 확인한 값(story)만 올라간다.
+  const local = store.getProfile();
+  const profile = local ? { ...local, storyRaw: {} } : null;
   const mvs = store.getMultiverses() ?? {};
   const lines = store.getLines();
   const active = store.getActive();

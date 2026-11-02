@@ -1,6 +1,6 @@
 // 검사 깊이별 단계 목록(설계 근거: docs/검사-설계-근거.md '검사 깊이').
 // 빠르게 = 꼭 필요한 것만(화면 15개 이하), 상황 질문은 학습용 6 + 채점용 3.
-// 표준 = 빠르게 + 경험·제약 + IPIP 50 + 흥미 24 + 상황 질문 나머지 9(채점용 3 포함, 18개 전부).
+// 표준 = 빠르게 + 경험·제약 + IPIP 50 + 흥미 24 + 상황 질문 나머지 9(채점용 3 포함, 18개 전부) + 진로 구성 인터뷰 5문항.
 // 한 화면에 문항 여러 개를 묶어 화면 수를 줄인다. 이미 답한 단계는 빼서 깊이를 올려도 다시 묻지 않는다.
 import { BFI_ITEMS } from "./bfi";
 import { IPIP50, pickHoldout, QUICK_HOLDOUT, RIASEC24, SJT } from "./tests";
@@ -18,6 +18,8 @@ export type Step =
   | { kind: "wants" }
   | { kind: "bfi"; ids: number[] } // BFI-10 묶음
   | { kind: "sjt"; ids: string[] } // 상황 질문 묶음
+  | { kind: "cci" } // 진로 구성 인터뷰 5문항(한 화면)
+  | { kind: "story" } // 이야기에서 뽑은 값 확인("맞나요?")
   | { kind: "scale"; test: "ipip" | "riasec"; ids: string[]; part: number; parts: number }; // IPIP·흥미 묶음
 
 export const DEPTHS: { mode: DepthMode; title: string; time: string; desc: string; ready: boolean }[] = [
@@ -63,7 +65,7 @@ export function stepsFor(mode: DepthMode, holdout: string[]): Step[] {
     { kind: "wants" },
   ];
   if (mode === "quick") return quick;
-  return [...quick, EXPERIENCES, ...scalePages("ipip", IPIP50.map((i) => i.id), 10), ...scalePages("riasec", RIASEC24.map((i) => i.id), 8), ...sjtPages(rest), CONSTRAINTS];
+  return [...quick, EXPERIENCES, ...scalePages("ipip", IPIP50.map((i) => i.id), 10), ...scalePages("riasec", RIASEC24.map((i) => i.id), 8), ...sjtPages(rest), { kind: "cci" }, { kind: "story" }, CONSTRAINTS];
 }
 
 export const depthOrder = (m: DepthMode) => DEPTHS.findIndex((d) => d.mode === m);
@@ -85,6 +87,10 @@ export function isAnswered(step: Step, p: Profile): boolean {
       return p.depth.life;
     case "wants":
       return true; // 기본값이 있고, 프로필이 있으면 이미 지나온 단계
+    case "cci":
+      return p.storyRaw.cci !== undefined; // 다 건너뛰어도(빈 답) 지나온 단계
+    case "story":
+      return p.story !== null || (p.storyRaw.cci !== undefined && !Object.values(p.storyRaw.cci).some((a) => a.trim())); // 확인했거나, 이야기를 다 건너뛴 경우
     case "bfi":
       return p.depth.bfiItems >= 10 || step.ids.every((id) => p.answers.bfi10?.[id] !== undefined);
     case "sjt": {
@@ -115,6 +121,8 @@ export function countSteps(mode: DepthMode) {
     spec: () => 10, // 학교·지금·졸업까지·학점·토익·자격증·프로젝트·수상·근로·인턴(기본값 있음)
     life: () => 8, // 모은 돈·집 지원·생활비·공부 시간·알바 시간·사는 곳·병역·입대 예정(기본값 있음)
     wants: () => 2,
+    cci: () => 5,
+    story: () => 1,
     bfi: (s) => (s.kind === "bfi" ? s.ids.length : 0),
     sjt: (s) => (s.kind === "sjt" ? s.ids.length : 0),
     scale: (s) => (s.kind === "scale" ? s.ids.length : 0),

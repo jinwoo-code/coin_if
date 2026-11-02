@@ -78,6 +78,7 @@ function interestFit(world: WorldTemplate, interests: Interests | null): number 
 }
 
 // 시뮬레이션 전: 이 길이 나와 얼마나 맞아 보이는지(0~1)
+// TODO(분신 작업): profile.story.coreValues(이야기에서 확인한 핵심 가치)를 가치관 부합도에 반영한다.
 export function preFit(world: WorldTemplate, profile: Profile): number {
   return 0.6 * valueFit(world, profile) + 0.25 * traitFit(world, profile.bigFive) + 0.15 * interestFit(world, profile.interests);
 }

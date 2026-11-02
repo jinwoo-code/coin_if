@@ -1,5 +1,6 @@
 // '그때의 나'와 대화. 시뮬레이션 기억을 근거로, 사용자의 말투로 답한다.
 import { NextResponse } from "next/server";
+import { hasCrisis } from "@/lib/crisis";
 import { generateJSON } from "@/lib/llm";
 import { getWorld } from "@/lib/worlds";
 import { memoriesOf } from "@/lib/sim";
@@ -9,8 +10,7 @@ import { currentUser } from "@/lib/supabase/server";
 import { paywall, spend, TALK_LIMIT } from "@/lib/tokens";
 import type { ChatMessage, Profile, SimEvent } from "@/lib/types";
 
-// 위기 신호가 보이면 시뮬레이션 대신 도움받을 곳을 안내한다.
-const CRISIS_WORDS = ["죽고 싶", "죽고싶", "자살", "자해", "사라지고 싶", "살기 싫"];
+// 위기 신호가 보이면 시뮬레이션 대신 도움받을 곳을 안내한다(감지는 lib/crisis.ts, 이야기 검사와 같이 씀).
 const CRISIS_REPLY =
   "지금 많이 힘든 것 같아. 이건 시뮬레이션 속 내가 답할 일이 아니라 진짜 사람이 함께 들어 줘야 하는 이야기야. " +
   "자살예방상담전화 109, 정신건강위기상담 1577-0199에 연락하면 24시간 이야기를 들어 줘. 학교 학생상담센터도 좋아.";
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     message: string;
   };
 
-  if (CRISIS_WORDS.some((w) => message.includes(w))) {
+  if (hasCrisis(message)) {
     return NextResponse.json({ reply: CRISIS_REPLY, memory: null, crisis: true });
   }
 

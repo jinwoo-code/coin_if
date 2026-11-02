@@ -47,7 +47,9 @@ export async function POST(req: Request) {
   if (!body) return NextResponse.json({ error: "형식이 맞지 않아요" }, { status: 400 });
 
   if (body.profile) {
-    const { error } = await sb.from("profiles").update({ data: body.profile }).eq("user_id", user.id);
+    // 인생 이야기 원문은 서버에 저장하지 않는다(브라우저가 빼고 보내지만 여기서도 한 번 더 뺀다).
+    const data = typeof body.profile === "object" ? { ...(body.profile as Record<string, unknown>), storyRaw: {} } : body.profile;
+    const { error } = await sb.from("profiles").update({ data }).eq("user_id", user.id);
     if (error) console.error("[동기화 실패] profile", error.message);
   }
   const rows = (body.simulations ?? [])

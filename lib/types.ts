@@ -2,6 +2,8 @@
 
 // ---------- 나(프로필) ----------
 
+import type { StorySignals } from "./story";
+
 export type DepthMode = "quick" | "standard" | "deep" | "ongoing";
 
 export interface Answers {
@@ -103,6 +105,11 @@ export interface Profile {
   // TODO(분신 작업): 분신이 이 문항에서 고를 보기(tone)를 예측해 정답률·브라이어 점수를 낸다.
   holdout: { seed: string; ids: string[] } | null;
   holdoutPicks: Record<string, number>;
+  // 인생 이야기에서 뽑아 사용자가 '맞아요'로 확인한 값만(lib/story.ts). 원문은 storyRaw.
+  // TODO(분신 작업): decisionStyle→갈림길 tone, persistence→끈기 배수, familyExpectation→안정 쪽, regretType→도전 쪽, coreValues→부합도, runwayMonths→생활비 바닥 시점.
+  story: StorySignals | null;
+  // 인생 이야기 원문, 장별 { 장: { 질문 id: 답 } }. 이 기기에만 저장(계정 동기화에서 뺀다). 대화·이야기 문장에만 쓰고 확률·선택 계산에는 쓰지 않는다.
+  storyRaw: Record<string, Record<string, string>>;
   // 어떤 검사를 했는지(입력한 정보 표시용)
   depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }

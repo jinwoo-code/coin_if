@@ -72,6 +72,7 @@ const CALCS: Record<FactorKey, { label: string; calc: Calc }> = {
       return { mult: t[p.spec.school], why: [p.spec.school] };
     },
   },
+  // TODO(분신 작업): profile.story.persistence(이야기에서 확인한 끈기)를 상황 질문 점수와 섞는다.
   persistence: {
     label: "끈기",
     calc: (p) => ({ mult: clamp(1 + 0.1 * (p.behavior.persistence - 3), 0.8, 1.2), why: [`상황 질문 끈기 ${p.behavior.persistence}점`] }),

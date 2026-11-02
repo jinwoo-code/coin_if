@@ -127,6 +127,7 @@ function vw(p: Profile, v: ValueKey) {
   return [1, 0.6, 0.35, 0.15][rankOf(p, v)] ?? 0;
 }
 
+// TODO(분신 작업): 사용자가 확인한 이야기 값(profile.story)을 tone 가중치에 더한다. decisionStyle(impulsive→change, deliberate→safe, follow→safe), familyExpectation(stable→safe, strength만큼), regretType(inaction→push·change, action→safe). 상황 질문 tone(lib/tests.ts)으로 가중치를 맞춘다.
 function pushes(p: Profile, state: LifeState): Push[] {
   const b = p.bigFive;
   const h = p.behavior;
@@ -372,6 +373,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       }
     }
     else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE;
+    // TODO(분신 작업): 사용자가 확인한 profile.story.runwayMonths가 있으면 생활비 바닥 시점을 그 값과 맞춘다.
     else if (!inService && sim.employedSince === null && sim.state.money < 0 && !sim.used.has("broke")) event = BROKE;
     else if (!inService) event = pickEvent(world, p, sim, month, cal, rand, force);
 
