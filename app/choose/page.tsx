@@ -1,6 +1,7 @@
 "use client";
 // 2. 진로 탐색: 전공과 가치관으로 추천된 진로 + 전체 진로 검색. 고른 진로의 준비 상태를 묻고, 살아볼 기간을 고른다.
-import { Check, Plus, Search } from "lucide-react";
+import { Check, ChevronRight, Plus, Search } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { LineBadge, Screen } from "@/components/ui";
@@ -138,6 +139,15 @@ export default function ChoosePage() {
         <p className="mt-1 text-sm text-muted">
           {profile.major ? `${waGwa(profile.major)} 내 가치관으로 먼저 추천했어요. ` : ""}진로 {WORLDS.length}개 중 2~3개를 골라 주세요.
         </p>
+        {profile.depthMode === "quick" ? (
+          <Link href="/interview?more=1" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
+            <span>
+              <strong className="font-semibold">더 정확하게 하기</strong>
+              <span className="text-muted"> · 성격 50문항, 흥미 검사(약 20~30분)</span>
+            </span>
+            <ChevronRight aria-hidden="true" size={16} />
+          </Link>
+        ) : null}
 
         {chosenWorlds.length ? (
           <div className="mt-4 flex flex-wrap gap-1.5" aria-label="고른 진로">

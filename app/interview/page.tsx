@@ -5,43 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui";
+import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
+import { depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey } from "@/lib/assessment";
 import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
 import { DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS, precision } from "@/lib/profile";
 import { store } from "@/lib/store";
-import { scoreSjt, SJT } from "@/lib/tests";
-import type { Behavior, BigFive, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
+import { IPIP50, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
+import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
-
-type TextKey = "dilemma" | "experiences" | "constraints";
-type Step =
-  | { kind: "basic" }
-  | { kind: "text"; key: TextKey; ask: string; placeholder: string; quick?: string[] }
-  | { kind: "values" }
-  | { kind: "spec" }
-  | { kind: "life" }
-  | { kind: "wants" }
-  | { kind: "bfi"; itemId: number }
-  | { kind: "sjt"; id: string };
-
-const STEPS: Step[] = [
-  { kind: "basic" },
-  {
-    kind: "text",
-    key: "dilemma",
-    ask: "요즘 가장 고민되는 선택이 뭐예요?",
-    placeholder: "예: 개발자로 취업할지 공무원 시험을 볼지…",
-    quick: ["바로 취업할지 공무원을 준비할지", "전공을 살릴지 다른 길로 갈지", "취업할지 대학원에 갈지"],
-  },
-  { kind: "spec" },
-  { kind: "values" },
-  ...BFI_ITEMS.slice(0, 5).map((i) => ({ kind: "bfi" as const, itemId: i.id })),
-  { kind: "text", key: "experiences", ask: "지금까지 해 본 것 중에 기억에 남는 경험이 있어요? 수업, 알바, 동아리 뭐든 좋아요.", placeholder: "예: 동아리에서 앱을 만들어 봤어요…" },
-  { kind: "life" },
-  ...BFI_ITEMS.slice(5).map((i) => ({ kind: "bfi" as const, itemId: i.id })),
-  ...SJT.map((q) => ({ kind: "sjt" as const, id: q.id })),
-  { kind: "wants" },
-  { kind: "text", key: "constraints", ask: "마지막으로, 진로를 정할 때 신경 쓰이는 게 더 있어요? 가족, 건강, 하고 싶은 것 뭐든요.", placeholder: "예: 부모님이 안정적인 일을 원하셔서…" },
-];
 
 const VALUES: { key: ValueKey; hint: string }[] = [
   { key: "안정", hint: "오래 다닐 수 있는 일" },
@@ -53,8 +24,6 @@ const VALUES: { key: ValueKey; hint: string }[] = [
   { key: "기여", hint: "누군가에게 도움이 되는 일" },
   { key: "관계", hint: "좋은 사람들과 하는 일" },
 ];
-
-const SCALE = ["전혀 아니다", "아닌 편", "보통", "그런 편", "매우 그렇다"];
 
 // ---------- 말풍선 ----------
 
@@ -112,10 +81,25 @@ function Radar({ b }: { b: BigFive }) {
 
 // ---------- 결과 화면의 작은 부품 ----------
 
-const BEHAVIOR_LABEL: { key: keyof Behavior; label: string; low: string; high: string }[] = [
+const BEHAVIOR_LABEL: {
+  key: keyof Behavior;
+  label: string;
+  low: string;
+  high: string;
+}[] = [
   { key: "persistence", label: "끈기", low: "금방 지침", high: "끝까지 버팀" },
-  { key: "risk", label: "위험 감수", low: "확실한 것부터", high: "일단 움직임" },
-  { key: "coping", label: "스트레스 회복", low: "오래 끌고 감", high: "빨리 털어냄" },
+  {
+    key: "risk",
+    label: "위험 감수",
+    low: "확실한 것부터",
+    high: "일단 움직임",
+  },
+  {
+    key: "coping",
+    label: "스트레스 회복",
+    low: "오래 끌고 감",
+    high: "빨리 털어냄",
+  },
   { key: "social", label: "도움 요청", low: "혼자 해결", high: "바로 물어봄" },
 ];
 
@@ -154,30 +138,44 @@ function Precision({ p }: { p: Profile }) {
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-hair" aria-hidden="true">
         <span className="block h-full rounded-full bg-ink transition-[width] duration-700" style={{ width: `${score}%` }} />
       </div>
-      {missing.length ? (
-        <>
-          <p className="mt-3 text-sm text-muted">더 알려 줄수록 '나'에 가까운 세계가 돼요: {missing.join(", ")}</p>
-          <Link href="/deepen" className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
-            정밀 검사로 정확도 높이기 <ChevronRight aria-hidden="true" size={16} />
-          </Link>
-        </>
-      ) : null}
+      {missing.length ? <p className="mt-3 text-sm text-muted">더 알려 줄수록 '나'에 가까운 세계가 돼요: {missing.join(", ")}</p> : null}
+      {p.depthMode === "quick" ? (
+        <Link href="/interview?more=1" className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
+          더 정확하게 하기 <ChevronRight aria-hidden="true" size={16} />
+        </Link>
+      ) : (
+        <Link href="/deepen" className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
+          커리어넷 가치관 검사(선택) <ChevronRight aria-hidden="true" size={16} />
+        </Link>
+      )}
     </section>
   );
 }
 
 // ---------- 화면 ----------
 
+const ITEM_TEXT: Record<string, string> = Object.fromEntries([...IPIP50, ...RIASEC24].map((i) => [i.id, i.text]));
+
 export default function InterviewPage() {
   const router = useRouter();
+  const [steps, setSteps] = useState<Step[]>(() => stepsFor("quick"));
+  const [mode, setMode] = useState<DepthMode>("quick");
+  // 깊이를 올리는 중이면 지금 프로필(이미 답한 것은 다시 묻지 않는다)
+  const [base, setBase] = useState<Profile | null>(null);
   const [index, setIndex] = useState(0);
   const [name, setName] = useState("");
   const [major, setMajor] = useState("");
-  const [texts, setTexts] = useState<Record<TextKey, string>>({ dilemma: "", experiences: "", constraints: "" });
+  const [texts, setTexts] = useState<Record<TextKey, string>>({
+    dilemma: "",
+    experiences: "",
+    constraints: "",
+  });
   const [draft, setDraft] = useState("");
   const [values, setValues] = useState<ValueKey[]>([]);
   const [bfi, setBfi] = useState<Record<number, number>>({});
   const [sjt, setSjt] = useState<Record<string, number>>({});
+  const [ipip, setIpip] = useState<Record<string, number>>({});
+  const [riasec, setRiasec] = useState<Record<string, number>>({});
   const [spec, setSpec] = useState<Spec>(DEFAULT_SPEC);
   const [life, setLife] = useState<Life>(DEFAULT_LIFE);
   const [wants, setWants] = useState<Wants>(DEFAULT_WANTS);
@@ -187,19 +185,47 @@ export default function InterviewPage() {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const curRef = useRef<HTMLDivElement>(null);
 
-  const step = STEPS[index];
-  const bfiCount = Object.keys(bfi).length;
-  const sjtCount = Object.keys(sjt).length;
+  const step = steps[index];
+
+  // /interview?more=1: 지금 프로필에서 깊이 올리기. 답한 것은 그대로 가져온다.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("more") !== "1") return;
+    const p = store.getProfile();
+    if (!p) return;
+    setBase(p);
+    setName(p.name);
+    setMajor(p.major);
+    setTexts({
+      dilemma: p.dilemma,
+      experiences: p.experiences,
+      constraints: p.constraints,
+    });
+    setValues(p.values);
+    setBfi(p.answers.bfi10 ?? {});
+    setSjt(p.answers.sjt ?? {});
+    setIpip(p.answers.ipip ?? {});
+    setRiasec(p.answers.riasec ?? {});
+    setSpec(p.spec);
+    setLife(p.life);
+    setWants(p.wants);
+    setReadiness(p.readiness);
+    setImported({ resume: p.depth.resume, github: p.depth.github });
+    setMode(p.depthMode);
+    setSteps([{ kind: "depth" }]);
+  }, []);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (thinking || loading || profile) endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    else curRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [index, thinking, loading, profile]);
 
   // 다음 질문 전에 잠깐 '입력 중'을 보여 줘서 대화처럼 느끼게 한다.
-  function advance(over: { texts?: Record<TextKey, string>; bfi?: Record<number, number>; sjt?: Record<string, number> } = {}) {
-    if (index + 1 >= STEPS.length) {
-      submit(over.texts ?? texts, over.bfi ?? bfi, over.sjt ?? sjt);
+  function advance(over: { texts?: Record<TextKey, string>; list?: Step[] } = {}) {
+    const list = over.list ?? steps;
+    if (index + 1 >= list.length) {
+      submit(over.texts ?? texts);
       return;
     }
     setThinking(true);
@@ -209,24 +235,51 @@ export default function InterviewPage() {
     }, 420);
   }
 
-  async function submit(latestTexts: Record<TextKey, string>, latestBfi: Record<number, number>, latestSjt: Record<string, number>) {
+  function chooseDepth(m: DepthMode) {
+    setMode(m);
+    const list = base ? remainingSteps(m, base) : stepsFor(m);
+    setSteps(list);
+    advance({ list });
+  }
+
+  async function submit(latestTexts: Record<TextKey, string>) {
     setLoading(true);
     try {
+      const ipipDone = IPIP50.every((i) => ipip[i.id] !== undefined);
+      const riasecDone = RIASEC24.every((i) => riasec[i.id] !== undefined);
+      const bfiCount = Object.keys(bfi).length;
+      const bigFive: BigFive = ipipDone ? (scoreScale(IPIP50, ipip, ["O", "C", "E", "A", "N"]) as BigFive) : base && (base.depth.bfiItems >= 50 || !bfiCount) ? base.bigFive : scoreBfi(bfi);
+      const behavior: Behavior = Object.keys(sjt).length || !base ? scoreSjt(sjt) : base.behavior;
+      const interests: Interests | null = riasecDone ? (scoreScale(RIASEC24, riasec, ["R", "I", "A", "S", "E", "C"]) as Interests) : (base?.interests ?? null);
       const draftProfile = {
+        ...base,
         name,
         major,
         ...latestTexts,
         values,
-        bigFive: scoreBfi(latestBfi),
-        behavior: scoreSjt(latestSjt),
+        bigFive,
+        behavior,
         spec,
         life,
         wants,
-        interests: null,
+        interests,
         readiness,
-        depth: { bfiItems: Object.keys(latestBfi).length, behaviorItems: Object.keys(latestSjt).length, interestItems: 0, spec: true, life: true, ...imported },
+        depthMode: base && depthOrder(base.depthMode) > depthOrder(mode) ? base.depthMode : mode,
+        answers: { bfi10: bfi, sjt, ipip, riasec },
+        depth: {
+          bfiItems: Math.max(base?.depth.bfiItems ?? 0, ipipDone ? 50 : bfiCount),
+          behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(sjt).length),
+          interestItems: Math.max(base?.depth.interestItems ?? 0, riasecDone ? 24 : 0),
+          spec: true,
+          life: true,
+          ...imported,
+        },
       };
-      const res = await fetch("/api/profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draftProfile) });
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(draftProfile),
+      });
       setProfile(await res.json());
     } finally {
       setLoading(false);
@@ -234,7 +287,7 @@ export default function InterviewPage() {
   }
 
   function answerText(value: string) {
-    if (step.kind !== "text" || !value.trim()) return;
+    if (step.kind !== "text" || (step.key === "dilemma" && !value.trim())) return;
     const updated = { ...texts, [step.key]: value.trim() };
     setTexts(updated);
     setDraft("");
@@ -243,9 +296,9 @@ export default function InterviewPage() {
 
   function confirm() {
     if (!profile) return;
-    store.setLocalOnly(false); // 내 인터뷰 결과는 로그인돼 있으면 계정에 올린다
+    if (!base) store.setLocalOnly(false); // 새로 만든 내 인터뷰 결과는 로그인돼 있으면 계정에 올린다(깊이 올리기는 원래 설정 그대로)
     store.setProfile(profile);
-    // 새 인터뷰를 마치면 예전 시뮬레이션 결과는 지운다.
+    // 내가 바뀌었으니 예전 시뮬레이션 결과는 지운다.
     store.clearResults();
     router.push("/choose");
   }
@@ -253,7 +306,7 @@ export default function InterviewPage() {
   const runway = life.livingCost - life.support > 0 ? Math.floor(life.savings / (life.livingCost - life.support)) : null;
 
   // 지나온 대화
-  const history = STEPS.slice(0, index).map((s, i) => {
+  const history = steps.slice(0, index).map((s, i) => {
     if (s.kind === "basic")
       return (
         <div key={i} className="contents">
@@ -307,26 +360,40 @@ export default function InterviewPage() {
           </Me>
         </div>
       );
-    if (s.kind === "sjt") {
-      const q = SJT.find((x) => x.id === s.id)!;
+    if (s.kind === "depth")
       return (
         <div key={i} className="contents">
-          <Ai>{q.text}</Ai>
-          <Me>{q.options[sjt[q.id]]?.text}</Me>
+          <Ai>얼마나 자세히 할까요?</Ai>
+          <Me>{DEPTHS.find((d) => d.mode === mode)?.title}</Me>
         </div>
       );
-    }
+    if (s.kind === "sjt" || s.kind === "bfi" || s.kind === "scale")
+      return (
+        <div key={i} className="contents">
+          <Ai>{s.kind === "sjt" ? "상황 질문" : s.kind === "bfi" ? "성격 질문" : s.test === "ipip" ? `성격 50문항 (${s.part}/${s.parts})` : `흥미 검사 (${s.part}/${s.parts})`}</Ai>
+          <Me>{s.ids.length}개 답했어요</Me>
+        </div>
+      );
     return null;
   });
 
   const done = profile !== null;
   const formStep = step.kind === "spec" || step.kind === "life" || step.kind === "wants";
+  // 문항 묶음 화면: 다 답해야 다음으로
+  const batchLeft =
+    step.kind === "bfi"
+      ? step.ids.filter((id) => bfi[id] === undefined).length
+      : step.kind === "sjt"
+        ? step.ids.filter((id) => sjt[id] === undefined).length
+        : step.kind === "scale"
+          ? step.ids.filter((id) => (step.test === "ipip" ? ipip : riasec)[id] === undefined).length
+          : null;
 
   return (
     <Screen
       title={done ? "AI가 이해한 나" : "나 만들기"}
       back="/"
-      right={done ? null : <span className="num pr-2 text-sm font-semibold text-muted">{`${Math.min(index + 1, STEPS.length)}/${STEPS.length}`}</span>}
+      right={done ? null : <span className="num pr-2 text-sm font-semibold text-muted">{`${Math.min(index + 1, steps.length)}/${steps.length}`}</span>}
       footer={
         done ? (
           <button className="btn-primary w-full" onClick={confirm}>
@@ -363,6 +430,10 @@ export default function InterviewPage() {
               <ArrowUp aria-hidden="true" size={22} />
             </button>
           </form>
+        ) : batchLeft !== null && !thinking && !loading ? (
+          <button className="btn-primary w-full" disabled={batchLeft > 0} onClick={() => advance()}>
+            {batchLeft > 0 ? `${batchLeft}문항 남았어요` : "다음"}
+          </button>
         ) : formStep && !thinking && !loading ? (
           <button className="btn-primary w-full" onClick={() => advance()}>
             {step.kind === "spec" ? "이 스펙으로 다음" : step.kind === "life" ? "이 조건으로 다음" : "다음"}
@@ -372,7 +443,7 @@ export default function InterviewPage() {
     >
       {done ? null : (
         <div className="pt-1">
-          <RouteProgress total={STEPS.length} current={index} label="인터뷰 진행" />
+          <RouteProgress total={steps.length} current={index} label="인터뷰 진행" />
           <p className="mt-3 text-cap text-muted">답변은 나를 닮은 시뮬레이션을 만드는 데만 쓰이고, 이 기기에만 저장돼요</p>
           <MockNotice />
         </div>
@@ -446,7 +517,14 @@ export default function InterviewPage() {
             <label htmlFor="speech" className="label">
               말투, 그때의 나는 이렇게 말해요
             </label>
-            <textarea id="speech" name="speech" rows={2} className="mt-1 w-full resize-none rounded-lg border-0 bg-transparent p-0 text-base" value={profile.speechStyle} onChange={(e) => setProfile({ ...profile, speechStyle: e.target.value })} />
+            <textarea
+              id="speech"
+              name="speech"
+              rows={2}
+              className="mt-1 w-full resize-none rounded-lg border-0 bg-transparent p-0 text-base"
+              value={profile.speechStyle}
+              onChange={(e) => setProfile({ ...profile, speechStyle: e.target.value })}
+            />
           </section>
           <p className="flex items-center gap-2 text-cap text-muted">
             <Check aria-hidden="true" size={14} /> 이 정보는 이 기기에만 저장돼요
@@ -455,6 +533,7 @@ export default function InterviewPage() {
       ) : (
         <div className="flex flex-col gap-4 py-6">
           {history}
+          <div ref={curRef} className="scroll-mt-20" aria-hidden="true" />
 
           {!thinking && !loading && step.kind === "basic" ? (
             <>
@@ -492,7 +571,13 @@ export default function InterviewPage() {
                     </button>
                   ))}
                 </div>
-              ) : null}
+              ) : (
+                <div className="ml-[42px] flex animate-rise">
+                  <button className="chip min-h-[44px]" onClick={() => answerText("")}>
+                    건너뛰기
+                  </button>
+                </div>
+              )}
             </>
           ) : null}
 
@@ -507,7 +592,11 @@ export default function InterviewPage() {
                   onImported={(src, extra) => {
                     setImported((m) => ({ ...m, [src]: true }));
                     if (extra?.experiences && !texts.experiences) setDraft(extra.experiences);
-                    if (extra?.coding !== undefined) setReadiness((r) => ({ ...r, coding: Math.max(r.coding ?? 0, extra.coding!) }));
+                    if (extra?.coding !== undefined)
+                      setReadiness((r) => ({
+                        ...r,
+                        coding: Math.max(r.coding ?? 0, extra.coding!),
+                      }));
                   }}
                 />
               </section>
@@ -562,74 +651,85 @@ export default function InterviewPage() {
             </>
           ) : null}
 
-          {!thinking && !loading && step.kind === "sjt"
-            ? (() => {
-                const q = SJT.find((x) => x.id === step.id)!;
-                return (
-                  <>
-                    {sjtCount === 0 ? <Ai>이번엔 상황 질문이에요. 되고 싶은 모습 말고, 실제로 할 것 같은 쪽을 골라 주세요.</Ai> : null}
-                    <section aria-labelledby={q.id} className="card ml-[42px] animate-rise p-5">
-                      <p className="num label">상황 {sjtCount + 1} / {SJT.length}</p>
-                      <h2 id={q.id} className="mt-1.5 text-lg font-bold">
-                        {q.text}
-                      </h2>
-                      <div className="mt-4 flex flex-col gap-2">
-                        {q.options.map((o, i) => (
-                          <button
-                            key={o.text}
-                            onClick={() => {
-                              const updated = { ...sjt, [q.id]: i };
-                              setSjt(updated);
-                              advance({ sjt: updated });
-                            }}
-                            className="min-h-[48px] rounded-xl border border-hair bg-surface px-4 py-2.5 text-left text-base transition-colors hover:border-ink"
-                          >
-                            {o.text}
-                          </button>
-                        ))}
-                      </div>
-                    </section>
-                  </>
-                );
-              })()
-            : null}
+          {!thinking && !loading && step.kind === "depth" ? (
+            <>
+              <Ai>{base ? "어디까지 더 해 볼까요? 이미 답한 건 다시 묻지 않아요." : "얼마나 자세히 할까요? 자세히 할수록 나를 더 닮은 시뮬레이션이 돼요."}</Ai>
+              <div role="list" className="ml-[42px] flex animate-rise flex-col gap-2">
+                {DEPTHS.map((d) => {
+                  const already = base ? depthOrder(d.mode) <= depthOrder(base.depthMode) : false;
+                  const off = !d.ready || already;
+                  return (
+                    <button
+                      key={d.mode}
+                      role="listitem"
+                      disabled={off}
+                      onClick={() => chooseDepth(d.mode)}
+                      className="flex min-h-[68px] flex-col items-start justify-center rounded-2xl border border-hair bg-surface px-4 py-3 text-left transition-colors hover:border-ink disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-hair"
+                    >
+                      <span className="flex w-full items-baseline justify-between gap-2">
+                        <span className="text-base font-bold">{d.title}</span>
+                        <span className="num text-cap font-semibold text-muted">{!d.ready ? "준비 중" : already ? "이미 했어요" : d.time}</span>
+                      </span>
+                      <span className="mt-0.5 text-cap text-muted">{d.desc}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
 
-          {!thinking && !loading && step.kind === "bfi"
-            ? (() => {
-                const item = BFI_ITEMS.find((i) => i.id === step.itemId)!;
-                return (
-                  <>
-                    {bfiCount === 0 || bfiCount === 5 ? <Ai>{bfiCount === 0 ? "짧은 성격 질문 몇 개만 할게요. 생각나는 대로 골라 주세요." : "성격 질문 다섯 개만 더 할게요."}</Ai> : null}
-                    <section aria-labelledby={`q${item.id}`} className="card ml-[42px] animate-rise p-5">
-                      <p className="num label">성격 질문 {bfiCount + 1} / 10</p>
-                      <h2 id={`q${item.id}`} className="mt-1.5 text-lg font-bold">
-                        “{item.text}”
-                      </h2>
-                      <div role="group" aria-labelledby={`q${item.id}`} className="mt-4 grid grid-cols-5 gap-1.5">
-                        {SCALE.map((label, n) => (
-                          <button
-                            key={label}
-                            aria-label={label}
-                            onClick={() => {
-                              const updated = { ...bfi, [item.id]: n + 1 };
-                              setBfi(updated);
-                              advance({ bfi: updated });
-                            }}
-                            className="flex h-12 items-center justify-center rounded-xl border border-hair bg-surface text-base font-semibold transition-colors hover:border-ink hover:bg-ink hover:text-white"
-                          >
-                            {n + 1}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="mt-2 flex justify-between text-cap text-muted">
-                        <span>전혀 아니다</span>
-                        <span>매우 그렇다</span>
-                      </div>
-                    </section>
-                  </>
-                );
-              })()
-            : null}
+          {!thinking && !loading && step.kind === "sjt" ? (
+            <>
+              {step.ids[0] === SJT[0].id ? <Ai>이번엔 상황 질문이에요. 되고 싶은 모습 말고, 실제로 할 것 같은 쪽을 골라 주세요.</Ai> : <Ai>상황 질문 몇 개 더예요.</Ai>}
+              <section aria-label="상황 질문" className="card ml-[42px] animate-rise p-5">
+                <ol>
+                  {step.ids.map((id) => {
+                    const q = SJT.find((x) => x.id === id)!;
+                    return <ChoiceItem key={id} id={id} n={SJT.indexOf(q) + 1} text={q.text} options={q.options.map((o) => o.text)} value={sjt[id]} onPick={(i) => setSjt((cur) => ({ ...cur, [id]: i }))} />;
+                  })}
+                </ol>
+              </section>
+            </>
+          ) : null}
+
+          {!thinking && !loading && step.kind === "bfi" ? (
+            <>
+              <Ai>{step.ids[0] === BFI_ITEMS[0].id ? "짧은 성격 질문이에요. 생각나는 대로 골라 주세요." : "성격 질문 다섯 개만 더 할게요."}</Ai>
+              <section aria-label="성격 질문" className="card ml-[42px] animate-rise p-5">
+                <ScaleEnds />
+                <ol className="mt-2">
+                  {step.ids.map((id) => {
+                    const item = BFI_ITEMS.find((i) => i.id === id)!;
+                    return <ScaleRow key={id} id={`bfi${id}`} n={id} text={item.text} value={bfi[id]} onPick={(v) => setBfi((cur) => ({ ...cur, [id]: v }))} />;
+                  })}
+                </ol>
+              </section>
+            </>
+          ) : null}
+
+          {!thinking && !loading && step.kind === "scale" ? (
+            <>
+              <Ai>
+                {step.test === "ipip"
+                  ? step.part === 1
+                    ? "성격 50문항이에요. 10문항 검사보다 훨씬 안정적이에요. IPIP 공개 문항을 저희가 우리말로 옮겼어요."
+                    : `성격 문항 ${step.part}/${step.parts}이에요.`
+                  : step.part === 1
+                    ? "이번엔 직업 흥미 24문항이에요. 저희가 만든 간이 검사라 표준화 검사는 아니에요."
+                    : `흥미 문항 ${step.part}/${step.parts}이에요.`}
+              </Ai>
+              <section aria-label={step.test === "ipip" ? "성격 50문항" : "흥미 검사"} className="card ml-[42px] animate-rise p-5">
+                <ScaleEnds />
+                <ol className="mt-2">
+                  {step.ids.map((id) => {
+                    const ans = step.test === "ipip" ? ipip : riasec;
+                    const set = step.test === "ipip" ? setIpip : setRiasec;
+                    return <ScaleRow key={id} id={id} n={Number(id.slice(1))} text={ITEM_TEXT[id]} value={ans[id]} onPick={(v) => set((cur) => ({ ...cur, [id]: v }))} />;
+                  })}
+                </ol>
+              </section>
+            </>
+          ) : null}
 
           {thinking ? (
             <Ai>

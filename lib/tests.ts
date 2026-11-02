@@ -1,7 +1,7 @@
 // 검사 문항 모음
 // 1) IPIP Big-Five Factor Markers 50문항(Goldberg, 1992; ipip.ori.org, 공개 문항). 한국어는 우리가 옮겼다(공식 번역본 아님).
 // 2) 직업 흥미 간이 검사 24문항: 홀랜드 RIASEC 6유형을 우리가 직접 쓴 문항으로 잰다(표준화 검사 아님).
-//    커리어넷 키가 있으면 /deepen에서 커리어넷 직업흥미검사로 바꿔 쓰고, 이 24문항은 폴백으로 남긴다(lib/careernet.ts).
+//    인터뷰의 표준 깊이(lib/assessment.ts)에서 묻는다. 커리어넷 흥미검사는 중·고등학생용이라 쓰지 않는다.
 // 3) 상황 질문 6개: 실제로 어떻게 행동하는지(끈기·위험 감수·스트레스 대처·도움 요청)를 본다.
 import type { Behavior, BigFive, Interests } from "./types";
 

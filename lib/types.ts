@@ -2,6 +2,15 @@
 
 // ---------- 나(프로필) ----------
 
+export type DepthMode = "quick" | "standard" | "deep" | "ongoing";
+
+export interface Answers {
+  bfi10?: Record<number, number>; // BFI-10 문항 번호 → 1~5
+  sjt?: Record<string, number>; // 상황 질문 id → 고른 보기 번호(학습용만)
+  ipip?: Record<string, number>; // IPIP 50 문항 id → 1~5
+  riasec?: Record<string, number>; // 흥미 24 문항 id → 1~5
+}
+
 export type ValueKey = "안정" | "성장" | "돈" | "여유" | "인정" | "자율" | "기여" | "관계";
 
 // 성격 5요인, 1~5
@@ -86,7 +95,11 @@ export interface Profile {
   readiness: Record<string, number>; // 진로별 직무 준비도 질문 답(lib/readiness.ts의 보기 번호)
   // 커리어넷 직업가치관검사 결과(점수는 안 주고 결과 페이지 주소만 준다). 시뮬레이션에는 쓰지 않는다.
   valuesTest?: { seq: number; url: string; at: string };
-  // 어떤 검사를 했는지(정확도 표시용)
+  // 검사 깊이(사용자가 고름, lib/assessment.ts). 정밀·계속 닮아 가기는 아직 준비 중이라 고를 수 없다.
+  depthMode: DepthMode;
+  // 검사 원답. 깊이를 올릴 때 이미 답한 건 다시 묻지 않고, 점수를 다시 계산하는 데 쓴다.
+  answers: Answers;
+  // 어떤 검사를 했는지(입력한 정보 표시용)
   depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }
 
