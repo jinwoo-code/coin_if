@@ -106,7 +106,7 @@ export interface Profile {
   holdout: { seed: string; ids: string[] } | null;
   holdoutPicks: Record<string, number>;
   // 인생 이야기에서 뽑아 사용자가 '맞아요'로 확인한 값만(lib/story.ts). 원문은 storyRaw.
-  // TODO(분신 작업): decisionStyle→갈림길 tone, persistence→끈기 배수, familyExpectation→안정 쪽, regretType→도전 쪽, coreValues→부합도, runwayMonths→생활비 바닥 시점.
+  // 엔진에서 쓰는 곳: lib/story.ts 아래쪽(끈기·부합도·이유 인용), lib/engine.ts pushes(결정 방식·가족 기대·후회 → tone)·생활비 바닥(버틸 기간).
   story: StorySignals | null;
   // 인생 이야기 원문, 장별 { 장: { 질문 id: 답 } }. 이 기기에만 저장(계정 동기화에서 뺀다). 대화·이야기 문장에만 쓰고 확률·선택 계산에는 쓰지 않는다.
   storyRaw: Record<string, Record<string, string>>;

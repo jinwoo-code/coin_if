@@ -113,7 +113,7 @@ export function StoryConfirm({ answers, onDone }: { answers: Record<string, stri
       {crisis ? <CrisisNote /> : null}
       {hasAnySignal(s) ? (
         <>
-          <p className="text-sm text-muted">틀린 건 고치거나 ✕로 지워 주세요. 맞다고 한 값만 시뮬레이션의 '나'에 들어가요.</p>
+          <p className="text-sm text-muted">틀린 건 고치거나 ✕로 지워 주세요. 맞다고 한 값만 시뮬레이션의 '나'가 고를 때 조금 반영돼요(반영하는 정도는 가정값이에요).</p>
           <ul className="flex flex-col gap-2">
             {s.decisionStyle ? (
               <Card title="결정하는 방식" evidence={s.decisionStyle.evidence} onRemove={() => set({ decisionStyle: null })}>

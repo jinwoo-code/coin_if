@@ -164,6 +164,8 @@ function InputChecklist({ p, onDeepen }: { p: Profile; onDeepen: () => void }) {
 // 분신이 나를 얼마나 닮았는지: 따로 둔 상황 질문에서 분신이 내 답을 맞히는지(lib/twin.ts). 입력 개수와 상관없다.
 function TwinMatch({ p }: { p: Profile }) {
   const t = twinScore(p);
+  // 이야기 값이 있으면 빼고도 재서 나란히 보여 준다(이야기가 분신을 더 닮게 했는지)
+  const base = t && p.story ? twinScore({ ...p, story: null }) : null;
   if (!t)
     return (
       <section className="card p-5" aria-labelledby="twin">
@@ -196,6 +198,15 @@ function TwinMatch({ p }: { p: Profile }) {
         브라이어 점수 <span className="num">{t.brier.toFixed(2)}</span> (찍기 <span className="num">{t.chanceBrier.toFixed(2)}</span>, 낮을수록 잘 맞힘).{" "}
         {t.n < 6 ? "문항이 적어서 우연이 크게 섞여요. 표준으로 더 하면 채점 문항이 6개가 돼요." : "문항이 6개라 우연이 아직 꽤 섞여요."}
       </p>
+      {base ? (
+        <p className="mt-1.5 text-cap text-muted">
+          이야기에서 확인한 값을 빼면{" "}
+          <span className="num">
+            {base.n}개 중 {base.hits}개
+          </span>
+          , 브라이어 <span className="num">{base.brier.toFixed(2)}</span>이에요.
+        </p>
+      ) : null}
       <details className="mt-3">
         <summary className="min-h-[44px] cursor-pointer py-2.5 text-sm font-semibold">문항별로 보기</summary>
         <ul className="mt-1 flex flex-col gap-3">

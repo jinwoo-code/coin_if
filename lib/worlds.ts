@@ -7,6 +7,7 @@ import marketer from "@/data/worlds/marketer.json";
 import extraFacts from "@/data/jobdata/extra-facts.json";
 import { JOBS } from "@/data/jobs";
 import { buildWorld } from "./archetypes";
+import { blendValueFit } from "./story";
 import type { BigFive, Fact, Interests, Profile, WorldStats, WorldTemplate } from "./types";
 
 // scripts/sync-jobdata.ts가 고용24에서 받아 온 사실을 진로별 근거에 더한다.
@@ -58,8 +59,13 @@ export const DEFAULT_TODOS: Record<string, string> = {
 // 1순위 가치에 가장 큰 가중치
 const RANK_WEIGHTS = [0.4, 0.3, 0.2, 0.1];
 
+// 이야기에서 확인한 핵심 가치가 있으면 0.2만큼 섞는다(lib/story.ts, 가정값)
 export function valueFit(world: WorldTemplate, profile: Profile): number {
-  return profile.values.reduce((sum, v, i) => sum + (RANK_WEIGHTS[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0);
+  return blendValueFit(
+    profile.values.reduce((sum, v, i) => sum + (RANK_WEIGHTS[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
+    world.fitValues,
+    profile.story,
+  );
 }
 
 function traitFit(world: WorldTemplate, bigFive: BigFive): number {
@@ -78,7 +84,6 @@ function interestFit(world: WorldTemplate, interests: Interests | null): number 
 }
 
 // 시뮬레이션 전: 이 길이 나와 얼마나 맞아 보이는지(0~1)
-// TODO(분신 작업): profile.story.coreValues(이야기에서 확인한 핵심 가치)를 가치관 부합도에 반영한다.
 export function preFit(world: WorldTemplate, profile: Profile): number {
   return 0.6 * valueFit(world, profile) + 0.25 * traitFit(world, profile.bigFive) + 0.15 * interestFit(world, profile.interests);
 }

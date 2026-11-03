@@ -4,6 +4,7 @@
 import { ymAt } from "./calendar";
 import { factorMult, startSkill } from "./factors";
 import { eulReul } from "./josa";
+import { blendPersistence, blendValueFit, storyReason } from "./story";
 import type { Choice, EventCard, LifeState, MonthLog, Path, Profile, ValueKey, WorldTemplate } from "./types";
 
 // ---------- 작은 도구들 ----------
@@ -105,7 +106,11 @@ const BROKE: EventCard = {
 
 const RANK_W = [0.4, 0.3, 0.2, 0.1];
 export function valueFit(world: WorldTemplate, p: Profile) {
-  return p.values.reduce((s, v, i) => s + (RANK_W[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0);
+  return blendValueFit(
+    p.values.reduce((s, v, i) => s + (RANK_W[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
+    world.fitValues,
+    p.story,
+  );
 }
 
 // ---------- ① '나'의 선택: 성향으로 정한다 ----------
@@ -127,7 +132,6 @@ function vw(p: Profile, v: ValueKey) {
   return [1, 0.6, 0.35, 0.15][rankOf(p, v)] ?? 0;
 }
 
-// TODO(분신 작업): 사용자가 확인한 이야기 값(profile.story)을 tone 가중치에 더한다. decisionStyle(impulsive→change, deliberate→safe, follow→safe), familyExpectation(stable→safe, strength만큼), regretType(inaction→push·change, action→safe). 상황 질문 tone(lib/tests.ts)으로 가중치를 맞춘다.
 function pushes(p: Profile, state: LifeState): Push[] {
   const b = p.bigFive;
   const h = p.behavior;
@@ -142,11 +146,21 @@ function pushes(p: Profile, state: LifeState): Push[] {
   if (vw(p, "관계")) out.push({ tone: "safe", value: 0.25 * vw(p, "관계"), reason: r("관계") });
   if (vw(p, "기여")) out.push({ tone: "push", value: 0.2 * vw(p, "기여"), reason: r("기여") });
   out.push({ tone: "push", value: 0.12 * (b.C - 3), reason: b.C >= 3 ? "일을 끝까지 해내는 편이라서" : "" });
-  out.push({ tone: "push", value: 0.15 * (h.persistence - 3), reason: h.persistence >= 3 ? "잘 안 풀려도 버티는 편이라서" : "" });
+  const grit = blendPersistence(h.persistence, p.story);
+  out.push({ tone: "push", value: 0.15 * (grit - 3), reason: grit >= 3 ? "잘 안 풀려도 버티는 편이라서" : "" });
   out.push({ tone: "change", value: 0.15 * (h.risk - 3), reason: h.risk >= 3 ? "불확실해도 일단 움직이는 편이라서" : "" });
   out.push({ tone: "change", value: 0.1 * (b.O - 3), reason: b.O >= 3 ? "새로운 걸 좋아하는 편이라서" : "" });
   out.push({ tone: "safe", value: 0.12 * (b.N - 3), reason: b.N >= 3 ? "쉽게 긴장하는 편이라서" : "" });
   out.push({ tone: "safe", value: 0.1 * (3 - h.risk), reason: h.risk < 3 ? "확실하지 않으면 움직이지 않는 편이라서" : "" });
+  // 이야기에서 사용자가 '맞아요'로 확인한 값(lib/story.ts). 무게는 가정값이고, 이유에 그 사람이 쓴 문장을 그대로 인용한다.
+  const st = p.story;
+  if (st?.decisionStyle) out.push({ tone: st.decisionStyle.value === "impulsive" ? "change" : "safe", value: 0.2, reason: storyReason(st.decisionStyle.evidence) });
+  if (st?.familyExpectation?.value === "stable") out.push({ tone: "safe", value: 0.06 * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence) });
+  if (st?.regretType?.value === "inaction") {
+    out.push({ tone: "push", value: 0.15, reason: storyReason(st.regretType.evidence) });
+    out.push({ tone: "change", value: 0.1, reason: storyReason(st.regretType.evidence) });
+  }
+  if (st?.regretType?.value === "action") out.push({ tone: "safe", value: 0.15, reason: storyReason(st.regretType.evidence) });
   // 지쳐 있으면 쉬거나 바꾸고 싶어진다.
   const tired = (state.stress - 50) / 100;
   if (tired > 0) {
@@ -361,6 +375,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     gradIn: p.spec.gradIn,
   };
   const enlist = p.life.military === "미필" && p.life.enlistIn !== null ? p.life.enlistIn : null;
+  const runway = p.story?.runwayMonths?.value ?? null;
   // 일하는 중의 평소 만족도: 이 일이 내 가치관을 얼마나 채우는지에 따라 45~75
   const jobSat = Math.round(48 + 32 * valueFit(world, p));
   const log: MonthLog[] = [];
@@ -384,8 +399,8 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
         sim.used.add("quit");
       }
     } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE;
-    // TODO(분신 작업): 사용자가 확인한 profile.story.runwayMonths가 있으면 생활비 바닥 시점을 그 값과 맞춘다.
-    else if (!inService && sim.employedSince === null && sim.state.money < 0 && !sim.used.has("broke")) event = BROKE;
+    // 생활비 바닥: 모은 돈이 바닥나거나, 이야기에서 말한 '집 지원 없이 버틸 수 있는 기간'이 졸업 뒤 지났을 때(더 이른 쪽)
+    else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway))) event = BROKE;
     else if (!inService) event = pickEvent(world, p, sim, month, cal, rand, force);
 
     let delta: Partial<LifeState> = {};

@@ -3,6 +3,7 @@
 // 화면에 "왜 이 배수인지"를 같이 보여 줘서 사용자가 판단할 수 있게 한다.
 // 전공·진로와 상관없이 같은 방식: 진로 파일이 정한 준비도 질문(readiness)과 자격증(certs)으로 계산한다.
 import { answerOf, READINESS } from "./readiness";
+import { blendPersistence } from "./story";
 import type { FactorKey, FactorNote, Profile, WorldTemplate } from "./types";
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
@@ -32,13 +33,13 @@ const CALCS: Record<FactorKey, { label: string; calc: Calc }> = {
         why.push(`${q.label}: ${o.t}`);
       }
       const certs = w.certs.filter((c) => hasCert(p, c)).slice(0, 2);
-      if (certs.length) (m *= 1.12 ** certs.length), why.push(certs.join("·"));
-      if (s.internMonths > 0) (m *= 1.15), why.push(`인턴·현장실습 ${s.internMonths}개월`);
-      if (s.projects >= 2) (m *= 1.1), why.push(`프로젝트·작품 ${s.projects}개`);
-      else if (s.projects === 0) (m *= 0.9), why.push("끝까지 해 본 프로젝트·작품 없음");
-      if (s.awards > 0) (m *= 1.05), why.push(`수상 ${s.awards}회`);
-      if (s.gpa !== null && s.gpa >= 3.8) (m *= 1.05), why.push(`학점 ${s.gpa}`);
-      if (s.toeic && s.toeic >= 800 && (w.archetype === "open" || w.archetype === "public")) (m *= 1.08), why.push(`토익 ${s.toeic}`);
+      if (certs.length) ((m *= 1.12 ** certs.length), why.push(certs.join("·")));
+      if (s.internMonths > 0) ((m *= 1.15), why.push(`인턴·현장실습 ${s.internMonths}개월`));
+      if (s.projects >= 2) ((m *= 1.1), why.push(`프로젝트·작품 ${s.projects}개`));
+      else if (s.projects === 0) ((m *= 0.9), why.push("끝까지 해 본 프로젝트·작품 없음"));
+      if (s.awards > 0) ((m *= 1.05), why.push(`수상 ${s.awards}회`));
+      if (s.gpa !== null && s.gpa >= 3.8) ((m *= 1.05), why.push(`학점 ${s.gpa}`));
+      if (s.toeic && s.toeic >= 800 && (w.archetype === "open" || w.archetype === "public")) ((m *= 1.08), why.push(`토익 ${s.toeic}`));
       return { mult: clamp(m, 0.15, 2.8), why };
     },
   },
@@ -54,7 +55,7 @@ const CALCS: Record<FactorKey, { label: string; calc: Calc }> = {
       why.push(`하루 실제 공부 ${Math.round(eff * 10) / 10}시간${lost >= 0.5 ? `(알바로 ${Math.round(lost * 10) / 10}시간 줄어듦)` : ""}`);
       m *= 1 + 0.08 * (p.bigFive.C - 3);
       why.push(`성실성 ${p.bigFive.C}점`);
-      if (w.id === "civil-servant" && (hasCert(p, "한국사1급") || hasCert(p, "한국사2급"))) (m *= 1.05), why.push("한국사 자격증(한국사 과목 기초)");
+      if (w.id === "civil-servant" && (hasCert(p, "한국사1급") || hasCert(p, "한국사2급"))) ((m *= 1.05), why.push("한국사 자격증(한국사 과목 기초)"));
       return { mult: clamp(m, 0.1, 1.6), why };
     },
   },
@@ -72,10 +73,14 @@ const CALCS: Record<FactorKey, { label: string; calc: Calc }> = {
       return { mult: t[p.spec.school], why: [p.spec.school] };
     },
   },
-  // TODO(분신 작업): profile.story.persistence(이야기에서 확인한 끈기)를 상황 질문 점수와 섞는다.
+  // 이야기에서 확인한 끈기가 있으면 상황 질문 점수와 2:1로 섞는다(가정값)
   persistence: {
     label: "끈기",
-    calc: (p) => ({ mult: clamp(1 + 0.1 * (p.behavior.persistence - 3), 0.8, 1.2), why: [`상황 질문 끈기 ${p.behavior.persistence}점`] }),
+    calc: (p) => {
+      const g = blendPersistence(p.behavior.persistence, p.story);
+      const why = p.story?.persistence ? `상황 질문 끈기 ${p.behavior.persistence}점과 이야기 ${p.story.persistence.value}점을 섞어 ${g}점` : `상황 질문 끈기 ${p.behavior.persistence}점`;
+      return { mult: clamp(1 + 0.1 * (g - 3), 0.8, 1.2), why: [why] };
+    },
   },
   military: {
     label: "병역",

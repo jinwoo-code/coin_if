@@ -43,8 +43,7 @@ export function sanitizeSignals(raw: unknown, source: string): StorySignals {
   const out: StorySignals = { ...EMPTY_SIGNALS, coreValues: [] };
 
   const d = obj("decisionStyle");
-  if (d && ["impulsive", "deliberate", "follow"].includes(d.value as string) && quoted(d.evidence))
-    out.decisionStyle = { value: d.value as "impulsive", evidence: String(d.evidence), confidence: conf(d.confidence) };
+  if (d && ["impulsive", "deliberate", "follow"].includes(d.value as string) && quoted(d.evidence)) out.decisionStyle = { value: d.value as "impulsive", evidence: String(d.evidence), confidence: conf(d.confidence) };
 
   const p = obj("persistence");
   if (p && [1, 2, 3, 4, 5].includes(p.value as number) && quoted(p.evidence)) out.persistence = { value: p.value as 1, evidence: String(p.evidence), confidence: conf(p.confidence) };
@@ -73,7 +72,10 @@ export function sanitizeSignals(raw: unknown, source: string): StorySignals {
 
 // 키가 없을 때의 목업: 낱말 규칙으로 찾고, 찾은 문장을 그대로 근거로 쓴다. 못 찾으면 null(지어내지 않는다).
 export function mockSignals(source: string): StorySignals {
-  const sentences = source.split(/(?<=[.!?。\n])\s*/).map((s) => s.trim()).filter(Boolean);
+  const sentences = source
+    .split(/(?<=[.!?。\n])\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean);
   const find = (words: string[]) => sentences.find((s) => words.some((w) => s.includes(w)));
   const out: StorySignals = { ...EMPTY_SIGNALS, coreValues: [] };
 
@@ -110,3 +112,24 @@ export function mockSignals(source: string): StorySignals {
 }
 
 export const hasAnySignal = (s: StorySignals) => Boolean(s.decisionStyle || s.persistence || s.familyExpectation || s.regretType || s.runwayMonths || s.coreValues.length);
+
+// ---------- 엔진에서 쓰는 곳(docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'). 무게는 전부 가정값 ----------
+// 이야기가 없으면(null) 모두 원래 값을 그대로 돌려줘서, 이야기를 안 쓴 사람의 결과는 바뀌지 않는다.
+
+// 끈기: 상황 질문 점수 2 : 이야기에서 확인한 끈기 1
+export function blendPersistence(sjt: number, story: StorySignals | null) {
+  return story?.persistence ? Math.round(((2 * sjt + story.persistence.value) / 3) * 10) / 10 : sjt;
+}
+
+// 가치관 부합도: 순위로 고른 가치관 0.8 + 이야기에서 확인한 핵심 가치의 평균 부합도 0.2
+export function blendValueFit(base: number, fitValues: Partial<Record<ValueKey, number>>, story: StorySignals | null) {
+  const cv = story?.coreValues ?? [];
+  if (!cv.length) return base;
+  return 0.8 * base + 0.2 * (cv.reduce((s, c) => s + (fitValues[c.value] ?? 0.5), 0) / cv.length);
+}
+
+// 선택 이유에 붙일 짧은 인용: "일단 해 보자"라고 해서
+export function storyReason(evidence: string) {
+  const e = evidence.trim().replace(/[.。!?]+$/, "");
+  return `"${e.length > 24 ? `${e.slice(0, 23)}…` : e}"라고 해서`;
+}
