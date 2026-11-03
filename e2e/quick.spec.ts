@@ -19,8 +19,8 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.getByPlaceholder("예: 컴퓨터모바일융합과…").fill("경영학과");
   await page.getByRole("button", { name: "다음", exact: true }).click();
 
-  // 깊이 고르기: 정밀은 아직 고를 수 없다
-  await expect(page.getByRole("listitem").filter({ hasText: "정밀" })).toBeDisabled();
+  // 깊이 고르기: 네 가지 모두 고를 수 있다
+  await expect(page.getByRole("listitem").filter({ hasText: "정밀" })).toBeEnabled();
   await expect(page.getByRole("listitem").filter({ hasText: "계속 닮아 가기" })).toBeEnabled();
   await page.getByRole("listitem").filter({ hasText: "빠르게" }).click();
 

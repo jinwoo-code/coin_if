@@ -1,4 +1,5 @@
 // 프로필 기본값. 사용자가 건너뛴 항목은 '평범한 조건'으로 채운다.
+import { chaptersDone } from "./chapters";
 import type { Behavior, Life, Profile, Spec, Wants } from "./types";
 
 export const DEFAULT_SPEC: Spec = {
@@ -73,6 +74,7 @@ export function completeness(p: Profile): { items: { label: string; done: boolea
     { label: "상황 질문 18개", done: p.depth.behaviorItems >= 12 },
     { label: "경험 이야기", done: p.experiences.trim().length > 0 },
     { label: "나에 대한 이야기", done: p.story !== null },
+    { label: `인생 이야기 ${chaptersDone(p)}/6장`, done: chaptersDone(p) === 6, optional: true },
     { label: "이력서·GitHub", done: p.depth.resume || p.depth.github, optional: true },
   ];
   return { items, missing: items.filter((i) => !i.done && !i.optional).map((i) => i.label) };

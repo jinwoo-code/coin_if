@@ -26,7 +26,7 @@ export type Step =
 export const DEPTHS: { mode: DepthMode; title: string; time: string; desc: string; ready: boolean }[] = [
   { mode: "quick", title: "빠르게", time: "약 10분", desc: "꼭 필요한 것만 물어요. 결과가 덜 정확할 수 있어요.", ready: true },
   { mode: "standard", title: "표준", time: "30~40분", desc: "성격 50문항, 흥미 검사, 경험 이야기까지 해요.", ready: true },
-  { mode: "deep", title: "정밀", time: "장마다 15~20분", desc: "인생 이야기 6장. 멈췄다가 이어서 할 수 있어요.", ready: false },
+  { mode: "deep", title: "정밀", time: "장마다 15~20분", desc: "표준 + 인생 이야기 6장. 멈췄다가 이어서 할 수 있어요.", ready: true },
   { mode: "ongoing", title: "계속 닮아 가기", time: "몇 주~몇 달", desc: "표준 + 시뮬레이션 속 선택 고치기와 한 달 체크인으로 맞춰 가요.", ready: true },
 ];
 

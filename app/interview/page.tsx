@@ -6,16 +6,18 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui";
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
+import { Ai, Me } from "@/components/chat";
 import { canDeepen, depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey } from "@/lib/assessment";
 import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
 import { completeness, DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS } from "@/lib/profile";
 import { store } from "@/lib/store";
 import { twinScore } from "@/lib/twin";
 import { selfAgreement } from "@/lib/ongoing";
+import { chaptersDone } from "@/lib/chapters";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
-import { CciForm, StoryConfirm } from "./story";
+import { CciForm, cciQa, StoryConfirm } from "./story";
 import type { StorySignals } from "@/lib/story";
 
 const VALUES: { key: ValueKey; hint: string }[] = [
@@ -30,21 +32,6 @@ const VALUES: { key: ValueKey; hint: string }[] = [
 ];
 
 // ---------- 말풍선 ----------
-
-function Ai({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex animate-rise items-end gap-2.5">
-      <span aria-hidden="true" className="mb-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-full bg-ink text-[11px] font-bold text-white">
-        AI
-      </span>
-      <div className="max-w-[85%] rounded-[20px] rounded-bl-md bg-surface px-4 py-3 text-base shadow-[0_0_0_1px_#E3E6EB]">{children}</div>
-    </div>
-  );
-}
-
-function Me({ children }: { children: React.ReactNode }) {
-  return <div className="max-w-[85%] animate-rise self-end rounded-[20px] rounded-br-md bg-ink px-4 py-3 text-base text-white">{children}</div>;
-}
 
 // ---------- 성격 오각형 ----------
 
@@ -642,6 +629,15 @@ export default function InterviewPage() {
             <p className="mt-2 text-cap text-muted">틀린 부분은 눌러서 바로 고칠 수 있어요</p>
           </section>
           <InputChecklist p={profile} onDeepen={deepen} />
+          {mode === "deep" && chaptersDone(profile) < 6 ? (
+            <Link href="/story" className="card flex min-h-[56px] items-center justify-between gap-3 p-5 hover:border-ink">
+              <span>
+                <strong className="text-base font-bold">인생 이야기 6장 시작하기</strong>
+                <span className="mt-0.5 block text-cap text-muted">정밀 단계예요. 장마다 15~20분, 멈췄다가 이어서 할 수 있어요.</span>
+              </span>
+              <ChevronRight aria-hidden="true" size={18} />
+            </Link>
+          ) : null}
           <TwinMatch p={profile} />
           <div className="grid gap-4 sm:grid-cols-2">
             <section className="card p-5">
@@ -865,7 +861,7 @@ export default function InterviewPage() {
               <div role="list" className="ml-[42px] flex animate-rise flex-col gap-2">
                 {DEPTHS.map((d) => {
                   // 남은 게 깊이 고르기뿐이면 이미 한 것. 계속 닮아 가기는 검사가 남지 않아도 켤 수 있다.
-                  const already = base ? (d.mode === "ongoing" ? base.depthMode === "ongoing" : remainingSteps(d.mode, base, holdout.ids).length <= 1) : false;
+                  const already = base ? (d.mode === "ongoing" ? base.depthMode === "ongoing" : d.mode === "deep" ? chaptersDone(base) === 6 : remainingSteps(d.mode, base, holdout.ids).length <= 1) : false;
                   const off = !d.ready || already;
                   return (
                     <button
@@ -901,7 +897,7 @@ export default function InterviewPage() {
               <Ai>이렇게 이해했어요. 맞나요?</Ai>
               <section aria-label="이야기에서 뽑은 값" className="card ml-[42px] animate-rise p-5">
                 <StoryConfirm
-                  answers={cci ?? {}}
+                  qa={cciQa(cci ?? {})}
                   onDone={(s) => {
                     setStory(s);
                     advance({ story: s });

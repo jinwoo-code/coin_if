@@ -133,3 +133,17 @@ export function storyReason(evidence: string) {
   const e = evidence.trim().replace(/[.。!?]+$/, "");
   return `"${e.length > 24 ? `${e.slice(0, 23)}…` : e}"라고 해서`;
 }
+
+// 장마다 뽑은 값 합치기: 새로 확인한 값이 있으면 그걸로, 없으면 전 값 유지. 핵심 가치는 새 것 먼저 최대 4개.
+export function mergeSignals(old: StorySignals | null, add: StorySignals): StorySignals {
+  if (!old) return add;
+  const cv = [...add.coreValues, ...old.coreValues].filter((c, i, xs) => xs.findIndex((x) => x.value === c.value) === i).slice(0, 4);
+  return {
+    decisionStyle: add.decisionStyle ?? old.decisionStyle,
+    persistence: add.persistence ?? old.persistence,
+    familyExpectation: add.familyExpectation ?? old.familyExpectation,
+    regretType: add.regretType ?? old.regretType,
+    coreValues: cv,
+    runwayMonths: add.runwayMonths ?? old.runwayMonths,
+  };
+}

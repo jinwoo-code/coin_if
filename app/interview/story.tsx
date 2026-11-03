@@ -81,7 +81,10 @@ function Card({ title, evidence, onRemove, children }: { title: string; evidence
 const scale = [1, 2, 3, 4, 5].map((v) => ({ v, t: String(v) }));
 const opts = <K extends keyof typeof LABEL>(k: K) => Object.entries(LABEL[k]).map(([v, t]) => ({ v, t }));
 
-export function StoryConfirm({ answers, onDone }: { answers: Record<string, string>; onDone: (s: StorySignals) => void }) {
+// 진로 구성 인터뷰 답 → 질문·답 목록
+export const cciQa = (answers: Record<string, string>) => CCI.filter((q) => answers[q.id]?.trim()).map((q) => ({ q: q.ask, a: answers[q.id] }));
+
+export function StoryConfirm({ qa, onDone }: { qa: { q: string; a: string }[]; onDone: (s: StorySignals) => void }) {
   const [s, setS] = useState<StorySignals | null>(null);
   const [crisis, setCrisis] = useState(false);
   const asked = useRef(false);
@@ -89,7 +92,6 @@ export function StoryConfirm({ answers, onDone }: { answers: Record<string, stri
   useEffect(() => {
     if (asked.current) return; // 개발 모드에서 두 번 부르지 않게
     asked.current = true;
-    const qa = CCI.filter((q) => answers[q.id]?.trim()).map((q) => ({ q: q.ask, a: answers[q.id] }));
     fetch("/api/story/extract", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ qa }) })
       .then((r) => r.json())
       .then((r: { signals?: StorySignals; crisis?: boolean }) => {
@@ -97,7 +99,7 @@ export function StoryConfirm({ answers, onDone }: { answers: Record<string, stri
         setCrisis(Boolean(r.crisis));
       })
       .catch(() => setS(EMPTY_SIGNALS));
-  }, [answers]);
+  }, [qa]);
 
   if (!s)
     return (

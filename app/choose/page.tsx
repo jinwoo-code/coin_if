@@ -15,6 +15,7 @@ import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WO
 import { Seg } from "../interview/form";
 import { canDeepen } from "@/lib/assessment";
 import { daysToCheckin } from "@/lib/ongoing";
+import { chaptersDone } from "@/lib/chapters";
 import { MyData } from "@/components/my-data";
 
 const PERIODS = [
@@ -143,6 +144,15 @@ export default function ChoosePage() {
             <span>
               <strong className="font-semibold">한 달 체크인</strong>
               <span className="text-muted"> · {checkinNote(profile)}</span>
+            </span>
+            <ChevronRight aria-hidden="true" size={16} />
+          </Link>
+        ) : null}
+        {!canDeepen(profile) ? (
+          <Link href="/story" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
+            <span>
+              <strong className="font-semibold">인생 이야기</strong>
+              <span className="text-muted"> · {chaptersDone(profile)}/6장, 정밀 단계</span>
             </span>
             <ChevronRight aria-hidden="true" size={16} />
           </Link>
