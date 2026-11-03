@@ -19,9 +19,9 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.getByPlaceholder("예: 컴퓨터모바일융합과…").fill("경영학과");
   await page.getByRole("button", { name: "다음", exact: true }).click();
 
-  // 깊이 고르기: 정밀·계속 닮아 가기는 고를 수 없다
+  // 깊이 고르기: 정밀은 아직 고를 수 없다
   await expect(page.getByRole("listitem").filter({ hasText: "정밀" })).toBeDisabled();
-  await expect(page.getByRole("listitem").filter({ hasText: "계속 닮아 가기" })).toBeDisabled();
+  await expect(page.getByRole("listitem").filter({ hasText: "계속 닮아 가기" })).toBeEnabled();
   await page.getByRole("listitem").filter({ hasText: "빠르게" }).click();
 
   await page.getByRole("button", { name: "바로 취업할지 공무원을 준비할지" }).click();
@@ -62,4 +62,15 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   expect(saved.holdout.ids).toHaveLength(6);
   expect(Object.keys(saved.holdoutPicks).every((id: string) => saved.holdout.ids.includes(id))).toBe(true);
   await expect(page.getByRole("link", { name: /더 정확하게 하기/ })).toBeVisible();
+
+  // 한 달 체크인(시연용): 채점용 3개 + 실제 선택 1개를 고르면 본인 일치율과 분신 점수가 나온다
+  await page.getByRole("link", { name: /한 달 체크인/ }).click();
+  await page.getByRole("button", { name: "시연용: 지금 해 보기" }).click();
+  await pickAll(page, 0);
+  await page.getByRole("button", { name: "저장" }).click();
+  await expect(page.getByText("3개 중 3개").first()).toBeVisible();
+  const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v5:profile") ?? "null"));
+  expect(after.checkins).toHaveLength(1);
+  expect(after.checkins[0].demo).toBe(true);
+  expect(after.corrections).toEqual([expect.objectContaining({ source: "checkin", to: "push" })]);
 });

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { freqWord, LineBadge, MockNotice, RouteProgress, Screen, StateMeters, STATE_META, won } from "@/components/ui";
 import { durationLabel, monthLabel } from "@/lib/calendar";
+import { CorrectChoice } from "@/components/correct";
 import { store } from "@/lib/store";
 import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
@@ -59,11 +60,7 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
   const others = fork.parent.count - fork.node.count;
   if (others <= 0) return null;
   return (
-    <Link
-      href={`/multiverse?world=${world.id}`}
-      className="mt-2.5 flex items-start gap-1.5 rounded-xl px-2.5 py-2 text-cap font-medium transition-colors hover:brightness-95"
-      style={{ background: `${world.color}14` }}
-    >
+    <Link href={`/multiverse?world=${world.id}`} className="mt-2.5 flex items-start gap-1.5 rounded-xl px-2.5 py-2 text-cap font-medium transition-colors hover:brightness-95" style={{ background: `${world.color}14` }}>
       <GitBranch aria-hidden="true" size={14} className="mt-0.5 flex-none" style={{ color: world.color }} />
       <span>
         갈림길 · {ev.branch === "choice" ? "내 선택" : "운"}으로 갈림
@@ -104,6 +101,7 @@ function EventCard({ ev, world, current, mv }: { ev: SimEvent; world: WorldTempl
           </span>
         </p>
       ) : null}
+      <CorrectChoice ev={ev} world={world} />
       <DeltaChips delta={ev.delta} />
       {ev.minor.length ? <p className="mt-2 text-cap text-muted">그 밖에: {ev.minor.join(", ")}</p> : null}
       <ForkNote mv={mv} ev={ev} world={world} />
@@ -152,7 +150,13 @@ export default function SimulatePage() {
     const saved = savedMv && sel.worldIds.every((id) => savedMv[id] && active[id] && lines[id]?.[active[id]]);
     if (saved) {
       const shown = Object.fromEntries(sel.worldIds.map((id) => [id, lines[id][active[id]]]));
-      const labels = Array.from(new Set(Object.values(shown).flat().map((e) => e.label)));
+      const labels = Array.from(
+        new Set(
+          Object.values(shown)
+            .flat()
+            .map((e) => e.label),
+        ),
+      );
       setMvs(savedMv);
       setRows(rowsOf(shown, labels));
       setTotal(labels.length);
@@ -229,7 +233,11 @@ export default function SimulatePage() {
   const current = rows.at(-1);
   const lanes = worlds.length || 2;
   const gridClass = lanes === 3 ? "grid-cols-[repeat(3,minmax(150px,1fr))] sm:grid-cols-[64px_repeat(3,minmax(0,1fr))]" : "grid-cols-[repeat(2,minmax(0,1fr))] sm:grid-cols-[64px_repeat(2,minmax(0,1fr))]";
-  const latest = (wid: string) => rows.flatMap((r) => r.events).filter((e) => e.worldId === wid).at(-1);
+  const latest = (wid: string) =>
+    rows
+      .flatMap((r) => r.events)
+      .filter((e) => e.worldId === wid)
+      .at(-1);
 
   return (
     <Screen

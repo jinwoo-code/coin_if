@@ -161,6 +161,11 @@ function pushes(p: Profile, state: LifeState): Push[] {
     out.push({ tone: "change", value: 0.1, reason: storyReason(st.regretType.evidence) });
   }
   if (st?.regretType?.value === "action") out.push({ tone: "safe", value: 0.15, reason: storyReason(st.regretType.evidence) });
+  // 계속 닮아 가기: 내가 직접 고친 선택·체크인에서 말한 실제 선택. 한 번에 0.08, tone마다 최대 0.4(가정값)
+  for (const t of ["push", "change", "safe"] as const) {
+    const n = (p.corrections ?? []).filter((c) => c.to === t).length;
+    if (n) out.push({ tone: t, value: Math.min(0.4, 0.08 * n), reason: "내가 직접 고친 선택을 반영해서" });
+  }
   // 지쳐 있으면 쉬거나 바꾸고 싶어진다.
   const tired = (state.stress - 50) / 100;
   if (tired > 0) {

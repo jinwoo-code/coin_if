@@ -110,6 +110,11 @@ export interface Profile {
   story: StorySignals | null;
   // 인생 이야기 원문, 장별 { 장: { 질문 id: 답 } }. 이 기기에만 저장(계정 동기화에서 뺀다). 대화·이야기 문장에만 쓰고 확률·선택 계산에는 쓰지 않는다.
   storyRaw: Record<string, Record<string, string>>;
+  // 계속 닮아 가기(docs/검사-설계-근거.md). since: 검사를 처음 끝낸 때(한 달 체크인 기준)
+  since: string | null;
+  // 시뮬레이션에서 '나라면 이렇게 안 해'로 고친 선택, 체크인에서 말한 실제 선택. 엔진 pushes가 tone 무게에 더한다.
+  corrections: Correction[];
+  checkins: Checkin[];
   // 어떤 검사를 했는지(입력한 정보 표시용)
   depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }
@@ -373,4 +378,23 @@ export interface PremiumItem {
   share: number; // 100번 중 몇 번
   satisfied: number; // 만족하며 끝난 비율(%)
   steps: string[];
+}
+
+export type Tone = "push" | "change" | "safe";
+
+export interface Correction {
+  at: string;
+  source: "sim" | "checkin";
+  eventId: string; // 같은 사건을 다시 고치면 덮어쓴다(체크인은 "checkin:날짜")
+  title: string;
+  from: Tone | null; // 엔진이 고른 쪽(체크인은 null)
+  to: Tone; // 내가 고른 쪽
+}
+
+// 한 달 체크인: 채점용 상황 질문을 다시 묻는다(본인 일치율 = 사람이 자기 답을 얼마나 되풀이하는지, 분신 점수의 기준선)
+export interface Checkin {
+  at: string;
+  picks: Record<string, number>;
+  real: Tone | "none"; // 지난 한 달 실제로 어떻게 했는지
+  demo: boolean; // 한 달을 안 기다리고 시연용으로 한 것
 }

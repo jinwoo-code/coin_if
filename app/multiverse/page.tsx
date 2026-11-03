@@ -8,6 +8,7 @@ import { LineBadge, MockNotice, RangeRow, Screen, Sheet, Typing, won } from "@/c
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { buildMultiverse, levers } from "@/lib/multiverse";
+import { CorrectChoice } from "@/components/correct";
 import { store } from "@/lib/store";
 import type { Lever, Line, LineNode, Multiverse, Profile, Selection, SimEvent, WorldStats, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
@@ -60,34 +61,14 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
 
 // ---------- 세계선 나무(노선도) ----------
 
-function Tree({
-  node,
-  mv,
-  world,
-  picked,
-  onOpen,
-  onPick,
-  depth = 0,
-}: {
-  node: LineNode;
-  mv: Multiverse;
-  world: WorldTemplate;
-  picked: string[];
-  onOpen: (l: Line) => void;
-  onPick: (l: Line) => void;
-  depth?: number;
-}) {
+function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: LineNode; mv: Multiverse; world: WorldTemplate; picked: string[]; onOpen: (l: Line) => void; onPick: (l: Line) => void; depth?: number }) {
   const line = mv.lines.find((l) => l.id === node.id);
   const onMain = mv.lines.find((l) => l.isMain)?.path.includes(node.id);
   const pct = Math.round((node.count / mv.stats.runs) * 100);
   return (
     <li className="relative">
       <div className="flex items-start gap-2.5">
-        <span
-          aria-hidden="true"
-          className="relative z-10 mt-1 h-[18px] w-[18px] flex-none rounded-full border-[4px]"
-          style={{ borderColor: world.color, background: onMain ? world.color : "#fff", opacity: onMain ? 1 : 0.85 }}
-        />
+        <span aria-hidden="true" className="relative z-10 mt-1 h-[18px] w-[18px] flex-none rounded-full border-[4px]" style={{ borderColor: world.color, background: onMain ? world.color : "#fff", opacity: onMain ? 1 : 0.85 }} />
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span className={`text-[15px] ${onMain ? "font-bold" : "font-semibold"}`}>{node.cause === "start" ? `출발 · ${monthLabel(mv.startYm, 0)}` : node.label}</span>
@@ -156,6 +137,7 @@ function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; o
           <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" /> {ev.evidence.label} ({ev.evidence.source})
         </p>
       ) : null}
+      <CorrectChoice ev={ev} world={world} />
       {canFlip ? (
         <button onClick={() => onFlip(ev)} className="chip mt-2 min-h-[40px] text-cap font-semibold">
           <Shuffle aria-hidden="true" size={14} /> {ev.branch === "luck" ? "운이 반대였다면" : "여기서 다르게 골랐다면"}
@@ -283,8 +265,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
         <Typing label="불러오는 중" /> 고용24에서 지금 현실을 불러오는 중…
       </p>
     );
-  if (!live.available)
-    return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24 키를 넣으면 이 진로의 실제 신입 공고·하는 일·국비 과정이 여기 보여요.</p>;
+  if (!live.available) return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24 키를 넣으면 이 진로의 실제 신입 공고·하는 일·국비 과정이 여기 보여요.</p>;
   const w = live.wanted;
   if (!w && !live.duties?.length && !(live.training && live.training.total > 0))
     return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24에 연결하지 못했어요. 인터넷 연결이나 인증키를 확인해 주세요.</p>;
@@ -486,7 +467,9 @@ function MultiversePage() {
         </h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-2xl p-3" style={{ background: `${world.color}12` }}>
-            <p className="text-cap text-muted">{durationLabel(selection.months)} 안에 {st.gate?.label}</p>
+            <p className="text-cap text-muted">
+              {durationLabel(selection.months)} 안에 {st.gate?.label}
+            </p>
             <p className="num text-2xl font-extrabold">{st.gate?.share ?? 0}%</p>
             <p className="num text-cap text-muted">{st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? `보통 ${monthLabel(mv.startYm, st.gate.typicalMonth)}` : "기간 안에 거의 못 함"}</p>
           </div>
@@ -574,7 +557,8 @@ function MultiversePage() {
           <div>
             <p className="text-base font-bold">{explored.title}</p>
             <p className="num mt-1 text-sm text-muted">
-              이 갈림길을 바꾼 채로 100번을 다시 살아봤어요. {st.gate?.label} {st.gate?.share}% → <strong className="text-ink">{explored.stats.gate?.share ?? 0}%</strong>, 만족하며 끝남 {st.satisfiedShare}% → <strong className="text-ink">{explored.stats.satisfiedShare}%</strong>
+              이 갈림길을 바꾼 채로 100번을 다시 살아봤어요. {st.gate?.label} {st.gate?.share}% → <strong className="text-ink">{explored.stats.gate?.share ?? 0}%</strong>, 만족하며 끝남 {st.satisfiedShare}% →{" "}
+              <strong className="text-ink">{explored.stats.satisfiedShare}%</strong>
             </p>
             <ol className="mt-4 flex flex-col gap-4">
               {explored.scenes.map((ev) => (
@@ -587,9 +571,7 @@ function MultiversePage() {
           </div>
         ) : open ? (
           <div>
-            <p className="num text-sm text-muted">
-              100번 중 {open.count}번이 이 세계로 왔어요. 아래는 그중 가장 전형적인 한 번이에요.
-            </p>
+            <p className="num text-sm text-muted">100번 중 {open.count}번이 이 세계로 왔어요. 아래는 그중 가장 전형적인 한 번이에요.</p>
             {busy ? (
               <p className="mt-3 flex items-center gap-2 text-sm text-muted">
                 <Typing label="다시 살아보는 중" /> 갈림길을 바꿔서 100번 다시 살아보는 중…

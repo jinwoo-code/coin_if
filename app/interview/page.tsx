@@ -11,6 +11,7 @@ import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
 import { completeness, DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS } from "@/lib/profile";
 import { store } from "@/lib/store";
 import { twinScore } from "@/lib/twin";
+import { selfAgreement } from "@/lib/ongoing";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
@@ -166,6 +167,8 @@ function TwinMatch({ p }: { p: Profile }) {
   const t = twinScore(p);
   // 이야기 값이 있으면 빼고도 재서 나란히 보여 준다(이야기가 분신을 더 닮게 했는지)
   const base = t && p.story ? twinScore({ ...p, story: null }) : null;
+  const last = p.checkins.at(-1);
+  const self = last ? selfAgreement(p, last) : null;
   if (!t)
     return (
       <section className="card p-5" aria-labelledby="twin">
@@ -206,6 +209,25 @@ function TwinMatch({ p }: { p: Profile }) {
           </span>
           , 브라이어 <span className="num">{base.brier.toFixed(2)}</span>이에요.
         </p>
+      ) : null}
+      {self ? (
+        <p className="mt-1.5 text-cap text-muted">
+          체크인에서 나도 처음 답과 같게 고른 건{" "}
+          <span className="num">
+            {self.n}개 중 {self.same}개
+          </span>
+          예요. 사람도 늘 같은 답을 하진 않아서, 분신 점수는 이것과 같이 봐야 해요.
+        </p>
+      ) : null}
+      {p.corrections.length ? <p className="mt-1.5 text-cap text-muted">직접 고친 선택 {p.corrections.length}개가 분신에 반영돼 있어요.</p> : null}
+      {p.depthMode === "ongoing" ? (
+        <Link href="/checkin" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
+          <span>
+            <strong className="font-semibold">한 달 체크인</strong>
+            <span className="text-muted"> · 상황 질문을 다시 물어 기준을 재요</span>
+          </span>
+          <ChevronRight aria-hidden="true" size={16} />
+        </Link>
       ) : null}
       <details className="mt-3">
         <summary className="min-h-[44px] cursor-pointer py-2.5 text-sm font-semibold">문항별로 보기</summary>
@@ -369,6 +391,7 @@ export default function InterviewPage() {
         interests,
         readiness,
         depthMode: base && depthOrder(base.depthMode) > depthOrder(mode) ? base.depthMode : mode,
+        since: base?.since ?? new Date().toISOString(),
         answers: { bfi10: bfi, sjt: trainPicks, ipip, riasec },
         holdout,
         holdoutPicks,
@@ -841,7 +864,8 @@ export default function InterviewPage() {
               <Ai>{base ? "어디까지 더 해 볼까요? 이미 답한 건 다시 묻지 않아요." : "얼마나 자세히 할까요? 자세히 할수록 나를 더 닮은 시뮬레이션이 돼요."}</Ai>
               <div role="list" className="ml-[42px] flex animate-rise flex-col gap-2">
                 {DEPTHS.map((d) => {
-                  const already = base ? remainingSteps(d.mode, base, holdout.ids).length <= 1 : false; // 남은 게 깊이 고르기뿐이면 이미 한 것
+                  // 남은 게 깊이 고르기뿐이면 이미 한 것. 계속 닮아 가기는 검사가 남지 않아도 켤 수 있다.
+                  const already = base ? (d.mode === "ongoing" ? base.depthMode === "ongoing" : remainingSteps(d.mode, base, holdout.ids).length <= 1) : false;
                   const off = !d.ready || already;
                   return (
                     <button

@@ -14,6 +14,7 @@ import type { Profile, WorldTemplate } from "@/lib/types";
 import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WORLDS } from "@/lib/worlds";
 import { Seg } from "../interview/form";
 import { canDeepen } from "@/lib/assessment";
+import { daysToCheckin } from "@/lib/ongoing";
 import { MyData } from "@/components/my-data";
 
 const PERIODS = [
@@ -101,11 +102,7 @@ export default function ChoosePage() {
   const fitOf = (w: WorldTemplate) => Math.round(preFit(w, profile) * 100);
   const toggle = (id: string) => setChosen((c) => (c.includes(id) ? c.filter((x) => x !== id) : c.length >= 3 ? c : [...c, id]));
   const q = query.trim().replace(/\s/g, "");
-  const list = q
-    ? WORLDS.filter((w) => (w.name + w.short + w.family + w.majors.join("")).replace(/\s/g, "").includes(q))
-    : family === "추천"
-      ? recs
-      : WORLDS.filter((w) => w.family === family);
+  const list = q ? WORLDS.filter((w) => (w.name + w.short + w.family + w.majors.join("")).replace(/\s/g, "").includes(q)) : family === "추천" ? recs : WORLDS.filter((w) => w.family === family);
   const chosenWorlds = chosen.map(getWorld);
   // 고른 진로들이 묻는 준비도 질문(중복 없이)
   const questions = Array.from(new Set(chosenWorlds.flatMap((w) => w.readiness))).filter((id) => READINESS[id]);
@@ -141,6 +138,15 @@ export default function ChoosePage() {
         <p className="mt-1 text-sm text-muted">
           {profile.major ? `${waGwa(profile.major)} 내 가치관으로 먼저 추천했어요. ` : ""}진로 {WORLDS.length}개 중 2~3개를 골라 주세요.
         </p>
+        {Object.keys(profile.holdoutPicks).length ? (
+          <Link href="/checkin" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
+            <span>
+              <strong className="font-semibold">한 달 체크인</strong>
+              <span className="text-muted"> · {checkinNote(profile)}</span>
+            </span>
+            <ChevronRight aria-hidden="true" size={16} />
+          </Link>
+        ) : null}
         {canDeepen(profile) ? (
           <Link href="/interview?more=1" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
             <span>
@@ -218,16 +224,11 @@ export default function ChoosePage() {
           <div className="mt-4 flex flex-col gap-4">
             {questions.map((id) => {
               const qq = READINESS[id];
-              const who = chosenWorlds.filter((w) => w.readiness.includes(id)).map((w) => w.short).join("·");
-              return (
-                <Seg
-                  key={id}
-                  label={`${qq.label} (${who})`}
-                  value={answerOf(readiness, id)}
-                  options={qq.options.map((o, i) => ({ v: i, t: o.t }))}
-                  onChange={(v) => setReadiness((r) => ({ ...r, [id]: v }))}
-                />
-              );
+              const who = chosenWorlds
+                .filter((w) => w.readiness.includes(id))
+                .map((w) => w.short)
+                .join("·");
+              return <Seg key={id} label={`${qq.label} (${who})`} value={answerOf(readiness, id)} options={qq.options.map((o, i) => ({ v: i, t: o.t }))} onChange={(v) => setReadiness((r) => ({ ...r, [id]: v }))} />;
             })}
           </div>
         </section>
@@ -260,4 +261,9 @@ export default function ChoosePage() {
       <MyData />
     </Screen>
   );
+}
+
+function checkinNote(p: Profile) {
+  const d = daysToCheckin(p);
+  return d === null || d <= 0 ? "지금 할 때예요" : `${d}일 뒤(시연용으로 지금도 돼요)`;
 }

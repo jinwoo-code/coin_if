@@ -27,7 +27,7 @@ export const DEPTHS: { mode: DepthMode; title: string; time: string; desc: strin
   { mode: "quick", title: "빠르게", time: "약 10분", desc: "꼭 필요한 것만 물어요. 결과가 덜 정확할 수 있어요.", ready: true },
   { mode: "standard", title: "표준", time: "30~40분", desc: "성격 50문항, 흥미 검사, 경험 이야기까지 해요.", ready: true },
   { mode: "deep", title: "정밀", time: "장마다 15~20분", desc: "인생 이야기 6장. 멈췄다가 이어서 할 수 있어요.", ready: false },
-  { mode: "ongoing", title: "계속 닮아 가기", time: "몇 주~몇 달", desc: "시뮬레이션 속 내 선택과 한 달 뒤 체크인으로 맞춰 가요.", ready: false },
+  { mode: "ongoing", title: "계속 닮아 가기", time: "몇 주~몇 달", desc: "표준 + 시뮬레이션 속 선택 고치기와 한 달 체크인으로 맞춰 가요.", ready: true },
 ];
 
 const DILEMMA: Step = {
@@ -40,7 +40,7 @@ const DILEMMA: Step = {
 const EXPERIENCES: Step = { kind: "text", key: "experiences", ask: "지금까지 해 본 것 중에 기억에 남는 경험이 있어요? 수업, 알바, 동아리 뭐든 좋아요.", placeholder: "예: 동아리에서 앱을 만들어 봤어요…" };
 const CONSTRAINTS: Step = { kind: "text", key: "constraints", ask: "진로를 정할 때 신경 쓰이는 게 더 있어요? 가족, 건강, 하고 싶은 것 뭐든요.", placeholder: "예: 부모님이 안정적인 일을 원하셔서…" };
 
-const chunk = <T,>(xs: T[], n: number) => Array.from({ length: Math.ceil(xs.length / n) }, (_, i) => xs.slice(i * n, i * n + n));
+const chunk = <T>(xs: T[], n: number) => Array.from({ length: Math.ceil(xs.length / n) }, (_, i) => xs.slice(i * n, i * n + n));
 const scalePages = (test: "ipip" | "riasec", ids: string[], size: number): Step[] => {
   const parts = chunk(ids, size);
   return parts.map((ids, i) => ({ kind: "scale", test, ids, part: i + 1, parts: parts.length }));
@@ -67,7 +67,24 @@ export function stepsFor(mode: DepthMode, holdout: string[]): Step[] {
     { kind: "wants" },
   ];
   if (mode === "quick") return quick;
-  return [...quick, EXPERIENCES, ...scalePages("ipip", IPIP50.map((i) => i.id), 10), ...scalePages("riasec", RIASEC24.map((i) => i.id), 8), ...sjtPages(rest), { kind: "cci" }, { kind: "story" }, CONSTRAINTS];
+  return [
+    ...quick,
+    EXPERIENCES,
+    ...scalePages(
+      "ipip",
+      IPIP50.map((i) => i.id),
+      10,
+    ),
+    ...scalePages(
+      "riasec",
+      RIASEC24.map((i) => i.id),
+      8,
+    ),
+    ...sjtPages(rest),
+    { kind: "cci" },
+    { kind: "story" },
+    CONSTRAINTS,
+  ];
 }
 
 export const depthOrder = (m: DepthMode) => DEPTHS.findIndex((d) => d.mode === m);
