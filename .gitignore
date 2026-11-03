@@ -8,3 +8,8 @@ next-env.d.ts
 .claude/settings.local.json
 /test-results
 /playwright-report
+
+# 파일럿 내보내기(Supabase profiles JSON, 개인 데이터). scripts/fit-weights.ts 입력. 절대 커밋하지 말 것
+/data/pilot/
+pilot*.json
+*-export.json

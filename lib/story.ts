@@ -1,6 +1,7 @@
 // 인생 이야기(진로 구성 인터뷰)에서 뽑는 값. 설계 근거: docs/검사-설계-근거.md '인생 이야기'.
 // 원문(storyRaw)은 이 기기에만 저장하고 확률·선택 계산에는 쓰지 않는다. 엔진에 들어갈 수 있는 건 사용자가 확인한 값(story)뿐이다.
 import type { ValueKey } from "./types";
+import { W } from "./weights";
 
 // Savickas 진로 구성 인터뷰(Career Construction Interview)를 우리말로 옮긴 5문항. 모두 건너뛸 수 있다.
 export const CCI: { id: string; ask: string; placeholder: string }[] = [
@@ -116,16 +117,19 @@ export const hasAnySignal = (s: StorySignals) => Boolean(s.decisionStyle || s.pe
 // ---------- 엔진에서 쓰는 곳(docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'). 무게는 전부 가정값 ----------
 // 이야기가 없으면(null) 모두 원래 값을 그대로 돌려줘서, 이야기를 안 쓴 사람의 결과는 바뀌지 않는다.
 
-// 끈기: 상황 질문 점수 2 : 이야기에서 확인한 끈기 1
+// 끈기: 상황 질문 점수와 이야기에서 확인한 끈기를 섞는다(story.persistenceShare, 처음 값 1/3 = 2:1)
 export function blendPersistence(sjt: number, story: StorySignals | null) {
-  return story?.persistence ? Math.round(((2 * sjt + story.persistence.value) / 3) * 10) / 10 : sjt;
+  if (!story?.persistence) return sjt;
+  const s = W("story.persistenceShare");
+  return Math.round((sjt * (1 - s) + story.persistence.value * s) * 10) / 10;
 }
 
 // 가치관 부합도: 순위로 고른 가치관 0.8 + 이야기에서 확인한 핵심 가치의 평균 부합도 0.2
 export function blendValueFit(base: number, fitValues: Partial<Record<ValueKey, number>>, story: StorySignals | null) {
   const cv = story?.coreValues ?? [];
   if (!cv.length) return base;
-  return 0.8 * base + 0.2 * (cv.reduce((s, c) => s + (fitValues[c.value] ?? 0.5), 0) / cv.length);
+  const s = W("story.coreValueShare");
+  return (1 - s) * base + s * (cv.reduce((a, c) => a + (fitValues[c.value] ?? 0.5), 0) / cv.length);
 }
 
 // 선택 이유에 붙일 짧은 인용: "일단 해 보자"라고 해서. 근거가 없으면(계정에서 받아 온 값) 인용 없이.

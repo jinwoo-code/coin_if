@@ -10,6 +10,8 @@ import { durationLabel, monthLabel } from "@/lib/calendar";
 import { buildMultiverse, levers } from "@/lib/multiverse";
 import { CorrectChoice } from "@/components/correct";
 import { store } from "@/lib/store";
+import { WeightSources } from "@/components/weights";
+import { fittedCount, weightGroups } from "@/lib/weights";
 import type { Lever, Line, LineNode, Multiverse, Profile, Selection, SimEvent, WorldStats, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 import { eulReul, iGa, quoted } from "@/lib/josa";
@@ -501,7 +503,10 @@ function MultiversePage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-cap text-muted">평범한 지원자를 ×1로 둔 배수예요. 배수 자체는 아직 가정값이라, 실제 채용 통계로 보정하는 중이에요.</p>
+            <p className="mt-2 text-cap text-muted">
+              평범한 지원자를 ×1로 둔 배수예요.{" "}
+              {fittedCount(weightGroups(world.readiness)[2].keys) ? "일부는 파일럿 데이터로 보정한 값이고 나머지는 가정값이에요(근거 자료에 표시)." : "배수 자체는 아직 가정값이라, 실제 채용 통계로 보정하는 중이에요."}
+            </p>
           </div>
         ) : null}
       </section>
@@ -535,6 +540,7 @@ function MultiversePage() {
           ))}
         </ul>
         <p className="mt-3 text-cap text-muted">합격·취업 확률과 사건 빈도는 이 자료를 기준으로 맞춘 모델 값이에요. 고용24 연동과 현직자 인터뷰로 계속 보정해요.</p>
+        <WeightSources readiness={world.readiness} />
       </details>
 
       {/* 세계선 나무 */}

@@ -9,6 +9,7 @@ import { nextMonthYm, planStations } from "@/lib/calendar";
 import { waGwa } from "@/lib/josa";
 import { answerOf, READINESS } from "@/lib/readiness";
 import { CostNote } from "@/components/account";
+import { PILOT_SJT, pilotAnswered } from "@/lib/pilot";
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WORLDS } from "@/lib/worlds";
@@ -144,6 +145,15 @@ export default function ChoosePage() {
             <span>
               <strong className="font-semibold">한 달 체크인</strong>
               <span className="text-muted"> · {checkinNote(profile)}</span>
+            </span>
+            <ChevronRight aria-hidden="true" size={16} />
+          </Link>
+        ) : null}
+        {store.isPilotInvited() ? (
+          <Link href="/pilot" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
+            <span>
+              <strong className="font-semibold">파일럿 상황 질문</strong>
+              <span className="text-muted"> · {profile.pilot?.withdrawnAt ? "빠짐" : `${pilotAnswered(profile)}/${PILOT_SJT.length}개`}</span>
             </span>
             <ChevronRight aria-hidden="true" size={16} />
           </Link>

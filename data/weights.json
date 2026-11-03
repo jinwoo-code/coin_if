@@ -1,0 +1,513 @@
+{
+  "_about": {
+    "note": "선택 점수에 더하는 값(kind add·slope), 확률 배수(mult·table·options), 섞는 비율(share). magnitude: assumed(우리가 정한 값) | fitted(scripts/fit-weights.ts로 보정, n = 보정에 쓴 인원). 민감도 분석(scripts/sensitivity.ts)은 add·slope·share·scale을 k배, mult·table·options를 k제곱한다."
+  },
+  "decide.temperature": {
+    "label": "선택의 단호함(높을수록 성향대로 고름)",
+    "value": 2.2,
+    "kind": "scale",
+    "direction": "선택 점수 차이를 확률 차이로 바꾸는 세기(exp(온도×점수)). 근거 연구 없음",
+    "magnitude": "assumed"
+  },
+  "value.rank": {
+    "label": "가치관 순위별 무게(선택)",
+    "value": [
+      1,
+      0.6,
+      0.35,
+      0.15
+    ],
+    "kind": "add",
+    "direction": "가치관 1~4순위가 선택에 주는 무게 비율",
+    "magnitude": "assumed",
+    "note": "아래 value.* 값에 곱해진다"
+  },
+  "value.fitRank": {
+    "label": "가치관 순위별 무게(부합도)",
+    "value": [
+      0.4,
+      0.3,
+      0.2,
+      0.1
+    ],
+    "kind": "add",
+    "direction": "가치관 1~4순위가 진로 부합도에 들어가는 비중. 순위가 높을수록 크게(직업가치관 순위 활용, 커리어넷 직업가치관검사의 상위 가치 해석 방식)",
+    "magnitude": "assumed",
+    "note": "합 1. 부합도(preFit·jobSat)에 씀"
+  },
+  "value.성장.push": {
+    "label": "가치관 성장 → 더 해 봄",
+    "value": 0.5,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.인정.push": {
+    "label": "가치관 인정 → 더 해 봄",
+    "value": 0.3,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.돈.change": {
+    "label": "가치관 돈 → 바꿈",
+    "value": 0.35,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.자율.change": {
+    "label": "가치관 자율 → 바꿈",
+    "value": 0.35,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.안정.safe": {
+    "label": "가치관 안정 → 신중",
+    "value": 0.5,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.여유.safe": {
+    "label": "가치관 여유 → 신중",
+    "value": 0.4,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.관계.safe": {
+    "label": "가치관 관계 → 신중",
+    "value": 0.25,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.기여.push": {
+    "label": "가치관 기여 → 더 해 봄",
+    "value": 0.2,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
+    "magnitude": "assumed"
+  },
+  "value.jobSat": {
+    "label": "가치관이 맞을 때 일 만족도",
+    "value": 32,
+    "kind": "slope",
+    "direction": "일할 때 평소 만족도 = 48 + 이 값 × 가치관 부합도(0~1). 근거 연구 없음",
+    "magnitude": "assumed"
+  },
+  "trait.C.push": {
+    "label": "성실성 → 더 해 봄",
+    "value": 0.12,
+    "kind": "slope",
+    "direction": "Soto(2019): 성격과 인생 결과의 관계는 재현되지만 효과가 작다 → 가치관보다 작게. 방향은 특성의 뜻. 성실성 → 더 해 봄",
+    "magnitude": "assumed",
+    "note": "(점수 - 3)에 곱한다"
+  },
+  "trait.persistence.push": {
+    "label": "끈기 → 더 해 봄",
+    "value": 0.15,
+    "kind": "slope",
+    "direction": "Soto(2019): 성격과 인생 결과의 관계는 재현되지만 효과가 작다 → 가치관보다 작게. 방향은 특성의 뜻. 상황 질문 끈기 → 더 해 봄",
+    "magnitude": "assumed",
+    "note": "(점수 - 3)에 곱한다"
+  },
+  "trait.risk.change": {
+    "label": "위험 감수 → 바꿈",
+    "value": 0.15,
+    "kind": "slope",
+    "direction": "Soto(2019): 성격과 인생 결과의 관계는 재현되지만 효과가 작다 → 가치관보다 작게. 방향은 특성의 뜻. 상황 질문 위험 감수 → 바꿈",
+    "magnitude": "assumed",
+    "note": "(점수 - 3)에 곱한다"
+  },
+  "trait.O.change": {
+    "label": "개방성 → 바꿈",
+    "value": 0.1,
+    "kind": "slope",
+    "direction": "Soto(2019): 성격과 인생 결과의 관계는 재현되지만 효과가 작다 → 가치관보다 작게. 방향은 특성의 뜻. 개방성 → 바꿈",
+    "magnitude": "assumed",
+    "note": "(점수 - 3)에 곱한다"
+  },
+  "trait.N.safe": {
+    "label": "신경성 → 신중",
+    "value": 0.12,
+    "kind": "slope",
+    "direction": "Soto(2019): 성격과 인생 결과의 관계는 재현되지만 효과가 작다 → 가치관보다 작게. 방향은 특성의 뜻. 예민함 → 신중",
+    "magnitude": "assumed",
+    "note": "(점수 - 3)에 곱한다"
+  },
+  "trait.lowRisk.safe": {
+    "label": "위험 회피 → 신중",
+    "value": 0.1,
+    "kind": "slope",
+    "direction": "Soto(2019): 성격과 인생 결과의 관계는 재현되지만 효과가 작다 → 가치관보다 작게. 방향은 특성의 뜻. 위험 회피 → 신중",
+    "magnitude": "assumed",
+    "note": "(점수 - 3)에 곱한다"
+  },
+  "state.tired.safe": {
+    "label": "지쳤을 때 → 신중",
+    "value": 1.2,
+    "kind": "slope",
+    "direction": "스트레스가 쌓이면 쉬거나 바꾸려 한다(엔진 설계). 근거 연구 없음. 지침 → 쉼",
+    "magnitude": "assumed",
+    "note": "(스트레스 - 50)/100에 곱한다"
+  },
+  "state.tired.copingRelief": {
+    "label": "스트레스 대처가 지침을 덜어 줌",
+    "value": 0.15,
+    "kind": "slope",
+    "direction": "스트레스가 쌓이면 쉬거나 바꾸려 한다(엔진 설계). 근거 연구 없음. 회복력이 높으면 덜 쉼",
+    "magnitude": "assumed",
+    "note": "(스트레스 - 50)/100에 곱한다"
+  },
+  "state.tired.change": {
+    "label": "지쳤을 때 → 바꿈",
+    "value": 0.6,
+    "kind": "slope",
+    "direction": "스트레스가 쌓이면 쉬거나 바꾸려 한다(엔진 설계). 근거 연구 없음. 지침 → 바꿈",
+    "magnitude": "assumed",
+    "note": "(스트레스 - 50)/100에 곱한다"
+  },
+  "state.rested.push": {
+    "label": "여유 있을 때 → 더 해 봄",
+    "value": 0.6,
+    "kind": "slope",
+    "direction": "스트레스가 쌓이면 쉬거나 바꾸려 한다(엔진 설계). 근거 연구 없음. 여유 → 더 해 봄",
+    "magnitude": "assumed",
+    "note": "(스트레스 - 50)/100에 곱한다"
+  },
+  "story.decisionStyle": {
+    "label": "이야기: 결정 방식",
+    "value": 0.2,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 일단 해 봄 → 바꿈, 따져 봄·남 따라 → 신중",
+    "magnitude": "assumed"
+  },
+  "story.familyStable": {
+    "label": "이야기: 가족이 안정을 바람 → 신중",
+    "value": 0.06,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 가족이 안정을 바람 → 신중(신경 쓰는 정도 1~5에 곱함)",
+    "magnitude": "assumed"
+  },
+  "story.regretInaction.push": {
+    "label": "이야기: 안 해서 후회 → 더 해 봄",
+    "value": 0.15,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 안 해서 후회 → 더 해 봄",
+    "magnitude": "assumed"
+  },
+  "story.regretInaction.change": {
+    "label": "이야기: 안 해서 후회 → 바꿈",
+    "value": 0.1,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 안 해서 후회 → 바꿈",
+    "magnitude": "assumed"
+  },
+  "story.regretAction.safe": {
+    "label": "이야기: 해서 후회 → 신중",
+    "value": 0.15,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 해서 후회 → 신중",
+    "magnitude": "assumed"
+  },
+  "story.persistenceShare": {
+    "label": "이야기 끈기를 섞는 비율",
+    "value": 0.3333333333333333,
+    "kind": "share",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 끈기 = 상황 질문 × (1 - 이 값) + 이야기 × 이 값",
+    "magnitude": "assumed"
+  },
+  "story.coreValueShare": {
+    "label": "이야기 핵심 가치를 섞는 비율",
+    "value": 0.2,
+    "kind": "share",
+    "direction": "docs/검사-설계-근거.md '이야기에서 뽑는 값과 엔진에서 쓰는 곳'. 가치관 부합도에 이야기 핵심 가치를 섞는 비율",
+    "magnitude": "assumed"
+  },
+  "correction.step": {
+    "label": "고친 선택 한 번의 무게",
+    "value": 0.08,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 깊이': 행동 기록이 자기 보고보다 정확(Youyou 외, 2015). '나라면 이렇게 안 해'·체크인 실제 선택 한 번",
+    "magnitude": "assumed"
+  },
+  "correction.cap": {
+    "label": "고친 선택 무게 상한",
+    "value": 0.4,
+    "kind": "add",
+    "direction": "docs/검사-설계-근거.md '검사 깊이': 행동 기록이 자기 보고보다 정확(Youyou 외, 2015). tone마다 상한",
+    "magnitude": "assumed"
+  },
+  "factor.cert": {
+    "label": "자격증 1개당",
+    "value": 1.12,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 자격증 1개(최대 2개까지 곱함)",
+    "magnitude": "assumed"
+  },
+  "factor.intern": {
+    "label": "인턴·현장실습",
+    "value": 1.15,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 인턴·현장실습",
+    "magnitude": "assumed"
+  },
+  "factor.projects2": {
+    "label": "프로젝트 2개 이상",
+    "value": 1.1,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 프로젝트·작품 2개 이상",
+    "magnitude": "assumed"
+  },
+  "factor.projects0": {
+    "label": "프로젝트 0개",
+    "value": 0.9,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 프로젝트·작품 없음",
+    "magnitude": "assumed"
+  },
+  "factor.awards": {
+    "label": "수상",
+    "value": 1.05,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 수상",
+    "magnitude": "assumed"
+  },
+  "factor.gpa": {
+    "label": "학점 3.8 이상",
+    "value": 1.05,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 학점 3.8 이상",
+    "magnitude": "assumed"
+  },
+  "factor.toeic": {
+    "label": "토익 800 이상(일반·공공)",
+    "value": 1.08,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 토익 800 이상(일반 기업·공공기관)",
+    "magnitude": "assumed"
+  },
+  "factor.koreanHistory": {
+    "label": "한국사 자격(시험형)",
+    "value": 1.05,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 한국사 자격증(9급 공무원)",
+    "magnitude": "assumed"
+  },
+  "factor.military.preEnlistHire": {
+    "label": "입대 앞둔 채용",
+    "value": 0.5,
+    "kind": "mult",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 입대 전 회사 채용(공무원 제외)",
+    "magnitude": "assumed"
+  },
+  "factor.examPower.C": {
+    "label": "성실성 → 시험 준비력",
+    "value": 0.08,
+    "kind": "slope",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 시험 공부량 배수에 성실성 (점수 - 3) × 이 값",
+    "magnitude": "assumed"
+  },
+  "factor.persistence": {
+    "label": "끈기 → 합격·취업",
+    "value": 0.1,
+    "kind": "slope",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 끈기 배수 = 1 + 이 값 × (끈기 - 3), 0.8~1.2",
+    "magnitude": "assumed"
+  },
+  "factor.region": {
+    "label": "사는 곳",
+    "value": {
+      "서울": 1,
+      "경기·인천": 0.95,
+      "지방 광역시": 0.8,
+      "그 외 지역": 0.65
+    },
+    "kind": "table",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 일자리가 수도권에 몰려 있음(방향만 근거)",
+    "magnitude": "assumed"
+  },
+  "factor.school": {
+    "label": "학교",
+    "value": {
+      "고졸": 0.7,
+      "전문대": 0.85,
+      "4년제": 1,
+      "대학원": 1.1
+    },
+    "kind": "table",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 학력",
+    "magnitude": "assumed"
+  },
+  "readiness.coding": {
+    "label": "준비도: 코딩 실력",
+    "value": [
+      0.4,
+      0.7,
+      1.0,
+      1.4
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '코딩 실력' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.portfolio": {
+    "label": "준비도: 포트폴리오",
+    "value": [
+      0.5,
+      0.8,
+      1.1,
+      1.4
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '포트폴리오' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.practice": {
+    "label": "준비도: 현장·임상 실습",
+    "value": [
+      0.7,
+      1.0,
+      1.15
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '현장·임상 실습' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.license": {
+    "label": "준비도: 면허·필수 자격",
+    "value": [
+      0.6,
+      0.9,
+      1.0,
+      1.3
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '면허·필수 자격' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.fieldCert": {
+    "label": "준비도: 기능사·산업기사",
+    "value": [
+      0.7,
+      1.0,
+      1.25
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '기능사·산업기사' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.teaching": {
+    "label": "준비도: 교원 자격",
+    "value": [
+      0.15,
+      0.9,
+      1.0
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '교원 자격' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.language": {
+    "label": "준비도: 외국어 회화",
+    "value": [
+      0.75,
+      1.0,
+      1.3
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '외국어 회화' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.service": {
+    "label": "준비도: 고객 응대·영업 경험",
+    "value": [
+      0.85,
+      1.0,
+      1.2
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '고객 응대·영업 경험' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.research": {
+    "label": "준비도: 연구 경험",
+    "value": [
+      0.7,
+      1.0,
+      1.3
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '연구 경험' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.fitness": {
+    "label": "준비도: 체력 시험 준비",
+    "value": [
+      0.6,
+      0.9,
+      1.1
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '체력 시험 준비' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.writing": {
+    "label": "준비도: 글쓰기·취재 경험",
+    "value": [
+      0.7,
+      1.0,
+      1.3
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '글쓰기·취재 경험' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.idea": {
+    "label": "준비도: 창업 아이템 단계",
+    "value": [
+      0.6,
+      1.0,
+      1.5
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '창업 아이템 단계' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.dataTool": {
+    "label": "준비도: 엑셀·SQL·통계 도구",
+    "value": [
+      0.8,
+      1.0,
+      1.3
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '엑셀·SQL·통계 도구' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.sns": {
+    "label": "준비도: SNS·콘텐츠 운영",
+    "value": [
+      0.8,
+      1.0,
+      1.3
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 'SNS·콘텐츠 운영' 보기별 배수",
+    "magnitude": "assumed"
+  },
+  "readiness.office": {
+    "label": "준비도: 사무 도구(엑셀·문서)",
+    "value": [
+      0.85,
+      1.0,
+      1.15
+    ],
+    "kind": "options",
+    "direction": "공개 통계 없음. 화면 '내 조건이 확률을 바꾼 정도'에 그대로 공개. 준비도 질문 '사무 도구(엑셀·문서)' 보기별 배수",
+    "magnitude": "assumed"
+  }
+}

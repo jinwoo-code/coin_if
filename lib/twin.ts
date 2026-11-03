@@ -5,7 +5,7 @@ import { SJT } from "./tests";
 import type { LifeState, Profile } from "./types";
 
 // 지치지도 여유롭지도 않은 평소 상태(스트레스 50이면 상태에서 오는 끌림이 0)
-const CALM: LifeState = { skill: 50, stress: 50, satisfaction: 50, relation: 50, money: 0 };
+export const CALM: LifeState = { skill: 50, stress: 50, satisfaction: 50, relation: 50, money: 0 };
 
 export interface TwinItem {
   id: string;

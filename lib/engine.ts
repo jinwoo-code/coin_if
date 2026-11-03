@@ -5,6 +5,7 @@ import { ymAt } from "./calendar";
 import { factorMult, startSkill } from "./factors";
 import { eulReul } from "./josa";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
+import { W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, Profile, ValueKey, WorldTemplate } from "./types";
 
 // ---------- 작은 도구들 ----------
@@ -104,10 +105,9 @@ const BROKE: EventCard = {
   effect: { stress: 10, satisfaction: -6 },
 };
 
-const RANK_W = [0.4, 0.3, 0.2, 0.1];
 export function valueFit(world: WorldTemplate, p: Profile) {
   return blendValueFit(
-    p.values.reduce((s, v, i) => s + (RANK_W[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
+    p.values.reduce((s, v, i) => s + (WA("value.fitRank")[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
     world.fitValues,
     p.story,
   );
@@ -127,60 +127,72 @@ function rankOf(p: Profile, v: ValueKey) {
   return i < 0 ? -1 : i;
 }
 
-// 가치관 순위가 높을수록 크게(1순위 1, 2순위 0.6, 3순위 0.35, 4순위 0.15, 없으면 0)
+// 가치관 순위가 높을수록 크게(value.rank: 1순위 1, 2순위 0.6, 3순위 0.35, 4순위 0.15, 없으면 0)
 function vw(p: Profile, v: ValueKey) {
-  return [1, 0.6, 0.35, 0.15][rankOf(p, v)] ?? 0;
+  return WA("value.rank")[rankOf(p, v)] ?? 0;
 }
+
+// 가치관이 미는 쪽(data/weights.json value.*)
+const VALUE_PUSH: [ValueKey, Tone][] = [
+  ["성장", "push"],
+  ["인정", "push"],
+  ["돈", "change"],
+  ["자율", "change"],
+  ["안정", "safe"],
+  ["여유", "safe"],
+  ["관계", "safe"],
+  ["기여", "push"],
+];
 
 function pushes(p: Profile, state: LifeState): Push[] {
   const b = p.bigFive;
   const h = p.behavior;
   const r = (v: ValueKey) => `${eulReul(v)} ${rankOf(p, v) + 1}순위로 꼽아서`;
   const out: Push[] = [];
-  if (vw(p, "성장")) out.push({ tone: "push", value: 0.5 * vw(p, "성장"), reason: r("성장") });
-  if (vw(p, "인정")) out.push({ tone: "push", value: 0.3 * vw(p, "인정"), reason: r("인정") });
-  if (vw(p, "돈")) out.push({ tone: "change", value: 0.35 * vw(p, "돈"), reason: r("돈") });
-  if (vw(p, "자율")) out.push({ tone: "change", value: 0.35 * vw(p, "자율"), reason: r("자율") });
-  if (vw(p, "안정")) out.push({ tone: "safe", value: 0.5 * vw(p, "안정"), reason: r("안정") });
-  if (vw(p, "여유")) out.push({ tone: "safe", value: 0.4 * vw(p, "여유"), reason: r("여유") });
-  if (vw(p, "관계")) out.push({ tone: "safe", value: 0.25 * vw(p, "관계"), reason: r("관계") });
-  if (vw(p, "기여")) out.push({ tone: "push", value: 0.2 * vw(p, "기여"), reason: r("기여") });
-  out.push({ tone: "push", value: 0.12 * (b.C - 3), reason: b.C >= 3 ? "일을 끝까지 해내는 편이라서" : "" });
+  for (const [v, tone] of VALUE_PUSH) if (vw(p, v)) out.push({ tone, value: W(`value.${v}.${tone}`) * vw(p, v), reason: r(v) });
+  out.push({ tone: "push", value: W("trait.C.push") * (b.C - 3), reason: b.C >= 3 ? "일을 끝까지 해내는 편이라서" : "" });
   const grit = blendPersistence(h.persistence, p.story);
-  out.push({ tone: "push", value: 0.15 * (grit - 3), reason: grit >= 3 ? "잘 안 풀려도 버티는 편이라서" : "" });
-  out.push({ tone: "change", value: 0.15 * (h.risk - 3), reason: h.risk >= 3 ? "불확실해도 일단 움직이는 편이라서" : "" });
-  out.push({ tone: "change", value: 0.1 * (b.O - 3), reason: b.O >= 3 ? "새로운 걸 좋아하는 편이라서" : "" });
-  out.push({ tone: "safe", value: 0.12 * (b.N - 3), reason: b.N >= 3 ? "쉽게 긴장하는 편이라서" : "" });
-  out.push({ tone: "safe", value: 0.1 * (3 - h.risk), reason: h.risk < 3 ? "확실하지 않으면 움직이지 않는 편이라서" : "" });
+  out.push({ tone: "push", value: W("trait.persistence.push") * (grit - 3), reason: grit >= 3 ? "잘 안 풀려도 버티는 편이라서" : "" });
+  out.push({ tone: "change", value: W("trait.risk.change") * (h.risk - 3), reason: h.risk >= 3 ? "불확실해도 일단 움직이는 편이라서" : "" });
+  out.push({ tone: "change", value: W("trait.O.change") * (b.O - 3), reason: b.O >= 3 ? "새로운 걸 좋아하는 편이라서" : "" });
+  out.push({ tone: "safe", value: W("trait.N.safe") * (b.N - 3), reason: b.N >= 3 ? "쉽게 긴장하는 편이라서" : "" });
+  out.push({ tone: "safe", value: W("trait.lowRisk.safe") * (3 - h.risk), reason: h.risk < 3 ? "확실하지 않으면 움직이지 않는 편이라서" : "" });
   // 이야기에서 사용자가 '맞아요'로 확인한 값(lib/story.ts). 무게는 가정값이고, 이유에 그 사람이 쓴 문장을 그대로 인용한다.
   const st = p.story;
-  if (st?.decisionStyle) out.push({ tone: st.decisionStyle.value === "impulsive" ? "change" : "safe", value: 0.2, reason: storyReason(st.decisionStyle.evidence) });
-  if (st?.familyExpectation?.value === "stable") out.push({ tone: "safe", value: 0.06 * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence) });
+  if (st?.decisionStyle) out.push({ tone: st.decisionStyle.value === "impulsive" ? "change" : "safe", value: W("story.decisionStyle"), reason: storyReason(st.decisionStyle.evidence) });
+  if (st?.familyExpectation?.value === "stable") out.push({ tone: "safe", value: W("story.familyStable") * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence) });
   if (st?.regretType?.value === "inaction") {
-    out.push({ tone: "push", value: 0.15, reason: storyReason(st.regretType.evidence) });
-    out.push({ tone: "change", value: 0.1, reason: storyReason(st.regretType.evidence) });
+    out.push({ tone: "push", value: W("story.regretInaction.push"), reason: storyReason(st.regretType.evidence) });
+    out.push({ tone: "change", value: W("story.regretInaction.change"), reason: storyReason(st.regretType.evidence) });
   }
-  if (st?.regretType?.value === "action") out.push({ tone: "safe", value: 0.15, reason: storyReason(st.regretType.evidence) });
-  // 계속 닮아 가기: 내가 직접 고친 선택·체크인에서 말한 실제 선택. 한 번에 0.08, tone마다 최대 0.4(가정값)
+  if (st?.regretType?.value === "action") out.push({ tone: "safe", value: W("story.regretAction.safe"), reason: storyReason(st.regretType.evidence) });
+  // 계속 닮아 가기: 내가 직접 고친 선택·체크인에서 말한 실제 선택. 한 번에 correction.step, tone마다 최대 correction.cap(가정값)
   for (const t of ["push", "change", "safe"] as const) {
     const n = (p.corrections ?? []).filter((c) => c.to === t).length;
-    if (n) out.push({ tone: t, value: Math.min(0.4, 0.08 * n), reason: "내가 직접 고친 선택을 반영해서" });
+    if (n) out.push({ tone: t, value: Math.min(W("correction.cap"), W("correction.step") * n), reason: "내가 직접 고친 선택을 반영해서" });
   }
   // 지쳐 있으면 쉬거나 바꾸고 싶어진다.
   const tired = (state.stress - 50) / 100;
   if (tired > 0) {
-    out.push({ tone: "safe", value: tired * (1.2 - 0.15 * (h.coping - 3)), reason: "스트레스가 많이 쌓여 있어서" });
-    out.push({ tone: "change", value: tired * 0.6, reason: "지금 상황에 지쳐서" });
+    out.push({ tone: "safe", value: tired * (W("state.tired.safe") - W("state.tired.copingRelief") * (h.coping - 3)), reason: "스트레스가 많이 쌓여 있어서" });
+    out.push({ tone: "change", value: tired * W("state.tired.change"), reason: "지금 상황에 지쳐서" });
   } else {
-    out.push({ tone: "push", value: -tired * 0.6, reason: "아직 여유가 있어서" });
+    out.push({ tone: "push", value: -tired * W("state.rested.push"), reason: "아직 여유가 있어서" });
   }
   return out.filter((x) => x.value > 0 && x.reason);
 }
 
 // 보기(tone)마다 고를 무게. decide와 분신 채점(lib/twin.ts)이 같은 식을 쓴다.
+const scoreOf = (ps: Push[], t: Tone) => ps.filter((x) => x.tone === t).reduce((s, x) => s + x.value, 0);
 function weightsOf(ps: Push[], tones: Tone[]) {
-  const score = (t: Tone) => ps.filter((x) => x.tone === t).reduce((s, x) => s + x.value, 0);
-  return tones.map((t) => Math.exp(2.2 * score(t)));
+  const temp = W("decide.temperature");
+  return tones.map((t) => Math.exp(temp * scoreOf(ps, t)));
+}
+
+// 온도를 곱하기 전 tone 점수(가중치 보정 scripts/fit-weights.ts용)
+export function toneScores(p: Profile, state: LifeState, tones: Tone[]) {
+  const ps = pushes(p, state);
+  return tones.map((t) => scoreOf(ps, t));
 }
 
 // 이 상태에서 '나'가 각 보기를 고를 확률(합 1)
@@ -293,7 +305,7 @@ function gateChance(e: EventCard, p: Profile, sim: Sim, world: WorldTemplate, mo
   // 생활비 때문에 알바를 늘렸으면 준비 시간이 줄어든다.
   if (sim.used.has("more-work") && sim.employedSince === null) pr *= 0.75;
   // 입대를 앞둔 미필자는 회사 채용에서 불리하다(가정: 절반).
-  if (e.hires && world.archetype !== "exam" && p.life.military === "미필" && p.life.enlistIn !== null && month < p.life.enlistIn) pr *= 0.5;
+  if (e.hires && world.archetype !== "exam" && p.life.military === "미필" && p.life.enlistIn !== null && month < p.life.enlistIn) pr *= W("factor.military.preEnlistHire");
   void world;
   return clamp(pr, 0, 0.95);
 }
@@ -382,7 +394,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
   const enlist = p.life.military === "미필" && p.life.enlistIn !== null ? p.life.enlistIn : null;
   const runway = p.story?.runwayMonths?.value ?? null;
   // 일하는 중의 평소 만족도: 이 일이 내 가치관을 얼마나 채우는지에 따라 45~75
-  const jobSat = Math.round(48 + 32 * valueFit(world, p));
+  const jobSat = Math.round(48 + W("value.jobSat") * valueFit(world, p));
   const log: MonthLog[] = [];
   const signature: string[] = [];
   const sigMonths: number[] = [];

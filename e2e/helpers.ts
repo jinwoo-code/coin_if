@@ -10,7 +10,7 @@ export async function pickAll(page: Page, n: number) {
 
 export const counter = (page: Page) => page.locator("header .num");
 export const next = (page: Page) => page.getByRole("button", { name: "다음", exact: true }).click();
-export const savedProfile = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem("cr:v6:profile") ?? "null"));
+export const savedProfile = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem("cr:v7:profile") ?? "null"));
 
 // 동의 → 기본 → 깊이 고르기 → 고민 → 스펙 → 가치관 → 성격 5 → 생활 조건 → 성격 5 → 상황 질문 3화면 → 바라는 것(빠르게와 표준 공통 앞부분)
 export async function quickPart(page: Page, depth: "빠르게" | "표준" | "정밀" | "계속 닮아 가기", total: number) {

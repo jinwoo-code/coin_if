@@ -7,8 +7,9 @@ import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } fr
 // 저장 형식이 바뀌면 VERSION을 올린다. 옛 데이터와 섞이지 않는다.
 // v5(2026-11 검사 개편): profile에 depthMode·answers·holdout·holdoutPicks·story·storyRaw 추가.
 // v6(2026-11-03 분신 작업): profile에 since·corrections·checkins 추가, storyRaw에 인생 이야기 장. 예전 판은 처음 읽을 때 옮긴다(migrate).
-const VERSION = "v6";
-const PREVS = ["v5", "v4"]; // 최근 판부터 찾는다
+// v7(2026-11-03 파일럿): profile에 pilot 추가, holdoutPicks에 파일럿 답(p1~p20).
+const VERSION = "v7";
+const PREVS = ["v6", "v5", "v4"]; // 최근 판부터 찾는다
 const KEYS = {
   profile: `cr:${VERSION}:profile`,
   selection: `cr:${VERSION}:selection`,
@@ -17,7 +18,8 @@ const KEYS = {
   active: `cr:${VERSION}:active`,
   report: `cr:${VERSION}:report`,
   premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
-  localOnly: `cr:${VERSION}:localOnly`, // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
+  localOnly: `cr:${VERSION}:localOnly`,
+  pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
 } as const;
 
 // 저장할 때마다 부르는 함수(계정 동기화). 하나만 둔다.
@@ -94,6 +96,8 @@ export const store = {
   setPremium: (p: PremiumItem[] | null) => write(KEYS.premium, p),
   isLocalOnly: () => read<boolean>(KEYS.localOnly) === true,
   setLocalOnly: (on: boolean) => write(KEYS.localOnly, on ? true : null),
+  isPilotInvited: () => read<boolean>(KEYS.pilotInvite) === true,
+  setPilotInvited: () => write(KEYS.pilotInvite, true),
   onWrite: (fn: (() => void) | null) => {
     onWrite = fn;
   },

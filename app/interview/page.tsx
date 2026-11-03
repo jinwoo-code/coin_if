@@ -14,6 +14,7 @@ import { store } from "@/lib/store";
 import { twinScore } from "@/lib/twin";
 import { selfAgreement } from "@/lib/ongoing";
 import { chaptersDone } from "@/lib/chapters";
+import { isPilotId, PILOT_SJT, pilotActive, pilotAnswered } from "@/lib/pilot";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
@@ -291,7 +292,9 @@ export default function InterviewPage() {
       const seed = Math.random().toString(36).slice(2, 10);
       return { seed, ids: pickHoldout(seed) };
     };
-    const p = new URLSearchParams(window.location.search).get("more") === "1" ? store.getProfile() : null;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("pilot") === "1") store.setPilotInvited(); // 파일럿 초대 링크로 들어옴
+    const p = params.get("more") === "1" ? store.getProfile() : null;
     if (!p) {
       const h = fresh();
       setHoldout(h);
@@ -359,7 +362,8 @@ export default function InterviewPage() {
       const bfiCount = Object.keys(bfi).length;
       const bigFive: BigFive = ipipDone ? (scoreScale(IPIP50, ipip, ["O", "C", "E", "A", "N"]) as BigFive) : base && (base.depth.bfiItems >= 50 || !bfiCount) ? base.bigFive : scoreBfi(bfi);
       const trainPicks = Object.fromEntries(Object.entries(sjt).filter(([id]) => !holdout.ids.includes(id)));
-      const holdoutPicks = Object.fromEntries(Object.entries(sjt).filter(([id]) => holdout.ids.includes(id)));
+      // 파일럿 답(p1~p20)은 /pilot에서 따로 받으니 그대로 둔다
+      const holdoutPicks = { ...Object.fromEntries(Object.entries(base?.holdoutPicks ?? {}).filter(([id]) => isPilotId(id))), ...Object.fromEntries(Object.entries(sjt).filter(([id]) => holdout.ids.includes(id))) };
       // 예전(v4) 프로필은 s1~s6 원답이 없어서 다시 셀 수 없다 → 원래 성향 점수를 그대로 쓴다
       const legacy = base && !base.answers.sjt && base.depth.behaviorItems >= 6;
       const behavior: Behavior = base && (legacy || !Object.keys(trainPicks).length) ? base.behavior : scoreSjt(trainPicks, holdout.ids);
@@ -634,6 +638,15 @@ export default function InterviewPage() {
               <span>
                 <strong className="text-base font-bold">인생 이야기 6장 시작하기</strong>
                 <span className="mt-0.5 block text-cap text-muted">정밀 단계예요. 장마다 15~20분, 멈췄다가 이어서 할 수 있어요.</span>
+              </span>
+              <ChevronRight aria-hidden="true" size={18} />
+            </Link>
+          ) : null}
+          {store.isPilotInvited() && !(pilotActive(profile) && pilotAnswered(profile) >= PILOT_SJT.length) && !profile.pilot?.withdrawnAt ? (
+            <Link href="/pilot" className="card flex min-h-[56px] items-center justify-between gap-3 border-[#0B6B4B] p-5 hover:border-ink">
+              <span>
+                <strong className="text-base font-bold">파일럿 상황 질문 {PILOT_SJT.length}개 더 하기</strong>
+                <span className="mt-0.5 block text-cap text-muted">파일럿 참여자만 보여요. 따로 동의를 받고, 성향 점수에는 안 들어가요.</span>
               </span>
               <ChevronRight aria-hidden="true" size={18} />
             </Link>

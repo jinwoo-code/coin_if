@@ -48,6 +48,7 @@ export function normalizeProfile(p: Partial<Profile> & Pick<Profile, "name">): P
     since: null,
     corrections: [],
     checkins: [],
+    pilot: null,
     ...p,
     storyRaw: { ...p.storyRaw },
     answers: { ...p.answers },

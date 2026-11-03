@@ -115,6 +115,8 @@ export interface Profile {
   // 시뮬레이션에서 '나라면 이렇게 안 해'로 고친 선택, 체크인에서 말한 실제 선택. 엔진 pushes가 tone 무게에 더한다.
   corrections: Correction[];
   checkins: Checkin[];
+  // 파일럿(lib/pilot.ts): 파일럿 동의 판·때, 빠진 때. 파일럿 답은 holdoutPicks의 p1~p20.
+  pilot: { version: string; consentAt: string; withdrawnAt: string | null } | null;
   // 어떤 검사를 했는지(입력한 정보 표시용)
   depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }

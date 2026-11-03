@@ -47,7 +47,7 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await expect(page).toHaveURL(/\/choose/);
 
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v6:profile") ?? "null"));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v7:profile") ?? "null"));
   expect(saved.depthMode).toBe("quick");
   expect(Object.keys(saved.answers.sjt)).toEqual(["s1", "s2", "s3", "s4", "s5", "s6"]);
   expect(Object.keys(saved.holdoutPicks)).toHaveLength(3);
@@ -61,7 +61,7 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await pickAll(page, 0);
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("3개 중 3개").first()).toBeVisible();
-  const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v6:profile") ?? "null"));
+  const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v7:profile") ?? "null"));
   expect(after.checkins).toHaveLength(1);
   expect(after.checkins[0].demo).toBe(true);
   expect(after.corrections).toEqual([expect.objectContaining({ source: "checkin", to: "push" })]);
