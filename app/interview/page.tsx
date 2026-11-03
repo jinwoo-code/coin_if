@@ -10,6 +10,7 @@ import { canDeepen, depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, typ
 import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
 import { completeness, DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS } from "@/lib/profile";
 import { store } from "@/lib/store";
+import { twinScore } from "@/lib/twin";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
@@ -160,20 +161,62 @@ function InputChecklist({ p, onDeepen }: { p: Profile; onDeepen: () => void }) {
   );
 }
 
-// 분신이 나를 얼마나 닮았는지: 채점용 상황 질문으로 잴 자리. 지금은 측정 전.
+// 분신이 나를 얼마나 닮았는지: 따로 둔 상황 질문에서 분신이 내 답을 맞히는지(lib/twin.ts). 입력 개수와 상관없다.
 function TwinMatch({ p }: { p: Profile }) {
-  const n = Object.keys(p.holdoutPicks).length;
+  const t = twinScore(p);
+  if (!t)
+    return (
+      <section className="card p-5" aria-labelledby="twin">
+        <div className="flex items-baseline justify-between">
+          <h2 id="twin" className="label">
+            분신 닮은 정도
+          </h2>
+          <span className="text-base font-bold text-muted">측정 전</span>
+        </div>
+        <p className="mt-2 text-sm text-muted">채점용 상황 질문에 답하면 분신이 나와 같은 걸 고르는지로 닮은 정도를 재요.</p>
+      </section>
+    );
   return (
     <section className="card p-5" aria-labelledby="twin">
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between gap-3">
         <h2 id="twin" className="label">
           분신 닮은 정도
         </h2>
-        <span className="text-base font-bold text-muted">측정 전</span>
+        <span className="text-base font-bold">
+          <span className="num">
+            {t.n}개 중 {t.hits}개
+          </span>{" "}
+          맞힘
+        </span>
       </div>
-      <p className="mt-2 text-sm text-muted">
-        답한 상황 질문 중 {n}개는 시뮬레이션에 쓰지 않고 따로 두었어요. 분신이 이 질문에서 나와 같은 걸 고르는지로 닮은 정도를 잴 거예요. 아직 측정 기능은 준비 중이에요.
+      <p className="mt-2 text-sm">
+        상황 질문 {t.n}개는 시뮬레이션에 쓰지 않고 따로 뒀어요. 분신에게 같은 질문을 줬더니 {t.n}개 중 {t.hits}개에서 나와 같은 걸 골랐어요. 아무거나 찍으면 {t.chanceHits}개쯤 맞혀요.
       </p>
+      <p className="mt-1.5 text-cap text-muted">
+        브라이어 점수 <span className="num">{t.brier.toFixed(2)}</span> (찍기 <span className="num">{t.chanceBrier.toFixed(2)}</span>, 낮을수록 잘 맞힘).{" "}
+        {t.n < 6 ? "문항이 적어서 우연이 크게 섞여요. 표준으로 더 하면 채점 문항이 6개가 돼요." : "문항이 6개라 우연이 아직 꽤 섞여요."}
+      </p>
+      <details className="mt-3">
+        <summary className="min-h-[44px] cursor-pointer py-2.5 text-sm font-semibold">문항별로 보기</summary>
+        <ul className="mt-1 flex flex-col gap-3">
+          {t.items.map((it) => (
+            <li key={it.id} className="rounded-2xl bg-ground px-4 py-3 text-sm">
+              <p className="font-semibold">{it.text}</p>
+              <p className="mt-1.5">
+                <span className="text-muted">내 답</span> {it.options[it.pick]}
+              </p>
+              <p className="mt-0.5">
+                <span className="text-muted">분신</span> {it.options[it.guess]}{" "}
+                <span className="text-muted">
+                  (고를 확률 <span className="num">{Math.round(it.probs[it.guess] * 100)}%</span>)
+                </span>
+                {it.guess === it.pick ? <span className="ml-1.5 font-semibold text-[#0B6B4B]">맞힘</span> : null}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-cap text-muted">분신은 시뮬레이션에서 '나'의 선택을 정하는 규칙 그대로예요. 지치지도 여유롭지도 않은 평소 상태로 계산했어요.</p>
+      </details>
     </section>
   );
 }
@@ -840,7 +883,9 @@ export default function InterviewPage() {
                 <ol>
                   {step.ids.map((id) => {
                     const q = SJT.find((x) => x.id === id)!;
-                    return <ChoiceItem key={id} id={`sjt-q${sjtOrder.indexOf(id) + 1}`} n={sjtOrder.indexOf(id) + 1} text={q.text} options={q.options.map((o) => o.text)} value={sjt[id]} onPick={(i) => setSjt((cur) => ({ ...cur, [id]: i }))} />;
+                    return (
+                      <ChoiceItem key={id} id={`sjt-q${sjtOrder.indexOf(id) + 1}`} n={sjtOrder.indexOf(id) + 1} text={q.text} options={q.options.map((o) => o.text)} value={sjt[id]} onPick={(i) => setSjt((cur) => ({ ...cur, [id]: i }))} />
+                    );
                   })}
                 </ol>
               </section>

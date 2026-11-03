@@ -48,9 +48,9 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await expect(counter(page)).toHaveText("12/13");
   await page.getByRole("button", { name: "다음", exact: true }).click();
 
-  // 결과: 입력한 정보 체크리스트와 '측정 전' 칸, '정확도' 문구 없음
+  // 결과: 입력한 정보 체크리스트와 분신 닮은 정도(채점용 3개 중 몇 개 맞혔는지), "정확도" 문구 없음
   await expect(page.getByRole("heading", { name: "입력한 정보" })).toBeVisible({ timeout: 60_000 });
-  await expect(page.getByText("측정 전")).toBeVisible();
+  await expect(page.getByText(/^3개 중 [0-3]개$/)).toBeVisible();
   await expect(page.getByText(/정확도|정밀도/)).toHaveCount(0);
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await expect(page).toHaveURL(/\/choose/);

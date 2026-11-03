@@ -158,11 +158,23 @@ function pushes(p: Profile, state: LifeState): Push[] {
   return out.filter((x) => x.value > 0 && x.reason);
 }
 
+// 보기(tone)마다 고를 무게. decide와 분신 채점(lib/twin.ts)이 같은 식을 쓴다.
+function weightsOf(ps: Push[], tones: Tone[]) {
+  const score = (t: Tone) => ps.filter((x) => x.tone === t).reduce((s, x) => s + x.value, 0);
+  return tones.map((t) => Math.exp(2.2 * score(t)));
+}
+
+// 이 상태에서 '나'가 각 보기를 고를 확률(합 1)
+export function toneProbs(p: Profile, state: LifeState, tones: Tone[]) {
+  const w = weightsOf(pushes(p, state), tones);
+  const total = w.reduce((a, b) => a + b, 0);
+  return w.map((x) => x / total);
+}
+
 export function decide(p: Profile, state: LifeState, choices: Choice[], rand: () => number) {
   const ps = pushes(p, state);
   const tones = choices.map((c) => c.tone);
-  const score = (t: Tone) => ps.filter((x) => x.tone === t).reduce((s, x) => s + x.value, 0);
-  const weights = tones.map((t) => Math.exp(2.2 * score(t)));
+  const weights = weightsOf(ps, tones);
   const total = weights.reduce((a, b) => a + b, 0);
   let roll = rand() * total;
   let index = 0;
@@ -371,8 +383,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
         sim.salary = 0;
         sim.used.add("quit");
       }
-    }
-    else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE;
+    } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE;
     // TODO(분신 작업): 사용자가 확인한 profile.story.runwayMonths가 있으면 생활비 바닥 시점을 그 값과 맞춘다.
     else if (!inService && sim.employedSince === null && sim.state.money < 0 && !sim.used.has("broke")) event = BROKE;
     else if (!inService) event = pickEvent(world, p, sim, month, cal, rand, force);
@@ -427,7 +438,8 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
 
     // 이번 달 돈의 흐름
     let flow: number;
-    if (inService) flow = 60; // 병 봉급에서 쓰고 남는 돈(가정)
+    if (inService)
+      flow = 60; // 병 봉급에서 쓰고 남는 돈(가정)
     else if (sim.employedSince !== null) flow = (sim.salary / 12) * NET_RATE - p.life.livingCost;
     else {
       const work = p.life.partTimeHours + (sim.used.has("more-work") ? 20 : 0);
@@ -440,9 +452,9 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       ? { sat: 45, stress: 50 }
       : sim.used.has("switched") && sim.employedSince === null
         ? { sat: 50, stress: 45 } // 다른 노선으로 갈아탐: 이 진로의 시계는 멈춘다
-      : sim.employedSince !== null
-        ? { sat: jobSat, stress: 38 + Math.max(0, world.hoursPerWeek - 40) * 1.5 }
-        : { sat: Math.max(35, 52 - sim.idle * 0.6), stress: 48 };
+        : sim.employedSince !== null
+          ? { sat: jobSat, stress: 38 + Math.max(0, world.hoursPerWeek - 40) * 1.5 }
+          : { sat: Math.max(35, 52 - sim.idle * 0.6), stress: 48 };
     if (!inService && sim.employedSince === null && !sim.used.has("switched")) sim.idle += 1;
     sim.state = applyDelta(drift(sim.state, target), delta);
     log.push({ month, event, choiceIndex, reason, tierLabel, delta, state: sim.state, status: statusOf(world, sim, month, inService), salary: sim.salary });
