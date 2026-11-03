@@ -5,9 +5,10 @@ import { normalizeProfile } from "./profile";
 import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } from "./types";
 
 // 저장 형식이 바뀌면 VERSION을 올린다. 옛 데이터와 섞이지 않는다.
-// v5(2026-11 검사 개편): profile에 depthMode·answers·holdout·holdoutPicks·story·storyRaw 추가. v4는 처음 읽을 때 옮긴다(migrate).
-const VERSION = "v5";
-const PREV = "v4";
+// v5(2026-11 검사 개편): profile에 depthMode·answers·holdout·holdoutPicks·story·storyRaw 추가.
+// v6(2026-11-03 분신 작업): profile에 since·corrections·checkins 추가, storyRaw에 인생 이야기 장. 예전 판은 처음 읽을 때 옮긴다(migrate).
+const VERSION = "v6";
+const PREVS = ["v5", "v4"]; // 최근 판부터 찾는다
 const KEYS = {
   profile: `cr:${VERSION}:profile`,
   selection: `cr:${VERSION}:selection`,
@@ -22,7 +23,7 @@ const KEYS = {
 // 저장할 때마다 부르는 함수(계정 동기화). 하나만 둔다.
 let onWrite: (() => void) | null = null;
 
-// v4 → v5: 키 이름만 바꿔 옮긴다. 새 프로필 칸은 normalizeProfile이 기본값(빠르게, 채점용 없음, 이야기 없음)으로 채운다.
+// 예전 판 → 지금 판: 키 이름만 바꿔 옮긴다. 새 프로필 칸은 normalizeProfile이 기본값(빠르게, 채점용 없음, 이야기 없음, 고친 선택·체크인 없음)으로 채운다.
 // 예전 프로필은 원답이 없어서, 깊이를 올리면 이미 한 검사는 depth 개수로 판단한다(lib/assessment.ts isAnswered).
 let migrated = false;
 function migrate() {
@@ -31,11 +32,13 @@ function migrate() {
   try {
     const ls = window.localStorage;
     for (const name of Object.keys(KEYS) as (keyof typeof KEYS)[]) {
-      const old = `cr:${PREV}:${KEYS[name].split(":")[2]}`;
-      const raw = ls.getItem(old);
-      if (raw === null) continue;
-      if (ls.getItem(KEYS[name]) === null) ls.setItem(KEYS[name], raw);
-      ls.removeItem(old);
+      for (const prev of PREVS) {
+        const old = `cr:${prev}:${KEYS[name].split(":")[2]}`;
+        const raw = ls.getItem(old);
+        if (raw === null) continue;
+        if (ls.getItem(KEYS[name]) === null) ls.setItem(KEYS[name], raw);
+        ls.removeItem(old);
+      }
     }
   } catch {
     // 저장이 막힌 환경이면 옮기지 않는다

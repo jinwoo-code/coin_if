@@ -2,6 +2,7 @@
 // GET: 동의 여부와 계정에 저장된 프로필·시뮬레이션. POST: 브라우저의 프로필·시뮬레이션을 올린다. DELETE: '전체 지우기'.
 import { NextResponse } from "next/server";
 import { CONSENT_VERSION } from "@/lib/consent";
+import { scrubStory } from "@/lib/story";
 import { topLeverTitles } from "@/lib/multiverse";
 import type { Profile } from "@/lib/types";
 import { WORLDS } from "@/lib/worlds";
@@ -48,12 +49,12 @@ export async function POST(req: Request) {
   if (!body) return NextResponse.json({ error: "형식이 맞지 않아요" }, { status: 400 });
 
   if (body.profile) {
-    // 인생 이야기 원문은 서버에 저장하지 않는다(브라우저가 빼고 보내지만 여기서도 한 번 더 뺀다).
-    const data = typeof body.profile === "object" ? { ...(body.profile as Record<string, unknown>), storyRaw: {} } : body.profile;
+    // 인생 이야기 원문·근거 인용은 서버에 저장하지 않는다(브라우저가 빼고 보내지만 여기서도 한 번 더 뺀다).
+    const data = typeof body.profile === "object" ? scrubStory({ ...(body.profile as Record<string, unknown>), storyRaw: {} }) : body.profile;
     const { error } = await sb.from("profiles").update({ data }).eq("user_id", user.id);
     if (error) console.error("[동기화 실패] profile", error.message);
   }
-  const rows = (body.simulations ?? [])
+  const rows = scrubStory(body.simulations ?? [])
     .filter((s) => s && typeof s.run_key === "string" && typeof s.career === "string" && Number.isFinite(s.months) && typeof s.start_month === "string")
     .slice(0, 10)
     .map((s) => ({ user_id: user.id, run_key: s.run_key, career: s.career, months: s.months, start_month: s.start_month, summary: s.summary, chosen_line: s.chosen_line ?? null, scenes: s.scenes ?? {} }));

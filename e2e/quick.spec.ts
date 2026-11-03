@@ -1,14 +1,6 @@
-// 빠르게 모드로 처음부터 진로 고르기까지(모바일 390px 근처). 표준·정밀은 발표 후(docs/검사-설계-근거.md).
-import { expect, test, type Page } from "@playwright/test";
-
-// 화면 안의 5점 척도·보기 묶음을 전부 고른다(n번째 보기)
-async function pickAll(page: Page, n: number) {
-  const groups = page.locator("main [role=radiogroup]");
-  await expect(groups.first()).toBeVisible(); // 'AI가 입력 중' 뒤에 문항이 나온다
-  for (let i = 0; i < (await groups.count()); i++) await groups.nth(i).getByRole("radio").nth(n).click();
-}
-
-const counter = (page: Page) => page.locator("header .num");
+// 빠르게 모드로 처음부터 진로 고르기까지(모바일 390px 근처), 그리고 시연용 한 달 체크인.
+import { expect, test } from "@playwright/test";
+import { counter, pickAll } from "./helpers";
 
 test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.goto("/interview");
@@ -55,7 +47,7 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await expect(page).toHaveURL(/\/choose/);
 
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v5:profile") ?? "null"));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v6:profile") ?? "null"));
   expect(saved.depthMode).toBe("quick");
   expect(Object.keys(saved.answers.sjt)).toEqual(["s1", "s2", "s3", "s4", "s5", "s6"]);
   expect(Object.keys(saved.holdoutPicks)).toHaveLength(3);
@@ -69,7 +61,7 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await pickAll(page, 0);
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("3개 중 3개").first()).toBeVisible();
-  const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v5:profile") ?? "null"));
+  const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v6:profile") ?? "null"));
   expect(after.checkins).toHaveLength(1);
   expect(after.checkins[0].demo).toBe(true);
   expect(after.corrections).toEqual([expect.objectContaining({ source: "checkin", to: "push" })]);

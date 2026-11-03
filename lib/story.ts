@@ -128,10 +128,30 @@ export function blendValueFit(base: number, fitValues: Partial<Record<ValueKey, 
   return 0.8 * base + 0.2 * (cv.reduce((s, c) => s + (fitValues[c.value] ?? 0.5), 0) / cv.length);
 }
 
-// 선택 이유에 붙일 짧은 인용: "일단 해 보자"라고 해서
+// 선택 이유에 붙일 짧은 인용: "일단 해 보자"라고 해서. 근거가 없으면(계정에서 받아 온 값) 인용 없이.
+export const STORY_REASON = "내 이야기에서 말한 대로";
 export function storyReason(evidence: string) {
   const e = evidence.trim().replace(/[.。!?]+$/, "");
+  if (!e) return STORY_REASON;
   return `"${e.length > 24 ? `${e.slice(0, 23)}…` : e}"라고 해서`;
+}
+
+// 계정(서버)에 올리기 전에 이야기 원문 조각을 뺀다: 확인한 값의 근거 인용(evidence 문자열), 선택 이유 속 인용.
+// 값(결정 방식 등)은 남는다. 통계 근거(StatEvidence)는 객체라 건드리지 않는다.
+export function scrubStory<T>(x: T): T {
+  const walk = (v: unknown, key?: string): unknown =>
+    typeof v === "string"
+      ? key === "evidence"
+        ? ""
+        : /^".*"라고 해서$/s.test(v)
+          ? STORY_REASON
+          : v
+      : Array.isArray(v)
+        ? v.map((y) => walk(y))
+        : v && typeof v === "object"
+          ? Object.fromEntries(Object.entries(v).map(([k, y]) => [k, walk(y, k)]))
+          : v;
+  return walk(x) as T;
 }
 
 // 장마다 뽑은 값 합치기: 새로 확인한 값이 있으면 그걸로, 없으면 전 값 유지. 핵심 가치는 새 것 먼저 최대 4개.

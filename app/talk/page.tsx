@@ -8,6 +8,7 @@ import { LineBadge, MockNotice, Screen, Sheet, Typing } from "@/components/ui";
 import { euro, iGa } from "@/lib/josa";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
+import { scrubStory } from "@/lib/story";
 import type { ChatMessage, Line, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
@@ -97,7 +98,18 @@ function TalkPage() {
       const res = await fetch("/api/talk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, worldId, lineId: lines[worldId]?.id ?? "", runKey: runKeys[worldId] ?? "", scenes: scenes[worldId] ?? [], lineTitle: lines[worldId]?.title ?? "", months: selection.months, history, message: text }),
+        // 대화는 계정에 저장되니, 이야기 인용이 답에 섞이지 않게 빼고 보낸다
+        body: JSON.stringify({
+          profile: scrubStory(profile),
+          worldId,
+          lineId: lines[worldId]?.id ?? "",
+          runKey: runKeys[worldId] ?? "",
+          scenes: scrubStory(scenes[worldId] ?? []),
+          lineTitle: lines[worldId]?.title ?? "",
+          months: selection.months,
+          history,
+          message: text,
+        }),
       });
       // 토큰이 부족하면 충전 화면으로, 20마디를 넘으면 안내
       if (res.status === 402) {

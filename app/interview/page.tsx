@@ -18,7 +18,7 @@ import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
 import { LifeForm, SpecForm, WantsForm } from "./form";
 import { CciForm, cciQa, StoryConfirm } from "./story";
-import type { StorySignals } from "@/lib/story";
+import { scrubStory, type StorySignals } from "@/lib/story";
 
 const VALUES: { key: ValueKey; hint: string }[] = [
   { key: "안정", hint: "오래 다닐 수 있는 일" },
@@ -392,14 +392,14 @@ export default function InterviewPage() {
           ...imported,
         },
       };
-      // 이야기 원문은 서버로 보내지 않는다(요약 API에도). 받은 뒤 브라우저에서 다시 붙인다.
+      // 이야기 원문과 그 인용(근거)은 서버로 보내지 않는다(요약 API에도). 받은 뒤 브라우저에서 다시 붙인다.
       const storyRaw = { ...base?.storyRaw, ...(cci ? { cci } : {}) };
       const res = await fetch("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...draftProfile, storyRaw: {} }),
+        body: JSON.stringify(scrubStory({ ...draftProfile, storyRaw: {} })),
       });
-      setProfile({ ...(await res.json()), storyRaw });
+      setProfile({ ...(await res.json()), storyRaw, story: draftProfile.story ?? null });
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@
 // 로그인 안 했거나 Supabase 키가 없으면 아무것도 안 한다(앱은 브라우저 저장만으로 돈다).
 "use client";
 import { store } from "./store";
+import { scrubStory } from "./story";
 import type { Multiverse, Profile, SimEvent } from "./types";
 
 export interface SyncStatus {
@@ -39,9 +40,9 @@ export function runKey(m: Multiverse) {
 }
 
 export function localSnapshot() {
-  // 인생 이야기 원문은 이 기기에만 둔다(계정에 올리지 않음). 확인한 값(story)만 올라간다.
+  // 인생 이야기 원문은 이 기기에만 둔다(계정에 올리지 않음). 확인한 값(story)만, 근거 인용은 빼고 올라간다(scrubStory).
   const local = store.getProfile();
-  const profile = local ? { ...local, storyRaw: {} } : null;
+  const profile = local ? scrubStory({ ...local, storyRaw: {} }) : null;
   const mvs = store.getMultiverses() ?? {};
   const lines = store.getLines();
   const active = store.getActive();
@@ -54,7 +55,7 @@ export function localSnapshot() {
     chosen_line: active[m.worldId] ?? null,
     scenes: lines[m.worldId] ?? {},
   }));
-  return { profile, simulations };
+  return { profile, simulations: scrubStory(simulations) };
 }
 
 export function hasLocalResults() {

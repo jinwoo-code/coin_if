@@ -148,7 +148,7 @@ export default function ChoosePage() {
             <ChevronRight aria-hidden="true" size={16} />
           </Link>
         ) : null}
-        {!canDeepen(profile) ? (
+        {profile.depthMode !== "quick" ? (
           <Link href="/story" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
             <span>
               <strong className="font-semibold">인생 이야기</strong>
