@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 // 화면 안의 5점 척도·보기 묶음을 전부 고른다(n번째 보기)
 async function pickAll(page: Page, n: number) {
   const groups = page.locator("main [role=radiogroup]");
+  await expect(groups.first()).toBeVisible(); // 'AI가 입력 중' 뒤에 문항이 나온다
   for (let i = 0; i < (await groups.count()); i++) await groups.nth(i).getByRole("radio").nth(n).click();
 }
 
