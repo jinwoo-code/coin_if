@@ -26,7 +26,9 @@ export function WeightSources({ readiness }: { readiness: string[] }) {
                     <span className="shrink-0">{w.label}</span>
                     <span className="num ml-auto min-w-0 text-right font-semibold">{formatWeight(w)}</span>
                   </span>
-                  <span className={`block ${fit ? "text-[#0B6B4B]" : "text-muted"}`}>{fit ? `보정값 · ${w.n}명${w.ci ? ` · 95% 구간 ${w.ci[0]}~${w.ci[1]}` : ""}${w.prior !== undefined ? ` · 처음 값 ${w.prior}` : ""}` : "가정값"}</span>
+                  <span className={`block ${fit ? "text-[#0B6B4B]" : "text-muted"}`}>
+                    {fit ? `보정값 · ${w.n ? `${w.n}명` : w.note}${w.ci ? ` · 95% 구간 ${w.ci[0]}~${w.ci[1]}` : ""}${w.prior !== undefined ? ` · 처음 값 ${w.prior}` : ""}` : "가정값"}
+                  </span>
                 </li>
               );
             })}

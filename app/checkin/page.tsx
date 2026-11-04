@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
 import { CheckinMail } from "@/components/checkin-mail";
+import { FLAGS } from "@/lib/flags";
 import { Screen } from "@/components/ui";
 import { BFI_ITEMS } from "@/lib/bfi";
 import { bigFiveDiff, daysToCheckin, selfAgreement, TONE_WORD, withCorrection, withNewBigFive } from "@/lib/ongoing";
@@ -133,7 +134,7 @@ export default function CheckinPage() {
             )}
           </section>
         ) : null}
-        <CheckinMail />
+        {FLAGS.checkinMail ? <CheckinMail /> : null}
         {profile.checkins.length > 1 ? (
           <section className="card mt-4 p-5">
             <p className="label">지난 체크인</p>
@@ -171,7 +172,7 @@ export default function CheckinPage() {
             시연용: 지금 해 보기
           </button>
         </section>
-        <CheckinMail />
+        {FLAGS.checkinMail ? <CheckinMail /> : null}
       </Screen>
     );
 

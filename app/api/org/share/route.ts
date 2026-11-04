@@ -1,5 +1,6 @@
 // 상담 선생님에게 내 요약 보여 주기(본인 행만, RLS). 소속 대학이 하나라고 보고 첫 소속으로 켠다.
 import { NextResponse } from "next/server";
+import { FLAGS } from "@/lib/flags";
 import { currentUser, supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ async function orgOf() {
 }
 
 export async function GET() {
+  if (!FLAGS.counselor) return NextResponse.json({ error: "지금은 꺼져 있어요" }, { status: 404 });
   const me = await orgOf();
   if (!me) return NextResponse.json({ on: false });
   const { data, error } = await me.sb.from("counsel_shares").select("org_id").eq("student_id", me.userId).eq("org_id", me.orgId).maybeSingle();
@@ -21,6 +23,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!FLAGS.counselor) return NextResponse.json({ error: "지금은 꺼져 있어요" }, { status: 404 });
   const body = (await req.json().catch(() => null)) as { on?: boolean } | null;
   if (typeof body?.on !== "boolean") return NextResponse.json({ error: "입력이 없어요" }, { status: 400 });
   const me = await orgOf();

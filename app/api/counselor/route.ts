@@ -1,10 +1,12 @@
 // 상담사 화면. 내가 counselor인 대학의 학생 중 본인이 '보여 주기'를 켠 사람만 counselor_students로 받는다.
 import { NextResponse } from "next/server";
+import { FLAGS } from "@/lib/flags";
 import { currentUser, supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  if (!FLAGS.counselor) return NextResponse.json({ error: "지금은 꺼져 있어요" }, { status: 404 });
   const sb = supabaseServer();
   const user = await currentUser();
   if (!sb || !user) return NextResponse.json({ error: "로그인이 필요해요." }, { status: 401 });

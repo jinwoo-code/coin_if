@@ -1,7 +1,9 @@
 "use client";
 // 상담사 화면: 학생이 직접 '보여 주기'를 켠 경우에만 그 학생의 요약을 본다. 숫자는 전부 엔진 결과이고, 대화·이야기 글은 없다.
+import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Ci, Screen } from "@/components/ui";
+import { FLAGS } from "@/lib/flags";
 import { getWorld } from "@/lib/worlds";
 
 interface Sim {
@@ -34,6 +36,7 @@ const careerName = (id: string) => {
 };
 
 export default function Counselor() {
+  if (!FLAGS.counselor) notFound();
   const [list, setList] = useState<Student[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => {

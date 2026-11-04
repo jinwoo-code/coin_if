@@ -50,6 +50,12 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   expect(calls).toBe(before);
   expect((await page.locator("main").innerText()).replace(/\s/g, "").includes(text.split("어떤 갈래로")[0].replace(/\s/g, "").slice(-30))).toBeTruthy();
 
+  // 플래그가 꺼져 있으면(기본) 이어 가는 버튼이 없다. 켠 뒤 확인: NEXT_PUBLIC_FEATURE_LIVE_LINK=1 npx playwright test e2e/live.spec.ts
+  if (process.env.NEXT_PUBLIC_FEATURE_LIVE_LINK !== "1") {
+    await expect(page.getByRole("button", { name: /이 결과로 세계선 지도/ })).toHaveCount(0);
+    return;
+  }
+
   // 이 결과로 세계선 지도·대화·리포트로 이어 가기(장면은 그 삶 그대로, 다시 살기 요청 없음)
   const replays: string[] = [];
   page.on("request", (r) => {

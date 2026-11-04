@@ -10,12 +10,13 @@ import { buildWorld } from "./archetypes";
 import { withBase } from "./base";
 import { blendValueFit } from "./story";
 import type { BigFive, Fact, Interests, Profile, WorldStats, WorldTemplate } from "./types";
-import { WA } from "./weights";
+import { examChance, WA } from "./weights";
 
 // scripts/sync-jobdata.ts가 고용24에서 받아 온 사실을 진로별 근거에 더한다.
 const extra = extraFacts as Record<string, Fact[]>;
 // 사람이 사건을 하나하나 쓴 진로 4개 + 직업 목록에서 유형 틀로 만든 진로들
-const CURATED = [developer, civilServant, dataAnalyst, marketer] as unknown as WorldTemplate[];
+// 상세판 JSON의 시험 관문은 chance 대신 competition(경쟁률)을 적는다.
+const CURATED = ([developer, civilServant, dataAnalyst, marketer] as unknown as WorldTemplate[]).map((w) => ({ ...w, events: w.events.map((e) => (e.competition ? { ...e, chance: examChance(e.competition) } : e)) }));
 const GENERATED = JOBS.map((j, i) => buildWorld(j, i + 4));
 export const WORLDS: WorldTemplate[] = [...CURATED, ...GENERATED].map((w) => withBase({ ...w, facts: [...w.facts, ...(extra[w.id] ?? [])] }));
 

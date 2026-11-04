@@ -151,7 +151,7 @@ rows.forEach((r, i) => {
   const big = r.byScale.reduce((a, b) => (Math.max(Math.abs(b.worst.hire), b.worst.lines) > Math.max(Math.abs(a.worst.hire), a.worst.lines) ? b : a));
   // 잡음 대비 더 크게 넘은 쪽을 보여 준다
   const where = Math.abs(big.worst.hire) / nh.p90 >= big.worst.lines / nl.p90 ? `${big.where.hire} (${big.scale}×, 합격률)` : `${big.where.lines} (${big.scale}×, 세계선)`;
-  out.push(`| ${i + 1} | \`${r.key}\` | ${short(w.value)} | ${w.magnitude === "fitted" ? `보정값(n=${w.n})` : "가정값"} | ${cell(r, "hire")} | ${cell(r, "months")} | ${cell(r, "lines")} | ${real(r) ? where : "잡음 수준"} |`);
+  out.push(`| ${i + 1} | \`${r.key}\` | ${short(w.value)} | ${w.magnitude === "fitted" ? `보정값(${w.n ? `n=${w.n}` : w.note})` : "가정값"} | ${cell(r, "hire")} | ${cell(r, "months")} | ${cell(r, "lines")} | ${real(r) ? where : "잡음 수준"} |`);
 });
 out.push("");
 out.push("## 인물별로 가장 크게 움직이는 가중치");

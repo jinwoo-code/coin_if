@@ -1,6 +1,7 @@
 // 체크인 메일(하루 한 번, vercel.json crons). 본인이 켠 사람에게만, 차례마다 한 통. 메일에 진로 결과나 답 내용을 넣지 않는다.
 // RESEND_API_KEY가 없으면 보내지 않고 몇 명이 대상인지만 돌려준다. CRON_SECRET이 맞아야 돈다(Vercel Cron이 Bearer로 보낸다).
 import { NextResponse } from "next/server";
+import { FLAGS } from "@/lib/flags";
 import { checkinMailRef } from "@/lib/ongoing";
 import { normalizeProfile } from "@/lib/profile";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -12,6 +13,7 @@ export const maxDuration = 60;
 const MAX_PER_RUN = 100;
 
 export async function GET(req: Request) {
+  if (!FLAGS.checkinMail) return NextResponse.json({ error: "지금은 꺼져 있어요" }, { status: 404 });
   const secret = process.env.CRON_SECRET;
   if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) return NextResponse.json({ error: "권한이 없어요" }, { status: 401 });
   const admin = supabaseAdmin();

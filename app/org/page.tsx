@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Screen } from "@/components/ui";
+import { FLAGS } from "@/lib/flags";
 
 interface Org {
   name: string;
@@ -91,7 +92,7 @@ export default function OrgPage() {
           <p className="mt-1 text-2xl font-extrabold">무제한 이용 중</p>
           <p className="mt-1 text-sm text-muted">{state.org.until}까지 토큰이 줄지 않아요.</p>
           <p className="mt-3 text-cap text-muted">학교에는 학생 개인 결과가 아니라 5명 이상 모인 항목의 합계만 보여요.</p>
-          <CounselShare />
+          {FLAGS.counselor ? <CounselShare /> : null}
         </section>
       ) : (
         <form className="card mt-4 p-5" onSubmit={join}>

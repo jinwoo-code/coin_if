@@ -41,6 +41,9 @@ export function W(key: string): number {
   return k === undefined ? (w.value as number) : apply(w.kind, w.value as number, k);
 }
 
+// 시험 한 번 합격 확률 = 준비된 응시자 보정 k ÷ 경쟁률. 경쟁률이 낮으면 1을 넘으므로 엔진 상한(0.95)에서 자른다.
+export const examChance = (competition: number) => Math.min(0.95, W("exam.readyK") / competition);
+
 export function WA(key: string): number[] {
   const w = get(key);
   const k = scales.get(key);

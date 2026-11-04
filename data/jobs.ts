@@ -340,14 +340,22 @@ export const JOBS: Job[] = [
     interests: { C: 5, I: 3 },
     values: { 돈: 0.85, 자율: 0.6, 안정: 0.75 },
     hours: 48,
-    exam: { months: [12], chance: 0.1, warmup: 20, label: "세무사 시험", salary: 3595, salaryNote: "세무사 초봉은 가정값(30~299인 대졸 초임 수준)", firstPost: "세무법인에 들어갔다" },
+    exam: { months: [12], competition: 23.15, warmup: 20, label: "세무사 시험", salary: 3595, salaryNote: "세무사 초봉은 가정값(30~299인 대졸 초임 수준)", firstPost: "세무법인에 들어갔다" },
     facts: [
       {
-        label: "제62회 세무사 2차 시험",
-        value: "6,943명 응시, 728명 합격(10.48%). 1차 합격률은 못 찾아서 2차 비율만 시험 한 번 합격 확률로 씀",
+        label: "제62회 세무사 최종 합격",
+        value: "2차 6,943명 응시, 728명 합격(10.48%)",
         source: "한국산업인력공단 공고(세무사신문 보도)",
         year: "2025년 11월",
         url: "https://taxtimes.co.kr/news/article.html?no=272366",
+      },
+      {
+        label: "제63회 세무사 1차 시험",
+        value:
+          "19,962명 접수, 16,856명 응시(84.44%), 3,050명 합격. 1차 응시 16,856명 ÷ 최종 합격 728명 = 약 23.2대 1로 씀(회차가 달라 근사, 제63회 최종 합격은 원문 확인 전이라 안 씀). 시험 한 번 합격 확률 = k ÷ 경쟁률(k는 9급에서 추정, 근거 자료의 가중치 참고)",
+        source: "한국산업인력공단 발표(세무사신문 보도)",
+        year: "2026년",
+        url: "https://taxtimes.co.kr/mobile/article.html?no=275294",
       },
     ],
     tags: ["야근"],
@@ -552,11 +560,11 @@ export const JOBS: Job[] = [
     hours: 42,
     place: "학교",
     people: { boss: "교감 선생님", peer: "임용 스터디원 하", other: "옆 반 선생님", otherRole: "선배 교사" },
-    exam: { months: [2], chance: 0.45, warmup: 6, label: "초등 임용시험", salary: 3428, salaryNote: "교사 초봉은 가정값(9급 초임 수준으로 둠, 교원 봉급표 확인 필요)", firstPost: "첫 발령: 담임을 맡았다" },
+    exam: { months: [2], chance: 0.447, warmup: 6, label: "초등 임용시험", salary: 3428, salaryNote: "교사 초봉은 가정값(9급 초임 수준으로 둠, 교원 봉급표 확인 필요)", firstPost: "첫 발령: 담임을 맡았다" },
     facts: [
       {
         label: "2026학년도 경북 초등교사 경쟁률(일반)",
-        value: "2.18대 1 (294명 선발, 641명 지원). 부산 2.29대 1과 평균 내 약 2.2대 1로 씀(전국 값은 못 찾음). 시험 한 번 합격 확률은 1 ÷ 경쟁률로 정함(접수자 전부를 똑같이 본 계산이라 제대로 준비한 사람에게는 낮게 나옴)",
+        value: "2.18대 1 (294명 선발, 641명 지원, 접수 기준). 부산 2.29대 1과 평균 내 약 2.24대 1로 씀(전국 값·응시자 수는 못 찾음). 시험 한 번 합격 확률 = 1 ÷ 경쟁률. 경쟁률이 낮아 다른 시험형의 보정 k를 곱하면 한 번에 0.85가 돼서 초등만 k를 뺐음",
         source: "경북교육청 발표(경북매일 보도)",
         year: "2025년 10월",
         url: "https://kbmaeil.com/article/20251002500181",
@@ -578,11 +586,11 @@ export const JOBS: Job[] = [
     hours: 42,
     place: "학교",
     people: { boss: "교감 선생님", peer: "임용 스터디원 하", other: "같은 교과 선배 교사", otherRole: "선배 교사" },
-    exam: { months: [2], chance: 0.14, warmup: 10, label: "중등 임용시험", salary: 3428, salaryNote: "교사 초봉은 가정값(9급 초임 수준으로 둠, 교원 봉급표 확인 필요)", firstPost: "첫 발령: 교과 수업을 맡았다" },
+    exam: { months: [2], competition: 5.67, warmup: 10, label: "중등 임용시험", salary: 3428, salaryNote: "교사 초봉은 가정값(9급 초임 수준으로 둠, 교원 봉급표 확인 필요)", firstPost: "첫 발령: 교과 수업을 맡았다" },
     facts: [
       {
         label: "2026학년도 경북 공립 중등교사 경쟁률",
-        value: "5.67대 1 (365명 모집, 2,071명 지원). 대전 8.7대 1과 평균 내 약 7대 1로 씀(전국 값은 못 찾음). 시험 한 번 합격 확률은 1 ÷ 경쟁률로 정함(접수자 전부를 똑같이 본 계산이라 제대로 준비한 사람에게는 낮게 나옴)",
+        value: "5.67대 1 (365명 모집, 2,071명 지원, 접수 기준). 경북 한 곳 값이고 전국 값·응시자 수는 못 찾음. 시험 한 번 합격 확률 = k ÷ 경쟁률(k는 9급에서 추정, 근거 자료의 가중치 참고)",
         source: "경북교육청 발표",
         year: "2025년",
         url: "https://www.kjob.news/news/436070",
@@ -744,11 +752,11 @@ export const JOBS: Job[] = [
     hours: 46,
     place: "지구대",
     people: { boss: "팀장 경위 박", peer: "같은 기수 순경 오", other: "선배 경장 김", otherRole: "선배" },
-    exam: { months: [5, 11], chance: 0.1, warmup: 12, label: "순경 공채", salary: 3428, salaryNote: "순경(9급 상당) 초봉은 일반직 9급 초임으로 둔 가정값", firstPost: "지구대로 첫 발령을 받았다" },
+    exam: { months: [5, 11], competition: 9.36, warmup: 12, label: "순경 공채", salary: 3428, salaryNote: "순경(9급 상당) 초봉은 일반직 9급 초임으로 둔 가정값", firstPost: "지구대로 첫 발령을 받았다" },
     facts: [
       {
         label: "2026년 제1차 순경 공채",
-        value: "29,972명 지원, 3,202명 선발 계획, 2,941명 최종 합격(약 10대 1). 시험 한 번 합격 확률은 1 ÷ 경쟁률로 정함(접수자 전부를 똑같이 본 계산이라 제대로 준비한 사람에게는 낮게 나옴)",
+        value: "29,972명 지원, 3,202명 선발 계획, 2,941명 최종 합격(접수 기준 9.36대 1, 응시자 수는 못 찾음). 시험 한 번 합격 확률 = k ÷ 경쟁률(k는 9급에서 추정, 근거 자료의 가중치 참고)",
         source: "경찰청 발표(매일신문 보도)",
         year: "2026년 6월",
         url: "https://www.imaeil.com/page/view/2026062213382205552",
@@ -770,11 +778,18 @@ export const JOBS: Job[] = [
     hours: 46,
     place: "소방서",
     people: { boss: "팀장 소방위 이", peer: "같은 기수 소방사 정", other: "선배 소방교 문", otherRole: "선배" },
-    exam: { months: [6], chance: 0.07, warmup: 12, label: "소방공무원 공채", salary: 3428, salaryNote: "소방사(9급 상당) 초봉은 일반직 9급 초임으로 둔 가정값", firstPost: "소방서로 첫 발령을 받았다" },
+    exam: { months: [6], competition: 9.14, warmup: 12, label: "소방공무원 공채", salary: 3428, salaryNote: "소방사(9급 상당) 초봉은 일반직 9급 초임으로 둔 가정값", firstPost: "소방서로 첫 발령을 받았다" },
     facts: [
       {
-        label: "2025년 소방공무원 공채 경쟁률",
-        value: "14대 1 (906명 선발, 12,672명 지원). 시험 한 번 합격 확률은 1 ÷ 경쟁률로 정함(접수자 전부를 똑같이 본 계산이라 제대로 준비한 사람에게는 낮게 나옴)",
+        label: "2025년 소방공무원 필기 응시 경쟁률(공채·경채 합계)",
+        value: "9.14대 1 (1,927명 선발, 17,617명 응시). 공채만의 응시자 수는 못 찾아 경채까지 합친 값을 씀. 시험 한 번 합격 확률 = k ÷ 경쟁률(k는 9급에서 추정, 근거 자료의 가중치 참고)",
+        source: "소방청 발표(뉴시스 보도)",
+        year: "2025년 4월",
+        url: "https://mobile.newsis.com/view/NISX20250424_0003152317",
+      },
+      {
+        label: "2025년 소방공무원 공채 접수 경쟁률(참고)",
+        value: "14대 1 (906명 선발, 12,672명 지원)",
         source: "소방청 발표(소방방재신문 보도)",
         year: "2025년 3월",
         url: "https://www.fpn119.co.kr/232112",

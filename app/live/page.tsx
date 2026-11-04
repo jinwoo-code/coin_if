@@ -10,6 +10,7 @@ import { LIVE_RUNS, liveMultiverse, liveSummary } from "@/lib/live";
 import { gateLabel } from "@/lib/multiverse";
 import { choiceLine, scenesOf } from "@/lib/scenes";
 import { store, type LiveRun } from "@/lib/store";
+import { FLAGS } from "@/lib/flags";
 import { scrubStory } from "@/lib/story";
 import type { Multiverse, Path, Profile, Selection, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
@@ -171,6 +172,7 @@ export default function LivePage() {
     store.setLive(next);
     setRun(next);
     setState("done");
+    if (!FLAGS.liveRefund) return;
     // AI가 판단하지 못한 몫의 토큰을 돌려준다(로그인 안 했거나 대학 계약이면 뺀 게 없어서 0)
     fetch("/api/live/refund", {
       method: "POST",
@@ -221,7 +223,7 @@ export default function LivePage() {
       back="/choose"
       footer={
         <div className="flex flex-col gap-2">
-          {finished ? (
+          {finished && FLAGS.liveLink ? (
             <button className="btn-primary w-full" onClick={continueWith}>
               이 결과로 세계선 지도·대화·리포트 보기
             </button>
@@ -252,7 +254,7 @@ export default function LivePage() {
         </p>
         {tier === "free" && !finished ? <p className="mt-2 text-cap text-muted">무료 키라 오래 걸리고 한도에 걸릴 수 있어요.</p> : null}
         {message ? <p className="mt-2 text-sm">{message}</p> : null}
-        {finished ? <p className="mt-2 text-cap text-muted">세계선 지도로 가면 지금 있는 기본 모드 결과는 이 결과로 바뀌어요.</p> : null}
+        {finished && FLAGS.liveLink ? <p className="mt-2 text-cap text-muted">세계선 지도로 가면 지금 있는 기본 모드 결과는 이 결과로 바뀌어요.</p> : null}
         {state === "failed" && !finished ? (
           <div className="mt-3">
             <p className="text-sm">AI가 답을 못 줬어요. 한도에 걸렸을 수 있어요. 나중에 이어서 할 수 있어요.</p>

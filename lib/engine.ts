@@ -8,7 +8,7 @@ import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./
 import norms from "@/data/norms.json";
 import { judgeFailed, judgeFor, type JudgeEntry } from "./judge";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
-import { W, WA } from "./weights";
+import { examChance, W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
 
 // ---------- 작은 도구들 ----------
@@ -442,7 +442,8 @@ function weightedPick<T>(items: T[], weightOf: (x: T) => number, rand: () => num
 
 function gateChance(e: EventCard, p: Profile, sim: Sim, world: WorldTemplate, month: number) {
   if ((e.chance ?? 0) >= 1) return 1; // 반드시 일어나는 일(시작, 불합격 통보 등)
-  let pr = (e.chance ?? 0) * factorMult(p, world, e.factors);
+  // 시험은 k ÷ 경쟁률. 민감도 분석이 k를 바꿀 수 있게 여기서 읽는다.
+  let pr = (e.competition ? examChance(e.competition) : (e.chance ?? 0)) * factorMult(p, world, e.factors);
   if (e.warmup) pr *= Math.min(1, (month + 1) / e.warmup);
   // 준비가 쌓일수록(역량) 조금씩 유리해진다.
   pr *= clamp(0.55 + sim.state.skill / 90, 0.55, 1.5);

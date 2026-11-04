@@ -203,6 +203,7 @@ export interface EventCard {
   minTenure?: number; // 지금 직장에서 이만큼(개월) 다닌 뒤에만
   maxTenure?: number; // 지금 직장에서 이만큼(개월) 안에만(예: 첫 실수는 신입 때)
   repeatable?: boolean; // 여러 번 일어나도 되는 일상 사건
+  competition?: number; // 시험 관문의 경쟁률. 있으면 확률은 k ÷ 경쟁률(lib/weights.ts examChance)
   chance?: number; // 관문(합격·취업): 조건이 되면 이 확률로 굴린다(한 달 기준, calendar가 있으면 그 달 한 번)
   factors?: FactorKey[]; // 관문 확률에 곱하는 개인 요인
   warmup?: number; // 준비를 시작하고 이 개월 수가 지나야 확률이 온전히 적용됨(그 전엔 비례해서 낮음)
