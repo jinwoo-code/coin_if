@@ -5,9 +5,11 @@ import { Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ChoiceItem } from "@/components/scale";
+import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
+import { CheckinMail } from "@/components/checkin-mail";
 import { Screen } from "@/components/ui";
-import { daysToCheckin, selfAgreement, TONE_WORD, withCorrection } from "@/lib/ongoing";
+import { BFI_ITEMS } from "@/lib/bfi";
+import { bigFiveDiff, daysToCheckin, selfAgreement, TONE_WORD, withCorrection, withNewBigFive } from "@/lib/ongoing";
 import { store } from "@/lib/store";
 import { SJT } from "@/lib/tests";
 import { twinScore } from "@/lib/twin";
@@ -27,6 +29,9 @@ export default function CheckinPage() {
   const [picks, setPicks] = useState<Record<string, number>>({});
   const [real, setReal] = useState<Tone | "none" | null>(null);
   const [done, setDone] = useState<Checkin | null>(null);
+  const [askBfi, setAskBfi] = useState(false);
+  const [bfi, setBfi] = useState<Record<number, number>>({});
+  const [applied, setApplied] = useState(false);
 
   useEffect(() => {
     const p = store.getProfile();
@@ -38,11 +43,12 @@ export default function CheckinPage() {
   const items = SJT.filter((q) => profile.holdoutPicks[q.id] !== undefined);
   const days = daysToCheckin(profile);
   const due = days === null || days <= 0;
-  const ready = items.every((q) => picks[q.id] !== undefined) && real !== null;
+  const bfiLeft = askBfi ? BFI_ITEMS.filter((i) => bfi[i.id] === undefined).length : 0;
+  const ready = items.every((q) => picks[q.id] !== undefined) && real !== null && !bfiLeft;
 
   function save() {
     if (!profile || !ready || real === null) return;
-    const c: Checkin = { at: new Date().toISOString(), picks, real, demo: !due };
+    const c: Checkin = { at: new Date().toISOString(), picks, real, demo: !due, ...(askBfi ? { bfi10: bfi } : {}) };
     let next: Profile = { ...profile, checkins: [...profile.checkins, c] };
     if (real !== "none") next = withCorrection(next, { source: "checkin", eventId: `checkin:${c.at.slice(0, 10)}`, title: "한 달 체크인: 실제로 한 선택", from: null, to: real });
     store.setProfile(next);
@@ -61,6 +67,7 @@ export default function CheckinPage() {
   if (done) {
     const self = selfAgreement(profile, done);
     const twin = twinScore(profile);
+    const diff = done.bfi10 ? bigFiveDiff(profile, done.bfi10) : null;
     return (
       <Screen
         title="한 달 체크인"
@@ -92,6 +99,41 @@ export default function CheckinPage() {
           {done.real !== "none" ? <p className="mt-2 text-sm">지난 한 달 실제로 {TONE_WORD[done.real]}을 골랐어요. 다음에 살아볼 때부터 분신도 그쪽으로 조금 더 기울어요.</p> : null}
           <p className="mt-2 text-cap text-muted">문항이 적어서 우연이 크게 섞여요. 체크인이 쌓일수록 믿을 만해져요.</p>
         </section>
+        {diff ? (
+          <section className="card mt-4 p-5" aria-label="성격 다시 재기">
+            <p className="label">성격 10문항, 지난번과 비교</p>
+            <ul className="num mt-3 flex flex-col gap-1.5 text-sm">
+              {diff.map((d) => (
+                <li key={d.key} className="flex justify-between gap-2">
+                  <span>{d.label}</span>
+                  <span>
+                    {d.before.toFixed(1)} → {d.after.toFixed(1)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-sm">성격은 한 달 만에 크게 안 바뀌어요. 달라 보여도 그날 기분이나 문항이 적어서일 수 있어요. 그래서 자동으로 바꾸지 않아요.</p>
+            {applied ? (
+              <p role="status" className="mt-3 text-sm font-semibold">
+                바꿨어요. 다음에 살아볼 때부터 반영돼요.
+              </p>
+            ) : (
+              <button
+                type="button"
+                className="btn-ghost mt-3 w-full"
+                onClick={() => {
+                  const next = withNewBigFive(profile, done.bfi10!);
+                  store.setProfile(next);
+                  setProfile(next);
+                  setApplied(true);
+                }}
+              >
+                이 차이만큼 내 성격 값 바꾸기
+              </button>
+            )}
+          </section>
+        ) : null}
+        <CheckinMail />
         {profile.checkins.length > 1 ? (
           <section className="card mt-4 p-5">
             <p className="label">지난 체크인</p>
@@ -129,6 +171,7 @@ export default function CheckinPage() {
             시연용: 지금 해 보기
           </button>
         </section>
+        <CheckinMail />
       </Screen>
     );
 
@@ -138,7 +181,7 @@ export default function CheckinPage() {
       back="/choose"
       footer={
         <button className="btn-primary w-full" disabled={!ready} onClick={save}>
-          {ready ? "저장" : `${items.filter((q) => picks[q.id] === undefined).length + (real === null ? 1 : 0)}문항 남았어요`}
+          {ready ? "저장" : `${items.filter((q) => picks[q.id] === undefined).length + (real === null ? 1 : 0) + bfiLeft}문항 남았어요`}
         </button>
       }
     >
@@ -169,6 +212,24 @@ export default function CheckinPage() {
           </div>
         </li>
       </ol>
+      {askBfi ? (
+        <section className="mt-6" aria-label="성격 10문항">
+          <h2 className="text-base font-bold">성격 10문항</h2>
+          <ScaleEnds />
+          <ol>
+            {BFI_ITEMS.map((item, i) => (
+              <ScaleRow key={item.id} id={`ci-bfi-${item.id}`} n={i + 1} text={item.text} value={bfi[item.id]} onPick={(v) => setBfi((cur) => ({ ...cur, [item.id]: v }))} />
+            ))}
+          </ol>
+          <button type="button" className="btn-ghost mt-2 w-full" onClick={() => setAskBfi(false)}>
+            성격 문항은 빼기
+          </button>
+        </section>
+      ) : (
+        <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setAskBfi(true)}>
+          성격 10문항도 다시 답하기(선택, 약 1분)
+        </button>
+      )}
     </Screen>
   );
 }

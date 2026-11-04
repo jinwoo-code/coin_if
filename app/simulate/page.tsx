@@ -95,6 +95,15 @@ function EventCard({ ev, world, current, mv }: { ev: SimEvent; world: WorldTempl
       ) : null}
       <h3 className={`text-[15px] font-bold leading-snug ${quiet ? "text-muted" : ""}`}>{ev.title}</h3>
       <p className="mt-1.5 text-sm text-muted">{ev.narration}</p>
+      {ev.reactions?.length ? (
+        <ul className="mt-2 space-y-1 text-cap text-muted">
+          {ev.reactions.map((r) => (
+            <li key={r.name}>
+              <b className="font-semibold">{r.name}</b> &quot;{r.line}&quot;
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {ev.choice ? (
         <p className="mt-2 flex gap-1.5 text-sm font-medium">
           <CornerDownRight aria-hidden="true" size={16} className="mt-[3px] flex-none" style={{ color: world.color }} />

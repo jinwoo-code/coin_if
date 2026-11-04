@@ -6,11 +6,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Ci, Odds, Screen } from "@/components/ui";
 import { durationLabel } from "@/lib/calendar";
 import { keyTier, loadRun, replayAll, runLive, type LiveStop } from "@/lib/live-client";
-import { LIVE_RUNS, liveSummary } from "@/lib/live";
+import { LIVE_RUNS, liveMultiverse, liveSummary } from "@/lib/live";
 import { gateLabel } from "@/lib/multiverse";
 import { choiceLine, scenesOf } from "@/lib/scenes";
 import { store, type LiveRun } from "@/lib/store";
-import type { Path, Profile, Selection, WorldTemplate } from "@/lib/types";
+import { scrubStory } from "@/lib/story";
+import type { Multiverse, Path, Profile, Selection, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
 const monthsText = (m: number | null) => (m === null ? "" : m < 12 ? `보통 ${m}개월 뒤` : `보통 ${Math.floor(m / 12)}년${m % 12 ? ` ${m % 12}개월` : ""} 뒤`);
@@ -170,6 +171,34 @@ export default function LivePage() {
     store.setLive(next);
     setRun(next);
     setState("done");
+    // AI가 판단하지 못한 몫의 토큰을 돌려준다(로그인 안 했거나 대학 계약이면 뺀 게 없어서 0)
+    fetch("/api/live/refund", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: run.key, profile: scrubStory({ ...profile, storyRaw: {}, judges: {} }), worldIds: sel.worldIds, months: sel.months, startYm: sel.startYm }),
+    })
+      .then((r) => r.json())
+      .then((b: { refunded?: number }) => {
+        if (!b.refunded) return;
+        setMessage(`AI가 판단하지 못한 몫으로 토큰 ${b.refunded}개를 돌려줬어요.`);
+        window.dispatchEvent(new Event("cr:tokens"));
+      })
+      .catch(() => undefined);
+  }
+  // 세계선 지도·대화·리포트는 저장된 결과를 읽는다. 이 결과로 바꿔 넣고 그쪽으로 간다(장면은 그 삶 그대로).
+  function continueWith() {
+    if (!profile || !sel || !lives) return;
+    store.clearResults();
+    const mvs: Record<string, Multiverse> = {};
+    for (const id of sel.worldIds) {
+      const { mv, scenes } = liveMultiverse(profile, getWorld(id), sel.months, sel.startYm, lives.done[id] ?? []);
+      mvs[id] = mv;
+      for (const [lineId, evs] of Object.entries(scenes)) store.setLine(id, lineId, evs);
+      const main = mv.lines.find((l) => l.isMain) ?? mv.lines[0];
+      if (main) store.setActive(id, main.id);
+    }
+    store.setMultiverses(mvs);
+    router.push(`/multiverse?world=${sel.worldIds[0]}`);
   }
   function basicMode() {
     if (!sel) return;
@@ -191,9 +220,16 @@ export default function LivePage() {
       title="실시간 판단 모드"
       back="/choose"
       footer={
-        <button className="btn-secondary w-full" onClick={basicMode}>
-          기본 모드로 1,000번 살아보기
-        </button>
+        <div className="flex flex-col gap-2">
+          {finished ? (
+            <button className="btn-primary w-full" onClick={continueWith}>
+              이 결과로 세계선 지도·대화·리포트 보기
+            </button>
+          ) : null}
+          <button className="btn-secondary w-full" onClick={basicMode}>
+            기본 모드로 1,000번 살아보기
+          </button>
+        </div>
       }
     >
       <p className="mt-2 text-sm text-muted">
@@ -215,7 +251,8 @@ export default function LivePage() {
           {lives.doneCount}/{lives.total}번 끝 · 창을 닫아도 여기까지 저장돼요
         </p>
         {tier === "free" && !finished ? <p className="mt-2 text-cap text-muted">무료 키라 오래 걸리고 한도에 걸릴 수 있어요.</p> : null}
-        {state === "denied" ? <p className="mt-2 text-sm">{message}</p> : null}
+        {message ? <p className="mt-2 text-sm">{message}</p> : null}
+        {finished ? <p className="mt-2 text-cap text-muted">세계선 지도로 가면 지금 있는 기본 모드 결과는 이 결과로 바뀌어요.</p> : null}
         {state === "failed" && !finished ? (
           <div className="mt-3">
             <p className="text-sm">AI가 답을 못 줬어요. 한도에 걸렸을 수 있어요. 나중에 이어서 할 수 있어요.</p>

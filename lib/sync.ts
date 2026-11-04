@@ -46,15 +46,18 @@ export function localSnapshot() {
   const mvs = store.getMultiverses() ?? {};
   const lines = store.getLines();
   const active = store.getActive();
-  const simulations: SimRow[] = Object.values(mvs).map((m) => ({
-    run_key: runKey(m),
-    career: m.worldId,
-    months: m.months,
-    start_month: m.startYm,
-    summary: m,
-    chosen_line: active[m.worldId] ?? null,
-    scenes: lines[m.worldId] ?? {},
-  }));
+  // 실시간 판단 결과는 이 기기에만 둔다(30번이라 대학 집계에 섞지 않는다)
+  const simulations: SimRow[] = Object.values(mvs)
+    .filter((m) => !m.live)
+    .map((m) => ({
+      run_key: runKey(m),
+      career: m.worldId,
+      months: m.months,
+      start_month: m.startYm,
+      summary: m,
+      chosen_line: active[m.worldId] ?? null,
+      scenes: lines[m.worldId] ?? {},
+    }));
   return { profile, simulations: scrubStory(simulations) };
 }
 

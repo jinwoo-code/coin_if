@@ -59,8 +59,18 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.getByRole("link", { name: /한 달 체크인/ }).click();
   await page.getByRole("button", { name: "시연용: 지금 해 보기" }).click();
   await pickAll(page, 0);
+  await page.getByRole("button", { name: /성격 10문항도 다시 답하기/ }).click();
+  await expect(page.getByRole("button", { name: /10문항 남았어요/ })).toBeDisabled();
+  await page.getByRole("button", { name: "성격 문항은 빼기" }).click();
+  await page.getByRole("button", { name: /성격 10문항도 다시 답하기/ }).click();
+  await pickAll(page, 0);
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("3개 중 3개").first()).toBeVisible();
+  await expect(page.getByText("성격 10문항, 지난번과 비교")).toBeVisible();
+  const big = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v9:profile") ?? "null").bigFive);
+  await page.getByRole("button", { name: "이 차이만큼 내 성격 값 바꾸기" }).click();
+  await expect(page.getByText(/바꿨어요/)).toBeVisible();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v9:profile") ?? "null").bigFive)).not.toEqual(big);
   const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v9:profile") ?? "null"));
   expect(after.checkins).toHaveLength(1);
   expect(after.checkins[0].demo).toBe(true);

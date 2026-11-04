@@ -4,7 +4,7 @@ import { CalendarPlus, Check, Copy, Lock, Printer } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
+import { Ci, LineBadge, LiveNotice, RangeRow, Screen, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -400,7 +400,9 @@ export default function ReportPage() {
               <h2 id="fit" className="text-xl font-bold">
                 내 가치관과 얼마나 맞았을까
               </h2>
-              <p className="mt-1 text-sm text-muted">{profile.values.join(" > ")} 순서의 가치관, 성격, 그리고 1,000번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요. 정답이 아니라 비교용 점수예요.</p>
+              <p className="mt-1 text-sm text-muted">
+                {profile.values.join(" > ")} 순서의 가치관, 성격, 그리고 {times(Object.values(mvs)[0]?.stats.runs ?? 0)}번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요. 정답이 아니라 비교용 점수예요.
+              </p>
               <ul className="mt-5 flex flex-col gap-4">
                 {report.worlds.map((w) => {
                   const world = getWorld(w.worldId);
@@ -427,9 +429,10 @@ export default function ReportPage() {
 
             <section aria-labelledby="hundred">
               <h2 id="hundred" className="text-xl font-bold">
-                1,000번 살아본 결과
+                {times(Object.values(mvs)[0]?.stats.runs ?? 0)}번 살아본 결과
               </h2>
-              <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 1,000번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
+              <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 {times(Object.values(mvs)[0]?.stats.runs ?? 0)}번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
+              {Object.values(mvs)[0]?.live ? <LiveNotice /> : null}
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
               </div>

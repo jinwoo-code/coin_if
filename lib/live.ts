@@ -1,10 +1,11 @@
 // 실시간 판단 모드(docs/선택-설계-근거.md '두 가지 시뮬레이션 모드'): 삶을 하나씩 살면서, 큰 갈림길에 닿을 때마다 그때 상황으로 AI에게 묻는다.
 // 엔진은 멈출 수 없어서, 판단이 없으면 LivePause를 던지고 판단을 받은 뒤 처음부터 다시 돈다. 시드가 같아서 앞부분은 똑같이 되풀이된다.
 // 그래서 받은 판단만 저장해 두면 창을 닫았다 열어도 이어지고, 다시 열면 같은 인생이 나온다. 브라우저·서버·스크립트 모두에서 돈다.
-import { keyLabel, isSatisfied, seedFor, statsOf } from "./multiverse";
+import { keyLabel, isSatisfied, multiverseOf, seedFor, statsOf } from "./multiverse";
 import { simulatePath, type LiveCtx } from "./engine";
 import { JUDGE_PROMPT_VERSION, judgeForks, type JudgeEntry } from "./judge";
-import type { EventCard, Path, Profile, WorldStats, WorldTemplate } from "./types";
+import { scenesOf } from "./scenes";
+import type { EventCard, Multiverse, Path, Profile, SimEvent, WorldStats, WorldTemplate } from "./types";
 
 export const LIVE_RUNS = 30; // 팀장 결정(2026-11-04). 50% 결과의 95% 구간이 ±18%p라 화면은 횟수로 보여 준다.
 
@@ -38,7 +39,7 @@ export function liveLife(p: Profile, world: WorldTemplate, months: number, start
 
 // 이 입력의 실행을 가리키는 이름. 입력이 하나라도 바뀌면 처음부터. 판단 캐시·이야기 원문은 넣지 않는다.
 export function liveRunKey(p: Profile, worldIds: string[], months: number, startYm: string) {
-  const src = JSON.stringify([{ ...p, judges: undefined, storyRaw: undefined }, worldIds, months, startYm, LIVE_RUNS, JUDGE_PROMPT_VERSION]);
+  const src = JSON.stringify([{ ...p, judges: undefined, storyRaw: undefined, checkinMail: undefined }, worldIds, months, startYm, LIVE_RUNS, JUDGE_PROMPT_VERSION]);
   let h = 0x811c9dc5;
   for (let i = 0; i < src.length; i++) {
     h ^= src.charCodeAt(i);
@@ -90,4 +91,32 @@ export function liveSummary(p: Profile, world: WorldTemplate, lives: { run: numb
     rule: picks.length - ai,
     stats: statsOf(p, world, paths),
   };
+}
+
+// 끝난 실시간 판단을 세계선 지도·대화·리포트로 잇는다. 장면은 그 삶을 그대로 쓴다(/api/line은 규칙으로 다시 살아서 다른 인생이 된다).
+export function liveMultiverse(p: Profile, world: WorldTemplate, months: number, startYm: string, lives: { run: number; path: Path }[]) {
+  const paths = lives.map((l) => l.path);
+  const mv: Multiverse = { ...multiverseOf(p, world, months, startYm, paths, 2), live: true };
+  const scenes: Record<string, SimEvent[]> = {};
+  for (const line of mv.lines) {
+    const path = paths.find((x) => x.seed === line.repSeed);
+    if (path) scenes[line.id] = scenesOf(world, path, line.id, months, startYm, mv.stats);
+  }
+  return { mv, scenes };
+}
+
+// 규칙으로 끝까지 살 때 만나는 큰 갈림길 수. 환불 계산의 전체 수(AI로 살았을 때와 조금 다를 수 있다).
+export function liveForkCount(p: Profile, world: WorldTemplate, months: number, startYm: string) {
+  const forks = new Set(judgeForks(world).map((e) => e.id));
+  let n = 0;
+  for (let run = 0; run < LIVE_RUNS; run++) {
+    n += liveLife(p, world, months, startYm, run, {}, true).months.filter((m) => m.event && forks.has(m.event.id)).length;
+  }
+  return n;
+}
+
+// AI가 판단하지 못한 몫만큼 돌려준다(내림). AI 호출 수에는 재요청이 섞여 있어 조금 적게 돌려줄 수 있다.
+export function liveRefundTokens(cost: number, aiCalls: number, total: number) {
+  if (cost <= 0 || total <= 0) return 0;
+  return Math.floor(cost * Math.max(0, 1 - aiCalls / total));
 }

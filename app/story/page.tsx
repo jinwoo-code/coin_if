@@ -12,6 +12,7 @@ import type { Profile } from "@/lib/types";
 export default function StoryPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [redo, setRedo] = useState<string | null>(null);
 
   useEffect(() => {
     const p = store.getProfile();
@@ -21,6 +22,15 @@ export default function StoryPage() {
 
   if (!profile) return null;
   const done = chaptersDone(profile);
+  function restart(id: string) {
+    if (!profile) return;
+    const { [id]: _gone, ...rest } = profile.storyRaw;
+    const next = { ...profile, storyRaw: rest };
+    store.setProfile(next);
+    setProfile(next);
+    setRedo(null);
+    router.push(`/story/${id}`);
+  }
   return (
     <Screen
       title="인생 이야기"
@@ -59,6 +69,25 @@ export default function StoryPage() {
                   <ChevronRight aria-hidden="true" size={16} />
                 </span>
               </Link>
+              {finished ? (
+                redo === c.id ? (
+                  <div className="mt-1 rounded-2xl border border-hair bg-surface p-3">
+                    <p className="text-sm">이 장에 쓴 글을 지우고 처음부터 다시 해요. 이미 확인한 값은 다시 확인할 때까지 남아 있고, 같은 칸이면 새 값으로 바뀌어요.</p>
+                    <div className="mt-2 flex gap-2">
+                      <button type="button" className="btn-primary flex-1" onClick={() => restart(c.id)}>
+                        지우고 다시 하기
+                      </button>
+                      <button type="button" className="btn-ghost flex-1" onClick={() => setRedo(null)}>
+                        그대로 두기
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" className="mt-1 min-h-[44px] px-2 text-cap font-semibold text-muted underline underline-offset-2" onClick={() => setRedo(c.id)}>
+                    {c.title} 다시 하기
+                  </button>
+                )
+              ) : null}
             </li>
           );
         })}

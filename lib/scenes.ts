@@ -58,6 +58,7 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
             ...(b.grade === "assumed" ? {} : { ref: b.ref, n: b.n, population: b.population?.label }),
             otherGroup: k.otherGroup,
             byAi: k.byAi,
+            stress: Math.round(k.stress),
             aiFailed: k.aiFailed || undefined,
             forced: k.forced || undefined,
             situation: k.situation,

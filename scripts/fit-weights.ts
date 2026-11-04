@@ -23,7 +23,8 @@
 //   - 검사 문항은 평소 상태(스트레스 50)로 본다. 파일럿 문항 중 '지친 상황'을 전제한 문항은 그 문항의 stress로 계산해서 상태 가중치(state.*)도 정할 수 있다
 //     (stress 값 자체는 팀이 정한 가정값). 온도(decide.temperature)는 가중치 전체 크기와 구분이 안 돼서 고정한다.
 //   - 엔진이 음수 무게를 버리므로 추정도 0 이상으로 제한한다. 0에 걸린 가중치는 제한 없이 추정한 값·구간도 같이 보여 준다(음수면 '방향 반대 가능').
-//   - 고친 선택(correction.*)은 그 순간의 상태를 저장하지 않아서 아직 안 쓴다. 체크인 다시 답은 같은 문항 반복이라 안 쓴다.
+//   - 고친 선택은 --corrections를 줄 때만 쓴다(고른 tone·그때 스트레스를 저장한 기록만). 기본으로 안 쓰는 까닭: 분신과 생각이 다를 때만 남는 기록이라, 넣으면 분신과 반대인 쪽으로 치우친다.
+//     체크인 다시 답은 같은 문항 반복이라 안 쓴다.
 import { readFileSync, writeFileSync } from "node:fs";
 import { ruleProbs, seededRandom, toneScores } from "../lib/engine";
 import { normalizeProfile } from "../lib/profile";
@@ -46,6 +47,7 @@ const SELFTEST = args.includes("--selftest") ? flag("--selftest", 300) : 0;
 const ITEMS = flag("--items", 6);
 const REPS = flag("--reps", 1);
 const WITH_PILOT = args.includes("--pilot");
+const WITH_CORRECTIONS = args.includes("--corrections");
 const file = args.find((a, i) => !a.startsWith("--") && !args[i - 1]?.startsWith("--"));
 
 const TONES: Tone[] = ["push", "change", "safe"];
@@ -86,10 +88,17 @@ function features(p: Profile, state: LifeState): Feat {
 
 function toPerson(p: Profile): Person | null {
   const cache = new Map<number, Feat>();
-  const obs = ITEMS_ALL.filter((q) => p.holdoutPicks[q.id] !== undefined && q.tones[p.holdoutPicks[q.id]] !== undefined).map((q) => {
-    if (!cache.has(q.stress)) cache.set(q.stress, features(p, stateOf(q.stress)));
-    return { ...cache.get(q.stress)!, tones: q.tones, pick: p.holdoutPicks[q.id] };
-  });
+  const featOf = (stress: number) => {
+    if (!cache.has(stress)) cache.set(stress, features(p, stateOf(stress)));
+    return cache.get(stress)!;
+  };
+  const obs: Obs[] = ITEMS_ALL.filter((q) => p.holdoutPicks[q.id] !== undefined && q.tones[p.holdoutPicks[q.id]] !== undefined).map((q) => ({ ...featOf(q.stress), tones: q.tones, pick: p.holdoutPicks[q.id] }));
+  if (WITH_CORRECTIONS) {
+    for (const c of p.corrections) {
+      if (c.source !== "sim" || c.stress === undefined || !c.tones || !c.tones.includes(c.to)) continue;
+      obs.push({ ...featOf(c.stress), tones: c.tones, pick: c.tones.indexOf(c.to) });
+    }
+  }
   return obs.length ? obs : null;
 }
 
@@ -276,6 +285,7 @@ function analyse(profiles: Profile[]) {
 }
 
 // ---------- 실행 ----------
+if (WITH_CORRECTIONS) console.log("고친 선택을 넣었어요. 분신과 다를 때만 남는 기록이라 결과가 분신 반대쪽으로 치우쳐요. 비교용으로만 보세요(--apply 하지 마세요).");
 const label = SELFTEST ? `가상 응답자 ${SELFTEST}명, 1인당 채점용 ${ITEMS}문항${WITH_PILOT ? ` + 파일럿 ${PILOT_SJT.length}문항` : ""}(참값을 아는 자체 확인)` : `입력 ${file}`;
 
 if (SELFTEST && REPS > 1) {

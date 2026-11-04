@@ -230,9 +230,14 @@ function lineTitle(world: WorldTemplate, trail: LineNode[], hasKids: boolean, ra
 
 export function buildMultiverse(p: Profile, world: WorldTemplate, months: number, startYm: string): { mv: Multiverse; paths: Path[] } {
   const paths = runAll(p, world, months, startYm);
+  return { mv: multiverseOf(p, world, months, startYm, paths), paths };
+}
+
+// 살아본 삶들로 세계선 나무와 세계선 목록을 만든다. minCount: '드물다'의 처음 기준(기본은 5번 또는 5%. 실시간 판단 30번은 2번).
+export function multiverseOf(p: Profile, world: WorldTemplate, months: number, startYm: string, paths: Path[], minCount = Math.max(5, Math.round(paths.length * 0.05))): Multiverse {
   const raw = buildRaw(paths);
   // 세계선이 너무 많아지지 않을 때까지 '드물다'의 기준을 올린다(최소 5%).
-  let min = Math.max(5, Math.round(paths.length * 0.05));
+  let min = minCount;
   let built = prune(raw, min, world);
   const countLines = (b: typeof built) => flatten(b.node).filter((x) => (b.ends.get(x.node.id)?.length ?? 0) >= min).length;
   while (countLines(built) > MAX_LINES && min < paths.length) {
@@ -271,7 +276,7 @@ export function buildMultiverse(p: Profile, world: WorldTemplate, months: number
   if (main) main.isMain = true;
   lines.sort((a, b) => Number(b.isMain) - Number(a.isMain) || b.count - a.count);
 
-  return { mv: { worldId: world.id, months, startYm, stats: statsOf(p, world, paths), tree, lines }, paths };
+  return { worldId: world.id, months, startYm, stats: statsOf(p, world, paths), tree, lines };
 }
 
 // 세계선 하나의 대표 회차를 다시 굴린다(같은 시드 → 같은 결과)

@@ -39,4 +39,12 @@ test("인생 이야기 한 장", async ({ page }) => {
   expect(p.storyRaw.decisions.done).toBe("1");
   expect(p.story.regretType.value).toBe("inaction");
   expect(others.filter((b) => b.includes(SECRET)).map((b) => b.split(" ")[0])).toEqual([]);
+
+  // 끝낸 장 다시 하기: 쓴 글만 지우고 처음부터. 확인한 값은 다시 확인할 때까지 남는다
+  await page.getByRole("button", { name: /큰 결정과 후회 다시 하기/ }).click();
+  await page.getByRole("button", { name: "지우고 다시 하기" }).click();
+  await expect(page).toHaveURL(/\/story\/decisions/);
+  const q = await savedProfile(page);
+  expect(q.storyRaw.decisions).toBeUndefined();
+  expect(q.story.regretType.value).toBe("inaction");
 });

@@ -39,10 +39,10 @@ export async function spend(feature: Feature, key: string | null, opts: { requir
 }
 
 // 서버 쪽 실패로 결과를 못 줬을 때 돌려준다(반대 금액 행을 더한다. 원장은 고치지 않는다).
-export async function refund(userId: string, feature: Feature, ref: string) {
+export async function refund(userId: string, feature: Feature, ref: string, amount: number = COSTS[feature]) {
   await supabaseAdmin()
     ?.from("token_ledger")
-    .insert({ user_id: userId, amount: COSTS[feature], reason: "refund", ref: `refund:${ref}` })
+    .insert({ user_id: userId, amount, reason: "refund", ref: `refund:${ref}` })
     .then(({ error }) => error && console.error("[환불 실패]", error.message));
 }
 

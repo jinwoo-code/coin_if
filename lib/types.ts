@@ -115,6 +115,7 @@ export interface Profile {
   // 시뮬레이션에서 '나라면 이렇게 안 해'로 고친 선택, 체크인에서 말한 실제 선택. 엔진 pushes가 tone 무게에 더한다.
   corrections: Correction[];
   checkins: Checkin[];
+  checkinMail?: boolean; // 체크인 때가 되면 메일 받기(본인이 켠 경우만)
   // 파일럿(lib/pilot.ts): 파일럿 동의 판·때, 빠진 때. 파일럿 답은 holdoutPicks의 p1~p20.
   pilot: { version: string; consentAt: string; withdrawnAt: string | null } | null;
   // AI 분신 판단 캐시(lib/judge.ts). 큰 갈림길 × 상황 칸마다 보기별 확률·이유. 키에 프로필 해시가 있어 프로필이 바뀌면 안 쓰인다.
@@ -259,6 +260,7 @@ export interface PickInfo {
   byAi: boolean; // 내 확률이 AI 분신 판단에서 왔는지(아니면 규칙 기울기)
   aiFailed: boolean; // AI 판단을 받으려다 실패해서 규칙 기울기로 처리됨
   forced: boolean; // '여기서 다르게 골랐다면'으로 강제한 선택
+  stress: number; // 고를 때의 스트레스(고친 선택을 가중치 보정에 쓸 때 필요)
   situation?: string; // 지금 상태 때문에 이쪽으로 민 이유(예: 스트레스가 많이 쌓여 있어서)
   shift?: string; // AI가 쓴, 보통 사람과 비교해 어느 쪽으로 기우는지
   otherGroup?: string; // 통계 대상 집단과 다르거나 확인할 수 없을 때 그 까닭
@@ -329,6 +331,7 @@ export interface ChoiceOdds {
   byAi: boolean;
   aiFailed?: boolean;
   forced?: boolean;
+  stress?: number; // 고를 때의 스트레스
   situation?: string;
   shift?: string;
 }
@@ -358,6 +361,7 @@ export interface SimEvent {
   routine: boolean;
   branch?: "luck" | "choice";
   minor: string[]; // 같은 역의 작은 일들
+  reactions?: { name: string; role: string; line: string }[]; // 등장인물이 따로 말한 한마디(NPC_AGENTS=1일 때, 문장뿐)
 }
 
 export interface FactorNote {
@@ -395,6 +399,7 @@ export interface Multiverse {
   stats: WorldStats;
   tree: LineNode;
   lines: Line[];
+  live?: boolean; // 실시간 판단 모드 결과(30번). 계정에 안 올리고, 세계선 다시 살기·갈림길 바꾸기를 안 쓴다
 }
 
 export interface Selection {
@@ -445,6 +450,8 @@ export interface Correction {
   title: string;
   from: Tone | null; // 엔진이 고른 쪽(체크인은 null)
   to: Tone; // 내가 고른 쪽
+  stress?: number; // 고칠 때 본 장면의 스트레스(체크인·예전 기록은 없음)
+  tones?: Tone[]; // 그 갈림길 보기들의 tone(체크인·예전 기록은 없음)
 }
 
 // 한 달 체크인: 채점용 상황 질문을 다시 묻는다(본인 일치율 = 사람이 자기 답을 얼마나 되풀이하는지, 분신 점수의 기준선)
@@ -453,4 +460,5 @@ export interface Checkin {
   picks: Record<string, number>;
   real: Tone | "none"; // 지난 한 달 실제로 어떻게 했는지
   demo: boolean; // 한 달을 안 기다리고 시연용으로 한 것
+  bfi10?: Record<number, number>; // 성격 10문항을 다시 답했으면 그 답(선택)
 }

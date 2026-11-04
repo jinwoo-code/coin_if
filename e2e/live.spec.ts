@@ -49,4 +49,24 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   await expect(page.getByRole("status")).toContainText("다 살아봤어요");
   expect(calls).toBe(before);
   expect((await page.locator("main").innerText()).replace(/\s/g, "").includes(text.split("어떤 갈래로")[0].replace(/\s/g, "").slice(-30))).toBeTruthy();
+
+  // 이 결과로 세계선 지도·대화·리포트로 이어 가기(장면은 그 삶 그대로, 다시 살기 요청 없음)
+  const replays: string[] = [];
+  page.on("request", (r) => {
+    if (/\/api\/(line|explore|simulate)/.test(r.url())) replays.push(r.url());
+  });
+  await page.getByRole("button", { name: /이 결과로 세계선 지도/ }).click();
+  await expect(page).toHaveURL(/\/multiverse/);
+  await expect(page.getByText("실시간 판단 30번 결과예요").first()).toBeVisible();
+  await expect(page.getByText(/30번 살아본 결과/).first()).toBeVisible();
+  await page.getByRole("button", { name: "이 세계 살아보기" }).first().click();
+  await expect(page.getByText("여기서 다르게 골랐다면")).toHaveCount(0);
+  await expect(page.getByText("나라면 이렇게 안 해")).toHaveCount(0);
+  expect(replays).toEqual([]);
+  await page.goto("/talk?world=developer");
+  await expect(page).toHaveURL(/\/talk/);
+  await expect(page.getByRole("textbox")).toBeVisible();
+  await page.goto("/report");
+  await expect(page.getByText(/30번 살아본 결과/).first()).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText("실시간 판단 30번 결과예요").first()).toBeVisible();
 });

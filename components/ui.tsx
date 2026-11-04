@@ -260,3 +260,8 @@ export function Odds({ odds }: { odds: ChoiceOdds }) {
     </details>
   );
 }
+
+// 실시간 판단 결과를 세계선 지도·리포트로 이어 볼 때 위에 붙인다
+export function LiveNotice() {
+  return <p className="mt-2 rounded-2xl border border-hair bg-surface p-3 text-sm text-muted">실시간 판단 30번 결과예요. 횟수가 적어 범위가 넓어요. 기본 모드 1,000번 숫자와 바로 비교하지 마세요.</p>;
+}

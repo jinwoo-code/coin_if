@@ -18,7 +18,9 @@ export function CorrectChoice({ ev, world }: { ev: SimEvent; world: WorldTemplat
   function pick(i: number) {
     const p = store.getProfile();
     if (!p || !card) return;
-    store.setProfile(withCorrection(p, { source: "sim", eventId: card.id, title: ev.title, from: card.choices[ev.choiceIndex]?.tone ?? null, to: card.choices[i].tone }));
+    store.setProfile(
+      withCorrection(p, { source: "sim", eventId: card.id, title: ev.title, from: card.choices[ev.choiceIndex]?.tone ?? null, to: card.choices[i].tone, stress: ev.odds?.stress ?? ev.state?.stress, tones: card.choices.map((c) => c.tone) }),
+    );
     setMine(i === ev.choiceIndex ? null : i);
     setOpen(false);
   }

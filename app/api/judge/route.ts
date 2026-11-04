@@ -3,50 +3,17 @@
 // 실제 사람들의 기준 비율을 주고 "이 사람이라면 솔직히 몇 %일지"만 묻는다. 붙잡는 건 엔진이 맡는다(r, 상한 0.67~1.5배).
 // 입력은 확인한 값만(이야기 원문·근거 인용 없음). 프롬프트를 고치면 JUDGE_PROMPT_VERSION(lib/judge.ts)을 올린다. 응답 검사·재요청은 lib/judge-ask.ts, 그래도 틀린 칸은 규칙 기울기로 채운다. 키가 없으면 규칙 기울기(목업).
 import { NextResponse } from "next/server";
-import norms from "@/data/norms.json";
 import { allBuckets, baseShare, bucketLabel, stressOf } from "@/lib/base";
-import { ruleJudge } from "@/lib/engine";
+import { ruleJudge, withFamilyPull } from "@/lib/engine";
 import type { JudgeEntry } from "@/lib/judge";
 import { askJudge } from "@/lib/judge-ask";
+import { personText } from "@/lib/judge-person";
 import { generateJSON, hasLLM } from "@/lib/llm";
 import { normalizeProfile } from "@/lib/profile";
-import { LABEL, scrubStory } from "@/lib/story";
 import type { BaseShare, Choice, LifeState, Profile, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
-const B5: Record<string, string> = { O: "개방성", C: "성실성", E: "외향성", A: "친화성", N: "신경성" };
-const BH: Record<string, string> = { persistence: "끈기", risk: "위험 감수", coping: "스트레스 대처", social: "도움 청하기" };
-
 const gradeText = (b: BaseShare) => (b.grade === "stat" ? "공개 통계" : b.grade === "interview" ? (b.ref ?? "현직자 인터뷰") : "가정값");
-
-function personText(p: Profile) {
-  const st = p.story ? scrubStory(p.story) : null;
-  const lines = [
-    `가치관(중요한 순서): ${p.values.join(" > ") || "안 고름"}`,
-    `성격(1~5, 괄호는 비교 집단 평균): ${Object.entries(B5)
-      .map(([k, n]) => `${n} ${p.bigFive[k as keyof typeof p.bigFive]}(${norms.bigFive.mean[k as keyof typeof norms.bigFive.mean]})`)
-      .join(", ")}`,
-    `상황 질문 성향(1~5, 괄호는 평균): ${Object.entries(BH)
-      .map(([k, n]) => `${n} ${p.behavior[k as keyof typeof p.behavior]}(${norms.behavior.mean[k as keyof typeof norms.behavior.mean]})`)
-      .join(", ")}`,
-  ];
-  if (p.wants?.hates?.length) lines.push(`싫은 것: ${p.wants.hates.join(", ")}`);
-  lines.push(`모은 돈 ${p.life.savings}만원, 집 지원 월 ${p.life.support}만원, 생활비 월 ${p.life.livingCost}만원`);
-  if (st?.decisionStyle) lines.push(`결정 방식(본인 확인): ${LABEL.decisionStyle[st.decisionStyle.value]}`);
-  if (st?.familyExpectation) lines.push(`가족 기대(본인 확인): ${LABEL.familyExpectation[st.familyExpectation.value]}${st.familyExpectation.value !== "none" ? `, 신경 쓰는 정도 ${st.familyExpectation.strength}/5` : ""}`);
-  if (st?.regretType) lines.push(`후회(본인 확인): ${LABEL.regretType[st.regretType.value]}`);
-  if (st?.coreValues?.length) lines.push(`이야기에서 드러난 핵심 가치: ${st.coreValues.map((c) => c.value).join(", ")}`);
-  if (st?.runwayMonths) lines.push(`집 지원 없이 버틸 수 있는 기간: ${st.runwayMonths.value}개월`);
-  const corr = (p.corrections ?? []).reduce<Record<string, number>>((acc, c) => ({ ...acc, [c.to]: (acc[c.to] ?? 0) + 1 }), {});
-  if (Object.keys(corr).length)
-    lines.push(
-      `시뮬레이션에서 직접 고친 선택: ${Object.entries(corr)
-        .map(([t, n]) => `${t === "push" ? "밀어붙이는 쪽" : t === "change" ? "바꾸는 쪽" : "신중한 쪽"} ${n}번`)
-        .join(", ")}`,
-    );
-  if (p.summary) lines.push(`요약: ${p.summary}`);
-  return lines.join("\n");
-}
 
 // 실시간 판단 모드: 상황 칸 대신 그때까지의 흐름을 준다. 큰 일 이름은 진로 데이터에서 찾는다(브라우저가 보낸 글을 프롬프트에 넣지 않는다).
 interface LiveInput {
@@ -96,7 +63,7 @@ export async function POST(req: Request) {
     live
       ? { skill: num(live.state?.skill), stress: num(live.state?.stress), satisfaction: num(live.state?.satisfaction), relation: num(live.state?.relation), money: num(live.state?.money) }
       : { skill: 50, stress: stressOf(b), satisfaction: 50, relation: 50, money: 0 };
-  const rule = (b: string) => ruleJudge(p, stateOf(b), fork.choices as Choice[], baseOf(b));
+  const rule = (b: string) => ruleJudge(withFamilyPull(p, world), stateOf(b), fork.choices as Choice[], baseOf(b));
 
   const prompt = [
     `[이 사람]\n${personText(p)}`,

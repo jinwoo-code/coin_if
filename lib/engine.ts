@@ -154,6 +154,19 @@ const VALUE_PUSH: [ValueKey, Tone][] = [
   ["기여", "push"],
 ];
 
+// 가족이 바라는 특정 직업: 진로마다 뜻이 달라서(이 진로면 더 해 보고, 다른 진로면 바꾸는 쪽) 진로를 아는 곳에서 표시를 붙인 프로필을 넘긴다. 없으면 같은 객체.
+type PulledProfile = Profile & { familyPull?: "match" | "other" };
+export function withFamilyPull(p: Profile, world: Pick<WorldTemplate, "name" | "short">): Profile {
+  const f = p.story?.familyExpectation;
+  const job = f?.value === "specific" ? (f.job ?? "").replace(/\s/g, "") : "";
+  if (!job) return p;
+  const hit = [world.name, world.short].some((n) => {
+    const x = n.replace(/\s/g, "");
+    return job.includes(x) || x.includes(job);
+  });
+  return { ...p, familyPull: hit ? "match" : "other" } as PulledProfile;
+}
+
 function pushes(p: Profile, state: LifeState): Push[] {
   const b = p.bigFive;
   const h = p.behavior;
@@ -216,6 +229,9 @@ function pushes(p: Profile, state: LifeState): Push[] {
   const st = p.story;
   if (st?.decisionStyle) out.push({ tone: st.decisionStyle.value === "impulsive" ? "change" : "safe", value: W("story.decisionStyle"), reason: storyReason(st.decisionStyle.evidence), explain: true });
   if (st?.familyExpectation?.value === "stable") out.push({ tone: "safe", value: W("story.familyStable") * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence), explain: true });
+  const pull = (p as PulledProfile).familyPull;
+  if (pull && st?.familyExpectation)
+    out.push({ tone: pull === "match" ? "push" : "change", value: W(pull === "match" ? "story.familyJob.match" : "story.familyJob.other") * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence), explain: true });
   if (st?.regretType?.value === "inaction") {
     out.push({ tone: "push", value: W("story.regretInaction.push"), reason: storyReason(st.regretType.evidence), explain: true });
     out.push({ tone: "change", value: W("story.regretInaction.change"), reason: storyReason(st.regretType.evidence), explain: true });
@@ -280,7 +296,8 @@ export interface Judge {
 }
 
 // base: 이 상황 칸의 기준 비율(없으면 평균 인물의 규칙 확률). judge: AI 분신 판단(3단계, 없으면 규칙 기울기)
-export function choiceProbs(p: Profile, state: LifeState, tones: Tone[], base?: number[], judge?: Judge | null) {
+// habit: 같은 삶에서 앞서 고른 쪽으로 기우는 값(보기별, choice.habit.*, 없으면 0). 상한 안에서 기울기에 더한다.
+export function choiceProbs(p: Profile, state: LifeState, tones: Tone[], base?: number[], judge?: Judge | null, habit?: number[]) {
   const norm = normProbs(state, tones);
   const b = base ?? norm;
   const mine = judge ? judge.probs : ruleProbs(p, state, tones);
@@ -288,7 +305,7 @@ export function choiceProbs(p: Profile, state: LifeState, tones: Tone[], base?: 
   const r = reflectOf(p);
   // AI 판단은 말한 대로, 규칙 기울기는 rule.scale을 곱한다(data/weights.json)
   const k = judge ? 1 : W("rule.scale");
-  const score = tones.map((_, i) => Math.log(b[i]) + r * clamp(k * Math.log(mine[i] / ref[i]), TILT_MIN, TILT_MAX));
+  const score = tones.map((_, i) => Math.log(b[i]) + r * clamp(k * Math.log(mine[i] / ref[i]) + (habit?.[i] ?? 0), TILT_MIN, TILT_MAX));
   const top = Math.max(...score);
   const w = score.map((x) => Math.exp(x - top));
   const total = w.reduce((a, c) => a + c, 0);
@@ -313,10 +330,10 @@ export function toneProbs(p: Profile, state: LifeState, tones: Tone[]) {
   return choiceProbs(p, state, tones);
 }
 
-export function decide(p: Profile, state: LifeState, choices: Choice[], rand: () => number, base?: number[], judge?: Judge | null) {
+export function decide(p: Profile, state: LifeState, choices: Choice[], rand: () => number, base?: number[], judge?: Judge | null, habit?: number[]) {
   const ps = pushes(p, state);
   const tones = choices.map((c) => c.tone);
-  const probs = choiceProbs(p, state, tones, base, judge);
+  const probs = choiceProbs(p, state, tones, base, judge, habit);
   let roll = rand();
   let index = 0;
   for (let i = 0; i < probs.length; i++) {
@@ -345,6 +362,7 @@ export function decide(p: Profile, state: LifeState, choices: Choice[], rand: ()
   }
   // AI가 쓴 이유가 있으면 그대로(위에서 rand는 똑같이 써서 판단이 있든 없든 난수 순서가 같다)
   if (judge?.reasons?.[index]) reason = judge.reasons[index];
+  else if (!reason && (habit?.[index] ?? 0) > 0) reason = "앞에서도 이쪽으로 골라서";
   return { index, reason, situation: mine.find((x) => x.fromState)?.reason, chance: Math.round(probs[index] * 100), base: base ?? normProbs(state, tones), probs };
 }
 
@@ -508,6 +526,8 @@ export function signatureKey(e: EventCard, choiceIndex: number, tierId?: string)
 // trace: 갈림길마다 decide 직전 상황을 넘겨 받는다(scripts/measure-base.ts가 기준 비율을 잴 때)
 export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force, trace?: (e: EventCard, c: ForkCtx) => void, live?: LiveHook): Path {
   const rand = seededRandom(seed);
+  const pulled = withFamilyPull(p, world);
+  const habit: Record<Tone, number> = { push: 0, change: 0, safe: 0 };
   const sim: Sim = {
     state: { skill: startSkill(p, world), stress: 40, satisfaction: 50, relation: 50, money: p.life.savings },
     used: new Set(),
@@ -574,11 +594,14 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
             })
           : null;
       const judge = live ? (liveEntry?.src === "ai" && liveEntry.probs.length === event.choices.length ? liveEntry : null) : judgeFor(p, world.id, event, bucket);
-      const d = decide(p, sim.state, event.choices, rand, shares.every((x) => x !== undefined) ? (shares as number[]) : undefined, judge);
+      // 갈림길끼리 이어 주기: 같은 삶에서 앞서 고른 쪽으로 조금 기운다. 실시간 AI 판단은 흐름을 이미 보고 말하므로 더하지 않는다(두 번 세지 않게).
+      const lean = live && judge ? undefined : event.choices.map((c) => Math.min(W("choice.habit.cap"), W("choice.habit.step") * habit[c.tone]));
+      const d = decide(pulled, sim.state, event.choices, rand, shares.every((x) => x !== undefined) ? (shares as number[]) : undefined, judge, lean);
       const forced = force?.eventId === event.id && force.choiceIndex !== undefined;
       choiceIndex = forced ? Math.min(force.choiceIndex!, event.choices.length - 1) : d.index;
       reason = forced ? "다른 세계에서는 이렇게 골랐어요" : d.reason;
       const chosen = event.choices[choiceIndex];
+      if (chosen && event.choices.length >= 2) habit[chosen.tone]++;
       if (event.choices.length >= 2) {
         const gap = chosen?.base?.population ? populationGap(p, chosen.base.population) : null;
         pick = {
@@ -587,6 +610,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
           byAi: !forced && judge?.src === "ai",
           aiFailed: !forced && (live ? liveEntry?.src === "fallback" : judgeFailed(p, world.id, event, bucket)),
           forced,
+          stress: sim.state.stress,
           situation: d.situation,
           shift: forced ? undefined : judge?.shift,
           otherGroup: gap ?? undefined,

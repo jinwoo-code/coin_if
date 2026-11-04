@@ -26,13 +26,7 @@ const keyOf = (s: SimEvent) => `${s.worldId}|${s.lineId}|${s.station}`;
 
 // 장면들에 문장을 입힌다(조용한 장면은 그대로). 한 번에 최대 16장면.
 // feature는 원가 기록(usage_logs)에 남는 기능 이름: 처음 살아보기 simulate, 다른 세계선 열기 line, 갈림길 바꿔 보기 explore.
-export async function narrate(
-  profile: Profile,
-  worlds: WorldTemplate[],
-  scenes: SimEvent[],
-  memories: Record<string, string[]> = {},
-  feature: "simulate" | "line" | "explore" = "simulate",
-): Promise<SimEvent[]> {
+export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes: SimEvent[], memories: Record<string, string[]> = {}, feature: "simulate" | "line" | "explore" = "simulate"): Promise<SimEvent[]> {
   const targets = scenes.filter((s) => s.eventId !== "quiet");
   if (targets.length === 0) return scenes;
   const out = new Map<string, Beat>();
@@ -41,9 +35,7 @@ export async function narrate(
     const beats = await generateJSON<Beat[]>({
       tag: `${feature} narrate x${chunk.length}`,
       model: "fast",
-      system:
-        "너는 진로 시뮬레이션의 이야기 작가다. 이미 정해진 사건과 주인공의 선택을 현실적인 문장으로 풀어 쓴다. " +
-        "사건이나 선택, 숫자를 바꾸거나 새로 지어내지 않는다. 과장하지 말고 있을 법한 수준으로, 한국어로 쓴다.",
+      system: "너는 진로 시뮬레이션의 이야기 작가다. 이미 정해진 사건과 주인공의 선택을 현실적인 문장으로 풀어 쓴다. " + "사건이나 선택, 숫자를 바꾸거나 새로 지어내지 않는다. 과장하지 말고 있을 법한 수준으로, 한국어로 쓴다.",
       prompt:
         `주인공 정보:\n${profileBrief(profile)}\n\n` +
         `아래 각 항목에 대해 JSON 배열로 답해라. 각 원소는 {"key","narration","choice"}.\n` +
@@ -79,4 +71,38 @@ export async function narrate(
 
 export function memoriesOf(scenes: SimEvent[]) {
   return scenes.filter((s) => s.eventId !== "quiet").map((s) => `${s.label}: ${s.title}${s.choice ? `. ${s.choice}` : ""} (${s.status})`);
+}
+
+// 등장인물별 호출(NPC_AGENTS=1일 때만): 큰 갈림길 장면에서 인물마다 따로 AI를 불러 그 사람 입장의 한마디를 받는다. 값은 문장뿐이고 엔진 숫자에 안 들어간다.
+// 호출 수 = 큰 갈림길 장면(진로마다 최대 NPC_SCENES) × 인물(최대 NPC_PEOPLE). 원가가 늘어서 기본은 끈다.
+export const npcAgentsOn = () => process.env.NPC_AGENTS === "1";
+const NPC_SCENES = 3;
+const NPC_PEOPLE = 2;
+
+export function npcTargets(world: WorldTemplate, scenes: SimEvent[]) {
+  return scenes
+    .filter((s) => s.worldId === world.id && s.branch === "choice" && s.choice)
+    .slice(0, NPC_SCENES)
+    .flatMap((scene) => world.npcs.slice(0, NPC_PEOPLE).map((npc) => ({ scene, npc })));
+}
+
+export async function addReactions(profile: Profile, worlds: WorldTemplate[], scenes: SimEvent[], feature = "simulate"): Promise<SimEvent[]> {
+  const jobs = worlds.flatMap((w) => npcTargets(w, scenes).map((t) => ({ ...t, world: w })));
+  if (!jobs.length) return scenes;
+  const got = await Promise.all(
+    jobs.map(async ({ scene, npc, world }) => {
+      const r = await generateJSON<{ line?: unknown } | null>({
+        tag: `${feature} npc`,
+        model: "fast",
+        system: `너는 진로 이야기 속 인물 '${npc.name}'(${npc.role})이다. 성격: ${npc.persona}. 주인공의 선택을 듣고 네 입장에서 한마디만 한다. 사건이나 선택을 바꾸지 않고, 숫자를 쓰지 않는다. 40자 안팎의 한국어 말투로 쓴다.`,
+        prompt: `주인공: ${profile.name}, ${world.name} 진로, 지금 처지: ${scene.status}\n일어난 일: ${scene.title}. ${scene.narration}\n주인공의 선택: ${scene.choice}\nJSON으로만 답해라: {"line": "한마디"}`,
+        fallback: () => null,
+      });
+      const line = typeof r?.line === "string" ? r.line.trim() : "";
+      return line && line.length <= 80 && !/\d/.test(line) ? { scene, reaction: { name: npc.name, role: npc.role, line } } : null;
+    }),
+  );
+  const byScene = new Map<SimEvent, { name: string; role: string; line: string }[]>();
+  for (const g of got) if (g) byScene.set(g.scene, [...(byScene.get(g.scene) ?? []), g.reaction]);
+  return scenes.map((s) => (byScene.has(s) ? { ...s, reactions: byScene.get(s) } : s));
 }

@@ -4,7 +4,7 @@ import { ArrowLeftRight, BarChart3, Check, CornerDownRight, GitBranch, MessageCi
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { Ci, CI_NOTE, LineBadge, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
+import { Ci, CI_NOTE, LineBadge, LiveNotice, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -110,7 +110,7 @@ function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: Li
 
 // ---------- 세계선 안의 장면(시트) ----------
 
-function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; onFlip: (ev: SimEvent) => void }) {
+function SceneRow({ ev, world, onFlip, live }: { ev: SimEvent; world: WorldTemplate; onFlip: (ev: SimEvent) => void; live?: boolean }) {
   if (ev.eventId === "quiet")
     return (
       <li className="relative pl-6 text-cap text-muted">
@@ -143,8 +143,8 @@ function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; o
           <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" /> {ev.evidence.label} ({ev.evidence.source})
         </p>
       ) : null}
-      <CorrectChoice ev={ev} world={world} />
-      {canFlip ? (
+      {live ? null : <CorrectChoice ev={ev} world={world} />}
+      {canFlip && !live ? (
         <button onClick={() => onFlip(ev)} className="chip mt-2 min-h-[40px] text-cap font-semibold">
           <Shuffle aria-hidden="true" size={14} /> {ev.branch === "luck" ? "운이 반대였다면" : "여기서 다르게 골랐다면"}
         </button>
@@ -192,13 +192,15 @@ function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
   );
 }
 
-function LeverList({ items, world }: { items: Lever[] | null; world: WorldTemplate }) {
+function LeverList({ items, world, live }: { items: Lever[] | null; world: WorldTemplate; live?: boolean }) {
   return (
     <section aria-labelledby="levers" className="mt-8">
       <h2 id="levers" className="flex items-center gap-2 text-xl font-bold">
         <Sparkles aria-hidden="true" size={20} style={{ color: world.color }} /> 내가 바꿀 수 있는 것 Top 3
       </h2>
-      <p className="mt-1 text-sm text-muted">조건을 바꾼 결과는 200번씩, 갈림길은 1,000번 살아본 결과예요. 그래서 위 통계와 조금 다를 수 있어요.</p>
+      <p className="mt-1 text-sm text-muted">
+        {live ? "실시간 판단 30번이 아니라 기본 모드 계산이에요. 조건은 200번씩, 갈림길은 1,000번 살아서 비교해요." : "조건을 바꾼 결과는 200번씩, 갈림길은 1,000번 살아본 결과예요. 그래서 위 통계와 조금 다를 수 있어요."}
+      </p>
       {items === null ? (
         <p className="mt-4 flex items-center gap-2 text-sm text-muted">
           <Typing label="계산 중" /> 조건을 바꿔 가며 다시 살아보는 중…
@@ -435,7 +437,7 @@ function MultiversePage() {
   return (
     <Screen
       title="세계선 지도"
-      back="/simulate"
+      back={mv.live ? "/live" : "/simulate"}
       footer={
         <div className="flex gap-2">
           <Link href={`/talk?world=${world.id}`} className="btn-ghost flex-1">
@@ -448,6 +450,7 @@ function MultiversePage() {
       }
     >
       <MockNotice />
+      {mv.live ? <LiveNotice /> : null}
       {/* 진로 탭 */}
       <div role="tablist" aria-label="진로" className="mt-2 flex gap-2 overflow-x-auto pb-1">
         {selection.worldIds.map((id) => {
@@ -571,7 +574,7 @@ function MultiversePage() {
         </ul>
       </section>
 
-      <LeverList items={leverMap[world.id] ?? null} world={world} />
+      <LeverList items={leverMap[world.id] ?? null} world={world} live={mv.live} />
 
       {/* 세계선 하나 살아보기 */}
       <Sheet open={open !== null} onClose={() => setOpen(null)} title={explored ? "반대로 간 세계" : (open?.title ?? "")}>
@@ -605,7 +608,7 @@ function MultiversePage() {
             {scenes ? (
               <ol className="mt-4 flex flex-col gap-4">
                 {scenes.map((ev) => (
-                  <SceneRow key={ev.station} ev={ev} world={world} onFlip={flip} />
+                  <SceneRow key={ev.station} ev={ev} world={world} onFlip={flip} live={mv.live} />
                 ))}
               </ol>
             ) : (

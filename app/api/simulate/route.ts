@@ -5,7 +5,7 @@ import { buildMultiverse, replayLine } from "@/lib/multiverse";
 import { normalizeProfile } from "@/lib/profile";
 import { scenesOf } from "@/lib/scenes";
 import { paywall, refund, spend } from "@/lib/tokens";
-import { memoriesOf, narrate } from "@/lib/sim";
+import { memoriesOf, narrate, addReactions, npcAgentsOn } from "@/lib/sim";
 import type { Profile, Selection, SimEvent } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
@@ -43,7 +43,8 @@ export async function POST(req: Request) {
         for (let from = 0; from < labels.length; from += 4) {
           const chunk = worlds.flatMap((w) => mains[w.id].slice(from, from + 4));
           const memories = Object.fromEntries(worlds.map((w) => [w.id, memoriesOf(done[w.id])]));
-          const told = await narrate(profile, worlds, chunk, memories);
+          const narrated = await narrate(profile, worlds, chunk, memories);
+          const told = npcAgentsOn() ? await addReactions(profile, worlds, narrated) : narrated;
           for (let st = from; st < Math.min(labels.length, from + 4); st++) {
             const events = told.filter((e) => e.station === st);
             events.forEach((e) => done[e.worldId].push(e));

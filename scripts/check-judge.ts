@@ -2,11 +2,13 @@
 //   npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-judge.ts
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { simulatePath } from "../lib/engine";
+import { choiceProbs, ruleProbs, simulatePath, withFamilyPull } from "../lib/engine";
+import { bigFiveDiff, checkinMailRef, withNewBigFive } from "../lib/ongoing";
+import { CALM } from "../lib/twin";
 import { askJudge, NEGATIVE } from "../lib/judge-ask";
 import { failedEntries, judgeFailed, judgeFor, judgeForks, missingJudges, withJudges } from "../lib/judge";
 import { DEMO_PROFILE } from "../lib/demo";
-import { LIVE_RUNS, liveEntryKey, liveLife, LivePause, liveRunKey, liveSummary, type LiveEntries } from "../lib/live";
+import { LIVE_RUNS, liveEntryKey, liveForkCount, liveLife, liveMultiverse, LivePause, liveRefundTokens, liveRunKey, liveSummary, type LiveEntries } from "../lib/live";
 import { seedFor } from "../lib/multiverse";
 import { callWithKeys, makeKeyPool, makeQueue, retryDelayMs, withRetry429 } from "../lib/llm-pace";
 import { choiceLine } from "../lib/scenes";
@@ -269,4 +271,58 @@ test("실시간: 요약은 횟수로, 입력이 바뀌면 실행 이름이 바�
   assert.equal(k, liveRunKey(DEMO_PROFILE, ["developer"], 36, "2026-12"));
   assert.notEqual(k, liveRunKey(DEMO_PROFILE, ["developer"], 60, "2026-12"));
   assert.match(k, /^[a-z0-9]{1,16}$/);
+});
+test("실시간: 돌려줄 토큰은 AI가 판단 못 한 몫(내림)", () => {
+  assert.equal(liveRefundTokens(4, 0, 100), 4);
+  assert.equal(liveRefundTokens(4, 30, 100), 2);
+  assert.equal(liveRefundTokens(4, 76, 100), 0);
+  assert.equal(liveRefundTokens(4, 200, 100), 0);
+  assert.equal(liveRefundTokens(0, 0, 100), 0);
+  assert.equal(liveRefundTokens(4, 0, 0), 0);
+  assert.ok(liveForkCount(DEMO_PROFILE, getWorld("developer"), 36, "2026-12") > 0);
+});
+test("실시간: 세계선으로 이을 때 장면은 그 삶 그대로", () => {
+  const lives = Array.from({ length: LIVE_RUNS }, (_, r) => ({ run: r, path: liveToEnd(r, {}, even).path }));
+  const { mv, scenes } = liveMultiverse(DEMO_PROFILE, getWorld("developer"), 36, "2026-12", lives);
+  assert.equal(mv.live, true);
+  assert.equal(mv.stats.runs, LIVE_RUNS);
+  assert.ok(mv.lines.length > 0);
+  for (const l of mv.lines) assert.ok(scenes[l.id]?.length, l.title);
+});
+test("가족이 바라는 직업: 이 진로면 더 해 봄, 다른 진로면 바꿈, 값이 없으면 같은 객체", () => {
+  const f = { value: "specific" as const, job: "개발자", strength: 5 as const, evidence: "아버지가 개발자 하래요" };
+  const p = { ...DEMO_PROFILE, story: { decisionStyle: null, persistence: null, familyExpectation: f, regretType: null, coreValues: [], runwayMonths: null } };
+  const tones = ["push", "change", "safe"] as const;
+  const dev = getWorld("developer");
+  const other = getWorld("marketer");
+  const plain = ruleProbs(p, CALM, [...tones]);
+  const match = ruleProbs(withFamilyPull(p, dev), CALM, [...tones]);
+  const away = ruleProbs(withFamilyPull(p, other), CALM, [...tones]);
+  assert.ok(match[0] > plain[0]);
+  assert.ok(away[1] > plain[1]);
+  assert.equal(withFamilyPull(DEMO_PROFILE, dev), DEMO_PROFILE);
+  assert.ok(choiceProbs(withFamilyPull(p, dev), CALM, [...tones]).every((x) => x > 0));
+});
+test("체크인 성격: 10문항끼리 비교하고, 누를 때만 차이를 더한다", () => {
+  const old = { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 3, 7: 3, 8: 3, 9: 3, 10: 3 };
+  const p = { ...DEMO_PROFILE, bigFive: { O: 4, C: 2, E: 3, A: 3, N: 5 }, answers: { ...DEMO_PROFILE.answers, bfi10: old } };
+  const next = { ...old, 8: 5, 3: 1, 9: 5, 4: 1 }; // 성실성 +2, 신경성 +2
+  const diff = bigFiveDiff(p, next);
+  assert.equal(diff.find((d) => d.key === "C")!.after, 5);
+  assert.equal(diff.find((d) => d.key === "C")!.before, 3);
+  const q = withNewBigFive(p, next);
+  assert.equal(q.bigFive.C, 4); // 2 + 2
+  assert.equal(q.bigFive.N, 5); // 5 + 2, 위로 막힘
+  assert.equal(q.bigFive.O, 4);
+  assert.deepEqual(q.answers.bfi10, next);
+});
+test("체크인 메일: 켠 사람만, 때가 됐을 때, 차례마다 이름이 달라진다", () => {
+  const now = Date.parse("2026-11-04T00:00:00Z");
+  const since = "2026-09-01T00:00:00.000Z";
+  const base = { ...DEMO_PROFILE, since, checkins: [] };
+  assert.equal(checkinMailRef(base, now), null); // 안 켬
+  assert.equal(checkinMailRef({ ...base, checkinMail: true }, now), "checkin:2026-09-01");
+  assert.equal(checkinMailRef({ ...base, checkinMail: true, since: "2026-10-30T00:00:00.000Z" }, now), null); // 아직 때가 아님
+  const after = { ...base, checkinMail: true, checkins: [{ at: "2026-10-01T00:00:00.000Z", picks: {}, real: "none" as const, demo: false }] };
+  assert.equal(checkinMailRef(after, now), "checkin:2026-10-01");
 });
