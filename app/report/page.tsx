@@ -1,6 +1,6 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
-import { CalendarPlus, Check, Copy, Lock, Printer } from "lucide-react";
+import { ArrowRight, CalendarPlus, Check, ChevronDown, Copy, Lock, Printer } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -285,6 +285,8 @@ export default function ReportPage() {
   const [premiumBusy, setPremiumBusy] = useState(false);
   const [done, setDone] = useState<Record<number, boolean>>({});
   const [notice, setNotice] = useState("");
+  const [planOpen, setPlanOpen] = useState(false);
+  const [resultsOpen, setResultsOpen] = useState(false);
 
   useEffect(() => {
     const p = store.getProfile();
@@ -369,7 +371,10 @@ export default function ReportPage() {
   }
 
   if (!profile) return null;
-  const best = report ? Math.max(...report.worlds.map((w) => w.fit)) : 0;
+  const best = report?.worlds.length ? Math.max(...report.worlds.map((w) => w.fit)) : 0;
+  const leaders = report?.worlds.filter((w) => w.fit === best) ?? [];
+  const firstStep = report?.todos.find((_, i) => !done[i]);
+  const cardColumns = report?.worlds.length === 1 ? "" : report?.worlds.length === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3";
 
   return (
     <Screen
@@ -377,11 +382,11 @@ export default function ReportPage() {
       title="비교 리포트"
       back="/multiverse"
       footer={
-        <div className="flex gap-2 sm:justify-end">
-          <button className="btn-ghost flex-1 sm:flex-none" onClick={downloadCheckin} disabled={!report}>
+        <div className="flex flex-wrap gap-2 sm:justify-end">
+          <button className="btn-ghost flex-1 px-3 text-sm sm:flex-none sm:px-6 sm:text-base" onClick={downloadCheckin} disabled={!report}>
             <CalendarPlus aria-hidden="true" size={18} /> 한 달 뒤 체크인
           </button>
-          <button className="btn-primary flex-1 sm:flex-none" onClick={share} disabled={!report}>
+          <button className="btn-primary flex-1 px-3 text-sm sm:flex-none sm:px-6 sm:text-base" onClick={share} disabled={!report}>
             <Copy aria-hidden="true" size={18} /> 상담사에게 공유
           </button>
         </div>
@@ -393,97 +398,124 @@ export default function ReportPage() {
           <p>살아본 길들을 비교하는 중…</p>
         </div>
       ) : (
-        <div className="grid gap-5 pt-2 lg:grid-cols-[1.2fr_1fr] lg:gap-6">
-          <div className="flex flex-col gap-5">
-            <section className="card p-5 sm:p-6" aria-labelledby="fit">
-              <h2 id="fit" className="text-xl font-bold">
-                내 가치관과 얼마나 맞았을까
-              </h2>
-              <p className="mt-1 text-sm text-muted">{profile.values.join(" > ")} 순서의 가치관, 성격, 그리고 100번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요. 정답이 아니라 비교용 점수예요.</p>
-              <ul className="mt-5 flex flex-col gap-4">
-                {report.worlds.map((w) => {
-                  const world = getWorld(w.worldId);
-                  return (
-                    <li key={w.worldId} className="flex items-center gap-3">
-                      <LineBadge world={world} size={32} />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="truncate text-base font-bold">{world.name}</span>
-                          <span className="num text-2xl font-extrabold">
-                            {w.fit}
-                            <span className="text-sm font-semibold text-muted">점</span>
-                          </span>
-                        </div>
-                        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-hair" aria-hidden="true">
-                          <span className="block h-full rounded-full" style={{ width: `${w.fit}%`, background: world.color, opacity: w.fit === best ? 1 : 0.55 }} />
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-
-            <section aria-labelledby="hundred">
-              <h2 id="hundred" className="text-xl font-bold">
-                100번 살아본 결과
-              </h2>
-              <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 100번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
+        <div className="flex flex-col gap-6 pb-4 pt-4 sm:gap-8 sm:pt-7">
+          <section aria-labelledby="fit">
+            <h2 id="fit" className="text-2xl font-extrabold sm:text-3xl">내 가치관과 얼마나 맞았을까?</h2>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <p className="text-sm font-semibold text-muted">중요하게 생각한 가치</p>
+              <ol aria-label="가치관 우선순위" className="flex flex-wrap gap-2">
+                {profile.values.map((value, i) => (
+                  <li key={value} className="flex items-center gap-2 rounded-full border border-hair bg-surface px-3 py-1.5 text-sm font-semibold">
+                    <span className="num flex h-5 w-5 items-center justify-center rounded-full bg-ground text-cap text-muted">{i + 1}</span>{value}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            {leaders.length > 0 ? (
+              <div className="mt-6 flex flex-col gap-5 rounded-[24px] border border-lineA/30 bg-[#EDF2FF] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-lineA">가치관 부합도 비교</p>
+                  <h3 className="mt-2 text-xl font-extrabold sm:text-2xl">
+                    {leaders.length === 1
+                      ? `${getWorld(leaders[0].worldId).name} 경로가 내 가치관에 가장 가까워요`
+                      : `${leaders.map((w) => getWorld(w.worldId).name).join(" · ")} 경로가 공동 최고 점수예요`}
+                  </h3>
+                  <p className="mt-3 text-sm text-muted">내 가치관과 성격, 시뮬레이션 결과를 함께 반영했어요. 각 경로의 장점과 어려움도 함께 살펴보세요.</p>
+                </div>
+                <div className="flex shrink-0 items-baseline gap-3 border-t border-lineA/20 pt-4 sm:block sm:min-w-32 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0 sm:text-center">
+                  <p className="num text-4xl font-extrabold text-lineA">{best}<span className="ml-1 text-xl">점</span></p>
+                  <p className="mt-1 text-sm text-muted">100점 만점 · 비교용</p>
+                </div>
               </div>
-            </section>
+            ) : <p className="card mt-6 p-5 text-muted">비교할 진로가 없어요. 세계선 지도에서 진로를 선택해 주세요.</p>}
+            <p className="mt-3 text-sm text-muted">미래 예측이나 정답이 아닌, 진로 탐색을 위한 비교 결과예요.</p>
+          </section>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+          <section aria-labelledby="compare">
+            <h2 id="compare" className="text-xl font-bold">살아본 진로, 한눈에 비교</h2>
+            <ul className={`mt-4 grid gap-4 ${cardColumns}`}>
               {report.worlds.map((w) => {
                 const world = getWorld(w.worldId);
+                const isBest = w.fit === best;
                 return (
-                  <section key={w.worldId} className="rounded-card p-5" style={{ background: `${world.color}12` }} aria-label={`${world.name} 요약`}>
-                    <div className="flex items-center gap-2">
-                      <LineBadge world={world} size={22} />
-                      <h3 className="text-base font-bold">{world.short}</h3>
+                  <li key={w.worldId} className="min-w-0 rounded-card border-2 bg-surface p-5 sm:p-6" style={{ borderColor: isBest ? world.color : "#E3E6EB" }}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <LineBadge world={world} size={28} />
+                      <h3 className="text-lg font-bold">{world.name}</h3>
                     </div>
-                    <p className="label mt-3">좋았던 점</p>
-                    <p className="mt-0.5 text-sm">{w.good}</p>
-                    <p className="label mt-3">힘들었던 점</p>
-                    <p className="mt-0.5 text-sm">{w.hard}</p>
-                  </section>
+                    <div className="mt-3 min-h-7">
+                      {isBest ? <span className="inline-block rounded-md bg-ground px-2 py-1 text-cap font-bold">{leaders.length > 1 ? "공동 최고 부합도" : "가장 높은 부합도"}</span> : <span className="text-cap text-muted">가치관 부합도</span>}
+                    </div>
+                    <p className="num mt-2 text-4xl font-extrabold">{w.fit}<span className="ml-1 text-xl">점</span><span className="sr-only"> / 100점</span></p>
+                    <div className="mt-4 h-3 overflow-hidden rounded-full bg-hair" aria-hidden="true">
+                      <span className="block h-full rounded-full" style={{ width: `${Math.max(0, Math.min(100, w.fit))}%`, background: world.color }} />
+                    </div>
+                    <dl className="mt-5 space-y-4 border-t border-hair pt-5">
+                      <div>
+                        <dt className="inline-block rounded-md bg-ground px-2 py-1 text-sm font-bold">잘 맞는 점</dt>
+                        <dd className="mt-2 text-base leading-relaxed">{w.good}</dd>
+                      </div>
+                      <div>
+                        <dt className="inline-block rounded-md bg-ground px-2 py-1 text-sm font-bold">살펴볼 점</dt>
+                        <dd className="mt-2 text-base leading-relaxed">{w.hard}</dd>
+                      </div>
+                    </dl>
+                  </li>
                 );
               })}
+            </ul>
+          </section>
+
+          <section className="card" aria-label="100번 살아본 결과">
+            <button type="button" aria-expanded={resultsOpen} aria-controls="report-run-details" onClick={() => setResultsOpen((open) => !open)} className="flex min-h-16 w-full items-center justify-between gap-4 rounded-card px-5 py-4 text-left text-base font-bold sm:px-6">
+              100번 살아본 결과 자세히 보기
+              <ChevronDown aria-hidden="true" size={20} className={`shrink-0 transition-transform ${resultsOpen ? "rotate-180" : ""}`} />
+            </button>
+            <div id="report-run-details" hidden={!resultsOpen} className="border-t border-hair p-4 print:!block sm:p-6">
+              <p className="mb-4 text-sm text-muted">같은 길을 내 조건과 성향으로 100번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
+              <div className="grid gap-4 md:grid-cols-2">
+                {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
+              </div>
             </div>
+          </section>
 
-            <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} />
-          </div>
+          <section aria-labelledby="next-step" className="card flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div className="min-w-0">
+              <h2 id="next-step" className="text-sm font-bold text-lineA">{report.todos.length > 0 && !firstStep ? "이번 주 할 일을 모두 마쳤어요" : "이번 주, 한 가지만 시작해요"}</h2>
+              <p className="mt-2 text-xl font-bold">{firstStep ?? (report.todos.length > 0 ? "해 본 일을 돌아보고 다음 걸음을 준비해요." : report.woop.plan)}</p>
+            </div>
+            <button type="button" onClick={() => setPlanOpen((open) => !open)} aria-expanded={planOpen} aria-controls="report-action-plan" className="btn-primary shrink-0">
+              {planOpen ? "실행 계획 접기" : "실행 계획 보기"}<ArrowRight aria-hidden="true" size={18} className={planOpen ? "-rotate-90" : ""} />
+            </button>
+          </section>
 
-          <div className="flex flex-col gap-5">
-            <section className="rounded-card bg-ink p-5 text-white sm:p-6" aria-labelledby="plan">
-              <h2 id="plan" className="text-xl font-bold">
-                이번 주 실행 계획
-              </h2>
-              <p className="mt-1 text-sm text-white/70">목표 달성 연구로 효과가 확인된 WOOP 방식으로 정리했어요.</p>
+          <div id="report-action-plan" hidden={!planOpen} className={planOpen ? "grid gap-5 lg:grid-cols-2" : "print:!grid print:gap-5"}>
+            <section className="card p-5 sm:p-6" aria-labelledby="plan">
+              <h2 id="plan" className="text-xl font-bold">이번 주 실행 계획</h2>
+              <p className="mt-2 text-sm text-muted">바라는 것부터 걸림돌을 만났을 때의 행동까지 정리했어요.</p>
               <ol className="mt-5 flex flex-col gap-4">
                 {WOOP_STEPS.map((s, i) => (
-                  <li key={s.key} className="flex gap-3">
-                    <span className={`num flex h-7 w-7 flex-none items-center justify-center rounded-full text-cap font-bold ${s.key === "plan" ? "bg-white text-ink" : "border border-white/40"}`}>{i + 1}</span>
+                  <li key={s.key} className={`flex gap-3 rounded-xl ${s.key === "plan" ? "bg-ground p-4" : ""}`}>
+                    <span className="num flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink text-cap font-bold text-white">{i + 1}</span>
                     <div>
-                      <p className="text-cap font-semibold text-white/70">{s.label}</p>
-                      <p className={s.key === "plan" ? "mt-0.5 text-lg font-bold" : "mt-0.5 text-base"}>{report.woop[s.key]}</p>
+                      <p className="text-sm font-semibold text-muted">{s.label}</p>
+                      <p className={s.key === "plan" ? "mt-1 text-lg font-bold" : "mt-1 text-base"}>{report.woop[s.key]}</p>
                     </div>
                   </li>
                 ))}
               </ol>
             </section>
-
             <section className="card p-5 sm:p-6" aria-labelledby="todo">
-              <h2 id="todo" className="text-xl font-bold">
-                이번 주 할 일
-              </h2>
+              <div className="flex items-baseline justify-between gap-3">
+                <h2 id="todo" className="text-xl font-bold">이번 주 할 일</h2>
+                <span className="num text-sm text-muted" aria-live="polite">{report.todos.filter((_, i) => done[i]).length} / {report.todos.length} 완료</span>
+              </div>
               <ul className="mt-3 flex flex-col">
                 {report.todos.map((t, i) => (
-                  <li key={i}>
-                    <label className="flex min-h-[52px] cursor-pointer items-center gap-3 border-b border-hair text-base last:border-0">
+                  <li key={i} className="border-b border-hair last:border-0">
+                    <label className="flex min-h-[52px] cursor-pointer items-center gap-3 py-3 text-base">
                       <input type="checkbox" className="peer sr-only" checked={Boolean(done[i])} onChange={(e) => setDone((d) => ({ ...d, [i]: e.target.checked }))} />
-                      <span aria-hidden="true" className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-hair text-transparent transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink">
+                      <span aria-hidden="true" className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 border-hair text-transparent peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink">
                         <Check size={15} strokeWidth={3} />
                       </span>
                       <span className={done[i] ? "text-muted line-through" : ""}>{t}</span>
@@ -491,10 +523,11 @@ export default function ReportPage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 text-cap text-muted">한 달 뒤 체크인에서 해 본 일을 입력하면 시뮬레이션을 다시 돌려 볼 수 있어요.</p>
+              <p className="mt-3 text-sm text-muted">한 달 뒤 체크인에서 해 본 일을 입력하면 시뮬레이션을 다시 돌려 볼 수 있어요.</p>
             </section>
-            <Programs region={profile.life.region} />
           </div>
+          <Programs region={profile.life.region} />
+          <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} />
         </div>
       )}
       {notice ? (
