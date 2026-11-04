@@ -27,7 +27,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 
 파일럿 링크: `/interview?pilot=1`(이 기기에 초대 표시 → 검사 결과·진로 고르기에 '파일럿 상황 질문' → `/pilot`).
 
-`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름). 절대 커밋하지 말 것.
+`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 AI 판단을 무료 키에 맞춰 천천히, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름). 절대 커밋하지 말 것.
 
 스택: Next.js 14 App Router, React 18, TypeScript, Tailwind 3, `@google/genai`(Gemini 3.5 Flash-Lite / 3.6 Flash, 한도면 다른 모델로 돌려 씀), Pretendard 자체 호스팅, lucide-react, fast-xml-parser, unpdf. 브라우저 localStorage(`lib/store.ts`, 저장 버전 `v8`, v4~v7은 처음 읽을 때 옮김) + 로그인하면 Supabase.
 
@@ -78,6 +78,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 | `lib/chapters.ts` | 인생 이야기 6장 질문, 장 대화 저장 형식(`storyRaw[장]`에 `i:q`·`i:a`·`i:f`·`i:s`·done), 다음 질문 고르기 |
 | `lib/pilot.ts`, `app/pilot` | 파일럿: 앱 동의와 따로 받는 파일럿 동의(판 `PILOT_VERSION`), 채점 전용 상황 질문 `PILOT_SJT`(문항마다 tone, 지친 상황이면 stress), 답은 holdoutPicks p1~p20(성향 점수 안 씀), 빠지기(답 지움 + withdrawnAt). 로그인해야 계정에 올라가 분석에 들어감 |
 | `lib/crisis.ts` | 위기 단어 감지(대화·이야기 검사 같이 씀) |
+| `lib/llm-pace.ts` | 무료 키 개발용(`GEMINI_TIER=free`): 하나씩 대기열, 호출 사이 4.5초, 429 재시도. AI 판단만 쓴다(`generateJSON`의 `pace`) |
 | `lib/judge.ts`, `lib/judge-client.ts`, `app/api/judge` | AI 분신 판단(기본 모드): 큰 갈림길(branch choice)만, 갈림길 하나에 한 번 호출로 상황 칸 전부의 보기별 확률 + 보기별 이유. `profile.judges`에 '프로필 해시\|진로\|갈림길\|칸' 키로 저장(해시가 바뀌면 안 쓰고 다음에 지움). `/simulate`가 시작 전에 8개씩 미리 받음. 키 없음·실패는 저장 안 함 → 엔진이 규칙 기울기 |
 | `app/api/*` | simulate(SSE), judge, line, explore, live(고용24 실시간), programs, major, resume(PDF), github, profile, talk(위기 단어 감지), report, status, story/extract·story/followup(원문 저장·로그 없음) |
 
@@ -289,4 +290,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
   - 시뮬레이션 쪽 '정밀 모드' 이름을 '실시간 판단 모드'로. 코드·화면에는 아직 없는 기능이라 문서만 바뀌었다. 검사 깊이 '정밀'은 그대로.
   - 실시간 판단 모드 원가 기준은 큰 갈림길만: 100번 × 1.9곳 × 1.7원 ≈ 3년 1회 약 320원(10년 약 490원, 가정값). 학생 한 달 3회면 최대 연 약 11,500원/명으로 계약 금액의 1.7배. 사용률을 몰라 손익에는 안 넣었다.
   - 수익모델 7·8·9장을 변동비 820만 원(AI 720만 원 + 운영 100만 원) 기준으로: 공헌이익 1,180만 원, 손익분기 약 6.2곳, 실제 흑자는 7곳부터(6곳 −204만 원).
-  - norms 후보 논문(김지현 외 2011) 원문은 팀장이 구해 주기로 함. 받으면 평균을 확인해 `data/norms.json`을 바꾸고 measure-base부터 다시 돌린다.
+  - norms 후보 논문(김지현 외 2011) 원문을 구하지 못했다. 노인 표본 표시를 유지하고, 파일럿 30명이 모이면 `scripts/update-norms.ts`로 바꾼다. 그 뒤 measure-base부터 다시 돌린다.
+- 2026-11-04 무료 키 개발용 설정(`GEMINI_TIER=free`, 팀장 지시): AI 판단만 3.5 Flash-Lite 하나로, 동시 1개(브라우저 + 서버 대기열), 앞 호출이 끝나고 4.5초 뒤 다음 호출, 429면 응답의 재시도 시간만큼 기다려 최대 3번 다시. 하루 한도(PerDay)는 기다려도 안 풀려서 바로 실패로 처리하고 30분 묻지 않는다(팀장 지시에 없던 예외). 비우거나 `paid`면 예전과 같다. 서술·대화·리포트는 무료여도 예전 그대로(모델 돌려 쓰기). 실제 키로 동시 2개를 보내 2.4초·9.0초에 끝나는 것 확인(갈림길 8곳이면 약 50초, 추정). 실제 429 대기는 가짜 응답으로만 확인했다.
+- 2026-11-04 무료 키 돌려 쓰기(팀장 결정, 개발용): `GEMINI_TIER=free`일 때만 `GEMINI_API_KEY_2~4`를 읽는다. AI 판단은 하루 한도면 바로, 분당 한도면 3번 재시도 뒤 다음 키. 서술·대화·리포트는 그 키의 모델을 다 쓴 뒤 다음 키. 쉬는 기록은 키·모델별, 서버가 켜져 있는 동안만. 한도는 프로젝트마다라 같은 프로젝트 키는 효과가 없다. Google API 약관의 한도 우회 금지 조항에 걸릴 수 있다는 걸 팀장이 듣고 정했다. 유료 키 연결 때 빼고, 실제 학생이 쓰는 배포에는 넣지 않는다. 키 전환은 가짜 응답으로만 확인했다(키가 하나일 때).
+- 2026-11-04 유료 키 없이 main에 합침(팀장 결정): Vercel 키는 그대로 뒀다. 그 키가 무료 등급이면 입력이 구글 서비스 개선에 쓰일 수 있으므로 실제 학생을 받기 전에 유료로 바꿔야 한다(이 결정은 위 '실제 학생은 유료 키만'을 바꾸지 않는다). Vercel에 `GEMINI_TIER`가 없으면 AI 판단은 동시 8개로 돌고, 한도에 걸린 갈림길은 규칙 계산으로 넘어간다.

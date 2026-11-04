@@ -1,10 +1,16 @@
 // Gemini 호출을 한곳에 모은 파일. 서버(API 라우트)에서만 import한다.
-// GEMINI_API_KEY가 없으면 hasLLM()이 false가 되고, 각 API는 목업 결과를 돌려준다.
+// 키가 없으면 hasLLM()이 false가 되고, 각 API는 목업 결과를 돌려준다.
 import { GoogleGenAI } from "@google/genai";
+import { callWithKeys, is429, makeKeyPool, makeQueue, type KeyPool } from "./llm-pace";
 import { costKrw } from "./pricing";
 
-const apiKey = process.env.GEMINI_API_KEY;
-const client = apiKey ? new GoogleGenAI({ apiKey }) : null;
+// 키 등급. 무료 키 개발용 설정은 GEMINI_TIER=free일 때만 켜진다. 비우면 유료와 같다.
+export const geminiTier = (): "free" | "paid" => (process.env.GEMINI_TIER === "free" ? "free" : "paid");
+
+// 키 목록. 유료는 GEMINI_API_KEY 하나. 무료는 GEMINI_API_KEY_2~4를 더해, 한도에 걸리면 다음 키로 넘어간다(개발용).
+const apiKeys = [process.env.GEMINI_API_KEY, ...(geminiTier() === "free" ? [process.env.GEMINI_API_KEY_2, process.env.GEMINI_API_KEY_3, process.env.GEMINI_API_KEY_4] : [])].filter((k): k is string => Boolean(k));
+const clients = apiKeys.map((apiKey) => new GoogleGenAI({ apiKey }));
+const keys: KeyPool = makeKeyPool(clients.length);
 
 // 모델 순서. 앞 모델이 한도(429)에 걸리거나 응답이 없으면 같은 프롬프트·설정으로 다음 모델을 쓴다(무료 등급 키는 모델마다 하루 20회).
 // 세 모델 모두 생각 최소(minimal)에서 1~2초, 생각 토큰 0으로 답한다(2026-11-02 확인).
@@ -19,8 +25,7 @@ export const MODELS = {
 
 // 한도에 걸렸거나 응답이 없던 모델은 잠시 건너뛴다(서버가 켜져 있는 동안만 기억).
 const TIMEOUT_MS = 30_000;
-const resting = new Map<string, number>();
-function restFor(model: string, err: unknown) {
+function restFor(key: number, model: string, err: unknown) {
   const msg = String((err as Error)?.message ?? err);
   let ms = 0;
   if (/"code":\s*429|RESOURCE_EXHAUSTED/.test(msg)) {
@@ -29,9 +34,13 @@ function restFor(model: string, err: unknown) {
     if (/PerDay/.test(msg)) ms = Math.max(ms, 30 * 60_000); // 하루 한도면 30분은 다시 묻지 않는다
   } else if (/"code":\s*404|NOT_FOUND/.test(msg)) ms = 6 * 3600_000;
   else if ((err as Error)?.name === "TimeoutError" || /timed? ?out|abort/i.test(msg)) ms = 10 * 60_000;
-  if (ms) resting.set(model, Date.now() + ms);
+  if (ms) keys.rest(key, model, ms);
   return ms;
 }
+
+// 무료 키일 때 pace를 켠 호출(지금은 AI 판단): 이 모델 하나만, 한 번에 하나씩, 호출 사이 4.5초, 429면 기다렸다가 다시.
+const FREE_PACED_MODEL = "gemini-3.5-flash-lite";
+const freeQueue = makeQueue();
 
 // 생각(thinking)은 끈다. 이미 정해진 결과를 문장으로 쓰는 일이라 필요 없고, 생각 토큰도 출력 요금이 붙는다.
 // 3 계열은 thinkingBudget: 0을 거부해서(400) thinkingLevel "minimal"을 쓴다.
@@ -40,7 +49,7 @@ function thinkingOff(model: string) {
 }
 
 export function hasLLM(): boolean {
-  return client !== null;
+  return clients.length > 0;
 }
 
 type Usage = { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number };
@@ -90,6 +99,33 @@ async function logUsage(tag: string, model: string, usage: Usage | undefined, wh
   }
 }
 
+async function generatePaced<T>(opts: { tag: string; system: string; prompt: string; fallback: () => T }, who: ReturnType<typeof caller>): Promise<T> {
+  const model = FREE_PACED_MODEL;
+  const allResting = () => keys.order().every((k) => keys.resting(k, model)); // 모든 키가 한도면 묻지 않는다
+  if (allResting()) return opts.fallback();
+  try {
+    return await freeQueue(async () => {
+      if (allResting()) return opts.fallback();
+      const res = await callWithKeys(
+        keys,
+        model,
+        (key) =>
+          clients[key].models.generateContent({
+            model,
+            contents: opts.prompt,
+            config: { systemInstruction: opts.system, responseMimeType: "application/json", temperature: 0.8, thinkingConfig: thinkingOff(model) as never, abortSignal: AbortSignal.timeout(TIMEOUT_MS) },
+          }),
+        (msg) => console.error(`[LLM 대기] ${opts.tag} ${model} ${msg}`),
+      );
+      await logUsage(opts.tag, model, res.usageMetadata, who);
+      return JSON.parse(res.text ?? "") as T;
+    });
+  } catch (err) {
+    console.error(`[LLM 실패] ${opts.tag} ${model} (무료 키 설정)`, String((err as Error)?.message ?? err).slice(0, 200));
+    return opts.fallback();
+  }
+}
+
 // JSON으로 답을 받는다. 실패하면 fallback을 돌려줘서 데모가 멈추지 않게 한다.
 export async function generateJSON<T>(opts: {
   tag: string;
@@ -97,30 +133,42 @@ export async function generateJSON<T>(opts: {
   system: string;
   prompt: string;
   fallback: () => T;
+  pace?: boolean; // 무료 키일 때 위 설정을 쓴다. 유료 키에서는 아무 일도 안 한다.
 }): Promise<T> {
-  if (!client) return opts.fallback();
+  if (!clients.length) return opts.fallback();
   const who = caller();
-  const now = Date.now();
-  const models = MODELS[opts.model].filter((m) => (resting.get(m) ?? 0) <= now);
-  for (const model of models.length ? models : MODELS[opts.model].slice(0, 1)) {
-    try {
-      const res = await client.models.generateContent({
-        model,
-        contents: opts.prompt,
-        config: {
-          systemInstruction: opts.system,
-          responseMimeType: "application/json",
-          temperature: 0.8,
-          thinkingConfig: thinkingOff(model) as never,
-          abortSignal: AbortSignal.timeout(TIMEOUT_MS),
-        },
-      });
-      await logUsage(opts.tag, model, res.usageMetadata, who);
-      return JSON.parse(res.text ?? "") as T;
-    } catch (err) {
-      const rest = restFor(model, err);
-      console.error(`[LLM 실패] ${opts.tag} ${model}${rest ? ` → ${Math.round(rest / 60_000)}분 쉬고 다음 모델` : " → 다음 모델"}`, String((err as Error)?.message ?? err).slice(0, 200));
+  if (opts.pace && geminiTier() === "free") return generatePaced(opts, who);
+  // 지금 키부터. 쉬는 모델은 건너뛰고, 키 하나에서 한도로 다 실패하면 다음 키(유료는 키가 하나라 예전과 같다).
+  const order = keys.order();
+  const usable = order.filter((k) => MODELS[opts.model].some((m) => !keys.resting(k, m)));
+  for (const key of usable.length ? usable : order.slice(0, 1)) {
+    const client = clients[key];
+    const live = MODELS[opts.model].filter((m) => !keys.resting(key, m));
+    let limited = false;
+    for (const model of live.length ? live : MODELS[opts.model].slice(0, 1)) {
+      try {
+        const res = await client.models.generateContent({
+          model,
+          contents: opts.prompt,
+          config: {
+            systemInstruction: opts.system,
+            responseMimeType: "application/json",
+            temperature: 0.8,
+            thinkingConfig: thinkingOff(model) as never,
+            abortSignal: AbortSignal.timeout(TIMEOUT_MS),
+          },
+        });
+        await logUsage(opts.tag, model, res.usageMetadata, who);
+        keys.use(key);
+        return JSON.parse(res.text ?? "") as T;
+      } catch (err) {
+        const rest = restFor(key, model, err);
+        limited ||= is429(err);
+        console.error(`[LLM 실패] ${opts.tag} ${model}${rest ? ` → ${Math.round(rest / 60_000)}분 쉬고 다음 모델` : " → 다음 모델"}`, String((err as Error)?.message ?? err).slice(0, 200));
+      }
     }
+    if (!limited) break; // 한도가 아니면 키를 바꿔도 소용없다
+    if (clients.length > 1) console.error(`[키 전환] ${opts.tag} ${key + 1}번 키 한도`);
   }
   console.error(`[LLM 실패] ${opts.tag} 모든 모델 실패 → 목업 문장`);
   return opts.fallback();

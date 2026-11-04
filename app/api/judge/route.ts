@@ -88,7 +88,7 @@ export async function POST(req: Request) {
   let src: JudgeEntry["src"] = hasLLM() ? "ai" : "mock";
   let got: { probs: Record<string, number[]>; reasons: string[]; shift: string } = { probs: {}, reasons: ids.map(() => ""), shift: "" };
   if (hasLLM()) {
-    got = await askJudge(() => generateJSON<unknown>({ tag: "judge", model: "fast", system, prompt, fallback: () => null }), ids, buckets);
+    got = await askJudge(() => generateJSON<unknown>({ tag: "judge", model: "fast", system, prompt, fallback: () => null, pace: true }), ids, buckets);
     if (!Object.keys(got.probs).length) src = "fallback";
   }
   const out: Record<string, JudgeEntry> = {};
