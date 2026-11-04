@@ -58,6 +58,7 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
             ...(b.grade === "assumed" ? {} : { ref: b.ref, n: b.n, population: b.population?.label }),
             otherGroup: k.otherGroup,
             byAi: k.byAi,
+            aiFailed: k.aiFailed || undefined,
             forced: k.forced || undefined,
             situation: k.situation,
             shift: k.shift,
@@ -100,8 +101,10 @@ export function choiceLine(ev: Pick<SimEvent, "reason" | "odds">) {
   if (o.forced) return ev.reason;
   const d = o.mine - o.base;
   if (d > ODDS_MARGIN) return ev.reason ? `${joinReason(ev.reason)} 보통보다 이쪽을 더 골라요` : "보통보다 이쪽을 더 골라요";
-  if (d < -ODDS_MARGIN) return `보통보다 덜 고르는 편이지만, 이번 삶에선 이쪽으로 갔어요${o.situation ? `. ${o.situation}요` : ""}`;
-  return "보통 사람과 비슷하게 골랐어요";
+  // AI 판단은 차이가 작아도 고른 보기의 이유를 붙인다
+  const aiReason = o.byAi && ev.reason ? ` · ${ev.reason}` : "";
+  if (d < -ODDS_MARGIN) return `보통보다 덜 고르는 편이지만, 이번 삶에선 이쪽으로 갔어요${aiReason || (o.situation ? `. ${o.situation}요` : "")}`;
+  return `보통 사람과 비슷하게 골랐어요${aiReason}`;
 }
 
 // AI가 쓴 이유가 문장으로 끝나면 마침표로, '~해서'처럼 이어지면 그대로 잇는다.

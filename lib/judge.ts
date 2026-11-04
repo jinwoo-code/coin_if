@@ -7,7 +7,7 @@ import { scrubStory } from "./story";
 import type { EventCard, Profile, WorldTemplate } from "./types";
 
 // 프롬프트(app/api/judge/route.ts)를 고치면 올린다. 판단 캐시 키에 들어가서 다시 판단하게 된다.
-export const JUDGE_PROMPT_VERSION = "2";
+export const JUDGE_PROMPT_VERSION = "3";
 
 export interface JudgeEntry {
   probs: number[]; // 보기 순서대로(합 1)
@@ -41,15 +41,25 @@ export const judgeForks = (w: WorldTemplate) => w.events.filter((e) => e.branch 
 export function judgeFor(p: Profile, worldId: string, e: EventCard, bucket: string): JudgeEntry | null {
   if (e.branch !== "choice" || !p.judges) return null;
   const j = p.judges[judgeKey(hashOf(p), worldId, e.id, bucket)];
-  return j && j.probs.length === e.choices.length ? j : null;
+  return j && j.src === "ai" && j.probs.length === e.choices.length ? j : null;
 }
 
-// 아직 판단이 없는 (진로, 갈림길)들. 한 갈림길의 상황 칸은 한 번의 호출로 같이 받는다.
+// AI 판단을 받으려다 실패해서 규칙 기울기로 처리되는 칸인지(작은 갈림길·키 없음은 실패가 아니다)
+export function judgeFailed(p: Profile, worldId: string, e: EventCard, bucket: string) {
+  return e.branch === "choice" && p.judges?.[judgeKey(hashOf(p), worldId, e.id, bucket)]?.src === "fallback";
+}
+
+// 호출 자체가 실패했을 때 남기는 표시(다음 미리 불러오기 때 다시 묻는다)
+export function failedEntries(e: EventCard): Record<string, JudgeEntry> {
+  return Object.fromEntries(allBuckets(e.stateKeys ?? []).map((b) => [b, { probs: [], reasons: [], src: "fallback" as const }]));
+}
+
+// 아직 AI 판단이 없는 (진로, 갈림길)들(지난번에 실패한 곳 포함). 한 갈림길의 상황 칸은 한 번의 호출로 같이 받는다.
 export function missingJudges(p: Profile, worlds: WorldTemplate[]) {
   const h = profileHash(p);
   return worlds.flatMap((w) =>
     judgeForks(w)
-      .filter((e) => allBuckets(e.stateKeys ?? []).some((b) => !p.judges?.[judgeKey(h, w.id, e.id, b)]))
+      .filter((e) => allBuckets(e.stateKeys ?? []).some((b) => p.judges?.[judgeKey(h, w.id, e.id, b)]?.src !== "ai"))
       .map((e) => ({ world: w, fork: e })),
   );
 }

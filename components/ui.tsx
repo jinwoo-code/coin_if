@@ -248,13 +248,13 @@ export function Odds({ odds }: { odds: ChoiceOdds }) {
         <span className={`flex-none rounded-full border px-2 py-0.5 font-semibold ${odds.grade === "assumed" ? "border-hair" : "border-ink text-ink"}`}>{badge}</span>
       </summary>
       <div className="flex flex-col gap-1 pb-1">
-        {odds.shift ? <p className="text-ink">{odds.shift}</p> : null}
         {odds.population ? (
           <p>
             {odds.population}이에요. {odds.otherGroup}
           </p>
         ) : null}
         <p>{odds.grade === "assumed" ? GRADE_NOTE : odds.ref}</p>
+        {odds.aiFailed ? <p className="font-semibold text-ink">AI 판단 실패 → 규칙 계산</p> : null}
         <p>{odds.byAi ? "'나는'은 AI 분신의 판단을 기준 비율에서 크게 벗어나지 않게 반영한 값이에요." : "'나는'은 내 성향을 규칙으로 계산해 기준 비율에서 크게 벗어나지 않게 반영한 값이에요."}</p>
       </div>
     </details>

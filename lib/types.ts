@@ -257,6 +257,7 @@ export interface PickInfo {
   base: number; // 기준 비율(이 상황 칸)
   mine: number; // 내가 그 보기를 고를 확률
   byAi: boolean; // 내 확률이 AI 분신 판단에서 왔는지(아니면 규칙 기울기)
+  aiFailed: boolean; // AI 판단을 받으려다 실패해서 규칙 기울기로 처리됨
   forced: boolean; // '여기서 다르게 골랐다면'으로 강제한 선택
   situation?: string; // 지금 상태 때문에 이쪽으로 민 이유(예: 스트레스가 많이 쌓여 있어서)
   shift?: string; // AI가 쓴, 보통 사람과 비교해 어느 쪽으로 기우는지
@@ -326,6 +327,7 @@ export interface ChoiceOdds {
   population?: string; // 통계의 대상 집단
   otherGroup?: string; // 대상 집단과 다르거나 확인할 수 없는 까닭(있으면 배지가 '통계(다른 집단 기준)')
   byAi: boolean;
+  aiFailed?: boolean;
   forced?: boolean;
   situation?: string;
   shift?: string;

@@ -3,10 +3,10 @@
 // 브라우저에서도 쓸 수 있도록 서버 전용 코드를 import하지 않는다.
 import { ymAt } from "./calendar";
 import { factorMult, startSkill } from "./factors";
-import { eulReul } from "./josa";
+import { eulReul, iGa } from "./josa";
 import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./base";
 import norms from "@/data/norms.json";
-import { judgeFor } from "./judge";
+import { judgeFailed, judgeFor } from "./judge";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
 import { W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
@@ -128,6 +128,8 @@ interface Push {
   value: number;
   reason: string;
   fromState?: boolean; // 성향이 아니라 지금 상태 때문에 미는 무게
+  explain?: boolean; // 선택 이유로 써도 되는지(가치관 1~2순위, 비교 집단보다 확실히 강한 성향, 이야기·고친 선택)
+  alts?: string[]; // 같은 뜻의 다른 표현(이유로 쓸 때 돌려 쓴다)
 }
 
 function rankOf(p: Profile, v: ValueKey) {
@@ -156,33 +158,73 @@ function pushes(p: Profile, state: LifeState): Push[] {
   const b = p.bigFive;
   const h = p.behavior;
   const r = (v: ValueKey) => `${eulReul(v)} ${rankOf(p, v) + 1}순위로 꼽아서`;
+  const valueAlts = (v: ValueKey) => (rankOf(p, v) === 0 ? [`${iGa(v)} 가장 중요해서`, `${eulReul(v)} 제일 먼저 꼽아서`, `${v} 쪽을 가장 크게 봐서`] : [`${eulReul(v)} 2순위로 꼽아서`, `${v}도 크게 따져서`, `${iGa(v)} 꽤 중요해서`]);
+  // 성향은 비교 집단 평균(data/norms.json)보다 reason.traitMargin 넘게 강할 때만 이유로 쓴다.
+  const margin = W("reason.traitMargin");
+  const strong = (mine: number, norm: number) => mine - norm >= margin;
   const out: Push[] = [];
   // 가치관을 하나도 안 고른 사람(비교 집단 평균 인물)은 8개가 똑같이 뽑힌다고 보고 순위 무게의 기대값을 준다(data/norms.json values, 가정값).
   const meanRank = WA("value.rank").reduce((a, c) => a + c, 0) / VALUE_PUSH.length;
   for (const [v, tone] of VALUE_PUSH) {
     if (!p.values.length) out.push({ tone, value: W(`value.${v}.${tone}`) * meanRank, reason: "보통 사람" });
-    else if (vw(p, v)) out.push({ tone, value: W(`value.${v}.${tone}`) * vw(p, v), reason: r(v) });
+    else if (vw(p, v)) out.push({ tone, value: W(`value.${v}.${tone}`) * vw(p, v), reason: r(v), explain: rankOf(p, v) <= 1, alts: rankOf(p, v) <= 1 ? valueAlts(v) : undefined });
   }
-  out.push({ tone: "push", value: W("trait.C.push") * (b.C - 3), reason: b.C >= 3 ? "일을 끝까지 해내는 편이라서" : "" });
+  out.push({
+    tone: "push",
+    value: W("trait.C.push") * (b.C - 3),
+    reason: b.C >= 3 ? "일을 끝까지 해내는 편이라서" : "",
+    explain: strong(b.C, norms.bigFive.mean.C),
+    alts: ["일을 끝까지 해내는 편이라서", "맡은 일은 끝내야 마음이 놓여서", "마무리를 중요하게 여겨서"],
+  });
   const grit = blendPersistence(h.persistence, p.story);
-  out.push({ tone: "push", value: W("trait.persistence.push") * (grit - 3), reason: grit >= 3 ? "잘 안 풀려도 버티는 편이라서" : "" });
-  out.push({ tone: "change", value: W("trait.risk.change") * (h.risk - 3), reason: h.risk >= 3 ? "불확실해도 일단 움직이는 편이라서" : "" });
-  out.push({ tone: "change", value: W("trait.O.change") * (b.O - 3), reason: b.O >= 3 ? "새로운 걸 좋아하는 편이라서" : "" });
-  out.push({ tone: "safe", value: W("trait.N.safe") * (b.N - 3), reason: b.N >= 3 ? "쉽게 긴장하는 편이라서" : "" });
-  out.push({ tone: "safe", value: W("trait.lowRisk.safe") * (3 - h.risk), reason: h.risk < 3 ? "확실하지 않으면 움직이지 않는 편이라서" : "" });
+  out.push({
+    tone: "push",
+    value: W("trait.persistence.push") * (grit - 3),
+    reason: grit >= 3 ? "잘 안 풀려도 버티는 편이라서" : "",
+    explain: strong(grit, norms.behavior.mean.persistence),
+    alts: ["잘 안 풀려도 버티는 편이라서", "쉽게 포기하지 않는 편이라서", "한 번 시작하면 오래 붙드는 편이라서"],
+  });
+  out.push({
+    tone: "change",
+    value: W("trait.risk.change") * (h.risk - 3),
+    reason: h.risk >= 3 ? "불확실해도 일단 움직이는 편이라서" : "",
+    explain: strong(h.risk, norms.behavior.mean.risk),
+    alts: ["불확실해도 일단 움직이는 편이라서", "해 보면서 알아 가는 편이라서", "모험을 크게 겁내지 않아서"],
+  });
+  out.push({
+    tone: "change",
+    value: W("trait.O.change") * (b.O - 3),
+    reason: b.O >= 3 ? "새로운 걸 좋아하는 편이라서" : "",
+    explain: strong(b.O, norms.bigFive.mean.O),
+    alts: ["새로운 걸 좋아하는 편이라서", "낯선 일에 호기심이 많아서", "안 해 본 쪽에 끌려서"],
+  });
+  out.push({
+    tone: "safe",
+    value: W("trait.N.safe") * (b.N - 3),
+    reason: b.N >= 3 ? "쉽게 긴장하는 편이라서" : "",
+    explain: strong(b.N, norms.bigFive.mean.N),
+    alts: ["쉽게 긴장하는 편이라서", "불안이 큰 편이라서", "걱정이 앞서는 편이라서"],
+  });
+  out.push({
+    tone: "safe",
+    value: W("trait.lowRisk.safe") * (3 - h.risk),
+    reason: h.risk < 3 ? "확실하지 않으면 움직이지 않는 편이라서" : "",
+    explain: strong(norms.behavior.mean.risk, h.risk),
+    alts: ["확실하지 않으면 움직이지 않는 편이라서", "확실한 쪽을 먼저 보는 편이라서", "위험은 되도록 피하는 편이라서"],
+  });
   // 이야기에서 사용자가 '맞아요'로 확인한 값(lib/story.ts). 무게는 가정값이고, 이유에 그 사람이 쓴 문장을 그대로 인용한다.
   const st = p.story;
-  if (st?.decisionStyle) out.push({ tone: st.decisionStyle.value === "impulsive" ? "change" : "safe", value: W("story.decisionStyle"), reason: storyReason(st.decisionStyle.evidence) });
-  if (st?.familyExpectation?.value === "stable") out.push({ tone: "safe", value: W("story.familyStable") * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence) });
+  if (st?.decisionStyle) out.push({ tone: st.decisionStyle.value === "impulsive" ? "change" : "safe", value: W("story.decisionStyle"), reason: storyReason(st.decisionStyle.evidence), explain: true });
+  if (st?.familyExpectation?.value === "stable") out.push({ tone: "safe", value: W("story.familyStable") * st.familyExpectation.strength, reason: storyReason(st.familyExpectation.evidence), explain: true });
   if (st?.regretType?.value === "inaction") {
-    out.push({ tone: "push", value: W("story.regretInaction.push"), reason: storyReason(st.regretType.evidence) });
-    out.push({ tone: "change", value: W("story.regretInaction.change"), reason: storyReason(st.regretType.evidence) });
+    out.push({ tone: "push", value: W("story.regretInaction.push"), reason: storyReason(st.regretType.evidence), explain: true });
+    out.push({ tone: "change", value: W("story.regretInaction.change"), reason: storyReason(st.regretType.evidence), explain: true });
   }
-  if (st?.regretType?.value === "action") out.push({ tone: "safe", value: W("story.regretAction.safe"), reason: storyReason(st.regretType.evidence) });
+  if (st?.regretType?.value === "action") out.push({ tone: "safe", value: W("story.regretAction.safe"), reason: storyReason(st.regretType.evidence), explain: true });
   // 계속 닮아 가기: 내가 직접 고친 선택·체크인에서 말한 실제 선택. 한 번에 correction.step, tone마다 최대 correction.cap(가정값)
   for (const t of ["push", "change", "safe"] as const) {
     const n = (p.corrections ?? []).filter((c) => c.to === t).length;
-    if (n) out.push({ tone: t, value: Math.min(W("correction.cap"), W("correction.step") * n), reason: "내가 직접 고친 선택을 반영해서" });
+    if (n) out.push({ tone: t, value: Math.min(W("correction.cap"), W("correction.step") * n), reason: "내가 직접 고친 선택을 반영해서", explain: true });
   }
   // 지쳐 있으면 쉬거나 바꾸고 싶어진다.
   const tired = (state.stress - 50) / 100;
@@ -223,7 +265,7 @@ export const normProbs = (state: LifeState, tones: Tone[]) => ruleProbs(NORM_PRO
 
 // ---------- 기준선 + 기울기(docs/선택-설계-근거.md '합치는 방식: 이산선택 모형') ----------
 // 점수_i = ln(기준 비율_i) + r × clip(기울기_i, ln(2/3), ln 1.5),  확률 = 소프트맥스(점수)
-// 기울기: AI 분신 판단이 있으면 ln(AI 확률 ÷ 기준 비율), 없으면 규칙 기울기 ln(내 규칙 확률 ÷ 평균 인물 규칙 확률)(같은 상태에서).
+// 기울기: AI 분신 판단이 있으면 ln(AI 확률 ÷ 기준 비율), 없으면 규칙 기울기 rule.scale × ln(내 규칙 확률 ÷ 평균 인물 규칙 확률)(같은 상태에서).
 // 성향이 모두 평균인 사람은 규칙 기울기가 0이라 정확히 기준 비율대로 고른다(scripts/check-base.ts가 확인).
 export const TILT_MIN = Math.log(2 / 3);
 export const TILT_MAX = Math.log(1.5);
@@ -244,7 +286,9 @@ export function choiceProbs(p: Profile, state: LifeState, tones: Tone[], base?: 
   const mine = judge ? judge.probs : ruleProbs(p, state, tones);
   const ref = judge ? b : norm;
   const r = reflectOf(p);
-  const score = tones.map((_, i) => Math.log(b[i]) + r * clamp(Math.log(mine[i] / ref[i]), TILT_MIN, TILT_MAX));
+  // AI 판단은 말한 대로, 규칙 기울기는 rule.scale을 곱한다(data/weights.json)
+  const k = judge ? 1 : W("rule.scale");
+  const score = tones.map((_, i) => Math.log(b[i]) + r * clamp(k * Math.log(mine[i] / ref[i]), TILT_MIN, TILT_MAX));
   const top = Math.max(...score);
   const w = score.map((x) => Math.exp(x - top));
   const total = w.reduce((a, c) => a + c, 0);
@@ -256,9 +300,10 @@ export function ruleJudge(p: Profile, state: LifeState, choices: Choice[], base:
   const tones = choices.map((c) => c.tone);
   const mine = ruleProbs(p, state, tones);
   const norm = normProbs(state, tones);
-  const w = base.map((b, i) => b * (mine[i] / norm[i]));
+  const k = W("rule.scale");
+  const w = base.map((b, i) => b * (mine[i] / norm[i]) ** k);
   const total = w.reduce((a, c) => a + c, 0);
-  const ps = pushes(p, state).filter((x) => x.reason !== "보통 사람" && !x.fromState);
+  const ps = pushes(p, state).filter((x) => x.explain);
   const reasons = tones.map((t) => ps.filter((x) => x.tone === t).toSorted((a, b) => b.value - a.value)[0]?.reason ?? "");
   return { probs: w.map((x) => x / total), reasons };
 }
@@ -283,15 +328,17 @@ export function decide(p: Profile, state: LifeState, choices: Choice[], rand: ()
   }
   // 이유: AI 판단이 있으면 AI가 쓴 문장, 없으면 고른 쪽을 민 성향 중 하나(무게만큼 뽑음, 없으면 빈 문자열). 지금 상태 때문에 민 건 성향이 아니라 situation으로 따로.
   const mine = ps.filter((x) => x.tone === tones[index] && x.reason !== "보통 사람");
-  const traits = mine.filter((x) => !x.fromState);
+  const traits = mine.filter((x) => x.explain);
   let reason = "";
   if (mine.length) {
     // rand는 고른 쪽을 민 게 있으면 항상 한 번 쓴다(같은 시드면 같은 인생)
-    let r = rand() * traits.reduce((s, x) => s + x.value, 0);
+    const roll = rand();
+    let r = roll * traits.reduce((s, x) => s + x.value, 0);
     for (const x of traits) {
       r -= x.value;
       if (r <= 0) {
-        reason = x.reason;
+        // 표현 고르기에 난수를 더 쓰지 않는다
+        reason = x.alts ? x.alts[Math.floor(roll * 997) % x.alts.length] : x.reason;
         break;
       }
     }
@@ -510,7 +557,16 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       const chosen = event.choices[choiceIndex];
       if (event.choices.length >= 2) {
         const gap = chosen?.base?.population ? populationGap(p, chosen.base.population) : null;
-        pick = { base: d.base[choiceIndex], mine: d.probs[choiceIndex], byAi: !forced && judge?.src === "ai", forced, situation: d.situation, shift: forced ? undefined : judge?.shift, otherGroup: gap ?? undefined };
+        pick = {
+          base: d.base[choiceIndex],
+          mine: d.probs[choiceIndex],
+          byAi: !forced && judge?.src === "ai",
+          aiFailed: !forced && judgeFailed(p, world.id, event, bucket),
+          forced,
+          situation: d.situation,
+          shift: forced ? undefined : judge?.shift,
+          otherGroup: gap ?? undefined,
+        };
       }
       const choice = event.choices[choiceIndex];
       delta = addDelta(addDelta(event.effect, choice?.effect), choice ? TONE_EFFECT[choice.tone] : undefined);

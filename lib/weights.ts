@@ -58,7 +58,7 @@ export function weightGroups(readinessIds: string[]) {
   const keys = Object.keys(WEIGHTS);
   const pick = (re: RegExp) => keys.filter((k) => re.test(k));
   return [
-    { title: "선택 규칙(가치관·성격·상태)", keys: pick(/^(decide|value|trait|state)\./) },
+    { title: "선택 규칙(가치관·성격·상태)", keys: pick(/^(decide|rule|reason|value|trait|state)\./) },
     { title: "이야기 값·고친 선택", keys: pick(/^(story|correction)\./) },
     { title: "확률 배수(내 조건)", keys: [...pick(/^factor\./), ...readinessIds.map((id) => `readiness.${id}`).filter((k) => WEIGHTS[k])] },
   ];

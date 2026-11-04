@@ -1,12 +1,13 @@
 // AI 분신 판단(기본 모드): 큰 갈림길 하나에서, 상황 칸마다 '이 사람이 각 보기를 고를 확률'과 보기별 이유를 받는다.
 // 하나를 고르게 하지 않고 보기별 확률을 받는다(Meister 외 2024: 분포를 직접 말하게 해야 실제 분포에 가깝다).
-// 실제 사람들의 기준 비율을 예시로 주고 "이 사람이라면 얼마나 달라질지"를 묻는다. 엔진이 기준선과 상한(0.67~1.5배) 안에서만 반영한다.
-// 입력은 확인한 값만(이야기 원문·근거 인용 없음). 프롬프트를 고치면 JUDGE_PROMPT_VERSION(lib/judge.ts)을 올린다. 응답이 틀리면 한 번 더 묻고, 그래도 틀린 칸은 규칙 기울기로 채운다. 키가 없으면 규칙 기울기(목업).
+// 실제 사람들의 기준 비율을 주고 "이 사람이라면 솔직히 몇 %일지"만 묻는다. 붙잡는 건 엔진이 맡는다(r, 상한 0.67~1.5배).
+// 입력은 확인한 값만(이야기 원문·근거 인용 없음). 프롬프트를 고치면 JUDGE_PROMPT_VERSION(lib/judge.ts)을 올린다. 응답 검사·재요청은 lib/judge-ask.ts, 그래도 틀린 칸은 규칙 기울기로 채운다. 키가 없으면 규칙 기울기(목업).
 import { NextResponse } from "next/server";
 import norms from "@/data/norms.json";
 import { allBuckets, baseShare, bucketLabel, stressOf } from "@/lib/base";
 import { ruleJudge } from "@/lib/engine";
 import type { JudgeEntry } from "@/lib/judge";
+import { askJudge } from "@/lib/judge-ask";
 import { generateJSON, hasLLM } from "@/lib/llm";
 import { normalizeProfile } from "@/lib/profile";
 import { LABEL, scrubStory } from "@/lib/story";
@@ -47,33 +48,6 @@ function personText(p: Profile) {
   return lines.join("\n");
 }
 
-// 그 보기를 안 고르는 이유·망설임이 섞인 표현
-const NEGATIVE = /망설|안 ?하|싫|꺼려|꺼리|내키지/;
-
-// 응답 검사: 상황 칸마다 모든 보기에 0 이상 숫자, 합이 0보다 크면 합 1로 정규화. 이유는 보기마다 50자 이내 문자열(아니면 규칙 이유), 부정 표현이 있으면 rejected로 세고 비운다.
-function parse(raw: unknown, ids: string[], buckets: string[]) {
-  const r = (raw ?? {}) as { probs?: Record<string, Record<string, unknown>>; reasons?: Record<string, unknown>; shift?: unknown };
-  const probs: Record<string, number[]> = {};
-  for (const b of buckets) {
-    const row = r.probs?.[b];
-    const xs = ids.map((id) => Number(row?.[id]));
-    const sum = xs.reduce((a, c) => a + c, 0);
-    if (xs.every((x) => Number.isFinite(x) && x >= 0) && sum > 0) probs[b] = xs.map((x) => x / sum);
-  }
-  let rejected = 0;
-  const reasons = ids.map((id) => {
-    const t = r.reasons?.[id];
-    if (typeof t !== "string" || !t.trim() || t.trim().length > 50) return "";
-    if (NEGATIVE.test(t)) {
-      rejected++;
-      return "";
-    }
-    return t.trim();
-  });
-  const shift = typeof r.shift === "string" && r.shift.trim().length <= 80 ? r.shift.trim() : "";
-  return { probs, reasons, shift, rejected };
-}
-
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as { profile?: Profile; worldId?: string; forkId?: string } | null;
   if (!body?.profile || !body.worldId || !body.forkId) return NextResponse.json({ error: "입력이 없어요" }, { status: 400 });
@@ -100,29 +74,21 @@ export async function POST(req: Request) {
     `[실제 사람들은 이렇게 골랐다(상황 칸별 기준 비율, 근거 등급)]\n${buckets
       .map((b) => `${b} (${bucketLabel(b)}): ${fork.choices.map((c, i) => `${ids[i]} ${Math.round((baseShare(c.base, b) ?? 0) * 100)}%`).join(", ")}`)
       .join("\n")}\n근거: ${fork.choices.map((c, i) => `${ids[i]} ${c.base ? gradeText(c.base) : "가정값"}`).join(", ")}`,
-    `이 사람이라면 상황 칸마다 각 보기를 고를 확률이 기준에서 얼마나 달라질지 판단해라. 하나만 고르지 말고 모든 보기에 확률을 줘라(합 1).\n` +
+    `실제 사람들은 위처럼 골랐다. 이 사람이라면 솔직히 상황 칸마다 각 보기를 몇 % 고를까? 하나만 고르지 말고 모든 보기에 확률을 줘라(합 1).\n` +
       `JSON으로만 답해라: {"probs": {${buckets.map((b) => `"${b}": {${ids.map((id) => `"${id}": 확률`).join(", ")}}`).join(", ")}}, "reasons": {${ids.map((id) => `"${id}": "이 사람이 이걸 고른다면 그 이유"`).join(", ")}}, "shift": "보통 사람과 비교해 어느 쪽으로 기우는지 한 문장"}`,
   ].join("\n\n");
   const system =
-    "너는 한 사람의 '분신'이다. 진로 갈림길에서 이 사람이 각 보기를 고를 확률을 추정한다. " +
-    "실제 사람들의 기준 비율에서 출발하고, 이 사람의 성향·가치관·확인한 이야기 값이 평균과 다른 만큼만 움직인다. " +
-    "사람은 생각보다 일관적이지 않다. 성격 하나로 극단적인 확률(90% 넘게, 5% 밑으로)을 주지 마라. 정보가 없거나 평균과 비슷하면 기준 비율 가까이 둔다. " +
-    "reasons는 보기마다 이 사람이 그걸 고른다면 그 이유만 쓴다. 확률이 낮은 보기라도 고르게 되는 이유를 쓰고, 안 고르는 이유나 망설임(망설여서, 안 하고 싶어서, 싫어서)은 절대 쓰지 마라. " +
+    "너는 한 사람의 '분신'이다. 진로 갈림길에서 실제 사람들이 고른 비율을 보고, 이 사람이라면 솔직히 각 보기를 몇 % 고를지 말한다. " +
+    "reasons는 보기마다 이 사람이 그걸 고른다면 그 이유만 쓴다. 보기 문장을 되풀이하지 말고 이 사람의 이야기·가치관·상황 중 하나를 근거로 쓴다. 안 고르는 이유나 망설임은 쓰지 마라. " +
+    "좋은 예: '모은 돈이 적어서', '성장을 가장 중요하게 여겨서'. 나쁜 예: '일 년 더 도전해서'(보기 되풀이), '퇴사는 망설여져서'(안 고르는 이유). " +
     "'~해서', '~라서'로 끝나는 짧은 한국어(20자 안팎)로, 입력에 있는 사실만 근거로 쓴다. " +
     "shift는 보통 사람과 비교해 이 사람이 어느 쪽으로 기우는지 40자 안팎 한 문장으로, 네가 준 확률과 같은 방향으로 쓴다. 이유와 shift에 숫자·점수는 쓰지 마라.";
 
   const t0 = Date.now();
   let src: JudgeEntry["src"] = hasLLM() ? "ai" : "mock";
-  let got = { probs: {} as Record<string, number[]>, reasons: ids.map(() => ""), shift: "" };
+  let got: { probs: Record<string, number[]>; reasons: string[]; shift: string } = { probs: {}, reasons: ids.map(() => ""), shift: "" };
   if (hasLLM()) {
-    // 확률 형식이 틀리거나 이유에 부정 표현이 있으면 한 번 더 묻는다. 두 번째에도 부정 표현이면 그 이유는 비운다(규칙 이유로).
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const raw = await generateJSON<unknown>({ tag: "judge", model: "fast", system, prompt, fallback: () => null });
-      if (raw === null) break; // 모든 모델 실패(한도 등)
-      const next = parse(raw, ids, buckets);
-      got = { probs: { ...got.probs, ...next.probs }, reasons: ids.map((_, i) => next.reasons[i] || got.reasons[i]), shift: next.shift || got.shift };
-      if (buckets.every((b) => got.probs[b]) && !next.rejected) break; // 길이만 틀린 이유는 다시 묻지 않고 규칙 이유로 채운다
-    }
+    got = await askJudge(() => generateJSON<unknown>({ tag: "judge", model: "fast", system, prompt, fallback: () => null }), ids, buckets);
     if (!Object.keys(got.probs).length) src = "fallback";
   }
   const out: Record<string, JudgeEntry> = {};
