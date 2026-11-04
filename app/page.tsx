@@ -2,7 +2,8 @@
 // 첫 화면: 하나의 '지금의 나'에서 여러 진로 노선이 갈라지는 그림이 핵심이다.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Clock3, Route, BookmarkCheck } from "lucide-react";
 import { AccountButton } from "@/components/account";
 import { DEMO_PROFILE, demoSelection } from "@/lib/demo";
 import { store } from "@/lib/store";
@@ -67,12 +68,26 @@ const STEPS = [
 export default function Home() {
   const router = useRouter();
   const [hasProgress, setHasProgress] = useState(false);
+  const [resumeHref, setResumeHref] = useState("/choose");
+  const demoDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    const check = () => setHasProgress(Boolean(store.getProfile()));
+    const check = () => {
+      setHasProgress(Boolean(store.getProfile()));
+      setResumeHref(store.getReport() ? "/report" : store.getSelection() ? "/simulate" : "/choose");
+    };
     check();
     window.addEventListener("cr:restored", check); // 로그인한 빈 기기에서 계정 기록을 내려받은 뒤
-    return () => window.removeEventListener("cr:restored", check);
+    window.addEventListener("storage", check);
+    return () => {
+      window.removeEventListener("cr:restored", check);
+      window.removeEventListener("storage", check);
+    };
   }, []);
+
+  function requestDemo() {
+    if (store.getProfile()) demoDialog.current?.showModal();
+    else startDemo();
+  }
 
   function startDemo() {
     store.reset();
@@ -84,7 +99,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="mx-auto flex h-16 w-full max-w-[1080px] items-center px-5 sm:px-8">
+      <header className="mx-auto flex min-h-20 w-full max-w-[1200px] items-center gap-4 px-5 sm:px-8">
         <span className="flex items-center gap-2 text-base font-bold tracking-tight">
           <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path d="M2 12h7" stroke="#14171F" strokeWidth="2.6" strokeLinecap="round" />
@@ -95,45 +110,66 @@ export default function Home() {
           </svg>
           진로 리허설
         </span>
-        <span className="ml-auto">
+        <a href="#how" className="ml-auto hidden min-h-11 items-center text-sm font-medium text-muted hover:text-ink sm:inline-flex">이용 방법</a>
+        <span className="ml-auto sm:ml-2">
           <AccountButton />
         </span>
       </header>
 
-      <main id="main" className="mx-auto grid w-full max-w-[1080px] flex-1 items-center gap-10 px-5 pb-12 pt-4 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
-        <section className="flex flex-col">
-          <h1 className="text-3xl font-extrabold sm:text-4xl">
+      <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-5 pb-14 pt-6 sm:px-8 sm:pt-10 lg:pb-20">
+        {hasProgress ? (
+          <aside aria-label="저장된 리허설" className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-hair bg-surface p-4 sm:px-6">
+            <BookmarkCheck aria-hidden="true" className="hidden text-lineA sm:block" size={24} />
+            <div className="flex-1 basis-48">
+              <p className="text-sm font-bold">진행하던 리허설이 있어요</p>
+              <p className="mt-0.5 text-sm text-muted">저장된 진로와 결과를 이어서 살펴보세요.</p>
+            </div>
+            <Link href={resumeHref} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-lineA hover:bg-lineA/5">이어서 하기 <ArrowRight aria-hidden="true" size={16} /></Link>
+          </aside>
+        ) : null}
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+        <section className="flex min-w-0 flex-col">
+          <p className="mb-5 flex items-center gap-2 text-sm font-semibold text-muted"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-lineA" />나의 가능성을 탐색하는 AI 진로 리허설</p>
+          <h1 className="text-3xl font-extrabold !leading-[1.2] sm:text-4xl lg:text-[54px]">
             가보기 전에,
             <br />
-            먼저 살아보세요
+            <span className="text-lineA">먼저 살아보세요.</span>
           </h1>
           <p className="mt-5 max-w-[30rem] text-lg text-muted">
-            고민 중인 진로를 AI가 실제 직업 통계 위에서 몇 년씩 먼저 살아봐요. 그 끝에 선 나와 이야기하고, 이번 주에 할 일까지 받아 가요.
+            개발자가 될까, 다른 길을 가볼까?<br />
+            고민 중인 진로를 미리 경험하고, 미래의 나와 이야기하며 나에게 맞는 길을 찾아보세요.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/interview" className="btn-primary sm:px-7">
+            <Link href="/interview" className="btn-primary sm:px-5">
               5분 인터뷰로 시작하기
+              <ArrowRight aria-hidden="true" size={18} />
             </Link>
-            <button onClick={startDemo} className="btn-ghost sm:px-7">
+            <button onClick={requestDemo} className="btn-ghost sm:px-5">
               예시 인물로 바로 보기
             </button>
           </div>
-          {hasProgress ? (
-            <Link href="/choose" className="mt-4 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
-              하던 곳에서 이어서 하기
-            </Link>
-          ) : null}
+          <p className="mt-4 flex items-center gap-2 text-sm text-muted"><Clock3 aria-hidden="true" size={15} />처음이라면 예시 인물로 먼저 둘러보세요.</p>
         </section>
 
-        <div className="card order-first p-4 sm:p-6 lg:order-none">
-          <HeroMap />
+        <figure className="min-w-0 overflow-hidden rounded-[28px] border border-hair bg-surface shadow-[0_16px_48px_-28px_rgba(20,23,31,0.25)]">
+          <div className="flex items-center justify-between gap-3 border-b border-hair px-5 py-4 sm:px-7">
+            <span className="flex items-center gap-2 text-sm font-bold"><Route aria-hidden="true" size={18} />나의 가능성 지도</span>
+            <span className="rounded-full bg-ground px-3 py-1 text-cap font-medium text-muted">체험 예시</span>
+          </div>
+          <div className="bg-[radial-gradient(#E3E6EB_1px,transparent_1px)] bg-[size:18px_18px] px-5 py-2 sm:px-7"><HeroMap /></div>
+          <figcaption className="border-t border-hair px-5 py-4 sm:px-7">
+            <p className="text-sm font-semibold">하나의 출발점, 서로 다른 세 가지 미래</p>
+            <p className="mt-1 text-sm text-muted">각 진로의 일상과 변화를 나란히 비교해요.</p>
+          </figcaption>
+        </figure>
         </div>
       </main>
 
       <section aria-labelledby="how" className="border-t border-hair bg-surface">
-        <div className="mx-auto w-full max-w-[1080px] px-5 py-12 sm:px-8">
-          <h2 id="how" className="text-xl font-bold">
-            이렇게 진행돼요
+        <div className="mx-auto w-full max-w-[1200px] px-5 py-12 sm:px-8 sm:py-16">
+          <p className="mb-2 text-sm font-semibold text-muted">리허설 이용 방법</p>
+          <h2 id="how" className="scroll-mt-6 text-2xl font-bold">
+            막연한 고민을, 다음 한 걸음으로
           </h2>
           <ol className="mt-8 grid gap-8 md:grid-cols-3 md:gap-6">
             {STEPS.map((s, i) => (
@@ -151,12 +187,24 @@ export default function Home() {
               </li>
             ))}
           </ol>
-          <p className="mt-10 text-cap text-muted">결과는 미래 예측이 아니라 선택을 돕는 리허설이에요. 결정은 언제나 직접 해요.</p>
-          <Link href="/privacy" className="mt-2 inline-block text-cap text-muted underline underline-offset-4 hover:text-ink">
+        </div>
+      </section>
+      <footer className="border-t border-hair">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-2 px-5 py-6 sm:px-8 md:flex-row md:items-center md:justify-between">
+          <p className="text-cap text-muted">결과는 미래 예측이 아니라 선택을 돕는 리허설이에요. 결정은 언제나 직접 해요.</p>
+          <Link href="/privacy" className="inline-flex min-h-11 items-center self-start text-cap text-muted underline underline-offset-4 hover:text-ink">
             개인정보 처리방침(초안)
           </Link>
         </div>
-      </section>
+      </footer>
+      <dialog ref={demoDialog} aria-labelledby="demo-title" aria-describedby="demo-description" className="w-[calc(100%-40px)] max-w-md rounded-[24px] border border-hair bg-surface p-6 text-ink shadow-xl backdrop:bg-ink/40">
+        <h2 id="demo-title" className="text-xl font-bold">예시 인물로 새로 시작할까요?</h2>
+        <p id="demo-description" className="mt-3 text-sm text-muted">예시 체험을 시작하면 이 브라우저에 저장된 프로필과 리허설 결과가 예시 인물의 기록으로 바뀌어요.</p>
+        <div className="mt-6 flex flex-col gap-3">
+          <button autoFocus onClick={() => demoDialog.current?.close()} className="btn-ghost">취소하고 기록 유지하기</button>
+          <button onClick={startDemo} className="btn-primary">예시 인물로 새로 시작하기</button>
+        </div>
+      </dialog>
     </div>
   );
 }
