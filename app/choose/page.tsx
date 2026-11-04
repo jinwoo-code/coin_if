@@ -10,6 +10,7 @@ import { waGwa } from "@/lib/josa";
 import { answerOf, READINESS } from "@/lib/readiness";
 import { CostNote } from "@/components/account";
 import { PILOT_SJT, pilotAnswered } from "@/lib/pilot";
+import { keyTier } from "@/lib/live-client";
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WORLDS } from "@/lib/worlds";
@@ -25,6 +26,10 @@ const PERIODS = [
   { months: 36, label: "3년" },
   { months: 60, label: "5년" },
   { months: 120, label: "10년" },
+];
+const MODES = [
+  { id: "basic" as const, label: "기본 모드", desc: "진로마다 1,000번 살아봐요. 몇 초면 돼요." },
+  { id: "live" as const, label: "실시간 판단 모드", desc: "큰 갈림길마다 AI가 직접 판단해요. 진로마다 30번, 몇 분 걸려요." },
 ];
 
 const KIND: Record<WorldTemplate["archetype"], string> = {
@@ -77,9 +82,12 @@ export default function ChoosePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [chosen, setChosen] = useState<string[]>([]);
   const [months, setMonths] = useState(36);
+  const [mode, setMode] = useState<"basic" | "live">("basic");
+  const [tier, setTier] = useState<"free" | "paid">("paid");
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState<string>("추천");
   const [readiness, setReadiness] = useState<Record<string, number>>({});
+  useEffect(() => void keyTier().then(setTier), []);
   const [stdMajors, setStdMajors] = useState<string[]>([]); // 고용24 학과정보로 찾은 표준 학과명
 
   useEffect(() => {
@@ -115,9 +123,9 @@ export default function ChoosePage() {
   function start() {
     if (!profile) return;
     store.setProfile({ ...profile, readiness });
-    store.setSelection({ worldIds: chosen, months, startYm });
+    store.setSelection({ worldIds: chosen, months, startYm, mode });
     store.clearResults();
-    router.push("/simulate");
+    router.push(mode === "live" ? "/live" : "/simulate");
   }
 
   return (
@@ -129,7 +137,7 @@ export default function ChoosePage() {
           <button className="btn-primary w-full" disabled={chosen.length < 2} onClick={start}>
             {chosen.length < 2 ? `진로를 ${2 - chosen.length}개 더 골라 주세요` : `${chosen.length}개 진로를 ${periodLabel} 살아보기`}
           </button>
-          <CostNote cost={1} />
+          <CostNote cost={mode === "live" ? 4 : 1} />
         </>
       }
     >
@@ -275,8 +283,32 @@ export default function ChoosePage() {
           })}
         </div>
         <p className="num mt-3 text-sm text-muted">
-          {plan.labels[0].split(" ")[0]} {startYm.slice(5).replace(/^0/, "")}월부터 한 달씩, 진로마다 1,000번 살아봐요. 화면에는 {plan.size === 1 ? "한 달" : `${plan.size}개월`}씩 묶어 {plan.count}개 역으로 보여 줘요.
+          {plan.labels[0].split(" ")[0]} {startYm.slice(5).replace(/^0/, "")}월부터 한 달씩, 진로마다 {mode === "live" ? "30" : "1,000"}번 살아봐요. 화면에는 {plan.size === 1 ? "한 달" : `${plan.size}개월`}씩 묶어 {plan.count}개 역으로 보여
+          줘요.
         </p>
+      </section>
+      <section aria-labelledby="mode" className="mt-8">
+        <h2 id="mode" className="text-xl font-bold">
+          어떻게 살아볼까요?
+        </h2>
+        <div role="radiogroup" aria-labelledby="mode" className="mt-4 space-y-2">
+          {MODES.map((m) => {
+            const on = mode === m.id;
+            return (
+              <button
+                key={m.id}
+                role="radio"
+                aria-checked={on}
+                onClick={() => setMode(m.id)}
+                className={`min-h-[44px] w-full rounded-2xl border p-3 text-left transition-colors ${on ? "border-ink bg-surface" : "border-hair text-muted hover:text-ink"}`}
+              >
+                <span className="block font-bold">{m.label}</span>
+                <span className="num mt-0.5 block text-sm">{m.desc}</span>
+              </button>
+            );
+          })}
+        </div>
+        {mode === "live" && tier === "free" ? <p className="mt-2 text-sm text-muted">무료 키라 오래 걸리고 한도에 걸릴 수 있어요. 멈추면 나중에 이어서 할 수 있어요.</p> : null}
       </section>
       <MyData />
     </Screen>

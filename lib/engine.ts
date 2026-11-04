@@ -6,7 +6,7 @@ import { factorMult, startSkill } from "./factors";
 import { eulReul, iGa } from "./josa";
 import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./base";
 import norms from "@/data/norms.json";
-import { judgeFailed, judgeFor } from "./judge";
+import { judgeFailed, judgeFor, type JudgeEntry } from "./judge";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
 import { W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
@@ -357,6 +357,16 @@ const TONE_EFFECT: Record<Tone, Partial<LifeState>> = {
 
 // ---------- ② 한 진로를 한 달씩 ----------
 
+// 실시간 판단 모드(lib/live.ts): 큰 갈림길에서 그때 상황을 넘기고 판단을 받는다. 판단이 없으면 훅이 예외를 던져 멈춘다.
+export interface LiveCtx {
+  month: number;
+  status: string;
+  bucket: string;
+  state: LifeState;
+  recent: { month: number; eventId: string; choice: number }[]; // 최근 큰 일과 고른 보기
+}
+export type LiveHook = (event: EventCard, ctx: LiveCtx) => JudgeEntry | null;
+
 export interface Force {
   eventId: string;
   choiceIndex?: number; // 내 선택을 바꿈
@@ -496,7 +506,7 @@ export function signatureKey(e: EventCard, choiceIndex: number, tierId?: string)
 }
 
 // trace: 갈림길마다 decide 직전 상황을 넘겨 받는다(scripts/measure-base.ts가 기준 비율을 잴 때)
-export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force, trace?: (e: EventCard, c: ForkCtx) => void): Path {
+export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force, trace?: (e: EventCard, c: ForkCtx) => void, live?: LiveHook): Path {
   const rand = seededRandom(seed);
   const sim: Sim = {
     state: { skill: startSkill(p, world), stress: 40, satisfaction: 50, relation: 50, money: p.life.savings },
@@ -549,7 +559,21 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       trace?.(event, ctx);
       const bucket = bucketOf(event.stateKeys, ctx);
       const shares = event.choices.map((c) => baseShare(c.base, bucket));
-      const judge = judgeFor(p, world.id, event, bucket);
+      // 실시간 판단: 큰 갈림길마다 그때 상황으로 받은 판단. 없으면 예전처럼 상황 칸별 저장 판단.
+      const liveEntry =
+        live && event.branch === "choice" && event.choices.length >= 2
+          ? live(event, {
+              month,
+              status: statusOf(world, sim, month, inService),
+              bucket,
+              state: sim.state,
+              recent: log
+                .filter((m) => m.event?.branch)
+                .slice(-5)
+                .map((m) => ({ month: m.month, eventId: m.event!.id, choice: m.choiceIndex })),
+            })
+          : null;
+      const judge = live ? (liveEntry?.src === "ai" && liveEntry.probs.length === event.choices.length ? liveEntry : null) : judgeFor(p, world.id, event, bucket);
       const d = decide(p, sim.state, event.choices, rand, shares.every((x) => x !== undefined) ? (shares as number[]) : undefined, judge);
       const forced = force?.eventId === event.id && force.choiceIndex !== undefined;
       choiceIndex = forced ? Math.min(force.choiceIndex!, event.choices.length - 1) : d.index;
@@ -561,7 +585,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
           base: d.base[choiceIndex],
           mine: d.probs[choiceIndex],
           byAi: !forced && judge?.src === "ai",
-          aiFailed: !forced && judgeFailed(p, world.id, event, bucket),
+          aiFailed: !forced && (live ? liveEntry?.src === "fallback" : judgeFailed(p, world.id, event, bucket)),
           forced,
           situation: d.situation,
           shift: forced ? undefined : judge?.shift,

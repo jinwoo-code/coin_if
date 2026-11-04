@@ -94,6 +94,7 @@ function finalDist(paths: Path[]) {
 
 const share = (paths: Path[], f: (p: Path) => boolean) => (paths.length ? Math.round((paths.filter(f).length / paths.length) * 100) : 0);
 const satisfied = (p: Path) => p.final.satisfaction >= 60;
+export const isSatisfied = satisfied;
 const stressed = (p: Path) => p.final.stress >= 65;
 
 function hireFactors(world: WorldTemplate): FactorKey[] {

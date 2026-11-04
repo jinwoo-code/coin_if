@@ -401,6 +401,7 @@ export interface Selection {
   worldIds: string[];
   months: number;
   startYm: string; // 시뮬레이션을 시작하는 연월(다음 달), 예: "2026-11"
+  mode?: "basic" | "live"; // 기본 모드(1,000번) | 실시간 판단 모드(30번). 없으면 기본
 }
 
 export interface ChatMessage {

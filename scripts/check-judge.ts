@@ -6,6 +6,8 @@ import { simulatePath } from "../lib/engine";
 import { askJudge, NEGATIVE } from "../lib/judge-ask";
 import { failedEntries, judgeFailed, judgeFor, judgeForks, missingJudges, withJudges } from "../lib/judge";
 import { DEMO_PROFILE } from "../lib/demo";
+import { LIVE_RUNS, liveEntryKey, liveLife, LivePause, liveRunKey, liveSummary, type LiveEntries } from "../lib/live";
+import { seedFor } from "../lib/multiverse";
 import { callWithKeys, makeKeyPool, makeQueue, retryDelayMs, withRetry429 } from "../lib/llm-pace";
 import { choiceLine } from "../lib/scenes";
 import type { ChoiceOdds } from "../lib/types";
@@ -196,4 +198,75 @@ test("키 전환: 쉬는 시간이 지나면 다시 쓴다", () => {
   assert.equal(pool.resting(0, "m"), true);
   t = 1001;
   assert.equal(pool.resting(0, "m"), false);
+});
+
+// 실시간 판단 모드: 가짜 AI로 한 삶을 끝까지 산다
+function liveToEnd(run: number, entries: LiveEntries, answer: (e: LivePause) => number[]) {
+  const w = getWorld("developer");
+  let asks = 0;
+  for (;;) {
+    try {
+      return { path: liveLife(DEMO_PROFILE, w, 36, "2026-12", run, entries), asks };
+    } catch (e) {
+      if (!(e instanceof LivePause)) throw e;
+      asks++;
+      assert.ok(asks < 50, "끝나지 않아요");
+      entries[liveEntryKey(w.id, run, e.ctx.month, e.event.id)] = { probs: answer(e), reasons: e.event.choices.map(() => "모은 돈이 적어서"), src: "ai" };
+    }
+  }
+}
+const even = (e: LivePause) => e.event.choices.map(() => 1 / e.event.choices.length);
+test("실시간: 삶마다 큰 갈림길에서 멈추고, 그때 상황을 넘긴다", () => {
+  let seen = 0;
+  for (let r = 0; r < LIVE_RUNS; r++)
+    liveToEnd(r, {}, (e) => {
+      seen++;
+      assert.equal(e.event.branch, "choice");
+      assert.ok(e.ctx.bucket.length > 0);
+      assert.ok(e.ctx.state.stress >= 0);
+      assert.ok(e.ctx.recent.length <= 5);
+      return even(e);
+    });
+  assert.ok(seen >= LIVE_RUNS / 2, `판단 ${seen}번`);
+});
+test("실시간: 저장한 판단이면 묻지 않고 같은 인생, 판단이 다르면 고를 확률이 달라진다", () => {
+  const entries: LiveEntries = {};
+  const lives = Array.from({ length: LIVE_RUNS }, (_, r) => liveToEnd(r, entries, even).path);
+  const w = getWorld("developer");
+  lives.forEach((path, r) => assert.deepEqual(liveLife(DEMO_PROFILE, w, 36, "2026-12", r, entries).signature, path.signature));
+  const picks = lives.flatMap((x) => x.months).filter((m) => m.pick?.byAi);
+  assert.ok(picks.length > 0);
+  for (const m of picks) {
+    const odds = m.pick!.mine / (1 - m.pick!.mine) / (m.pick!.base / (1 - m.pick!.base));
+    assert.ok(odds < 1.5 + 0.3 && odds > 1 / 1.5 - 0.3, `상한 밖: ${odds}`); // 엔진 상한(r 곱한 뒤 소프트맥스) 안
+  }
+  assert.ok(picks.every((m) => m.reason === "모은 돈이 적어서"));
+  // 보기 하나로 몰아 줘도 상한 때문에 기준에서 크게 못 벗어난다
+  const skew: LiveEntries = {};
+  const one = liveToEnd(0, skew, (e) => e.event.choices.map((_, i) => (i === 0 ? 0.97 : 0.03 / (e.event.choices.length - 1)))).path;
+  for (const m of one.months.filter((x) => x.pick?.byAi && x.choiceIndex === 0)) assert.ok(m.pick!.mine < m.pick!.base * 1.6 + 0.05);
+});
+test("실시간: 규칙으로 끝내면 멈추지 않고 실패 표시, 같은 시드라 판단 없을 때 앞부분은 같다", () => {
+  const w = getWorld("developer");
+  const path = liveLife(DEMO_PROFILE, w, 36, "2026-12", 3, {}, true);
+  const bare = simulatePath(DEMO_PROFILE, w, 36, "2026-12", seedFor(DEMO_PROFILE, w.id, 3));
+  assert.deepEqual(path.signature, bare.signature); // 규칙 기울기면 기본 모드의 같은 회차와 같은 인생
+  assert.ok(path.months.filter((m) => m.event?.branch === "choice" && m.pick).every((m) => !m.pick!.byAi));
+  assert.ok(path.months.some((m) => m.pick?.aiFailed) || path.months.every((m) => m.event?.branch !== "choice"));
+});
+test("실시간: 요약은 횟수로, 입력이 바뀌면 실행 이름이 바뀐다", () => {
+  const entries: LiveEntries = {};
+  const lives = Array.from({ length: 10 }, (_, r) => ({ run: r, path: liveToEnd(r, entries, even).path }));
+  const s = liveSummary(DEMO_PROFILE, getWorld("developer"), lives);
+  assert.equal(s.n, 10);
+  assert.equal(
+    s.groups.reduce((a, g) => a + g.runs.length, 0),
+    10,
+  );
+  assert.ok(s.ai > 0);
+  assert.equal(s.rule, 0);
+  const k = liveRunKey(DEMO_PROFILE, ["developer"], 36, "2026-12");
+  assert.equal(k, liveRunKey(DEMO_PROFILE, ["developer"], 36, "2026-12"));
+  assert.notEqual(k, liveRunKey(DEMO_PROFILE, ["developer"], 60, "2026-12"));
+  assert.match(k, /^[a-z0-9]{1,16}$/);
 });

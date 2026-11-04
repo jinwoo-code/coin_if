@@ -11,7 +11,7 @@ import { askJudge } from "@/lib/judge-ask";
 import { generateJSON, hasLLM } from "@/lib/llm";
 import { normalizeProfile } from "@/lib/profile";
 import { LABEL, scrubStory } from "@/lib/story";
-import type { BaseShare, Choice, LifeState, Profile } from "@/lib/types";
+import type { BaseShare, Choice, LifeState, Profile, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
 const B5: Record<string, string> = { O: "개방성", C: "성실성", E: "외향성", A: "친화성", N: "신경성" };
@@ -48,8 +48,34 @@ function personText(p: Profile) {
   return lines.join("\n");
 }
 
+// 실시간 판단 모드: 상황 칸 대신 그때까지의 흐름을 준다. 큰 일 이름은 진로 데이터에서 찾는다(브라우저가 보낸 글을 프롬프트에 넣지 않는다).
+interface LiveInput {
+  month: number;
+  status?: string;
+  bucket: string;
+  state: LifeState;
+  recent?: { month: number; eventId: string; choice: number }[];
+}
+const num = (x: unknown) => (Number.isFinite(Number(x)) ? Math.round(Number(x)) : 0);
+function flowText(world: WorldTemplate, live: LiveInput) {
+  const s = live.state ?? ({} as LifeState);
+  const recent = (live.recent ?? [])
+    .slice(-5)
+    .map((r) => {
+      const e = world.events.find((x) => x.id === r.eventId);
+      if (!e) return null;
+      const c = e.choices[num(r.choice)];
+      return `${num(r.month) + 1}개월째: ${e.title}${c && e.choices.length >= 2 ? ` → ${c.text}` : ""}`;
+    })
+    .filter(Boolean);
+  return [
+    `${num(live.month) + 1}개월째. 스트레스 ${num(s.stress)}/100, 만족도 ${num(s.satisfaction)}/100, 역량 ${num(s.skill)}/100, 지금 가진 돈 ${num(s.money)}만원.`,
+    recent.length ? `최근 큰 일:\n${recent.join("\n")}` : "아직 큰 일은 없었다.",
+  ].join("\n");
+}
+
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => null)) as { profile?: Profile; worldId?: string; forkId?: string } | null;
+  const body = (await req.json().catch(() => null)) as { profile?: Profile; worldId?: string; forkId?: string; live?: LiveInput } | null;
   if (!body?.profile || !body.worldId || !body.forkId) return NextResponse.json({ error: "입력이 없어요" }, { status: 400 });
   let world;
   try {
@@ -61,20 +87,27 @@ export async function POST(req: Request) {
   if (!fork) return NextResponse.json({ error: "없는 갈림길" }, { status: 400 });
   const p = normalizeProfile({ ...body.profile, storyRaw: {} });
   const ids = fork.choices.map((_, i) => `c${i}`);
-  const buckets = allBuckets(fork.stateKeys ?? ["stress"]);
-  const baseOf = (b: string) => fork.choices.map((c) => baseShare(c.base, b) ?? 1 / fork.choices.length);
-  const stateOf = (b: string): LifeState => ({ skill: 50, stress: stressOf(b), satisfaction: 50, relation: 50, money: 0 });
+  const live = body.live;
+  // 실시간 판단은 칸 하나("now"), 기준 비율은 그때 상황 칸의 값
+  const buckets = live ? ["now"] : allBuckets(fork.stateKeys ?? ["stress"]);
+  const shareBucket = (b: string) => (live ? String(live.bucket) : b);
+  const baseOf = (b: string) => fork.choices.map((c) => baseShare(c.base, shareBucket(b)) ?? 1 / fork.choices.length);
+  const stateOf = (b: string): LifeState =>
+    live
+      ? { skill: num(live.state?.skill), stress: num(live.state?.stress), satisfaction: num(live.state?.satisfaction), relation: num(live.state?.relation), money: num(live.state?.money) }
+      : { skill: 50, stress: stressOf(b), satisfaction: 50, relation: 50, money: 0 };
   const rule = (b: string) => ruleJudge(p, stateOf(b), fork.choices as Choice[], baseOf(b));
 
   const prompt = [
     `[이 사람]\n${personText(p)}`,
     `[진로] ${world.name}`,
+    ...(live ? [`[지금까지의 흐름]\n${flowText(world, live)}`] : []),
     `[갈림길] ${fork.title}\n${fork.text}`,
     `[보기]\n${fork.choices.map((c, i) => `${ids[i]}: ${c.text}`).join("\n")}`,
-    `[실제 사람들은 이렇게 골랐다(상황 칸별 기준 비율, 근거 등급)]\n${buckets
-      .map((b) => `${b} (${bucketLabel(b)}): ${fork.choices.map((c, i) => `${ids[i]} ${Math.round((baseShare(c.base, b) ?? 0) * 100)}%`).join(", ")}`)
+    `[실제 사람들은 이렇게 골랐다(${live ? "비슷한 상황의 기준 비율" : "상황 칸별 기준 비율"}, 근거 등급)]\n${buckets
+      .map((b) => `${live ? "지금 상황" : `${b} (${bucketLabel(b)})`}: ${fork.choices.map((c, i) => `${ids[i]} ${Math.round((baseShare(c.base, shareBucket(b)) ?? 0) * 100)}%`).join(", ")}`)
       .join("\n")}\n근거: ${fork.choices.map((c, i) => `${ids[i]} ${c.base ? gradeText(c.base) : "가정값"}`).join(", ")}`,
-    `실제 사람들은 위처럼 골랐다. 이 사람이라면 솔직히 상황 칸마다 각 보기를 몇 % 고를까? 하나만 고르지 말고 모든 보기에 확률을 줘라(합 1).\n` +
+    `실제 사람들은 위처럼 골랐다. 이 사람이라면 ${live ? "지금까지의 흐름을 겪은 지금" : "솔직히 상황 칸마다"} 각 보기를 몇 % 고를까? 하나만 고르지 말고 모든 보기에 확률을 줘라(합 1).\n` +
       `JSON으로만 답해라: {"probs": {${buckets.map((b) => `"${b}": {${ids.map((id) => `"${id}": 확률`).join(", ")}}`).join(", ")}}, "reasons": {${ids.map((id) => `"${id}": "이 사람이 이걸 고른다면 그 이유"`).join(", ")}}, "shift": "보통 사람과 비교해 어느 쪽으로 기우는지 한 문장"}`,
   ].join("\n\n");
   const system =
@@ -88,7 +121,7 @@ export async function POST(req: Request) {
   let src: JudgeEntry["src"] = hasLLM() ? "ai" : "mock";
   let got: { probs: Record<string, number[]>; reasons: string[]; shift: string } = { probs: {}, reasons: ids.map(() => ""), shift: "" };
   if (hasLLM()) {
-    got = await askJudge(() => generateJSON<unknown>({ tag: "judge", model: "fast", system, prompt, fallback: () => null, pace: true }), ids, buckets);
+    got = await askJudge(() => generateJSON<unknown>({ tag: live ? "judge_live" : "judge", model: "fast", system, prompt, fallback: () => null, pace: true }), ids, buckets);
     if (!Object.keys(got.probs).length) src = "fallback";
   }
   const out: Record<string, JudgeEntry> = {};

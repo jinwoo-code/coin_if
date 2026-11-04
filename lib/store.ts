@@ -2,6 +2,7 @@
 // 로그인하면 lib/sync.ts가 onWrite로 저장을 듣고 계정에도 올린다. 이 파일은 브라우저 저장만 맡는다.
 "use client";
 import { normalizeProfile } from "./profile";
+import type { LiveEntries } from "./live";
 import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } from "./types";
 
 // 저장 형식이 바뀌면 VERSION을 올린다. 옛 데이터와 섞이지 않는다.
@@ -9,8 +10,9 @@ import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } fr
 // v6(2026-11-03 분신 작업): profile에 since·corrections·checkins 추가, storyRaw에 인생 이야기 장. 예전 판은 처음 읽을 때 옮긴다(migrate).
 // v7(2026-11-03 파일럿): profile에 pilot 추가, holdoutPicks에 파일럿 답(p1~p20).
 // v8(2026-11-03 선택 개편): profile에 judges(AI 분신 판단 캐시) 추가.
-const VERSION = "v8";
-const PREVS = ["v7", "v6", "v5", "v4"]; // 최근 판부터 찾는다
+// v9(2026-11-04 실시간 판단 모드): selection에 mode, 진행 저장 live 추가.
+const VERSION = "v9";
+const PREVS = ["v8", "v7", "v6", "v5", "v4"]; // 최근 판부터 찾는다
 const KEYS = {
   profile: `cr:${VERSION}:profile`,
   selection: `cr:${VERSION}:selection`,
@@ -18,6 +20,7 @@ const KEYS = {
   lines: `cr:${VERSION}:lines`,
   active: `cr:${VERSION}:active`,
   report: `cr:${VERSION}:report`,
+  live: `cr:${VERSION}:live`, // 실시간 판단 모드 진행(이 기기에만)
   premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
   localOnly: `cr:${VERSION}:localOnly`,
   pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
@@ -68,6 +71,14 @@ function write(key: string, value: unknown) {
   onWrite?.();
 }
 
+// 실시간 판단 모드 진행. 입력이 바뀌면 key가 바뀌어 처음부터.
+export interface LiveRun {
+  key: string;
+  entries: LiveEntries;
+  ruleRest: boolean; // 남은 건 규칙 계산으로 끝내기
+  charged: boolean;
+}
+
 // 세계선별 장면: { [worldId]: { [lineId]: SimEvent[] } }
 type LineCache = Record<string, Record<string, SimEvent[]>>;
 
@@ -91,6 +102,15 @@ export const store = {
   // 진로마다 지금 보고 있는 세계선(대화·리포트가 이 세계선을 기준으로 한다)
   getActive: () => read<Record<string, string>>(KEYS.active) ?? {},
   setActive: (worldId: string, lineId: string) => write(KEYS.active, { ...(read<Record<string, string>>(KEYS.active) ?? {}), [worldId]: lineId }),
+  getLive: () => read<LiveRun>(KEYS.live),
+  // 답이 올 때마다 저장한다. 계정에는 안 올려서 onWrite를 부르지 않는다.
+  setLive: (r: LiveRun) => {
+    try {
+      window.localStorage.setItem(KEYS.live, JSON.stringify(r));
+    } catch {
+      // 저장이 막힌 환경이면 이번 창에서만 이어진다
+    }
+  },
   getReport: () => read<Report>(KEYS.report),
   setReport: (r: Report | null) => write(KEYS.report, r),
   getPremium: () => read<PremiumItem[]>(KEYS.premium),
