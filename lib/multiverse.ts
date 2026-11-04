@@ -9,6 +9,8 @@ import { euro, eulReul } from "./josa";
 import { answerOf, READINESS } from "./readiness";
 
 export const RUNS = 1000;
+// '바꿀 수 있는 것'에서 조건을 바꿔 다시 사는 횟수. 조건마다 다시 돌려서 무겁다(휴대폰 약 29초 → 약 6초, 추정). 세계선 통계는 RUNS 그대로.
+export const LEVER_RUNS = 200;
 const KEYS: (keyof LifeState)[] = ["skill", "stress", "satisfaction", "relation", "money"];
 const MAX_DEPTH = 5;
 const MAX_LINES = 7;
@@ -318,14 +320,15 @@ function monthsText(m: number | null) {
   return m === null ? "기간 안에 못 함" : `보통 ${durationLabel(m + 1)} 뒤`;
 }
 
-export function levers(p: Profile, world: WorldTemplate, months: number, startYm: string, base: Path[]): Lever[] {
-  const baseStats = statsOf(p, world, base);
+export function levers(p: Profile, world: WorldTemplate, months: number, startYm: string, base: Path[], n = LEVER_RUNS): Lever[] {
+  // 조건 비교는 같은 회차끼리(앞 n번). 갈림길 비교는 이미 산 base 전체를 쓴다.
+  const baseStats = statsOf(p, world, base.slice(0, n));
   const metric = `${durationLabel(months)} 안에 ${gateLabel(world)}`;
   const out: Lever[] = [];
   for (const t of [...tweaksFor(world), ...COMMON_TWEAKS]) {
     const q = t.apply(p);
     if (!q) continue;
-    const s = statsOf(q, world, runAll(q, world, months, startYm));
+    const s = statsOf(q, world, runAll(q, world, months, startYm, undefined, n));
     const dShare = (s.gate?.share ?? 0) - (baseStats.gate?.share ?? 0);
     const dSat = s.satisfiedShare - baseStats.satisfiedShare;
     const dTime = (baseStats.gate?.typicalMonth ?? months) - (s.gate?.typicalMonth ?? months);

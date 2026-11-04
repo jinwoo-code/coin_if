@@ -198,7 +198,7 @@ function LeverList({ items, world }: { items: Lever[] | null; world: WorldTempla
       <h2 id="levers" className="flex items-center gap-2 text-xl font-bold">
         <Sparkles aria-hidden="true" size={20} style={{ color: world.color }} /> 내가 바꿀 수 있는 것 Top 3
       </h2>
-      <p className="mt-1 text-sm text-muted">내 조건 하나를 바꾸거나 갈림길에서 다르게 골랐을 때, 1,000번을 다시 살아본 결과예요. 휴대폰에서는 수십 초 걸릴 수 있어요.</p>
+      <p className="mt-1 text-sm text-muted">조건을 바꾼 결과는 200번씩, 갈림길은 1,000번 살아본 결과예요. 그래서 위 통계와 조금 다를 수 있어요.</p>
       {items === null ? (
         <p className="mt-4 flex items-center gap-2 text-sm text-muted">
           <Typing label="계산 중" /> 조건을 바꿔 가며 다시 살아보는 중…
@@ -370,7 +370,7 @@ function MultiversePage() {
   const world = useMemo(() => (worldId ? getWorld(worldId) : null), [worldId]);
   const mv = mvs[worldId];
 
-  // '바꿀 수 있는 것'은 브라우저에서 계산한다(같은 시드라 서버와 같은 결과). 1,000번씩 여러 번이라 Web Worker에서(lib/levers-client.ts).
+  // '바꿀 수 있는 것'은 브라우저에서 계산한다(같은 시드라 서버와 같은 결과). 200번씩 여러 번이라 Web Worker에서(lib/levers-client.ts).
   useEffect(() => {
     if (!profile || !selection || !world || leverMap[world.id]) return;
     let live = true;
