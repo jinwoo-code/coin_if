@@ -4,10 +4,11 @@ import { CalendarPlus, Check, Copy, Lock, Printer } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
+import { Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
+import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
-import { buildMultiverse, levers } from "@/lib/multiverse";
+import { computeLevers } from "@/lib/levers-client";
 import { hasSupabase } from "@/lib/supabase/config";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
@@ -39,14 +40,14 @@ function downloadCheckin() {
   URL.revokeObjectURL(url);
 }
 
-// 100번 살아본 결과: 관문(합격·취업), 세계선 상위 3개, 바꿀 수 있는 것
+// 1,000번 살아본 결과: 관문(합격·취업), 세계선 상위 3개, 바꿀 수 있는 것
 // 일반 리포트는 '바꿀 수 있는 것'을 2개까지, 프리미엄은 전부 보여 준다.
 const BASIC_LEVERS = 2;
 
 function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: Multiverse; items: Lever[] | undefined; premium: boolean }) {
   const st = mv.stats;
   return (
-    <section className="rounded-card border border-hair bg-surface p-5" aria-label={`${world.name} 100번 살아본 결과`}>
+    <section className="rounded-card border border-hair bg-surface p-5" aria-label={`${world.name} ${times(st.runs)}번 살아본 결과`}>
       <div className="flex items-center gap-2">
         <LineBadge world={world} size={24} />
         <h3 className="text-base font-bold">{world.name}</h3>
@@ -57,17 +58,21 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
             {durationLabel(mv.months)} 안에 {st.gate?.label}
           </dt>
           <dd className="num mt-0.5 text-sm">
-            <strong className="text-xl font-extrabold">{st.gate?.share ?? 0}번</strong> / {st.runs}번
+            <strong className="text-xl font-extrabold">{st.gate?.share ?? 0}%</strong> <Ci pct={st.gate?.share ?? 0} n={st.runs} />
             {st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? <span className="text-muted">, 보통 {monthLabel(mv.startYm, st.gate.typicalMonth)}</span> : null}
           </dd>
         </div>
         <div className="rounded-2xl bg-ground p-3">
           <dt className="text-cap text-muted">만족하며 끝남</dt>
-          <dd className="num text-xl font-extrabold">{st.satisfiedShare}%</dd>
+          <dd className="num text-xl font-extrabold">
+            {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} className="block" />
+          </dd>
         </div>
         <div className="rounded-2xl bg-ground p-3">
           <dt className="text-cap text-muted">스트레스 높게 끝남</dt>
-          <dd className="num text-xl font-extrabold">{st.stressedShare}%</dd>
+          <dd className="num text-xl font-extrabold">
+            {st.stressedShare}% <Ci pct={st.stressedShare} n={st.runs} className="block" />
+          </dd>
         </div>
       </dl>
       <p className="label mt-4">가장 많이 간 세계선</p>
@@ -75,12 +80,14 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
         {mv.lines.slice(0, 3).map((l) => (
           <li key={l.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1">
             <span className="text-sm font-semibold">{l.title}</span>
-            <span className="num text-cap font-semibold">{l.count}%</span>
+            <span className="num text-cap font-semibold">{Math.round((l.count / st.runs) * 100)}%</span>
             <span className="col-span-2 flex items-center gap-2">
               <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-hair" aria-hidden="true">
-                <span className="block h-full rounded-full" style={{ width: `${l.count}%`, background: world.color }} />
+                <span className="block h-full rounded-full" style={{ width: `${(l.count / st.runs) * 100}%`, background: world.color }} />
               </span>
-              <span className="num text-cap text-muted">{l.switched ? "다른 진로로 감" : `만족 ${l.satisfiedShare}%`} · {won(l.final.money.p50)}</span>
+              <span className="num text-cap text-muted">
+                {l.switched ? "다른 진로로 감" : `만족 ${l.satisfiedShare}%`} · {won(l.final.money.p50)}
+              </span>
             </span>
           </li>
         ))}
@@ -224,7 +231,7 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
                 <thead className="text-cap text-muted">
                   <tr>
                     <th className="py-1.5 pr-2 font-medium">세계선</th>
-                    <th className="py-1.5 pr-2 text-right font-medium">100번 중</th>
+                    <th className="py-1.5 pr-2 text-right font-medium">{times(mv.stats.runs)}번 중</th>
                     <th className="py-1.5 pr-2 text-right font-medium">만족</th>
                     <th className="py-1.5 pr-2 text-right font-medium">스트레스 높음</th>
                     <th className="py-1.5 text-right font-medium">모은 돈(가운데)</th>
@@ -234,7 +241,7 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
                   {mv.lines.map((l) => (
                     <tr key={l.id} className="border-t border-hair">
                       <td className="py-2 pr-2 font-semibold">{l.title}</td>
-                      <td className="py-2 pr-2 text-right">{l.count}번</td>
+                      <td className="py-2 pr-2 text-right">{times(l.count)}번</td>
                       <td className="py-2 pr-2 text-right">{satText(l)}</td>
                       <td className="py-2 pr-2 text-right">{l.stressedShare}%</td>
                       <td className="py-2 text-right">{won(l.final.money.p50)}</td>
@@ -255,7 +262,7 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
               {getWorld(it.worldId).short} · {it.line}
             </p>
             <p className="num text-cap text-muted">
-              100번 중 {it.share}번 · 만족하며 끝남 {it.satisfied}%
+              {it.share}%가 이 길 · 만족하며 끝남 {it.satisfied}%
             </p>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm">
               {it.steps.map((st) => (
@@ -298,15 +305,8 @@ export default function ReportPage() {
     setProfile(p);
     setMvs(m);
     // 바꿀 수 있는 것: 브라우저에서 조건을 바꿔 가며 다시 살아본다.
-    window.setTimeout(() => {
-      const out: Record<string, Lever[]> = {};
-      for (const id of s.worldIds) {
-        const w = getWorld(id);
-        const { paths } = buildMultiverse(p, w, s.months, s.startYm);
-        out[id] = levers(p, w, s.months, s.startYm, paths);
-      }
-      setLeverMap(out);
-    }, 60);
+    // 1,000번씩 여러 번 다시 사는 일이라 Web Worker에서(lib/levers-client.ts)
+    Promise.all(s.worldIds.map((id) => computeLevers(p, id, s.months, s.startYm).catch(() => [] as Lever[]))).then((all) => setLeverMap(Object.fromEntries(s.worldIds.map((id, i) => [id, all[i]]))));
     setPremium(store.getPremium());
     const saved = store.getReport();
     if (saved && saved.worlds.every((w) => m[w.worldId])) {
@@ -400,7 +400,7 @@ export default function ReportPage() {
               <h2 id="fit" className="text-xl font-bold">
                 내 가치관과 얼마나 맞았을까
               </h2>
-              <p className="mt-1 text-sm text-muted">{profile.values.join(" > ")} 순서의 가치관, 성격, 그리고 100번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요. 정답이 아니라 비교용 점수예요.</p>
+              <p className="mt-1 text-sm text-muted">{profile.values.join(" > ")} 순서의 가치관, 성격, 그리고 1,000번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요. 정답이 아니라 비교용 점수예요.</p>
               <ul className="mt-5 flex flex-col gap-4">
                 {report.worlds.map((w) => {
                   const world = getWorld(w.worldId);
@@ -427,9 +427,9 @@ export default function ReportPage() {
 
             <section aria-labelledby="hundred">
               <h2 id="hundred" className="text-xl font-bold">
-                100번 살아본 결과
+                1,000번 살아본 결과
               </h2>
-              <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 100번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
+              <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 1,000번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
               </div>
@@ -484,7 +484,10 @@ export default function ReportPage() {
                   <li key={i}>
                     <label className="flex min-h-[52px] cursor-pointer items-center gap-3 border-b border-hair text-base last:border-0">
                       <input type="checkbox" className="peer sr-only" checked={Boolean(done[i])} onChange={(e) => setDone((d) => ({ ...d, [i]: e.target.checked }))} />
-                      <span aria-hidden="true" className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-hair text-transparent transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-hair text-transparent transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink"
+                      >
                         <Check size={15} strokeWidth={3} />
                       </span>
                       <span className={done[i] ? "text-muted line-through" : ""}>{t}</span>

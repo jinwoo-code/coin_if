@@ -1,4 +1,4 @@
-// 멀티버스: 같은 사람이 같은 진로를 100번 살아 보고, 갈림길마다 갈라진 세계선 나무를 만든다.
+// 멀티버스: 같은 사람이 같은 진로를 1,000번 살아 보고, 갈림길마다 갈라진 세계선 나무를 만든다.
 // AI가 먼저 가는 길(본선)은 갈림길마다 가장 많이 간 쪽을 따라간 세계선이다.
 // 브라우저에서도 돌아간다(갈림길을 바꿔 보는 건 즉시 계산).
 import { simulatePath, type Force } from "./engine";
@@ -8,7 +8,7 @@ import { durationLabel } from "./calendar";
 import { euro, eulReul } from "./josa";
 import { answerOf, READINESS } from "./readiness";
 
-export const RUNS = 100;
+export const RUNS = 1000;
 const KEYS: (keyof LifeState)[] = ["skill", "stress", "satisfaction", "relation", "money"];
 const MAX_DEPTH = 5;
 const MAX_LINES = 7;
@@ -18,7 +18,10 @@ function pct(sorted: number[], p: number) {
   return sorted[Math.min(sorted.length - 1, Math.max(0, Math.round((sorted.length - 1) * p)))];
 }
 function median(xs: number[]) {
-  return pct(xs.toSorted((a, b) => a - b), 0.5);
+  return pct(
+    xs.toSorted((a, b) => a - b),
+    0.5,
+  );
 }
 
 export function seedFor(p: Profile, worldId: string, i: number) {
@@ -35,7 +38,22 @@ function eventOf(world: WorldTemplate, id: string): EventCard | undefined {
   return world.events.find((e) => e.id === id) ?? COMMON.find((e) => e.id === id);
 }
 // 엔진 공통 사건 중 갈림길이 되는 것
-const COMMON: EventCard[] = [{ id: "broke", title: "모아 둔 돈이 바닥났다", kind: "bad", weight: 0, branch: "choice", branchLabel: "생활비가 떨어짐", text: "", effect: {}, choices: [{ text: "알바를 늘림", tone: "push", label: "알바를 늘림" }, { text: "집에 도움 요청", tone: "safe", label: "집에 도움 요청" }] }];
+const COMMON: EventCard[] = [
+  {
+    id: "broke",
+    title: "모아 둔 돈이 바닥났다",
+    kind: "bad",
+    weight: 0,
+    branch: "choice",
+    branchLabel: "생활비가 떨어짐",
+    text: "",
+    effect: {},
+    choices: [
+      { text: "알바를 늘림", tone: "push", label: "알바를 늘림" },
+      { text: "집에 도움 요청", tone: "safe", label: "집에 도움 요청" },
+    ],
+  },
+];
 
 // 이 회차가 다른 진로로 갈아탔는지(선택지에 sets: "switched")
 function didSwitch(world: WorldTemplate, path: Path) {
@@ -166,7 +184,10 @@ function prune(raw: Raw, min: number, world: WorldTemplate): { node: LineNode; e
   const walk = (r: Raw, cause: LineNode["cause"], label: string): LineNode => {
     const kept = [...r.kids.values()].filter((k) => k.runs.length >= min).toSorted((a, b) => b.runs.length - a.runs.length);
     const keptRuns = new Set(kept.flatMap((k) => k.runs));
-    ends.set(r.id, r.runs.filter((i) => !keptRuns.has(i)));
+    ends.set(
+      r.id,
+      r.runs.filter((i) => !keptRuns.has(i)),
+    );
     return {
       id: r.id,
       key: r.key,
@@ -196,7 +217,10 @@ function lineTitle(world: WorldTemplate, trail: LineNode[], hasKids: boolean, ra
     const fail: Record<string, string> = { exam: "기간 안에 합격하지 못한 세계", license: "기간 안에 자리 잡지 못한 세계", grad: "기간 안에 입학하지 못한 세계", startup: "기간 안에 매출로 자리 잡지 못한 세계" };
     return fail[world.archetype] ?? `기간 안에 ${euro(world.short)} 일하지 못한 세계`;
   }
-  const tail = steps.slice(-2).map((n) => n.label).join(" → ");
+  const tail = steps
+    .slice(-2)
+    .map((n) => n.label)
+    .join(" → ");
   if (rareMajority) return `${tail}, 그 뒤 여러 갈래`;
   return hasKids ? `${tail}, 그 뒤로는 큰 변화 없이` : tail;
 }
@@ -209,7 +233,7 @@ export function buildMultiverse(p: Profile, world: WorldTemplate, months: number
   let built = prune(raw, min, world);
   const countLines = (b: typeof built) => flatten(b.node).filter((x) => (b.ends.get(x.node.id)?.length ?? 0) >= min).length;
   while (countLines(built) > MAX_LINES && min < paths.length) {
-    min += 2;
+    min += Math.max(2, Math.round(paths.length * 0.02)); // 100번일 때 2번씩 = 2%p씩
     built = prune(raw, min, world);
   }
   const { node: tree, ends } = built;
@@ -254,7 +278,7 @@ export function replayLine(p: Profile, world: WorldTemplate, months: number, sta
 
 // ---------- 갈림길을 바꿔 보기 ----------
 
-// 이 갈림길에서 반대로 간 100번(운은 반대 결과로, 선택은 다른 선택지로 강제)
+// 이 갈림길에서 반대로 간 1,000번(운은 반대 결과로, 선택은 다른 선택지로 강제)
 export function explore(p: Profile, world: WorldTemplate, months: number, startYm: string, force: Force) {
   const paths = runAll(p, world, months, startYm, force);
   return { stats: statsOf(p, world, paths), paths };
@@ -331,7 +355,7 @@ export function levers(p: Profile, world: WorldTemplate, months: number, startYm
   byEvent.forEach((groups, id) => {
     const e0 = eventOf(world, id);
     // 다른 진로로 갈아탄 경우는 이 진로 안에서 비교할 수 없어서 뺀다.
-    const opts = [...groups.entries()].filter(([i, ps]) => ps.length >= 5 && e0?.choices[i]?.sets !== "switched");
+    const opts = [...groups.entries()].filter(([i, ps]) => ps.length >= Math.max(5, base.length * 0.05) && e0?.choices[i]?.sets !== "switched");
     if (opts.length < 2) return;
     const scored = opts.map(([i, ps]) => ({ i, ps, sat: share(ps, satisfied) })).toSorted((a, b) => b.sat - a.sat);
     const best = scored[0];
@@ -348,7 +372,10 @@ export function levers(p: Profile, world: WorldTemplate, months: number, startYm
     });
   });
 
-  return out.filter((l) => l.gain > 0.5).toSorted((a, b) => b.gain - a.gain).slice(0, 3);
+  return out
+    .filter((l) => l.gain > 0.5)
+    .toSorted((a, b) => b.gain - a.gain)
+    .slice(0, 3);
 }
 
 // 대학 집계용: 바꿀 수 있는 것 상위 3개 제목(서버가 저장할 때 한 번 계산).

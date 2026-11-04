@@ -275,7 +275,7 @@ export default function ChoosePage() {
           })}
         </div>
         <p className="num mt-3 text-sm text-muted">
-          {plan.labels[0].split(" ")[0]} {startYm.slice(5).replace(/^0/, "")}월부터 한 달씩, 진로마다 100번 살아봐요. 화면에는 {plan.size === 1 ? "한 달" : `${plan.size}개월`}씩 묶어 {plan.count}개 역으로 보여 줘요.
+          {plan.labels[0].split(" ")[0]} {startYm.slice(5).replace(/^0/, "")}월부터 한 달씩, 진로마다 1,000번 살아봐요. 화면에는 {plan.size === 1 ? "한 달" : `${plan.size}개월`}씩 묶어 {plan.count}개 역으로 보여 줘요.
         </p>
       </section>
       <MyData />

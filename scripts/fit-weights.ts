@@ -25,7 +25,7 @@
 //   - 엔진이 음수 무게를 버리므로 추정도 0 이상으로 제한한다. 0에 걸린 가중치는 제한 없이 추정한 값·구간도 같이 보여 준다(음수면 '방향 반대 가능').
 //   - 고친 선택(correction.*)은 그 순간의 상태를 저장하지 않아서 아직 안 쓴다. 체크인 다시 답은 같은 문항 반복이라 안 쓴다.
 import { readFileSync, writeFileSync } from "node:fs";
-import { seededRandom, toneProbs, toneScores } from "../lib/engine";
+import { ruleProbs, seededRandom, toneScores } from "../lib/engine";
 import { normalizeProfile } from "../lib/profile";
 import { VALUE_KEYS, type StorySignals } from "../lib/story";
 import { PILOT_SJT } from "../lib/pilot";
@@ -234,7 +234,7 @@ function synthetic(n: number, seed = 0): Profile[] {
       .slice(0, ITEMS);
     const items = [...pool, ...(WITH_PILOT ? ITEMS_ALL.filter((q) => PILOT_SJT.some((x) => x.id === q.id)) : [])];
     for (const q of items) {
-      const pr = toneProbs(p, stateOf(q.stress), q.tones);
+      const pr = ruleProbs(p, stateOf(q.stress), q.tones); // 보정 모델과 같은 규칙 확률(기준선을 섞기 전)
       let r = rnd();
       let j = 0;
       while (j < pr.length - 1 && (r -= pr[j]) > 0) j++;

@@ -7,6 +7,7 @@ import marketer from "@/data/worlds/marketer.json";
 import extraFacts from "@/data/jobdata/extra-facts.json";
 import { JOBS } from "@/data/jobs";
 import { buildWorld } from "./archetypes";
+import { withBase } from "./base";
 import { blendValueFit } from "./story";
 import type { BigFive, Fact, Interests, Profile, WorldStats, WorldTemplate } from "./types";
 import { WA } from "./weights";
@@ -16,7 +17,7 @@ const extra = extraFacts as Record<string, Fact[]>;
 // 사람이 사건을 하나하나 쓴 진로 4개 + 직업 목록에서 유형 틀로 만든 진로들
 const CURATED = [developer, civilServant, dataAnalyst, marketer] as unknown as WorldTemplate[];
 const GENERATED = JOBS.map((j, i) => buildWorld(j, i + 4));
-export const WORLDS: WorldTemplate[] = [...CURATED, ...GENERATED].map((w) => ({ ...w, facts: [...w.facts, ...(extra[w.id] ?? [])] }));
+export const WORLDS: WorldTemplate[] = [...CURATED, ...GENERATED].map((w) => withBase({ ...w, facts: [...w.facts, ...(extra[w.id] ?? [])] }));
 
 export const FAMILIES = Array.from(new Set(WORLDS.map((w) => w.family)));
 
@@ -86,7 +87,7 @@ export function preFit(world: WorldTemplate, profile: Profile): number {
   return 0.6 * valueFit(world, profile) + 0.25 * traitFit(world, profile.bigFive) + 0.15 * interestFit(world, profile.interests);
 }
 
-// 시뮬레이션 후: 리포트에 보여 줄 부합도(0~100). 100번 살아본 결과를 함께 반영한다.
+// 시뮬레이션 후: 리포트에 보여 줄 부합도(0~100). 1,000번 살아본 결과를 함께 반영한다.
 export function finalFit(world: WorldTemplate, profile: Profile, stats: WorldStats): number {
   const outcome = (stats.satisfiedShare / 100) * 0.5 + ((stats.gate?.share ?? 0) / 100) * 0.3 + (1 - stats.stressedShare / 100) * 0.2;
   const score = 0.45 * valueFit(world, profile) + 0.15 * traitFit(world, profile.bigFive) + 0.1 * interestFit(world, profile.interests) + 0.3 * outcome;

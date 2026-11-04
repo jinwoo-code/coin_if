@@ -1,11 +1,12 @@
 "use client";
 // 여러 화면에서 같이 쓰는 부품. 색은 '노선' 색만 쓰고 나머지는 무채색이다.
+import { wilson } from "@/lib/ci";
 import { ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { won } from "@/lib/format";
 import { TokenChip } from "./account";
-import type { LifeState, WorldTemplate } from "@/lib/types";
+import type { ChoiceOdds, LifeState, WorldTemplate } from "@/lib/types";
 
 // ---------- 화면 틀 ----------
 
@@ -79,9 +80,7 @@ export function RouteProgress({ total, current, label }: { total: number; curren
     <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={total} aria-valuenow={current} className="flex items-center">
       {Array.from({ length: total }, (_, i) => (
         <div key={i} className="flex flex-1 items-center last:flex-none">
-          <span
-            className={`h-2.5 w-2.5 flex-none rounded-full transition-colors duration-300 ${i < current ? "bg-ink" : i === current ? "bg-ink ring-4 ring-ink/15" : "bg-hair"}`}
-          />
+          <span className={`h-2.5 w-2.5 flex-none rounded-full transition-colors duration-300 ${i < current ? "bg-ink" : i === current ? "bg-ink ring-4 ring-ink/15" : "bg-hair"}`} />
           {i < total - 1 ? <span className={`h-[3px] flex-1 transition-colors duration-300 ${i < current ? "bg-ink" : "bg-hair"}`} /> : null}
         </div>
       ))}
@@ -109,10 +108,7 @@ export function StateMeters({ state, color, keys }: { state: LifeState; color: s
         <div key={m.key} className="grid grid-cols-[52px_1fr_26px] items-center gap-2 text-cap">
           <dt className="text-muted">{m.label}</dt>
           <dd className="h-1.5 overflow-hidden rounded-full bg-hair" aria-hidden="true">
-            <span
-              className="block h-full rounded-full transition-[width] duration-700 ease-out"
-              style={{ width: `${state[m.key]}%`, background: m.key === "stress" ? "#5B6472" : color }}
-            />
+            <span className="block h-full rounded-full transition-[width] duration-700 ease-out" style={{ width: `${state[m.key]}%`, background: m.key === "stress" ? "#5B6472" : color }} />
           </dd>
           <dd className="num text-right font-semibold">
             <span className="sr-only">{m.label} </span>
@@ -159,11 +155,7 @@ export function MockNotice() {
       alive = false;
     };
   }, []);
-  return mock ? (
-    <p className="mt-2 rounded-2xl bg-[#FFF4E5] px-4 py-2.5 text-cap text-[#7A4300]">
-      목업 모드로 보고 있어요. AI 키를 넣으면 매번 새로운 이야기가 만들어져요.
-    </p>
-  ) : null;
+  return mock ? <p className="mt-2 rounded-2xl bg-[#FFF4E5] px-4 py-2.5 text-cap text-[#7A4300]">목업 모드로 보고 있어요. AI 키를 넣으면 매번 새로운 이야기가 만들어져요.</p> : null;
 }
 
 // ---------- 아래에서 올라오는 시트(기억 보기 등) ----------
@@ -196,7 +188,20 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   );
 }
 
-// ---------- 100번 살아본 분포: 10%~90% 범위 띠 + 가운데 값 ----------
+// ---------- 확률 옆 오차 범위(95% 신뢰구간, Wilson). 표본 오차만이고 모델이 틀릴 가능성은 안 들어 있다 ----------
+
+export function Ci({ pct, n, className = "" }: { pct: number; n: number; className?: string }) {
+  const [lo, hi] = wilson(pct, n);
+  return (
+    <span className={`num text-cap font-normal text-muted ${className}`} title="95% 신뢰구간(Wilson)">
+      ({lo}~{hi}%)
+    </span>
+  );
+}
+
+export const CI_NOTE = "괄호는 표본 오차 범위(95% 신뢰구간)예요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.";
+
+// ---------- 1,000번 살아본 분포: 10%~90% 범위 띠 + 가운데 값 ----------
 
 export function RangeRow({ label, p10, p50, p90, color, money = false, max = 100 }: { label: string; p10: number; p50: number; p90: number; color: string; money?: boolean; max?: number }) {
   const scale = (v: number) => Math.max(0, Math.min(100, (v / (money ? Math.max(max, 1) : 100)) * 100));
@@ -221,9 +226,37 @@ export function RangeRow({ label, p10, p50, p90, color, money = false, max = 100
   );
 }
 
-// 100번 중 몇 번인지에 따라 '자주/가끔/드물게'
+// 살아본 횟수 중 몇 %인지에 따라 '자주/가끔/드물게'
 export function freqWord(count: number) {
   if (count >= 60) return "자주 있는 일";
   if (count >= 25) return "가끔 있는 일";
   return "드문 일";
+}
+
+const GRADE_NOTE = "실제 통계가 아니에요. 평균 성향인 사람이 이 앱의 규칙에서 고르는 비율이에요.";
+
+// 갈림길 장면: 보통은 몇 %가 이 선택을 하는지, 나는 몇 %인지, 그 기준 비율의 근거 등급
+export function Odds({ odds }: { odds: ChoiceOdds }) {
+  const badge = odds.grade === "stat" ? (odds.otherGroup ? "통계(다른 집단 기준)" : "통계") : odds.grade === "interview" ? (odds.n ? `현직자 ${odds.n}명` : "현직자") : "가정값";
+  return (
+    <details className="mt-1 text-cap text-muted">
+      <summary className="flex min-h-[44px] cursor-pointer list-none flex-wrap items-center gap-x-1.5 gap-y-1 py-1">
+        <span className="num">보통은 {odds.base}%가 이렇게 해요</span>
+        <span className="num whitespace-nowrap">
+          → <b className="font-semibold text-ink">나는 {odds.mine}%</b>
+        </span>
+        <span className={`flex-none rounded-full border px-2 py-0.5 font-semibold ${odds.grade === "assumed" ? "border-hair" : "border-ink text-ink"}`}>{badge}</span>
+      </summary>
+      <div className="flex flex-col gap-1 pb-1">
+        {odds.shift ? <p className="text-ink">{odds.shift}</p> : null}
+        {odds.population ? (
+          <p>
+            {odds.population}이에요. {odds.otherGroup}
+          </p>
+        ) : null}
+        <p>{odds.grade === "assumed" ? GRADE_NOTE : odds.ref}</p>
+        <p>{odds.byAi ? "'나는'은 AI 분신의 판단을 기준 비율에서 크게 벗어나지 않게 반영한 값이에요." : "'나는'은 내 성향을 규칙으로 계산해 기준 비율에서 크게 벗어나지 않게 반영한 값이에요."}</p>
+      </div>
+    </details>
+  );
 }

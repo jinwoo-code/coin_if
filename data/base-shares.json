@@ -1,0 +1,5748 @@
+{
+  "_global": {
+    "broke": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.56,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(13710번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.631,
+            "stress:low|money:ok": 0.645,
+            "stress:mid|money:low": 0.567,
+            "stress:mid|money:ok": 0.568,
+            "stress:high|money:low": 0.47,
+            "stress:high|money:ok": 0.442
+          }
+        },
+        {
+          "share": 0.44,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(13710번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.369,
+            "stress:low|money:ok": 0.355,
+            "stress:mid|money:low": 0.433,
+            "stress:mid|money:ok": 0.432,
+            "stress:high|money:low": 0.53,
+            "stress:high|money:ok": 0.558
+          }
+        }
+      ]
+    },
+    "enlist": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "discharge": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    }
+  },
+  "civil-servant": {
+    "study-start": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.63,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.63,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.37,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.37,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "study-grind": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.508,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7142번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.578,
+            "stress:high": 0.43
+          }
+        },
+        {
+          "share": 0.492,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7142번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.422,
+            "stress:high": 0.57
+          }
+        }
+      ]
+    },
+    "mock-exam": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.519,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1132번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.572,
+            "stress:high": 0.437
+          }
+        },
+        {
+          "share": 0.481,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1132번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.428,
+            "stress:high": 0.563
+          }
+        }
+      ]
+    },
+    "friend-hired": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.55,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1328번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.578,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.45,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1328번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.422,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "family-pressure": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.459,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(510번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.437
+          }
+        },
+        {
+          "share": 0.541,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(510번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.563
+          }
+        }
+      ]
+    },
+    "exam-pass-national": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.518,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(881번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.566,
+            "stress:high": 0.448
+          }
+        },
+        {
+          "share": 0.482,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(881번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.434,
+            "stress:high": 0.552
+          }
+        }
+      ]
+    },
+    "exam-pass-local": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.492,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(755번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.558,
+            "stress:high": 0.445
+          }
+        },
+        {
+          "share": 0.508,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(755번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.442,
+            "stress:high": 0.555
+          }
+        }
+      ]
+    },
+    "exam-fail": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.519,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(4860번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.565,
+            "stress:high": 0.449
+          }
+        },
+        {
+          "share": 0.481,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(4860번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.435,
+            "stress:high": 0.551
+          }
+        }
+      ]
+    },
+    "keep-going": {
+      "stateKeys": [
+        "stress",
+        "prep"
+      ],
+      "choices": [
+        {
+          "share": 0.331,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1009번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.495,
+            "stress:low|prep:long": 0.495,
+            "stress:mid|prep:short": 0.422,
+            "stress:mid|prep:long": 0.422,
+            "stress:high|prep:short": 0.327,
+            "stress:high|prep:long": 0.318
+          }
+        },
+        {
+          "share": 0.258,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1009번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.232,
+            "stress:low|prep:long": 0.232,
+            "stress:mid|prep:short": 0.257,
+            "stress:mid|prep:long": 0.257,
+            "stress:high|prep:short": 0.26,
+            "stress:high|prep:long": 0.258
+          }
+        },
+        {
+          "share": 0.411,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1009번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.273,
+            "stress:low|prep:long": 0.273,
+            "stress:mid|prep:short": 0.321,
+            "stress:mid|prep:long": 0.321,
+            "stress:high|prep:short": 0.413,
+            "stress:high|prep:long": 0.424
+          }
+        }
+      ]
+    },
+    "keep-going-2": {
+      "stateKeys": [
+        "stress",
+        "prep"
+      ],
+      "choices": [
+        {
+          "share": 0.344,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(404번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.495,
+            "stress:low|prep:long": 0.495,
+            "stress:mid|prep:short": 0.422,
+            "stress:mid|prep:long": 0.422,
+            "stress:high|prep:short": 0.327,
+            "stress:high|prep:long": 0.33
+          }
+        },
+        {
+          "share": 0.259,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(404번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.232,
+            "stress:low|prep:long": 0.232,
+            "stress:mid|prep:short": 0.257,
+            "stress:mid|prep:long": 0.257,
+            "stress:high|prep:short": 0.26,
+            "stress:high|prep:long": 0.259
+          }
+        },
+        {
+          "share": 0.397,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(404번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.273,
+            "stress:low|prep:long": 0.273,
+            "stress:mid|prep:short": 0.321,
+            "stress:mid|prep:long": 0.321,
+            "stress:high|prep:short": 0.413,
+            "stress:high|prep:long": 0.411
+          }
+        }
+      ]
+    },
+    "keep-going-3": {
+      "stateKeys": [
+        "stress",
+        "prep"
+      ],
+      "choices": [
+        {
+          "share": 0.446,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low|prep:short": 0.495,
+            "stress:low|prep:long": 0.495,
+            "stress:mid|prep:short": 0.422,
+            "stress:mid|prep:long": 0.422,
+            "stress:high|prep:short": 0.327,
+            "stress:high|prep:long": 0.327
+          }
+        },
+        {
+          "share": 0.255,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low|prep:short": 0.232,
+            "stress:low|prep:long": 0.232,
+            "stress:mid|prep:short": 0.257,
+            "stress:mid|prep:long": 0.257,
+            "stress:high|prep:short": 0.26,
+            "stress:high|prep:long": 0.26
+          }
+        },
+        {
+          "share": 0.299,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low|prep:short": 0.273,
+            "stress:low|prep:long": 0.273,
+            "stress:mid|prep:short": 0.321,
+            "stress:mid|prep:long": 0.321,
+            "stress:high|prep:short": 0.413,
+            "stress:high|prep:long": 0.413
+          }
+        }
+      ]
+    },
+    "first-post": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.627,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1636번 측정)",
+          "byState": {
+            "stress:low": 0.65,
+            "stress:mid": 0.585,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.373,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1636번 측정)",
+          "byState": {
+            "stress:low": 0.35,
+            "stress:mid": 0.415,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "first-pay": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.613,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1550번 측정)",
+          "byState": {
+            "stress:low": 0.646,
+            "stress:mid": 0.586,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.387,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1550번 측정)",
+          "byState": {
+            "stress:low": 0.354,
+            "stress:mid": 0.414,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "complaint": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.549,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(13532번 측정)",
+          "byState": {
+            "stress:low": 0.636,
+            "stress:mid": 0.569,
+            "stress:high": 0.459
+          }
+        },
+        {
+          "share": 0.451,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(13532번 측정)",
+          "byState": {
+            "stress:low": 0.364,
+            "stress:mid": 0.431,
+            "stress:high": 0.541
+          }
+        }
+      ]
+    },
+    "event-duty": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.614,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1452번 측정)",
+          "byState": {
+            "stress:low": 0.647,
+            "stress:mid": 0.584,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.386,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1452번 측정)",
+          "byState": {
+            "stress:low": 0.353,
+            "stress:mid": 0.416,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "on-time": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.589,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1409번 측정)",
+          "byState": {
+            "stress:low": 0.641,
+            "stress:mid": 0.578,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.411,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1409번 측정)",
+          "byState": {
+            "stress:low": 0.359,
+            "stress:mid": 0.422,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "routine-work": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.554,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(20996번 측정)",
+          "byState": {
+            "stress:low": 0.637,
+            "stress:mid": 0.57,
+            "stress:high": 0.461
+          }
+        },
+        {
+          "share": 0.446,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(20996번 측정)",
+          "byState": {
+            "stress:low": 0.363,
+            "stress:mid": 0.43,
+            "stress:high": 0.539
+          }
+        }
+      ]
+    },
+    "transfer": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.572,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1077번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.575,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.428,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1077번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.425,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "quit-thought": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.654,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1635번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.684,
+            "stress:low|tenure:settled": 0.677,
+            "stress:mid|tenure:new": 0.633,
+            "stress:mid|tenure:settled": 0.631,
+            "stress:high|tenure:new": 0.557,
+            "stress:high|tenure:settled": 0.557
+          }
+        },
+        {
+          "share": 0.346,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1635번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.316,
+            "stress:low|tenure:settled": 0.323,
+            "stress:mid|tenure:new": 0.367,
+            "stress:mid|tenure:settled": 0.369,
+            "stress:high|tenure:new": 0.443,
+            "stress:high|tenure:settled": 0.443
+          }
+        }
+      ]
+    }
+  },
+  "data-analyst": {
+    "ncs-start": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.63,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.63,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.37,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.37,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "ncs-grind": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.534,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(11183번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.566,
+            "stress:high": 0.457
+          }
+        },
+        {
+          "share": 0.466,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(11183번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.434,
+            "stress:high": 0.543
+          }
+        }
+      ]
+    },
+    "cert-pass": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.583,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1825번 측정)",
+          "byState": {
+            "stress:low": 0.623,
+            "stress:mid": 0.578,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.417,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1825번 측정)",
+          "byState": {
+            "stress:low": 0.377,
+            "stress:mid": 0.422,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "pub-fail": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.617,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(4381번 측정)",
+          "byState": {
+            "stress:low": 0.664,
+            "stress:mid": 0.623,
+            "stress:high": 0.574
+          }
+        },
+        {
+          "share": 0.383,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(4381번 측정)",
+          "byState": {
+            "stress:low": 0.336,
+            "stress:mid": 0.377,
+            "stress:high": 0.426
+          }
+        }
+      ]
+    },
+    "got-public": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.542,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(629번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.561,
+            "stress:high": 0.474
+          }
+        },
+        {
+          "share": 0.458,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(629번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.439,
+            "stress:high": 0.526
+          }
+        }
+      ]
+    },
+    "got-private": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.517,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1496번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.56,
+            "stress:high": 0.459
+          }
+        },
+        {
+          "share": 0.483,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1496번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.44,
+            "stress:high": 0.541
+          }
+        }
+      ]
+    },
+    "long-prep": {
+      "stateKeys": [
+        "stress",
+        "prep"
+      ],
+      "choices": [
+        {
+          "share": 0.418,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1438번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.516,
+            "stress:low|prep:long": 0.516,
+            "stress:mid|prep:short": 0.451,
+            "stress:mid|prep:long": 0.433,
+            "stress:high|prep:short": 0.386,
+            "stress:high|prep:long": 0.402
+          }
+        },
+        {
+          "share": 0.291,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1438번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.242,
+            "stress:low|prep:long": 0.242,
+            "stress:mid|prep:short": 0.275,
+            "stress:mid|prep:long": 0.283,
+            "stress:high|prep:short": 0.307,
+            "stress:high|prep:long": 0.299
+          }
+        },
+        {
+          "share": 0.291,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1438번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.242,
+            "stress:low|prep:long": 0.242,
+            "stress:mid|prep:short": 0.274,
+            "stress:mid|prep:long": 0.284,
+            "stress:high|prep:short": 0.307,
+            "stress:high|prep:long": 0.299
+          }
+        }
+      ]
+    },
+    "dashboard": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.621,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(55108번 측정)",
+          "byState": {
+            "stress:low": 0.635,
+            "stress:mid": 0.596,
+            "stress:high": 0.486
+          }
+        },
+        {
+          "share": 0.379,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(55108번 측정)",
+          "byState": {
+            "stress:low": 0.365,
+            "stress:mid": 0.404,
+            "stress:high": 0.514
+          }
+        }
+      ]
+    },
+    "audit": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.621,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1701번 측정)",
+          "byState": {
+            "stress:low": 0.636,
+            "stress:mid": 0.594,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.379,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1701번 측정)",
+          "byState": {
+            "stress:low": 0.364,
+            "stress:mid": 0.406,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "model-win": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.609,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1752번 측정)",
+          "byState": {
+            "stress:low": 0.635,
+            "stress:mid": 0.588,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.391,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1752번 측정)",
+          "byState": {
+            "stress:low": 0.365,
+            "stress:mid": 0.412,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "weekend-home": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.627,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(592번 측정)",
+          "byState": {
+            "stress:low": 0.643,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.373,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(592번 측정)",
+          "byState": {
+            "stress:low": 0.357,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "da-raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.618,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1618번 측정)",
+          "byState": {
+            "stress:low": 0.634,
+            "stress:mid": 0.593,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.382,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1618번 측정)",
+          "byState": {
+            "stress:low": 0.366,
+            "stress:mid": 0.407,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "da-offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.456,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.453,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.386
+          }
+        },
+        {
+          "share": 0.544,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.547,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.614
+          }
+        }
+      ]
+    },
+    "da-burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.465,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1754번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.484,
+            "stress:low|tenure:settled": 0.483,
+            "stress:mid|tenure:new": 0.44,
+            "stress:mid|tenure:settled": 0.445,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.327
+          }
+        },
+        {
+          "share": 0.244,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1754번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.237,
+            "stress:low|tenure:settled": 0.238,
+            "stress:mid|tenure:new": 0.254,
+            "stress:mid|tenure:settled": 0.253,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.26
+          }
+        },
+        {
+          "share": 0.291,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1754번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.279,
+            "stress:low|tenure:settled": 0.279,
+            "stress:mid|tenure:new": 0.306,
+            "stress:mid|tenure:settled": 0.302,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.413
+          }
+        }
+      ]
+    },
+    "da-mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.595,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1754번 측정)",
+          "byState": {
+            "stress:low": 0.634,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.405,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1754번 측정)",
+          "byState": {
+            "stress:low": 0.366,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    }
+  },
+  "developer": {
+    "job-hunt": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.524,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7733번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.563,
+            "stress:high": 0.453
+          }
+        },
+        {
+          "share": 0.476,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7733번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.437,
+            "stress:high": 0.547
+          }
+        }
+      ]
+    },
+    "portfolio": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.586,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1393번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.414,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1393번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "coding-test": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.58,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1260번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.582,
+            "stress:high": 0.452
+          }
+        },
+        {
+          "share": 0.42,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1260번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.418,
+            "stress:high": 0.548
+          }
+        }
+      ]
+    },
+    "bootcamp": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.552,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1043번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.645,
+            "stress:low|money:ok": 0.645,
+            "stress:mid|money:low": 0.568,
+            "stress:mid|money:ok": 0.578,
+            "stress:high|money:low": 0.442,
+            "stress:high|money:ok": 0.442
+          }
+        },
+        {
+          "share": 0.448,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1043번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.355,
+            "stress:low|money:ok": 0.355,
+            "stress:mid|money:low": 0.432,
+            "stress:mid|money:ok": 0.422,
+            "stress:high|money:low": 0.558,
+            "stress:high|money:ok": 0.558
+          }
+        }
+      ]
+    },
+    "long-hunt": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.354,
+          "grade": "assumed",
+          "ref": "가정값: 통계로 정한 보기를 뺀 나머지를 엔진 비율대로 나눔"
+        },
+        {
+          "share": 0.323,
+          "grade": "stat",
+          "ref": "한국고용정보원(2025.12), 청년 첫 일자리 및 일자리 미스매치 분석: 일 경험 없는 15~29세 남성 실업자 중 32.3%가 공무원 등 시험 준비(아시아경제 2025-12-13 보도, https://www.asiae.co.kr/en/article/2025121313120856567). 대상이 '1년 구직한 사람'과 꼭 같지는 않다.",
+          "population": {
+            "label": "일 경험 없는 15~29세 남성 실업자 기준",
+            "noWork": true,
+            "unchecked": [
+              "성별",
+              "나이"
+            ]
+          }
+        },
+        {
+          "share": 0.323,
+          "grade": "assumed",
+          "ref": "가정값: 통계로 정한 보기를 뺀 나머지를 엔진 비율대로 나눔"
+        }
+      ]
+    },
+    "got-job": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.531,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2720번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.565,
+            "stress:high": 0.453
+          }
+        },
+        {
+          "share": 0.469,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2720번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.435,
+            "stress:high": 0.547
+          }
+        }
+      ]
+    },
+    "got-job-small": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.46,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(305번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.44
+          }
+        },
+        {
+          "share": 0.54,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(305번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.56
+          }
+        }
+      ]
+    },
+    "first-review": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.576,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1833번 측정)",
+          "byState": {
+            "stress:low": 0.641,
+            "stress:mid": 0.572,
+            "stress:high": 0.478
+          }
+        },
+        {
+          "share": 0.424,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1833번 측정)",
+          "byState": {
+            "stress:low": 0.359,
+            "stress:mid": 0.428,
+            "stress:high": 0.522
+          }
+        }
+      ]
+    },
+    "sprint": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.583,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(55086번 측정)",
+          "byState": {
+            "stress:low": 0.631,
+            "stress:mid": 0.578,
+            "stress:high": 0.478
+          }
+        },
+        {
+          "share": 0.417,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(55086번 측정)",
+          "byState": {
+            "stress:low": 0.369,
+            "stress:mid": 0.422,
+            "stress:high": 0.522
+          }
+        }
+      ]
+    },
+    "weekend-outage": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.577,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1831번 측정)",
+          "byState": {
+            "stress:low": 0.638,
+            "stress:mid": 0.572,
+            "stress:high": 0.478
+          }
+        },
+        {
+          "share": 0.423,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1831번 측정)",
+          "byState": {
+            "stress:low": 0.362,
+            "stress:mid": 0.428,
+            "stress:high": 0.522
+          }
+        }
+      ]
+    },
+    "spec-change": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.575,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1829번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.572,
+            "stress:high": 0.48
+          }
+        },
+        {
+          "share": 0.425,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1829번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.428,
+            "stress:high": 0.52
+          }
+        }
+      ]
+    },
+    "first-ship": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.569,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1832번 측정)",
+          "byState": {
+            "stress:low": 0.64,
+            "stress:mid": 0.568,
+            "stress:high": 0.474
+          }
+        },
+        {
+          "share": 0.431,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1832번 측정)",
+          "byState": {
+            "stress:low": 0.36,
+            "stress:mid": 0.432,
+            "stress:high": 0.526
+          }
+        }
+      ]
+    },
+    "side-project": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.555,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1811번 측정)",
+          "byState": {
+            "stress:low": 0.631,
+            "stress:mid": 0.567,
+            "stress:high": 0.475
+          }
+        },
+        {
+          "share": 0.445,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1811번 측정)",
+          "byState": {
+            "stress:low": 0.369,
+            "stress:mid": 0.433,
+            "stress:high": 0.525
+          }
+        }
+      ]
+    },
+    "dev-raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.575,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1589번 측정)",
+          "byState": {
+            "stress:low": 0.629,
+            "stress:mid": 0.575,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.425,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1589번 측정)",
+          "byState": {
+            "stress:low": 0.371,
+            "stress:mid": 0.425,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "dev-offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.435,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1803번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.444,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.402
+          }
+        },
+        {
+          "share": 0.565,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1803번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.556,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.598
+          }
+        }
+      ]
+    },
+    "dev-burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.411,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1830번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.495,
+            "stress:mid|tenure:new": 0.421,
+            "stress:mid|tenure:settled": 0.42,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.355
+          }
+        },
+        {
+          "share": 0.256,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1830번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.232,
+            "stress:mid|tenure:new": 0.256,
+            "stress:mid|tenure:settled": 0.257,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.26
+          }
+        },
+        {
+          "share": 0.333,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1830번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.273,
+            "stress:mid|tenure:new": 0.323,
+            "stress:mid|tenure:settled": 0.323,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.385
+          }
+        }
+      ]
+    },
+    "dev-mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.555,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1819번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.564,
+            "stress:high": 0.472
+          }
+        },
+        {
+          "share": 0.445,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1819번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.436,
+            "stress:high": 0.528
+          }
+        }
+      ]
+    }
+  },
+  "exam": {
+    "study-start": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.63,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.63,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.37,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.37,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "study-grind": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.527,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(25188번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.564,
+            "stress:high": 0.456
+          }
+        },
+        {
+          "share": 0.473,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(25188번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.436,
+            "stress:high": 0.544
+          }
+        }
+      ]
+    },
+    "mock-good": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.538,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1703번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.57,
+            "stress:high": 0.451
+          }
+        },
+        {
+          "share": 0.462,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1703번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.43,
+            "stress:high": 0.549
+          }
+        }
+      ]
+    },
+    "friend-hired": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.562,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1770번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.578,
+            "stress:high": 0.456
+          }
+        },
+        {
+          "share": 0.438,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1770번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.422,
+            "stress:high": 0.544
+          }
+        }
+      ]
+    },
+    "family-ask": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.509,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1207번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.555,
+            "stress:high": 0.455
+          }
+        },
+        {
+          "share": 0.491,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1207번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.445,
+            "stress:high": 0.545
+          }
+        }
+      ]
+    },
+    "exam-pass": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.52,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1475번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.557,
+            "stress:high": 0.459
+          }
+        },
+        {
+          "share": 0.48,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1475번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.443,
+            "stress:high": 0.541
+          }
+        }
+      ]
+    },
+    "exam-fail": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.524,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(6809번 측정)",
+          "byState": {
+            "stress:low": 0.627,
+            "stress:mid": 0.561,
+            "stress:high": 0.458
+          }
+        },
+        {
+          "share": 0.476,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(6809번 측정)",
+          "byState": {
+            "stress:low": 0.373,
+            "stress:mid": 0.439,
+            "stress:high": 0.542
+          }
+        }
+      ]
+    },
+    "keep-going": {
+      "stateKeys": [
+        "stress",
+        "prep"
+      ],
+      "choices": [
+        {
+          "share": 0.355,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1502번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.495,
+            "stress:low|prep:long": 0.495,
+            "stress:mid|prep:short": 0.422,
+            "stress:mid|prep:long": 0.402,
+            "stress:high|prep:short": 0.327,
+            "stress:high|prep:long": 0.331
+          }
+        },
+        {
+          "share": 0.259,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1502번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.232,
+            "stress:low|prep:long": 0.232,
+            "stress:mid|prep:short": 0.257,
+            "stress:mid|prep:long": 0.258,
+            "stress:high|prep:short": 0.26,
+            "stress:high|prep:long": 0.259
+          }
+        },
+        {
+          "share": 0.386,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1502번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.273,
+            "stress:low|prep:long": 0.273,
+            "stress:mid|prep:short": 0.321,
+            "stress:mid|prep:long": 0.34,
+            "stress:high|prep:short": 0.413,
+            "stress:high|prep:long": 0.41
+          }
+        }
+      ]
+    },
+    "first-post": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.642,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1472번 측정)",
+          "byState": {
+            "stress:low": 0.653,
+            "stress:mid": 0.591,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.358,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1472번 측정)",
+          "byState": {
+            "stress:low": 0.347,
+            "stress:mid": 0.409,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "hard-case": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.456,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(11452번 측정)",
+          "byState": {
+            "stress:low": 0.64,
+            "stress:mid": 0.561,
+            "stress:high": 0.399
+          }
+        },
+        {
+          "share": 0.544,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(11452번 측정)",
+          "byState": {
+            "stress:low": 0.36,
+            "stress:mid": 0.439,
+            "stress:high": 0.601
+          }
+        }
+      ]
+    },
+    "meaning": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.573,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1244번 측정)",
+          "byState": {
+            "stress:low": 0.643,
+            "stress:mid": 0.573,
+            "stress:high": 0.445
+          }
+        },
+        {
+          "share": 0.427,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1244번 측정)",
+          "byState": {
+            "stress:low": 0.357,
+            "stress:mid": 0.427,
+            "stress:high": 0.555
+          }
+        }
+      ]
+    },
+    "routine": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.469,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(12420번 측정)",
+          "byState": {
+            "stress:low": 0.642,
+            "stress:mid": 0.564,
+            "stress:high": 0.404
+          }
+        },
+        {
+          "share": 0.531,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(12420번 측정)",
+          "byState": {
+            "stress:low": 0.358,
+            "stress:mid": 0.436,
+            "stress:high": 0.596
+          }
+        }
+      ]
+    },
+    "quit-thought": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.634,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1426번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.68,
+            "stress:low|tenure:settled": 0.681,
+            "stress:mid|tenure:new": 0.628,
+            "stress:mid|tenure:settled": 0.625,
+            "stress:high|tenure:new": 0.557,
+            "stress:high|tenure:settled": 0.557
+          }
+        },
+        {
+          "share": 0.366,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1426번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.32,
+            "stress:low|tenure:settled": 0.319,
+            "stress:mid|tenure:new": 0.372,
+            "stress:mid|tenure:settled": 0.375,
+            "stress:high|tenure:new": 0.443,
+            "stress:high|tenure:settled": 0.443
+          }
+        }
+      ]
+    },
+    "first-mistake": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.629,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(654번 측정)",
+          "byState": {
+            "stress:low": 0.649,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.371,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(654번 측정)",
+          "byState": {
+            "stress:low": 0.351,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.575,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1225번 측정)",
+          "byState": {
+            "stress:low": 0.644,
+            "stress:mid": 0.575,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.425,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1225번 측정)",
+          "byState": {
+            "stress:low": 0.356,
+            "stress:mid": 0.425,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.476,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(767번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.561,
+            "stress:high": 0.415
+          }
+        },
+        {
+          "share": 0.524,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(767번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.439,
+            "stress:high": 0.585
+          }
+        }
+      ]
+    }
+  },
+  "grad": {
+    "contact-lab": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.631,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1511번 측정)",
+          "byState": {
+            "stress:low": 0.632,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.369,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1511번 측정)",
+          "byState": {
+            "stress:low": 0.368,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "admit": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.595,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.622,
+            "stress:mid": 0.574,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.405,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.378,
+            "stress:mid": 0.426,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "enroll": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.629,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.646,
+            "stress:mid": 0.587,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.371,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.354,
+            "stress:mid": 0.413,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "exp-fail": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.422,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(24867번 측정)",
+          "byState": {
+            "stress:low": 0.633,
+            "stress:mid": 0.545,
+            "stress:high": 0.4
+          }
+        },
+        {
+          "share": 0.578,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(24867번 측정)",
+          "byState": {
+            "stress:low": 0.367,
+            "stress:mid": 0.455,
+            "stress:high": 0.6
+          }
+        }
+      ]
+    },
+    "prof-pressure": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.548,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1931번 측정)",
+          "byState": {
+            "stress:low": 0.632,
+            "stress:mid": 0.568,
+            "stress:high": 0.449
+          }
+        },
+        {
+          "share": 0.452,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1931번 측정)",
+          "byState": {
+            "stress:low": 0.368,
+            "stress:mid": 0.432,
+            "stress:high": 0.551
+          }
+        }
+      ]
+    },
+    "conference": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.477,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1834번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.549,
+            "stress:high": 0.435
+          }
+        },
+        {
+          "share": 0.523,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1834번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.451,
+            "stress:high": 0.565
+          }
+        }
+      ]
+    },
+    "phd-or-job": {
+      "stateKeys": [
+        "stress",
+        "prep"
+      ],
+      "choices": [
+        {
+          "share": 0.557,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1655번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.681,
+            "stress:low|prep:long": 0.681,
+            "stress:mid|prep:short": 0.621,
+            "stress:mid|prep:long": 0.621,
+            "stress:high|prep:short": 0.547,
+            "stress:high|prep:long": 0.547
+          }
+        },
+        {
+          "share": 0.443,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1655번 측정)",
+          "byState": {
+            "stress:low|prep:short": 0.319,
+            "stress:low|prep:long": 0.319,
+            "stress:mid|prep:short": 0.379,
+            "stress:mid|prep:long": 0.379,
+            "stress:high|prep:short": 0.453,
+            "stress:high|prep:long": 0.453
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.427,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(32228번 측정)",
+          "byState": {
+            "stress:low": 0.631,
+            "stress:mid": 0.544,
+            "stress:high": 0.404
+          }
+        },
+        {
+          "share": 0.573,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(32228번 측정)",
+          "byState": {
+            "stress:low": 0.369,
+            "stress:mid": 0.456,
+            "stress:high": 0.596
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.498,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1896번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.56,
+            "stress:high": 0.433
+          }
+        },
+        {
+          "share": 0.502,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1896번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.44,
+            "stress:high": 0.567
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.35,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1993번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.495,
+            "stress:mid|tenure:new": 0.409,
+            "stress:mid|tenure:settled": 0.398,
+            "stress:high|tenure:new": 0.332,
+            "stress:high|tenure:settled": 0.319
+          }
+        },
+        {
+          "share": 0.258,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1993번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.232,
+            "stress:mid|tenure:new": 0.258,
+            "stress:mid|tenure:settled": 0.259,
+            "stress:high|tenure:new": 0.259,
+            "stress:high|tenure:settled": 0.258
+          }
+        },
+        {
+          "share": 0.392,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1993번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.273,
+            "stress:mid|tenure:new": 0.333,
+            "stress:mid|tenure:settled": 0.343,
+            "stress:high|tenure:new": 0.409,
+            "stress:high|tenure:settled": 0.423
+          }
+        }
+      ]
+    }
+  },
+  "license": {
+    "lic-study": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.556,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1811번 측정)",
+          "byState": {
+            "stress:low": 0.629,
+            "stress:mid": 0.559,
+            "stress:high": 0.459
+          }
+        },
+        {
+          "share": 0.444,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1811번 측정)",
+          "byState": {
+            "stress:low": 0.371,
+            "stress:mid": 0.441,
+            "stress:high": 0.541
+          }
+        }
+      ]
+    },
+    "clinical": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.609,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1038번 측정)",
+          "byState": {
+            "stress:low": 0.629,
+            "stress:mid": 0.562,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.391,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1038번 측정)",
+          "byState": {
+            "stress:low": 0.371,
+            "stress:mid": 0.438,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "lic-pass": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.588,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1826번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.589,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.412,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1826번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.411,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "lic-fail": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.642,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(423번 측정)",
+          "byState": {
+            "stress:low": 0.661,
+            "stress:mid": 0.621,
+            "stress:high": 0.557
+          }
+        },
+        {
+          "share": 0.358,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(423번 측정)",
+          "byState": {
+            "stress:low": 0.339,
+            "stress:mid": 0.379,
+            "stress:high": 0.443
+          }
+        }
+      ]
+    },
+    "apply": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.593,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2076번 측정)",
+          "byState": {
+            "stress:low": 0.65,
+            "stress:mid": 0.572,
+            "stress:high": 0.464
+          }
+        },
+        {
+          "share": 0.407,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2076번 측정)",
+          "byState": {
+            "stress:low": 0.35,
+            "stress:mid": 0.428,
+            "stress:high": 0.536
+          }
+        }
+      ]
+    },
+    "interview": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.644,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(818번 측정)",
+          "byState": {
+            "stress:low": 0.661,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.356,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(818번 측정)",
+          "byState": {
+            "stress:low": 0.339,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "long-hunt": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.428,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(415번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.495,
+            "stress:low|money:ok": 0.495,
+            "stress:mid|money:low": 0.422,
+            "stress:mid|money:ok": 0.422,
+            "stress:high|money:low": 0.327,
+            "stress:high|money:ok": 0.327
+          }
+        },
+        {
+          "share": 0.252,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(415번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.232,
+            "stress:low|money:ok": 0.232,
+            "stress:mid|money:low": 0.257,
+            "stress:mid|money:ok": 0.257,
+            "stress:high|money:low": 0.26,
+            "stress:high|money:ok": 0.26
+          }
+        },
+        {
+          "share": 0.32,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(415번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.273,
+            "stress:low|money:ok": 0.273,
+            "stress:mid|money:low": 0.321,
+            "stress:mid|money:ok": 0.321,
+            "stress:high|money:low": 0.413,
+            "stress:high|money:ok": 0.413
+          }
+        }
+      ]
+    },
+    "got-job": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.605,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2020번 측정)",
+          "byState": {
+            "stress:low": 0.653,
+            "stress:mid": 0.571,
+            "stress:high": 0.464
+          }
+        },
+        {
+          "share": 0.395,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2020번 측정)",
+          "byState": {
+            "stress:low": 0.347,
+            "stress:mid": 0.429,
+            "stress:high": 0.536
+          }
+        }
+      ]
+    },
+    "got-job-small": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "night-shift": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.476,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(19931번 측정)",
+          "byState": {
+            "stress:low": 0.644,
+            "stress:mid": 0.56,
+            "stress:high": 0.415
+          }
+        },
+        {
+          "share": 0.524,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(19931번 측정)",
+          "byState": {
+            "stress:low": 0.356,
+            "stress:mid": 0.44,
+            "stress:high": 0.585
+          }
+        }
+      ]
+    },
+    "complaint": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.478,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(15280번 측정)",
+          "byState": {
+            "stress:low": 0.644,
+            "stress:mid": 0.56,
+            "stress:high": 0.415
+          }
+        },
+        {
+          "share": 0.522,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(15280번 측정)",
+          "byState": {
+            "stress:low": 0.356,
+            "stress:mid": 0.44,
+            "stress:high": 0.585
+          }
+        }
+      ]
+    },
+    "senior-pressure": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.576,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1751번 측정)",
+          "byState": {
+            "stress:low": 0.654,
+            "stress:mid": 0.573,
+            "stress:high": 0.449
+          }
+        },
+        {
+          "share": 0.424,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1751번 측정)",
+          "byState": {
+            "stress:low": 0.346,
+            "stress:mid": 0.427,
+            "stress:high": 0.551
+          }
+        }
+      ]
+    },
+    "thanks": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.548,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low": 0.654,
+            "stress:mid": 0.568,
+            "stress:high": 0.443
+          }
+        },
+        {
+          "share": 0.452,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low": 0.346,
+            "stress:mid": 0.432,
+            "stress:high": 0.557
+          }
+        }
+      ]
+    },
+    "first-mistake": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(760번 측정)",
+          "byState": {
+            "stress:low": 0.667,
+            "stress:mid": 0.573,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(760번 측정)",
+          "byState": {
+            "stress:low": 0.333,
+            "stress:mid": 0.427,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.487,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(25203번 측정)",
+          "byState": {
+            "stress:low": 0.646,
+            "stress:mid": 0.56,
+            "stress:high": 0.42
+          }
+        },
+        {
+          "share": 0.513,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(25203번 측정)",
+          "byState": {
+            "stress:low": 0.354,
+            "stress:mid": 0.44,
+            "stress:high": 0.58
+          }
+        }
+      ]
+    },
+    "crunch": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.572,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low": 0.655,
+            "stress:mid": 0.571,
+            "stress:high": 0.447
+          }
+        },
+        {
+          "share": 0.428,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low": 0.345,
+            "stress:mid": 0.429,
+            "stress:high": 0.553
+          }
+        }
+      ]
+    },
+    "praise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.55,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low": 0.652,
+            "stress:mid": 0.567,
+            "stress:high": 0.443
+          }
+        },
+        {
+          "share": 0.45,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1749번 측정)",
+          "byState": {
+            "stress:low": 0.348,
+            "stress:mid": 0.433,
+            "stress:high": 0.557
+          }
+        }
+      ]
+    },
+    "peer-leave": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.605,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1741번 측정)",
+          "byState": {
+            "stress:low": 0.676,
+            "stress:mid": 0.621,
+            "stress:high": 0.555
+          }
+        },
+        {
+          "share": 0.395,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1741번 측정)",
+          "byState": {
+            "stress:low": 0.324,
+            "stress:mid": 0.379,
+            "stress:high": 0.445
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.542,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1747번 측정)",
+          "byState": {
+            "stress:low": 0.654,
+            "stress:mid": 0.565,
+            "stress:high": 0.439
+          }
+        },
+        {
+          "share": 0.458,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1747번 측정)",
+          "byState": {
+            "stress:low": 0.346,
+            "stress:mid": 0.435,
+            "stress:high": 0.561
+          }
+        }
+      ]
+    },
+    "raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.493,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1658번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.56,
+            "stress:high": 0.424
+          }
+        },
+        {
+          "share": 0.507,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1658번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.44,
+            "stress:high": 0.576
+          }
+        }
+      ]
+    },
+    "offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.421,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1743번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.443,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.386
+          }
+        },
+        {
+          "share": 0.579,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1743번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.557,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.614
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.388,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1758번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.495,
+            "stress:mid|tenure:new": 0.422,
+            "stress:mid|tenure:settled": 0.419,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.326
+          }
+        },
+        {
+          "share": 0.255,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1758번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.232,
+            "stress:mid|tenure:new": 0.257,
+            "stress:mid|tenure:settled": 0.257,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.258
+          }
+        },
+        {
+          "share": 0.357,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1758번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.273,
+            "stress:mid|tenure:new": 0.321,
+            "stress:mid|tenure:settled": 0.324,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.416
+          }
+        }
+      ]
+    }
+  },
+  "marketer": {
+    "apply-mkt": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.559,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7726번 측정)",
+          "byState": {
+            "stress:low": 0.627,
+            "stress:mid": 0.57,
+            "stress:high": 0.456
+          }
+        },
+        {
+          "share": 0.441,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7726번 측정)",
+          "byState": {
+            "stress:low": 0.373,
+            "stress:mid": 0.43,
+            "stress:high": 0.544
+          }
+        }
+      ]
+    },
+    "mkt-intern": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.604,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1416번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.645,
+            "stress:low|money:ok": 0.624,
+            "stress:mid|money:low": 0.568,
+            "stress:mid|money:ok": 0.579,
+            "stress:high|money:low": 0.442,
+            "stress:high|money:ok": 0.442
+          }
+        },
+        {
+          "share": 0.396,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1416번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.355,
+            "stress:low|money:ok": 0.376,
+            "stress:mid|money:low": 0.432,
+            "stress:mid|money:ok": 0.421,
+            "stress:high|money:low": 0.558,
+            "stress:high|money:ok": 0.558
+          }
+        }
+      ]
+    },
+    "got-mkt": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.565,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2023번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.57,
+            "stress:high": 0.458
+          }
+        },
+        {
+          "share": 0.435,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2023번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.43,
+            "stress:high": 0.542
+          }
+        }
+      ]
+    },
+    "long-hunt-mkt": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.422,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(903번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.495,
+            "stress:low|money:ok": 0.495,
+            "stress:mid|money:low": 0.422,
+            "stress:mid|money:ok": 0.423,
+            "stress:high|money:low": 0.327,
+            "stress:high|money:ok": 0.327
+          }
+        },
+        {
+          "share": 0.254,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(903번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.232,
+            "stress:low|money:ok": 0.232,
+            "stress:mid|money:low": 0.257,
+            "stress:mid|money:ok": 0.256,
+            "stress:high|money:low": 0.26,
+            "stress:high|money:ok": 0.26
+          }
+        },
+        {
+          "share": 0.324,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(903번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.273,
+            "stress:low|money:ok": 0.273,
+            "stress:mid|money:low": 0.321,
+            "stress:mid|money:ok": 0.321,
+            "stress:high|money:low": 0.413,
+            "stress:high|money:ok": 0.413
+          }
+        }
+      ]
+    },
+    "got-agency": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.5,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(205번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.5,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(205번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "weekly-content": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(64411번 측정)",
+          "byState": {
+            "stress:low": 0.631,
+            "stress:mid": 0.588,
+            "stress:high": 0.481
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(64411번 측정)",
+          "byState": {
+            "stress:low": 0.369,
+            "stress:mid": 0.412,
+            "stress:high": 0.519
+          }
+        }
+      ]
+    },
+    "campaign-flop": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.609,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1838번 측정)",
+          "byState": {
+            "stress:low": 0.643,
+            "stress:mid": 0.583,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.391,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1838번 측정)",
+          "byState": {
+            "stress:low": 0.357,
+            "stress:mid": 0.417,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "viral": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.593,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1834번 측정)",
+          "byState": {
+            "stress:low": 0.643,
+            "stress:mid": 0.576,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.407,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1834번 측정)",
+          "byState": {
+            "stress:low": 0.357,
+            "stress:mid": 0.424,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "launch-crunch": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.607,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1835번 측정)",
+          "byState": {
+            "stress:low": 0.643,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.393,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1835번 측정)",
+          "byState": {
+            "stress:low": 0.357,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "mkt-raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.593,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1705번 측정)",
+          "byState": {
+            "stress:low": 0.63,
+            "stress:mid": 0.585,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.407,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1705번 측정)",
+          "byState": {
+            "stress:low": 0.37,
+            "stress:mid": 0.415,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "mkt-offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.448,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1820번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.449,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.386
+          }
+        },
+        {
+          "share": 0.552,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1820번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.551,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.614
+          }
+        }
+      ]
+    },
+    "mkt-burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.438,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1848번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.478,
+            "stress:mid|tenure:new": 0.428,
+            "stress:mid|tenure:settled": 0.433,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.327
+          }
+        },
+        {
+          "share": 0.252,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1848번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.24,
+            "stress:mid|tenure:new": 0.256,
+            "stress:mid|tenure:settled": 0.255,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.26
+          }
+        },
+        {
+          "share": 0.31,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1848번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.282,
+            "stress:mid|tenure:new": 0.316,
+            "stress:mid|tenure:settled": 0.312,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.413
+          }
+        }
+      ]
+    },
+    "mkt-mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.586,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1835번 측정)",
+          "byState": {
+            "stress:low": 0.642,
+            "stress:mid": 0.575,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.414,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1835번 측정)",
+          "byState": {
+            "stress:low": 0.358,
+            "stress:mid": 0.425,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    }
+  },
+  "open": {
+    "apply": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.531,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7954번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.565,
+            "stress:high": 0.459
+          }
+        },
+        {
+          "share": 0.469,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(7954번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.435,
+            "stress:high": 0.541
+          }
+        }
+      ]
+    },
+    "interview": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.598,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1270번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.587,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.402,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1270번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.413,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "prep": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1395번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.586,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1395번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.414,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "long-hunt": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.407,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(948번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.495,
+            "stress:low|money:ok": 0.495,
+            "stress:mid|money:low": 0.412,
+            "stress:mid|money:ok": 0.423,
+            "stress:high|money:low": 0.327,
+            "stress:high|money:ok": 0.327
+          }
+        },
+        {
+          "share": 0.256,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(948번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.232,
+            "stress:low|money:ok": 0.232,
+            "stress:mid|money:low": 0.257,
+            "stress:mid|money:ok": 0.256,
+            "stress:high|money:low": 0.26,
+            "stress:high|money:ok": 0.26
+          }
+        },
+        {
+          "share": 0.337,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(948번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.273,
+            "stress:low|money:ok": 0.273,
+            "stress:mid|money:low": 0.331,
+            "stress:mid|money:ok": 0.321,
+            "stress:high|money:low": 0.413,
+            "stress:high|money:ok": 0.413
+          }
+        }
+      ]
+    },
+    "got-job": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.552,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1998번 측정)",
+          "byState": {
+            "stress:low": 0.627,
+            "stress:mid": 0.568,
+            "stress:high": 0.456
+          }
+        },
+        {
+          "share": 0.448,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1998번 측정)",
+          "byState": {
+            "stress:low": 0.373,
+            "stress:mid": 0.432,
+            "stress:high": 0.544
+          }
+        }
+      ]
+    },
+    "got-job-small": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "first-mistake": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.606,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(996번 측정)",
+          "byState": {
+            "stress:low": 0.648,
+            "stress:mid": 0.578,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.394,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(996번 측정)",
+          "byState": {
+            "stress:low": 0.352,
+            "stress:mid": 0.422,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.618,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(60867번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.583,
+            "stress:high": 0.479
+          }
+        },
+        {
+          "share": 0.382,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(60867번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.417,
+            "stress:high": 0.521
+          }
+        }
+      ]
+    },
+    "crunch": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.611,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1810번 측정)",
+          "byState": {
+            "stress:low": 0.644,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.389,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1810번 측정)",
+          "byState": {
+            "stress:low": 0.356,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "praise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.597,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1803번 측정)",
+          "byState": {
+            "stress:low": 0.641,
+            "stress:mid": 0.578,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.403,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1803번 측정)",
+          "byState": {
+            "stress:low": 0.359,
+            "stress:mid": 0.422,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "peer-leave": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.644,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1798번 측정)",
+          "byState": {
+            "stress:low": 0.675,
+            "stress:mid": 0.628,
+            "stress:high": 0.557
+          }
+        },
+        {
+          "share": 0.356,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1798번 측정)",
+          "byState": {
+            "stress:low": 0.325,
+            "stress:mid": 0.372,
+            "stress:high": 0.443
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.589,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1804번 측정)",
+          "byState": {
+            "stress:low": 0.64,
+            "stress:mid": 0.576,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.411,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1804번 측정)",
+          "byState": {
+            "stress:low": 0.36,
+            "stress:mid": 0.424,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.61,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1661번 측정)",
+          "byState": {
+            "stress:low": 0.641,
+            "stress:mid": 0.581,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.39,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1661번 측정)",
+          "byState": {
+            "stress:low": 0.359,
+            "stress:mid": 0.419,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.45,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1795번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.449,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.386
+          }
+        },
+        {
+          "share": 0.55,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1795번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.551,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.614
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.448,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1825번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.486,
+            "stress:mid|tenure:new": 0.43,
+            "stress:mid|tenure:settled": 0.433,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.327
+          }
+        },
+        {
+          "share": 0.248,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1825번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.236,
+            "stress:mid|tenure:new": 0.255,
+            "stress:mid|tenure:settled": 0.254,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.26
+          }
+        },
+        {
+          "share": 0.304,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1825번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.278,
+            "stress:mid|tenure:new": 0.315,
+            "stress:mid|tenure:settled": 0.313,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.413
+          }
+        }
+      ]
+    }
+  },
+  "portfolio": {
+    "apply": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.539,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(5435번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.559,
+            "stress:high": 0.468
+          }
+        },
+        {
+          "share": 0.461,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(5435번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.441,
+            "stress:high": 0.532
+          }
+        }
+      ]
+    },
+    "interview": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.581,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1195번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.419,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1195번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "prep": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.587,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1352번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.583,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.413,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1352번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.417,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "long-hunt": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.397,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1071번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.495,
+            "stress:low|money:ok": 0.495,
+            "stress:mid|money:low": 0.412,
+            "stress:mid|money:ok": 0.42,
+            "stress:high|money:low": 0.349,
+            "stress:high|money:ok": 0.327
+          }
+        },
+        {
+          "share": 0.257,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1071번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.232,
+            "stress:low|money:ok": 0.232,
+            "stress:mid|money:low": 0.257,
+            "stress:mid|money:ok": 0.256,
+            "stress:high|money:low": 0.26,
+            "stress:high|money:ok": 0.26
+          }
+        },
+        {
+          "share": 0.346,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1071번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.273,
+            "stress:low|money:ok": 0.273,
+            "stress:mid|money:low": 0.331,
+            "stress:mid|money:ok": 0.324,
+            "stress:high|money:low": 0.391,
+            "stress:high|money:ok": 0.413
+          }
+        }
+      ]
+    },
+    "got-job": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.549,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1669번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.566,
+            "stress:high": 0.467
+          }
+        },
+        {
+          "share": 0.451,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1669번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.434,
+            "stress:high": 0.533
+          }
+        }
+      ]
+    },
+    "got-job-small": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.49,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(202번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.51,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(202번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "work-piece": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.545,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(3420번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.562,
+            "stress:high": 0.468
+          }
+        },
+        {
+          "share": 0.455,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(3420번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.438,
+            "stress:high": 0.532
+          }
+        }
+      ]
+    },
+    "contest": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.581,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1183번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.579,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.419,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1183번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.421,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "go-freelance": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.432,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1039번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.46,
+            "stress:low|money:ok": 0.46,
+            "stress:mid|money:low": 0.445,
+            "stress:mid|money:ok": 0.446,
+            "stress:high|money:low": 0.386,
+            "stress:high|money:ok": 0.386
+          }
+        },
+        {
+          "share": 0.568,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1039번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.54,
+            "stress:low|money:ok": 0.54,
+            "stress:mid|money:low": 0.555,
+            "stress:mid|money:ok": 0.554,
+            "stress:high|money:low": 0.614,
+            "stress:high|money:ok": 0.614
+          }
+        }
+      ]
+    },
+    "first-client": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.502,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(246번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.498,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(246번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "revisions": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.484,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(23086번 측정)",
+          "byState": {
+            "stress:low": 0.636,
+            "stress:mid": 0.561,
+            "stress:high": 0.422
+          }
+        },
+        {
+          "share": 0.516,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(23086번 측정)",
+          "byState": {
+            "stress:low": 0.364,
+            "stress:mid": 0.439,
+            "stress:high": 0.578
+          }
+        }
+      ]
+    },
+    "hit": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.53,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1766번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.566,
+            "stress:high": 0.446
+          }
+        },
+        {
+          "share": 0.47,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1766번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.434,
+            "stress:high": 0.554
+          }
+        }
+      ]
+    },
+    "first-mistake": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.572,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(876번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.572,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.428,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(876번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.428,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.493,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(32410번 측정)",
+          "byState": {
+            "stress:low": 0.636,
+            "stress:mid": 0.562,
+            "stress:high": 0.426
+          }
+        },
+        {
+          "share": 0.507,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(32410번 측정)",
+          "byState": {
+            "stress:low": 0.364,
+            "stress:mid": 0.438,
+            "stress:high": 0.574
+          }
+        }
+      ]
+    },
+    "crunch": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.551,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1778번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.567,
+            "stress:high": 0.455
+          }
+        },
+        {
+          "share": 0.449,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1778번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.433,
+            "stress:high": 0.545
+          }
+        }
+      ]
+    },
+    "praise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.529,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1766번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.564,
+            "stress:high": 0.444
+          }
+        },
+        {
+          "share": 0.471,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1766번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.436,
+            "stress:high": 0.556
+          }
+        }
+      ]
+    },
+    "peer-leave": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.598,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1758번 측정)",
+          "byState": {
+            "stress:low": 0.681,
+            "stress:mid": 0.62,
+            "stress:high": 0.557
+          }
+        },
+        {
+          "share": 0.402,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1758번 측정)",
+          "byState": {
+            "stress:low": 0.319,
+            "stress:mid": 0.38,
+            "stress:high": 0.443
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.525,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1762번 측정)",
+          "byState": {
+            "stress:low": 0.637,
+            "stress:mid": 0.565,
+            "stress:high": 0.441
+          }
+        },
+        {
+          "share": 0.475,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1762번 측정)",
+          "byState": {
+            "stress:low": 0.363,
+            "stress:mid": 0.435,
+            "stress:high": 0.559
+          }
+        }
+      ]
+    },
+    "raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.491,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1618번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.561,
+            "stress:high": 0.428
+          }
+        },
+        {
+          "share": 0.509,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1618번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.439,
+            "stress:high": 0.572
+          }
+        }
+      ]
+    },
+    "offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.415,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1750번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.441,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.385
+          }
+        },
+        {
+          "share": 0.585,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1750번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.559,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.615
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.383,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1782번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.495,
+            "stress:mid|tenure:new": 0.422,
+            "stress:mid|tenure:settled": 0.42,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.33
+          }
+        },
+        {
+          "share": 0.256,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1782번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.232,
+            "stress:mid|tenure:new": 0.257,
+            "stress:mid|tenure:settled": 0.256,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.259
+          }
+        },
+        {
+          "share": 0.361,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1782번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.273,
+            "stress:mid|tenure:new": 0.321,
+            "stress:mid|tenure:settled": 0.324,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.411
+          }
+        }
+      ]
+    }
+  },
+  "public": {
+    "ncs-start": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.63,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.63,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.37,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.37,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "ncs-grind": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.542,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(17287번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.559,
+            "stress:high": 0.476
+          }
+        },
+        {
+          "share": 0.458,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(17287번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.441,
+            "stress:high": 0.524
+          }
+        }
+      ]
+    },
+    "pub-fail": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.622,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(5710번 측정)",
+          "byState": {
+            "stress:low": 0.666,
+            "stress:mid": 0.619,
+            "stress:high": 0.582
+          }
+        },
+        {
+          "share": 0.378,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(5710번 측정)",
+          "byState": {
+            "stress:low": 0.334,
+            "stress:mid": 0.381,
+            "stress:high": 0.418
+          }
+        }
+      ]
+    },
+    "got-public": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.555,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(869번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.556,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.445,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(869번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.444,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "got-private": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.528,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1549번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.551,
+            "stress:high": 0.478
+          }
+        },
+        {
+          "share": 0.472,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1549번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.449,
+            "stress:high": 0.522
+          }
+        }
+      ]
+    },
+    "first-mistake": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.607,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1094번 측정)",
+          "byState": {
+            "stress:low": 0.64,
+            "stress:mid": 0.587,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.393,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1094번 측정)",
+          "byState": {
+            "stress:low": 0.36,
+            "stress:mid": 0.413,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.64,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(59381번 측정)",
+          "byState": {
+            "stress:low": 0.651,
+            "stress:mid": 0.592,
+            "stress:high": 0.485
+          }
+        },
+        {
+          "share": 0.36,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(59381번 측정)",
+          "byState": {
+            "stress:low": 0.349,
+            "stress:mid": 0.408,
+            "stress:high": 0.515
+          }
+        }
+      ]
+    },
+    "crunch": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.618,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1997번 측정)",
+          "byState": {
+            "stress:low": 0.64,
+            "stress:mid": 0.59,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.382,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1997번 측정)",
+          "byState": {
+            "stress:low": 0.36,
+            "stress:mid": 0.41,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "praise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.609,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.584,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.391,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.416,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "peer-leave": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.656,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.676,
+            "stress:mid": 0.633,
+            "stress:high": 0.557
+          }
+        },
+        {
+          "share": 0.344,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1999번 측정)",
+          "byState": {
+            "stress:low": 0.324,
+            "stress:mid": 0.367,
+            "stress:high": 0.443
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.602,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.637,
+            "stress:mid": 0.583,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.398,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2000번 측정)",
+          "byState": {
+            "stress:low": 0.363,
+            "stress:mid": 0.417,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.637,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1812번 측정)",
+          "byState": {
+            "stress:low": 0.647,
+            "stress:mid": 0.594,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.363,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1812번 측정)",
+          "byState": {
+            "stress:low": 0.353,
+            "stress:mid": 0.406,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.456,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1994번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.453,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.386
+          }
+        },
+        {
+          "share": 0.544,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1994번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.547,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.614
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.467,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1998번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.486,
+            "stress:low|tenure:settled": 0.49,
+            "stress:mid|tenure:new": 0.435,
+            "stress:mid|tenure:settled": 0.443,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.327
+          }
+        },
+        {
+          "share": 0.243,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1998번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.236,
+            "stress:low|tenure:settled": 0.234,
+            "stress:mid|tenure:new": 0.254,
+            "stress:mid|tenure:settled": 0.253,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.26
+          }
+        },
+        {
+          "share": 0.29,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1998번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.278,
+            "stress:low|tenure:settled": 0.276,
+            "stress:mid|tenure:new": 0.311,
+            "stress:mid|tenure:settled": 0.304,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.413
+          }
+        }
+      ]
+    }
+  },
+  "startup": {
+    "register": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.63,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1989번 측정)",
+          "byState": {
+            "stress:low": 0.63,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.37,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1989번 측정)",
+          "byState": {
+            "stress:low": 0.37,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "grant": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.545,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1705번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.562,
+            "stress:high": 0.476
+          }
+        },
+        {
+          "share": 0.455,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1705번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.438,
+            "stress:high": 0.524
+          }
+        }
+      ]
+    },
+    "first-sale": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.545,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2021번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.566,
+            "stress:high": 0.464
+          }
+        },
+        {
+          "share": 0.455,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2021번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.434,
+            "stress:high": 0.536
+          }
+        }
+      ]
+    },
+    "cofounder": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.586,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1914번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.591,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.414,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1914번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.409,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "pivot": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.295,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1389번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.315,
+            "stress:low|money:ok": 0.315,
+            "stress:mid|money:low": 0.301,
+            "stress:mid|money:ok": 0.307,
+            "stress:high|money:low": 0.285,
+            "stress:high|money:ok": 0.278
+          }
+        },
+        {
+          "share": 0.295,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1389번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.315,
+            "stress:low|money:ok": 0.315,
+            "stress:mid|money:low": 0.301,
+            "stress:mid|money:ok": 0.307,
+            "stress:high|money:low": 0.285,
+            "stress:high|money:ok": 0.278
+          }
+        },
+        {
+          "share": 0.41,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1389번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.37,
+            "stress:low|money:ok": 0.37,
+            "stress:mid|money:low": 0.398,
+            "stress:mid|money:ok": 0.386,
+            "stress:high|money:low": 0.43,
+            "stress:high|money:ok": 0.444
+          }
+        }
+      ]
+    },
+    "customer-love": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.548,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1889번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.566,
+            "stress:high": 0.466
+          }
+        },
+        {
+          "share": 0.452,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1889번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.434,
+            "stress:high": 0.534
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.545,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(57812번 측정)",
+          "byState": {
+            "stress:low": 0.629,
+            "stress:mid": 0.558,
+            "stress:high": 0.483
+          }
+        },
+        {
+          "share": 0.455,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(57812번 측정)",
+          "byState": {
+            "stress:low": 0.371,
+            "stress:mid": 0.442,
+            "stress:high": 0.517
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.407,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1680번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.495,
+            "stress:mid|tenure:new": 0.42,
+            "stress:mid|tenure:settled": 0.41,
+            "stress:high|tenure:new": 0.327,
+            "stress:high|tenure:settled": 0.354
+          }
+        },
+        {
+          "share": 0.257,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1680번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.232,
+            "stress:mid|tenure:new": 0.257,
+            "stress:mid|tenure:settled": 0.258,
+            "stress:high|tenure:new": 0.26,
+            "stress:high|tenure:settled": 0.26
+          }
+        },
+        {
+          "share": 0.336,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1680번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.273,
+            "stress:mid|tenure:new": 0.323,
+            "stress:mid|tenure:settled": 0.332,
+            "stress:high|tenure:new": 0.413,
+            "stress:high|tenure:settled": 0.386
+          }
+        }
+      ]
+    }
+  },
+  "trade": {
+    "apply": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.539,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(4167번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.57,
+            "stress:high": 0.447
+          }
+        },
+        {
+          "share": 0.461,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(4167번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.43,
+            "stress:high": 0.553
+          }
+        }
+      ]
+    },
+    "interview": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.581,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(919번 측정)",
+          "byState": {
+            "stress:low": 0.625,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.419,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(919번 측정)",
+          "byState": {
+            "stress:low": 0.375,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "prep": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.583,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1020번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.582,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.417,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1020번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.418,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "long-hunt": {
+      "stateKeys": [
+        "stress",
+        "money"
+      ],
+      "choices": [
+        {
+          "share": 0.377,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(749번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.495,
+            "stress:low|money:ok": 0.495,
+            "stress:mid|money:low": 0.422,
+            "stress:mid|money:ok": 0.416,
+            "stress:high|money:low": 0.327,
+            "stress:high|money:ok": 0.329
+          }
+        },
+        {
+          "share": 0.258,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(749번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.232,
+            "stress:low|money:ok": 0.232,
+            "stress:mid|money:low": 0.257,
+            "stress:mid|money:ok": 0.257,
+            "stress:high|money:low": 0.26,
+            "stress:high|money:ok": 0.259
+          }
+        },
+        {
+          "share": 0.365,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(749번 측정)",
+          "byState": {
+            "stress:low|money:low": 0.273,
+            "stress:low|money:ok": 0.273,
+            "stress:mid|money:low": 0.321,
+            "stress:mid|money:ok": 0.327,
+            "stress:high|money:low": 0.413,
+            "stress:high|money:ok": 0.412
+          }
+        }
+      ]
+    },
+    "got-job": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.545,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2652번 측정)",
+          "byState": {
+            "stress:low": 0.626,
+            "stress:mid": 0.571,
+            "stress:high": 0.443
+          }
+        },
+        {
+          "share": 0.455,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(2652번 측정)",
+          "byState": {
+            "stress:low": 0.374,
+            "stress:mid": 0.429,
+            "stress:high": 0.557
+          }
+        }
+      ]
+    },
+    "got-job-small": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.568,
+            "stress:high": 0.442
+          }
+        },
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 측정 표본 부족, 스트레스 50 기준 엔진 비율",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.432,
+            "stress:high": 0.558
+          }
+        }
+      ]
+    },
+    "field-cert": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.56,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1959번 측정)",
+          "byState": {
+            "stress:low": 0.634,
+            "stress:mid": 0.574,
+            "stress:high": 0.448
+          }
+        },
+        {
+          "share": 0.44,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1959번 측정)",
+          "byState": {
+            "stress:low": 0.366,
+            "stress:mid": 0.426,
+            "stress:high": 0.552
+          }
+        }
+      ]
+    },
+    "safety": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.447,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(16340번 측정)",
+          "byState": {
+            "stress:low": 0.639,
+            "stress:mid": 0.551,
+            "stress:high": 0.414
+          }
+        },
+        {
+          "share": 0.553,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(16340번 측정)",
+          "byState": {
+            "stress:low": 0.361,
+            "stress:mid": 0.449,
+            "stress:high": 0.586
+          }
+        }
+      ]
+    },
+    "customer": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.446,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(16160번 측정)",
+          "byState": {
+            "stress:low": 0.637,
+            "stress:mid": 0.551,
+            "stress:high": 0.414
+          }
+        },
+        {
+          "share": 0.554,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(16160번 측정)",
+          "byState": {
+            "stress:low": 0.363,
+            "stress:mid": 0.449,
+            "stress:high": 0.586
+          }
+        }
+      ]
+    },
+    "own-shop": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.395,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1901번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.434,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.382
+          }
+        },
+        {
+          "share": 0.605,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1901번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.566,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.618
+          }
+        }
+      ]
+    },
+    "first-mistake": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.565,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1096번 측정)",
+          "byState": {
+            "stress:low": 0.647,
+            "stress:mid": 0.573,
+            "stress:high": 0.434
+          }
+        },
+        {
+          "share": 0.435,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1096번 측정)",
+          "byState": {
+            "stress:low": 0.353,
+            "stress:mid": 0.427,
+            "stress:high": 0.566
+          }
+        }
+      ]
+    },
+    "daily": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.452,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(31380번 측정)",
+          "byState": {
+            "stress:low": 0.64,
+            "stress:mid": 0.551,
+            "stress:high": 0.417
+          }
+        },
+        {
+          "share": 0.548,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(31380번 측정)",
+          "byState": {
+            "stress:low": 0.36,
+            "stress:mid": 0.449,
+            "stress:high": 0.583
+          }
+        }
+      ]
+    },
+    "crunch": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.542,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1914번 측정)",
+          "byState": {
+            "stress:low": 0.642,
+            "stress:mid": 0.565,
+            "stress:high": 0.449
+          }
+        },
+        {
+          "share": 0.458,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1914번 측정)",
+          "byState": {
+            "stress:low": 0.358,
+            "stress:mid": 0.435,
+            "stress:high": 0.551
+          }
+        }
+      ]
+    },
+    "praise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.514,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1901번 측정)",
+          "byState": {
+            "stress:low": 0.638,
+            "stress:mid": 0.563,
+            "stress:high": 0.443
+          }
+        },
+        {
+          "share": 0.486,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1901번 측정)",
+          "byState": {
+            "stress:low": 0.362,
+            "stress:mid": 0.437,
+            "stress:high": 0.557
+          }
+        }
+      ]
+    },
+    "peer-leave": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.585,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1892번 측정)",
+          "byState": {
+            "stress:low": 0.681,
+            "stress:mid": 0.617,
+            "stress:high": 0.556
+          }
+        },
+        {
+          "share": 0.415,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1892번 측정)",
+          "byState": {
+            "stress:low": 0.319,
+            "stress:mid": 0.383,
+            "stress:high": 0.444
+          }
+        }
+      ]
+    },
+    "mentor": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.51,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1906번 측정)",
+          "byState": {
+            "stress:low": 0.644,
+            "stress:mid": 0.56,
+            "stress:high": 0.438
+          }
+        },
+        {
+          "share": 0.49,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1906번 측정)",
+          "byState": {
+            "stress:low": 0.356,
+            "stress:mid": 0.44,
+            "stress:high": 0.562
+          }
+        }
+      ]
+    },
+    "raise": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.456,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1747번 측정)",
+          "byState": {
+            "stress:low": 0.645,
+            "stress:mid": 0.551,
+            "stress:high": 0.424
+          }
+        },
+        {
+          "share": 0.544,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1747번 측정)",
+          "byState": {
+            "stress:low": 0.355,
+            "stress:mid": 0.449,
+            "stress:high": 0.576
+          }
+        }
+      ]
+    },
+    "offer": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.401,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1893번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.46,
+            "stress:low|tenure:settled": 0.46,
+            "stress:mid|tenure:new": 0.445,
+            "stress:mid|tenure:settled": 0.436,
+            "stress:high|tenure:new": 0.386,
+            "stress:high|tenure:settled": 0.385
+          }
+        },
+        {
+          "share": 0.599,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1893번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.54,
+            "stress:low|tenure:settled": 0.54,
+            "stress:mid|tenure:new": 0.555,
+            "stress:mid|tenure:settled": 0.564,
+            "stress:high|tenure:new": 0.614,
+            "stress:high|tenure:settled": 0.615
+          }
+        }
+      ]
+    },
+    "burnout": {
+      "stateKeys": [
+        "stress",
+        "tenure"
+      ],
+      "choices": [
+        {
+          "share": 0.359,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1913번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.495,
+            "stress:low|tenure:settled": 0.495,
+            "stress:mid|tenure:new": 0.418,
+            "stress:mid|tenure:settled": 0.408,
+            "stress:high|tenure:new": 0.323,
+            "stress:high|tenure:settled": 0.325
+          }
+        },
+        {
+          "share": 0.258,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1913번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.232,
+            "stress:low|tenure:settled": 0.232,
+            "stress:mid|tenure:new": 0.257,
+            "stress:mid|tenure:settled": 0.258,
+            "stress:high|tenure:new": 0.258,
+            "stress:high|tenure:settled": 0.259
+          }
+        },
+        {
+          "share": 0.383,
+          "grade": "assumed",
+          "ref": "가정값: 비교 집단 평균 인물이 지금 엔진에서 고르는 비율(1913번 측정)",
+          "byState": {
+            "stress:low|tenure:new": 0.273,
+            "stress:low|tenure:settled": 0.273,
+            "stress:mid|tenure:new": 0.325,
+            "stress:mid|tenure:settled": 0.334,
+            "stress:high|tenure:new": 0.419,
+            "stress:high|tenure:settled": 0.416
+          }
+        }
+      ]
+    }
+  }
+}

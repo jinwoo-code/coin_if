@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const ids = Object.keys(multiverses);
 
   // 부합도는 AI가 아니라 코드로 계산한다(매번 같은 기준).
-  // 한 번의 이야기가 아니라 100번 살아본 결과의 가운데 값으로 계산한다.
+  // 한 번의 이야기가 아니라 1,000번 살아본 결과의 가운데 값으로 계산한다.
   const fits = Object.fromEntries(ids.map((id) => [id, finalFit(getWorld(id), profile, multiverses[id].stats)]));
 
   const fallback = (): Omit<Report, "worlds"> & { worlds: { worldId: string; good: string; hard: string }[] } => ({

@@ -1,14 +1,17 @@
 "use client";
-// 3-2. 멀티버스: 100번 살아본 세계선 나무. 세계선을 열어 보고, 갈림길을 바꿔 보고, 두 세계를 비교한다.
+// 3-2. 멀티버스: 1,000번 살아본 세계선 나무. 세계선을 열어 보고, 갈림길을 바꿔 보고, 두 세계를 비교한다.
 import { ArrowLeftRight, BarChart3, Check, CornerDownRight, GitBranch, MessageCircle, Shuffle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { LineBadge, MockNotice, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
+import { Ci, CI_NOTE, LineBadge, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
+import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
-import { buildMultiverse, levers } from "@/lib/multiverse";
+import { baseSummary } from "@/lib/base";
+import { computeLevers } from "@/lib/levers-client";
 import { CorrectChoice } from "@/components/correct";
+import { choiceLine } from "@/lib/scenes";
 import { store } from "@/lib/store";
 import { WeightSources } from "@/components/weights";
 import { fittedCount, weightGroups } from "@/lib/weights";
@@ -76,7 +79,7 @@ function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: Li
             <span className={`text-[15px] ${onMain ? "font-bold" : "font-semibold"}`}>{node.cause === "start" ? `출발 · ${monthLabel(mv.startYm, 0)}` : node.label}</span>
             {node.cause !== "start" ? (
               <span className="num text-cap text-muted">
-                100번 중 {node.count}번 · 보통 {monthLabel(mv.startYm, node.typicalMonth)}
+                {times(mv.stats.runs)}번 중 {times(node.count)}번 · 보통 {monthLabel(mv.startYm, node.typicalMonth)}
               </span>
             ) : null}
           </p>
@@ -130,10 +133,11 @@ function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; o
           <CornerDownRight aria-hidden="true" size={16} className="mt-[3px] flex-none" style={{ color: world.color }} />
           <span>
             {ev.choice}
-            {ev.reason ? <span className="block text-cap font-normal text-muted">{ev.reason} 이렇게 했어요</span> : null}
+            {choiceLine(ev) ? <span className="block text-cap font-normal text-muted">{choiceLine(ev)}</span> : null}
           </span>
         </p>
       ) : null}
+      {ev.choice && ev.odds ? <Odds odds={ev.odds} /> : null}
       {ev.evidence ? (
         <p className="mt-1.5 flex gap-1.5 text-cap text-muted">
           <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" /> {ev.evidence.label} ({ev.evidence.source})
@@ -158,7 +162,7 @@ interface Explored {
 
 function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
   const rows: [string, (l: Line) => string][] = [
-    ["100번 중", (l) => `${l.count}번`],
+    ["살아본 횟수 중", (l) => `${times(l.count)}번`],
     ["만족하며 끝남", (l) => satText(l)],
     ["스트레스 높게 끝남", (l) => `${l.stressedShare}%`],
     ["모은 돈(가운데 값)", (l) => won(l.final.money.p50)],
@@ -194,7 +198,7 @@ function LeverList({ items, world }: { items: Lever[] | null; world: WorldTempla
       <h2 id="levers" className="flex items-center gap-2 text-xl font-bold">
         <Sparkles aria-hidden="true" size={20} style={{ color: world.color }} /> 내가 바꿀 수 있는 것 Top 3
       </h2>
-      <p className="mt-1 text-sm text-muted">내 조건 하나를 바꾸거나 갈림길에서 다르게 골랐을 때, 100번을 다시 살아본 결과예요.</p>
+      <p className="mt-1 text-sm text-muted">내 조건 하나를 바꾸거나 갈림길에서 다르게 골랐을 때, 1,000번을 다시 살아본 결과예요. 휴대폰에서는 수십 초 걸릴 수 있어요.</p>
       {items === null ? (
         <p className="mt-4 flex items-center gap-2 text-sm text-muted">
           <Typing label="계산 중" /> 조건을 바꿔 가며 다시 살아보는 중…
@@ -366,14 +370,16 @@ function MultiversePage() {
   const world = useMemo(() => (worldId ? getWorld(worldId) : null), [worldId]);
   const mv = mvs[worldId];
 
-  // '바꿀 수 있는 것'은 브라우저에서 바로 계산한다(같은 시드라 서버와 같은 결과).
+  // '바꿀 수 있는 것'은 브라우저에서 계산한다(같은 시드라 서버와 같은 결과). 1,000번씩 여러 번이라 Web Worker에서(lib/levers-client.ts).
   useEffect(() => {
     if (!profile || !selection || !world || leverMap[world.id]) return;
-    const t = window.setTimeout(() => {
-      const { paths } = buildMultiverse(profile, world, selection.months, selection.startYm);
-      setLeverMap((m) => ({ ...m, [world.id]: levers(profile, world, selection.months, selection.startYm, paths) }));
-    }, 50);
-    return () => window.clearTimeout(t);
+    let live = true;
+    computeLevers(profile, world.id, selection.months, selection.startYm)
+      .then((lv) => live && setLeverMap((m) => ({ ...m, [world.id]: lv })))
+      .catch(() => live && setLeverMap((m) => ({ ...m, [world.id]: [] })));
+    return () => {
+      live = false;
+    };
   }, [profile, selection, world, leverMap]);
 
   useEffect(() => setPicked([]), [worldId]);
@@ -462,23 +468,29 @@ function MultiversePage() {
         })}
       </div>
 
-      {/* 100번의 결과 */}
+      {/* 1,000번의 결과 */}
       <section aria-labelledby="summary" className="card mt-4 p-5">
         <h2 id="summary" className="text-lg font-bold">
-          {world.name}, 100번 살아본 결과
+          {world.name}, {times(st.runs)}번 살아본 결과
         </h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-2xl p-3" style={{ background: `${world.color}12` }}>
             <p className="text-cap text-muted">
               {durationLabel(selection.months)} 안에 {st.gate?.label}
             </p>
-            <p className="num text-2xl font-extrabold">{st.gate?.share ?? 0}%</p>
+            <p className="num text-2xl font-extrabold">
+              {st.gate?.share ?? 0}% <Ci pct={st.gate?.share ?? 0} n={st.runs} />
+            </p>
             <p className="num text-cap text-muted">{st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? `보통 ${monthLabel(mv.startYm, st.gate.typicalMonth)}` : "기간 안에 거의 못 함"}</p>
           </div>
           <div className="rounded-2xl bg-ground p-3">
             <p className="text-cap text-muted">만족하며 끝남</p>
-            <p className="num text-2xl font-extrabold">{st.satisfiedShare}%</p>
-            <p className="num text-cap text-muted">스트레스 높게 끝남 {st.stressedShare}%</p>
+            <p className="num text-2xl font-extrabold">
+              {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} />
+            </p>
+            <p className="num text-cap text-muted">
+              스트레스 높게 끝남 {st.stressedShare}% <Ci pct={st.stressedShare} n={st.runs} />
+            </p>
           </div>
         </div>
         {(st.gate?.share ?? 0) < 10 ? <p className="mt-3 rounded-xl bg-[#FFF4E5] px-3 py-2 text-cap text-[#7A4300]">{whyLow(profile, world, selection.months)}</p> : null}
@@ -487,7 +499,7 @@ function MultiversePage() {
           {st.salary.p50 ? <RangeRow label="연봉(일하는 경우)" {...st.salary} color={world.color} money max={6000} /> : null}
           <RangeRow label="만족도" {...st.final.satisfaction} color={world.color} />
         </div>
-        <p className="mt-2 text-cap text-muted">굵은 선은 가운데 값, 옅은 띠는 100번 중 80번이 들어간 범위예요.</p>
+        <p className="mt-2 text-cap text-muted">굵은 선은 가운데 값, 옅은 띠는 10번 중 8번이 들어간 범위예요. {CI_NOTE}</p>
 
         {st.factors.length ? (
           <div className="mt-5 border-t border-hair pt-4">
@@ -521,6 +533,10 @@ function MultiversePage() {
           </span>
           <span className="text-cap font-semibold text-muted">펼치기</span>
         </summary>
+        <p className="num mt-3 text-sm font-semibold">
+          기준선: 통계 {baseSummary(world).stat} · 현직자 {baseSummary(world).interview} · 가정값 {baseSummary(world).assumed}
+        </p>
+        <p className="text-cap text-muted">갈림길 보기 {baseSummary(world).total}개의 '보통은 몇 %' 값이 어디서 왔는지예요.</p>
         <ul className="mt-3 flex flex-col gap-3">
           {world.facts.map((f) => (
             <li key={f.label} className="text-sm">
@@ -548,7 +564,7 @@ function MultiversePage() {
         <h2 id="tree" className="flex items-center gap-2 text-xl font-bold">
           <GitBranch aria-hidden="true" size={20} style={{ color: world.color }} /> 갈라진 세계선 {mv.lines.length}개
         </h2>
-        <p className="mt-1 text-sm text-muted">갈림길마다 100번 중 몇 번이 어느 쪽으로 갔는지예요. 두 세계를 골라 비교해 보세요.</p>
+        <p className="mt-1 text-sm text-muted">갈림길마다 {times(mv.stats.runs)}번 중 몇 번이 어느 쪽으로 갔는지예요. 두 세계를 골라 비교해 보세요.</p>
         {pickedLines.length === 2 ? <Compare a={pickedLines[0]} b={pickedLines[1]} world={world} /> : null}
         <ul className="mt-5">
           <Tree node={mv.tree} mv={mv} world={world} picked={picked} onOpen={openLine} onPick={togglePick} />
@@ -563,8 +579,9 @@ function MultiversePage() {
           <div>
             <p className="text-base font-bold">{explored.title}</p>
             <p className="num mt-1 text-sm text-muted">
-              이 갈림길을 바꾼 채로 100번을 다시 살아봤어요. {st.gate?.label} {st.gate?.share}% → <strong className="text-ink">{explored.stats.gate?.share ?? 0}%</strong>, 만족하며 끝남 {st.satisfiedShare}% →{" "}
-              <strong className="text-ink">{explored.stats.satisfiedShare}%</strong>
+              이 갈림길을 바꾼 채로 {times(explored.stats.runs)}번을 다시 살아봤어요. {st.gate?.label} {st.gate?.share}% → <strong className="text-ink">{explored.stats.gate?.share ?? 0}%</strong>{" "}
+              <Ci pct={explored.stats.gate?.share ?? 0} n={explored.stats.runs} />, 만족하며 끝남 {st.satisfiedShare}% → <strong className="text-ink">{explored.stats.satisfiedShare}%</strong>{" "}
+              <Ci pct={explored.stats.satisfiedShare} n={explored.stats.runs} />
             </p>
             <ol className="mt-4 flex flex-col gap-4">
               {explored.scenes.map((ev) => (
@@ -577,10 +594,12 @@ function MultiversePage() {
           </div>
         ) : open ? (
           <div>
-            <p className="num text-sm text-muted">100번 중 {open.count}번이 이 세계로 왔어요. 아래는 그중 가장 전형적인 한 번이에요.</p>
+            <p className="num text-sm text-muted">
+              {times(mv.stats.runs)}번 중 {times(open.count)}번이 이 세계로 왔어요. 아래는 그중 가장 전형적인 한 번이에요.
+            </p>
             {busy ? (
               <p className="mt-3 flex items-center gap-2 text-sm text-muted">
-                <Typing label="다시 살아보는 중" /> 갈림길을 바꿔서 100번 다시 살아보는 중…
+                <Typing label="다시 살아보는 중" /> 갈림길을 바꿔서 1,000번 다시 살아보는 중…
               </p>
             ) : null}
             {scenes ? (

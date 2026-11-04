@@ -1,12 +1,16 @@
 "use client";
-// 3. 체험: 진로마다 100번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
+// 3. 체험: 진로마다 1,000번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
 import { BarChart3, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { freqWord, LineBadge, MockNotice, RouteProgress, Screen, StateMeters, STATE_META, won } from "@/components/ui";
+import { Ci, freqWord, LineBadge, MockNotice, Odds, RouteProgress, Screen, StateMeters, STATE_META, won } from "@/components/ui";
+import { times } from "@/lib/ci";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { CorrectChoice } from "@/components/correct";
+import { missingJudges } from "@/lib/judge";
+import { prefetchJudges } from "@/lib/judge-client";
+import { choiceLine } from "@/lib/scenes";
 import { store } from "@/lib/store";
 import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
@@ -65,7 +69,7 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
       <span>
         갈림길 · {ev.branch === "choice" ? "내 선택" : "운"}으로 갈림
         <span className="block font-normal text-muted">
-          여기서 {fork.parent.count}번 중 {others}번은 다른 세계로 갔어요
+          여기서 {times(fork.parent.count)}번 중 {times(others)}번은 다른 세계로 갔어요
         </span>
       </span>
     </Link>
@@ -86,7 +90,7 @@ function EventCard({ ev, world, current, mv }: { ev: SimEvent; world: WorldTempl
       </p>
       {!quiet && !ev.routine ? (
         <p className="num mb-1.5 text-cap text-muted">
-          {freqWord(pct)} · 100번 중 {ev.freq}번
+          {freqWord(pct)} · {times(mv.stats.runs)}번 중 {times(ev.freq)}번
         </p>
       ) : null}
       <h3 className={`text-[15px] font-bold leading-snug ${quiet ? "text-muted" : ""}`}>{ev.title}</h3>
@@ -97,10 +101,11 @@ function EventCard({ ev, world, current, mv }: { ev: SimEvent; world: WorldTempl
           <span>
             <span className="sr-only">나의 선택: </span>
             {ev.choice}
-            {ev.reason ? <span className="mt-0.5 block text-cap font-normal text-muted">{ev.reason} 이렇게 했어요</span> : null}
+            {choiceLine(ev) ? <span className="mt-0.5 block text-cap font-normal text-muted">{choiceLine(ev)}</span> : null}
           </span>
         </p>
       ) : null}
+      {ev.choice && ev.odds ? <Odds odds={ev.odds} /> : null}
       <CorrectChoice ev={ev} world={world} />
       <DeltaChips delta={ev.delta} />
       {ev.minor.length ? <p className="mt-2 text-cap text-muted">그 밖에: {ev.minor.join(", ")}</p> : null}
@@ -130,6 +135,7 @@ export default function SimulatePage() {
   const [done, setDone] = useState(false);
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [error, setError] = useState("");
+  const [judging, setJudging] = useState<{ done: number; total: number } | null>(null);
   const startedRef = useRef(false);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -169,10 +175,20 @@ export default function SimulatePage() {
     if (rows.length > 0 && !done) endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [rows.length, done]);
 
-  async function run(profile: Profile, sel: Selection) {
+  async function run(start: Profile, sel: Selection) {
     setError("");
     setRows([]);
     setDone(false);
+    let profile = start;
+    // 큰 갈림길마다 AI 분신 판단을 먼저 받는다(이미 받은 건 다시 안 물음). 실패한 갈림길은 엔진이 규칙 기울기로 고른다.
+    const ws = sel.worldIds.map(getWorld);
+    if (missingJudges(profile, ws).length) {
+      const r = await prefetchJudges(profile, ws, (d, t) => setJudging({ done: d, total: t }));
+      console.info("[분신 판단]", r.report.map((x) => `${x.worldId} ${x.calls}회(AI ${x.ai}) ${(x.ms / 1000).toFixed(1)}초`).join(", "));
+      profile = r.profile;
+      if (profile !== start) store.setProfile(profile);
+      setJudging(null);
+    }
     try {
       const res = await fetch("/api/simulate", {
         method: "POST",
@@ -271,7 +287,7 @@ export default function SimulatePage() {
       {Object.keys(mvs).length > 0 && selection ? (
         <div className="mt-3 rounded-2xl bg-surface px-4 py-3 text-sm shadow-[0_0_0_1px_#E3E6EB]">
           <p>
-            {monthLabel(selection.startYm, 0)}부터 {durationLabel(selection.months)}을 진로마다 <strong>내 조건과 성향으로 100번</strong> 살아봤어요.
+            {monthLabel(selection.startYm, 0)}부터 {durationLabel(selection.months)}을 진로마다 <strong>내 조건과 성향으로 {times(Object.values(mvs)[0]?.stats.runs ?? 1000)}번</strong> 살아봤어요.
           </p>
           <ul className="mt-1.5 flex flex-col gap-1 text-muted">
             {worlds.map((w) => {
@@ -281,7 +297,7 @@ export default function SimulatePage() {
                 <li key={w.id} className="flex gap-1.5">
                   <LineBadge world={w} size={18} />
                   <span>
-                    {w.short}: 세계선 {mv.lines.length}개로 갈라졌고, 지금 보는 건 가장 흔한 세계예요({main?.count ?? 0}번).
+                    {w.short}: 세계선 {mv.lines.length}개로 갈라졌고, 지금 보는 건 가장 흔한 세계예요({times(main?.count ?? 0)}번).
                   </span>
                 </li>
               ) : null;
@@ -318,6 +334,15 @@ export default function SimulatePage() {
           );
         })}
       </div>
+
+      {judging ? (
+        <div className="mt-5" aria-live="polite">
+          <RouteProgress total={Math.max(1, judging.total)} current={judging.done} label="분신 판단 진행" />
+          <p className="num mt-2 text-cap text-muted">
+            분신이 큰 갈림길에서 나라면 어떻게 할지 판단하는 중이에요 ({judging.done}/{judging.total})
+          </p>
+        </div>
+      ) : null}
 
       {total > 0 ? (
         <div className="mt-5">
@@ -365,10 +390,12 @@ export default function SimulatePage() {
                     </span>
                     {mv && main ? (
                       <section className="animate-rise rounded-2xl p-3.5 sm:p-4" style={{ background: `${w.color}12` }}>
-                        <h3 className="text-sm font-bold">100번 중 이 세계로 온 건 {main.count}번</h3>
+                        <h3 className="text-sm font-bold">
+                          {times(mv.stats.runs)}번 중 이 세계로 온 건 {times(main.count)}번
+                        </h3>
                         <p className="mt-1 text-sm">{main.title}</p>
                         <p className="num mt-2 text-cap text-muted">
-                          100번 전체로 보면 {mv.stats.gate?.label} {mv.stats.gate?.share}%
+                          {times(mv.stats.runs)}번 전체로 보면 {mv.stats.gate?.label} {mv.stats.gate?.share}% <Ci pct={mv.stats.gate?.share ?? 0} n={mv.stats.runs} />
                           {mv.stats.gate?.typicalMonth !== null && mv.stats.gate?.typicalMonth !== undefined ? `, 보통 ${durationLabel(mv.stats.gate.typicalMonth + 1)} 뒤` : ""}
                         </p>
                         <Link href={`/multiverse?world=${w.id}`} className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
@@ -385,7 +412,7 @@ export default function SimulatePage() {
       </div>
       <div ref={endRef} />
 
-      {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">100번 살아보고 첫 번째 역으로 출발하는 중…</p> : null}
+      {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">1,000번 살아보고 첫 번째 역으로 출발하는 중…</p> : null}
       {error ? (
         <p role="alert" className="mt-4 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
           {error}

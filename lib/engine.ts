@@ -1,12 +1,15 @@
 // 규칙 엔진. AI 없이 숫자만으로 한 사람의 한 진로를 '한 달씩' 처음부터 끝까지 굴린다.
-// 같은 엔진으로 100번을 돌려 세계선 나무를 만들고(multiverse.ts), 그중 한 줄을 AI가 이야기로 풀어 준다(sim.ts).
+// 같은 엔진으로 1,000번을 돌려 세계선 나무를 만들고(multiverse.ts), 그중 한 줄을 AI가 이야기로 풀어 준다(sim.ts).
 // 브라우저에서도 쓸 수 있도록 서버 전용 코드를 import하지 않는다.
 import { ymAt } from "./calendar";
 import { factorMult, startSkill } from "./factors";
 import { eulReul } from "./josa";
+import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./base";
+import norms from "@/data/norms.json";
+import { judgeFor } from "./judge";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
 import { W, WA } from "./weights";
-import type { Choice, EventCard, LifeState, MonthLog, Path, Profile, ValueKey, WorldTemplate } from "./types";
+import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
 
 // ---------- 작은 도구들 ----------
 
@@ -105,6 +108,10 @@ const BROKE: EventCard = {
   effect: { stress: 10, satisfaction: -6 },
 };
 
+// 진로마다 같은 공통 사건(기준 비율은 data/base-shares.json의 "_global")
+export const GLOBAL_EVENTS = [ENLIST, DISCHARGE, BROKE];
+const [ENLIST_B, DISCHARGE_B, BROKE_B] = GLOBAL_EVENTS.map((e) => attachBase(e, "_global"));
+
 export function valueFit(world: WorldTemplate, p: Profile) {
   return blendValueFit(
     p.values.reduce((s, v, i) => s + (WA("value.fitRank")[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
@@ -120,6 +127,7 @@ interface Push {
   tone: Tone;
   value: number;
   reason: string;
+  fromState?: boolean; // 성향이 아니라 지금 상태 때문에 미는 무게
 }
 
 function rankOf(p: Profile, v: ValueKey) {
@@ -149,7 +157,12 @@ function pushes(p: Profile, state: LifeState): Push[] {
   const h = p.behavior;
   const r = (v: ValueKey) => `${eulReul(v)} ${rankOf(p, v) + 1}순위로 꼽아서`;
   const out: Push[] = [];
-  for (const [v, tone] of VALUE_PUSH) if (vw(p, v)) out.push({ tone, value: W(`value.${v}.${tone}`) * vw(p, v), reason: r(v) });
+  // 가치관을 하나도 안 고른 사람(비교 집단 평균 인물)은 8개가 똑같이 뽑힌다고 보고 순위 무게의 기대값을 준다(data/norms.json values, 가정값).
+  const meanRank = WA("value.rank").reduce((a, c) => a + c, 0) / VALUE_PUSH.length;
+  for (const [v, tone] of VALUE_PUSH) {
+    if (!p.values.length) out.push({ tone, value: W(`value.${v}.${tone}`) * meanRank, reason: "보통 사람" });
+    else if (vw(p, v)) out.push({ tone, value: W(`value.${v}.${tone}`) * vw(p, v), reason: r(v) });
+  }
   out.push({ tone: "push", value: W("trait.C.push") * (b.C - 3), reason: b.C >= 3 ? "일을 끝까지 해내는 편이라서" : "" });
   const grit = blendPersistence(h.persistence, p.story);
   out.push({ tone: "push", value: W("trait.persistence.push") * (grit - 3), reason: grit >= 3 ? "잘 안 풀려도 버티는 편이라서" : "" });
@@ -174,10 +187,10 @@ function pushes(p: Profile, state: LifeState): Push[] {
   // 지쳐 있으면 쉬거나 바꾸고 싶어진다.
   const tired = (state.stress - 50) / 100;
   if (tired > 0) {
-    out.push({ tone: "safe", value: tired * (W("state.tired.safe") - W("state.tired.copingRelief") * (h.coping - 3)), reason: "스트레스가 많이 쌓여 있어서" });
-    out.push({ tone: "change", value: tired * W("state.tired.change"), reason: "지금 상황에 지쳐서" });
+    out.push({ tone: "safe", value: tired * (W("state.tired.safe") - W("state.tired.copingRelief") * (h.coping - 3)), reason: "스트레스가 많이 쌓여 있어서", fromState: true });
+    out.push({ tone: "change", value: tired * W("state.tired.change"), reason: "지금 상황에 지쳐서", fromState: true });
   } else {
-    out.push({ tone: "push", value: -tired * W("state.rested.push"), reason: "아직 여유가 있어서" });
+    out.push({ tone: "push", value: -tired * W("state.rested.push"), reason: "아직 여유가 있어서", fromState: true });
   }
   return out.filter((x) => x.value > 0 && x.reason);
 }
@@ -195,33 +208,87 @@ export function toneScores(p: Profile, state: LifeState, tones: Tone[]) {
   return tones.map((t) => scoreOf(ps, t));
 }
 
-// 이 상태에서 '나'가 각 보기를 고를 확률(합 1)
-export function toneProbs(p: Profile, state: LifeState, tones: Tone[]) {
+// 규칙만으로 낸 확률(온도 × tone 점수의 소프트맥스). 기준선을 섞기 전 값이라 가중치 보정(scripts/fit-weights.ts)이 쓴다.
+export function ruleProbs(p: Profile, state: LifeState, tones: Tone[]) {
   const w = weightsOf(pushes(p, state), tones);
   const total = w.reduce((a, b) => a + b, 0);
   return w.map((x) => x / total);
 }
 
-export function decide(p: Profile, state: LifeState, choices: Choice[], rand: () => number) {
+// ---------- 비교 집단 평균 인물(data/norms.json) ----------
+// 성향이 모두 비교 집단 평균이고 가치관을 고르지 않은(기대값) 사람. 이야기 값·고친 선택은 없음.
+// 갈림길 기준 비율(가정값)을 잴 때(scripts/measure-base.ts)와, 규칙 기울기를 '평균에서 벗어난 만큼'으로 계산할 때 쓴다.
+export const NORM_PROFILE = { bigFive: norms.bigFive.mean, behavior: norms.behavior.mean, values: [], story: null, corrections: [] } as unknown as Profile;
+export const normProbs = (state: LifeState, tones: Tone[]) => ruleProbs(NORM_PROFILE, state, tones);
+
+// ---------- 기준선 + 기울기(docs/선택-설계-근거.md '합치는 방식: 이산선택 모형') ----------
+// 점수_i = ln(기준 비율_i) + r × clip(기울기_i, ln(2/3), ln 1.5),  확률 = 소프트맥스(점수)
+// 기울기: AI 분신 판단이 있으면 ln(AI 확률 ÷ 기준 비율), 없으면 규칙 기울기 ln(내 규칙 확률 ÷ 평균 인물 규칙 확률)(같은 상태에서).
+// 성향이 모두 평균인 사람은 규칙 기울기가 0이라 정확히 기준 비율대로 고른다(scripts/check-base.ts가 확인).
+export const TILT_MIN = Math.log(2 / 3);
+export const TILT_MAX = Math.log(1.5);
+// r = 기울기 반영 비율. 검사를 깊게 할수록 분신을 더 믿는다. 가정값(같은 문서 '분신이 얼마나 움직일 수 있나' 표).
+// 계속 닮아 가기는 검사 단계가 표준과 같아서 0.7(문서에 없음, 가정값).
+export const REFLECT: Record<Profile["depthMode"], number> = { quick: 0.5, standard: 0.7, deep: 0.85, ongoing: 0.7 };
+export const reflectOf = (p: Profile) => REFLECT[p.depthMode] ?? REFLECT.quick;
+
+export interface Judge {
+  probs: number[]; // 보기 순서대로 AI 분신이 말한 확률(합 1)
+  reasons?: string[]; // 보기 순서대로 이유(AI가 쓴 문장)
+}
+
+// base: 이 상황 칸의 기준 비율(없으면 평균 인물의 규칙 확률). judge: AI 분신 판단(3단계, 없으면 규칙 기울기)
+export function choiceProbs(p: Profile, state: LifeState, tones: Tone[], base?: number[], judge?: Judge | null) {
+  const norm = normProbs(state, tones);
+  const b = base ?? norm;
+  const mine = judge ? judge.probs : ruleProbs(p, state, tones);
+  const ref = judge ? b : norm;
+  const r = reflectOf(p);
+  const score = tones.map((_, i) => Math.log(b[i]) + r * clamp(Math.log(mine[i] / ref[i]), TILT_MIN, TILT_MAX));
+  const top = Math.max(...score);
+  const w = score.map((x) => Math.exp(x - top));
+  const total = w.reduce((a, c) => a + c, 0);
+  return w.map((x) => x / total);
+}
+
+// 목업 판단(키가 없거나 AI가 실패했을 때): 기준 비율 × e^(규칙 기울기)를 확률로. 이유는 보기마다 그쪽을 가장 크게 민 성향(없으면 빈 문자열).
+export function ruleJudge(p: Profile, state: LifeState, choices: Choice[], base: number[]) {
+  const tones = choices.map((c) => c.tone);
+  const mine = ruleProbs(p, state, tones);
+  const norm = normProbs(state, tones);
+  const w = base.map((b, i) => b * (mine[i] / norm[i]));
+  const total = w.reduce((a, c) => a + c, 0);
+  const ps = pushes(p, state).filter((x) => x.reason !== "보통 사람" && !x.fromState);
+  const reasons = tones.map((t) => ps.filter((x) => x.tone === t).toSorted((a, b) => b.value - a.value)[0]?.reason ?? "");
+  return { probs: w.map((x) => x / total), reasons };
+}
+
+// 이 상태에서 '나'가 각 보기를 고를 확률(합 1). 분신 채점(lib/twin.ts)용: 상황 질문에는 기준 비율이 없어 평균 인물 확률을 기준으로 쓴다.
+export function toneProbs(p: Profile, state: LifeState, tones: Tone[]) {
+  return choiceProbs(p, state, tones);
+}
+
+export function decide(p: Profile, state: LifeState, choices: Choice[], rand: () => number, base?: number[], judge?: Judge | null) {
   const ps = pushes(p, state);
   const tones = choices.map((c) => c.tone);
-  const weights = weightsOf(ps, tones);
-  const total = weights.reduce((a, b) => a + b, 0);
-  let roll = rand() * total;
+  const probs = choiceProbs(p, state, tones, base, judge);
+  let roll = rand();
   let index = 0;
-  for (let i = 0; i < weights.length; i++) {
-    roll -= weights[i];
+  for (let i = 0; i < probs.length; i++) {
+    roll -= probs[i];
     if (roll <= 0) {
       index = i;
       break;
     }
   }
-  const mine = ps.filter((x) => x.tone === tones[index]);
-  let reason = tones[index] === "safe" ? "무리하지 않으려고" : tones[index] === "change" ? "다른 길도 봐야 할 것 같아서" : "해 볼 만하다고 생각해서";
+  // 이유: AI 판단이 있으면 AI가 쓴 문장, 없으면 고른 쪽을 민 성향 중 하나(무게만큼 뽑음, 없으면 빈 문자열). 지금 상태 때문에 민 건 성향이 아니라 situation으로 따로.
+  const mine = ps.filter((x) => x.tone === tones[index] && x.reason !== "보통 사람");
+  const traits = mine.filter((x) => !x.fromState);
+  let reason = "";
   if (mine.length) {
-    const sum = mine.reduce((s, x) => s + x.value, 0);
-    let r = rand() * sum;
-    for (const x of mine) {
+    // rand는 고른 쪽을 민 게 있으면 항상 한 번 쓴다(같은 시드면 같은 인생)
+    let r = rand() * traits.reduce((s, x) => s + x.value, 0);
+    for (const x of traits) {
       r -= x.value;
       if (r <= 0) {
         reason = x.reason;
@@ -229,7 +296,9 @@ export function decide(p: Profile, state: LifeState, choices: Choice[], rand: ()
       }
     }
   }
-  return { index, reason, chance: Math.round((weights[index] / total) * 100) };
+  // AI가 쓴 이유가 있으면 그대로(위에서 rand는 똑같이 써서 판단이 있든 없든 난수 순서가 같다)
+  if (judge?.reasons?.[index]) reason = judge.reasons[index];
+  return { index, reason, situation: mine.find((x) => x.fromState)?.reason, chance: Math.round(probs[index] * 100), base: base ?? normProbs(state, tones), probs };
 }
 
 // 선택의 성격에 따른 추가 변화
@@ -379,7 +448,8 @@ export function signatureKey(e: EventCard, choiceIndex: number, tierId?: string)
   return tierId ? `${e.id}@${tierId}` : e.id;
 }
 
-export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force): Path {
+// trace: 갈림길마다 decide 직전 상황을 넘겨 받는다(scripts/measure-base.ts가 기준 비율을 잴 때)
+export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force, trace?: (e: EventCard, c: ForkCtx) => void): Path {
   const rand = seededRandom(seed);
   const sim: Sim = {
     state: { skill: startSkill(p, world), stress: 40, satisfaction: 50, relation: 50, money: p.life.savings },
@@ -408,28 +478,40 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     // 사건 고르기
     let event: EventCard | null = null;
     if (enlist !== null && month === enlist) {
-      event = ENLIST;
+      event = ENLIST_B;
       // 회사원은 보통 입대 전에 퇴사한다(공무원은 군 휴직으로 자리가 유지됨).
       if (sim.employedSince !== null && world.archetype !== "exam") {
         sim.employedSince = null;
         sim.salary = 0;
         sim.used.add("quit");
       }
-    } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE;
+    } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE_B;
     // 생활비 바닥: 모은 돈이 바닥나거나, 이야기에서 말한 '집 지원 없이 버틸 수 있는 기간'이 졸업 뒤 지났을 때(더 이른 쪽)
-    else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway))) event = BROKE;
+    else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway))) event = BROKE_B;
     else if (!inService) event = pickEvent(world, p, sim, month, cal, rand, force);
 
     let delta: Partial<LifeState> = {};
     let choiceIndex = 0;
     let reason = "";
+    let pick: PickInfo | undefined;
     let tierLabel: string | undefined;
 
     if (event) {
       sim.used.add(event.id);
-      const d = decide(p, sim.state, event.choices, rand);
-      choiceIndex = force?.eventId === event.id && force.choiceIndex !== undefined ? Math.min(force.choiceIndex, event.choices.length - 1) : d.index;
-      reason = force?.eventId === event.id && force.choiceIndex !== undefined ? "다른 세계에서는 이렇게 골랐어요" : d.reason;
+      const ctx: ForkCtx = { state: sim.state, idle: sim.idle, tenure: sim.employedSince === null ? 0 : month - sim.employedSince };
+      trace?.(event, ctx);
+      const bucket = bucketOf(event.stateKeys, ctx);
+      const shares = event.choices.map((c) => baseShare(c.base, bucket));
+      const judge = judgeFor(p, world.id, event, bucket);
+      const d = decide(p, sim.state, event.choices, rand, shares.every((x) => x !== undefined) ? (shares as number[]) : undefined, judge);
+      const forced = force?.eventId === event.id && force.choiceIndex !== undefined;
+      choiceIndex = forced ? Math.min(force.choiceIndex!, event.choices.length - 1) : d.index;
+      reason = forced ? "다른 세계에서는 이렇게 골랐어요" : d.reason;
+      const chosen = event.choices[choiceIndex];
+      if (event.choices.length >= 2) {
+        const gap = chosen?.base?.population ? populationGap(p, chosen.base.population) : null;
+        pick = { base: d.base[choiceIndex], mine: d.probs[choiceIndex], byAi: !forced && judge?.src === "ai", forced, situation: d.situation, shift: forced ? undefined : judge?.shift, otherGroup: gap ?? undefined };
+      }
       const choice = event.choices[choiceIndex];
       delta = addDelta(addDelta(event.effect, choice?.effect), choice ? TONE_EFFECT[choice.tone] : undefined);
       // 싫다고 한 일에 걸리면 만족도가 더 깎인다.
@@ -489,7 +571,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
           : { sat: Math.max(35, 52 - sim.idle * 0.6), stress: 48 };
     if (!inService && sim.employedSince === null && !sim.used.has("switched")) sim.idle += 1;
     sim.state = applyDelta(drift(sim.state, target), delta);
-    log.push({ month, event, choiceIndex, reason, tierLabel, delta, state: sim.state, status: statusOf(world, sim, month, inService), salary: sim.salary });
+    log.push({ month, event, choiceIndex, reason, pick, tierLabel, delta, state: sim.state, status: statusOf(world, sim, month, inService), salary: sim.salary });
   }
 
   return { seed, months: log, signature, sigMonths, choiceKeys, final: sim.state, employedAt, salary: sim.salary };

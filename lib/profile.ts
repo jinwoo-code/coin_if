@@ -57,6 +57,7 @@ export function normalizeProfile(p: Partial<Profile> & Pick<Profile, "name">): P
     life: { ...DEFAULT_LIFE, ...p.life },
     wants: { ...DEFAULT_WANTS, ...p.wants },
     behavior: { ...DEFAULT_BEHAVIOR, ...p.behavior },
+    judges: p.judges ?? {},
     depth: { bfiItems: 0, behaviorItems: 0, interestItems: 0, resume: false, github: false, spec: false, life: false, ...p.depth },
   };
 }

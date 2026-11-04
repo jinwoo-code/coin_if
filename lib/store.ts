@@ -8,8 +8,9 @@ import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } fr
 // v5(2026-11 검사 개편): profile에 depthMode·answers·holdout·holdoutPicks·story·storyRaw 추가.
 // v6(2026-11-03 분신 작업): profile에 since·corrections·checkins 추가, storyRaw에 인생 이야기 장. 예전 판은 처음 읽을 때 옮긴다(migrate).
 // v7(2026-11-03 파일럿): profile에 pilot 추가, holdoutPicks에 파일럿 답(p1~p20).
-const VERSION = "v7";
-const PREVS = ["v6", "v5", "v4"]; // 최근 판부터 찾는다
+// v8(2026-11-03 선택 개편): profile에 judges(AI 분신 판단 캐시) 추가.
+const VERSION = "v8";
+const PREVS = ["v7", "v6", "v5", "v4"]; // 최근 판부터 찾는다
 const KEYS = {
   profile: `cr:${VERSION}:profile`,
   selection: `cr:${VERSION}:selection`,

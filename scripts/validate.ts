@@ -9,22 +9,24 @@
 //   (예전에는 3년만 돌려서 공무원이 통계와 맞아 보였지만, 3년 넘게 걸린 합격자가 빠진 착시였다.)
 // 공무원은 공부 시작부터 '합격 발표 달'까지 센다(비교 통계가 합격자의 준비 기간이라서. 첫 출근은 그 뒤).
 import { runAll } from "../lib/multiverse";
+import norms from "../data/norms.json";
 import { normalizeProfile } from "../lib/profile";
 import { READINESS } from "../lib/readiness";
 import { getWorld, WORLDS } from "../lib/worlds";
 
-const RUNS = 400;
+const RUNS = 1000; // 앱과 같은 횟수(lib/multiverse.ts RUNS)
 const MONTHS = 120;
 
 // 준비도 질문마다 배수가 1에 가장 가까운 보기
-const avgReadiness = Object.fromEntries(
-  Object.entries(READINESS).map(([id, q]) => [id, q.options.reduce((best, o, i) => (Math.abs(o.mult - 1) < Math.abs(q.options[best].mult - 1) ? i : best), 0)]),
-);
+const avgReadiness = Object.fromEntries(Object.entries(READINESS).map(([id, q]) => [id, q.options.reduce((best, o, i) => (Math.abs(o.mult - 1) < Math.abs(q.options[best].mult - 1) ? i : best), 0)]));
 
 const avg = normalizeProfile({
   name: "평균",
   dilemma: "검증",
-  values: ["안정", "돈", "성장", "여유"],
+  // 성향은 비교 집단 평균(data/norms.json), 가치관은 안 고름(= 기대값). 그래서 갈림길마다 기준 비율(data/base-shares.json) 그대로 고른다.
+  values: [],
+  bigFive: norms.bigFive.mean,
+  behavior: { ...norms.behavior.mean },
   readiness: avgReadiness,
   spec: { school: "4년제", status: "졸업", gradIn: 0, gpa: null, certs: [], toeic: null, projects: 1, workMonths: 0, internMonths: 0, awards: 0, github: null },
   // 공시생 하루 평균 8.7시간(이대중 외)과 맞추려고 수험 조건은 알바 없이 8.7시간. 사는 곳은 배수 ×1인 서울.
@@ -35,7 +37,11 @@ function hiredMonths(id: string) {
   const paths = runAll(avg, getWorld(id), MONTHS, "2026-11", undefined, RUNS);
   // 0부터 세므로 +1 = 졸업(공부 시작) 후 몇 달째에 붙었나. 시험형은 합격 발표 달, 나머지는 첫 출근 달.
   const at = (p: (typeof paths)[number]) => (getWorld(id).archetype === "exam" ? p.months.findIndex((m) => m.event?.id.startsWith("exam-pass")) : (p.employedAt ?? -1));
-  const hired = paths.map(at).filter((m) => m >= 0).map((m) => m + 1).toSorted((a, b) => a - b);
+  const hired = paths
+    .map(at)
+    .filter((m) => m >= 0)
+    .map((m) => m + 1)
+    .toSorted((a, b) => a - b);
   return { hired, n: paths.length };
 }
 const mean = (xs: number[]) => (xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : NaN);

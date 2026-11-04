@@ -1,4 +1,4 @@
-// "이 갈림길에서 반대로 갔다면": 그 갈림길을 강제로 바꾼 100번을 새로 살아 보고, 대표 회차를 이야기로 보여 준다.
+// "이 갈림길에서 반대로 갔다면": 그 갈림길을 강제로 바꾼 1,000번을 새로 살아 보고, 대표 회차를 이야기로 보여 준다.
 import { NextResponse } from "next/server";
 import type { Force } from "@/lib/engine";
 import { explore } from "@/lib/multiverse";

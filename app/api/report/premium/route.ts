@@ -20,14 +20,14 @@ export async function POST(req: Request) {
   const paid = await spend("premium_report", [...runKeys].sort().join("|"), { requireLogin: true });
   if (!paid.ok) return paywall(paid);
 
-  // 진로마다 만족하며 끝난 비율이 가장 낮은 세계선 2개 = 막히는 길(엔진 값). 너무 드문 길(100번 중 3번 미만)과
+  // 진로마다 만족하며 끝난 비율이 가장 낮은 세계선 2개 = 막히는 길(엔진 값). 너무 드문 길(살아본 횟수의 3% 미만)과
   // 다른 진로로 갈아탄 길(그 뒤를 살아보지 않아 만족 비율이 의미 없음)은 뺀다.
   const stuck = ids.flatMap((id) =>
     multiverses[id].lines
-      .filter((l) => l.count >= 3 && !l.switched)
+      .filter((l) => l.count >= multiverses[id].stats.runs * 0.03 && !l.switched)
       .toSorted((a, b) => a.satisfiedShare - b.satisfiedShare)
       .slice(0, 2)
-      .map((l) => ({ key: `${id}/${l.id}`, worldId: id, lineId: l.id, line: l.title, share: l.count, satisfied: l.satisfiedShare, stressed: l.stressedShare })),
+      .map((l) => ({ key: `${id}/${l.id}`, worldId: id, lineId: l.id, line: l.title, share: Math.round((l.count / multiverses[id].stats.runs) * 100), satisfied: l.satisfiedShare, stressed: l.stressedShare })),
   );
 
   // key = 진로/세계선(세계선 id는 진로가 달라도 겹칠 수 있다)
@@ -42,11 +42,10 @@ export async function POST(req: Request) {
     tag: "premium_report",
     model: "smart",
     system:
-      "너는 진로 상담사다. 시뮬레이션에서 학생이 자주 막힌 세계선마다, 그 길로 가고 있다고 느낄 때 할 수 있는 구체적 행동을 쓴다. " +
-      "주어진 숫자를 바꾸거나 새 숫자를 만들지 않는다. 한 길을 추천하지 않는다. 한국어, 행동마다 30자 안팎.",
+      "너는 진로 상담사다. 시뮬레이션에서 학생이 자주 막힌 세계선마다, 그 길로 가고 있다고 느낄 때 할 수 있는 구체적 행동을 쓴다. " + "주어진 숫자를 바꾸거나 새 숫자를 만들지 않는다. 한 길을 추천하지 않는다. 한국어, 행동마다 30자 안팎.",
     prompt:
       `학생: ${profile.summary}\n중요한 가치: ${profile.values.join(" > ")}\n현실 제약: ${profile.constraints}\n` +
-      `막힌 세계선(엔진 결과):\n${stuck.map((s) => `- [${s.key}] ${getWorld(s.worldId).name}: ${s.line} (100번 중 ${s.share}번, 만족 ${s.satisfied}%, 스트레스 높음 ${s.stressed}%)`).join("\n")}\n` +
+      `막힌 세계선(엔진 결과):\n${stuck.map((s) => `- [${s.key}] ${getWorld(s.worldId).name}: ${s.line} (살아본 횟수의 ${s.share}%, 만족 ${s.satisfied}%, 스트레스 높음 ${s.stressed}%)`).join("\n")}\n` +
       `이 학생이 본선에서 겪은 힘든 일:\n${ids.flatMap((id) => (scenes[id] ?? []).filter((e) => e.kind === "bad").map((e) => `- ${getWorld(id).short} ${e.label}: ${e.title}`)).join("\n")}\n\n` +
       `JSON으로 답해라: {"items":[{"key": 위 [ ] 안의 값 그대로, "steps": 할 일 3개}]}`,
     fallback,

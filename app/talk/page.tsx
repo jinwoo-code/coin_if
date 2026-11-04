@@ -201,7 +201,7 @@ function TalkPage() {
         <Link href={`/multiverse?world=${active}`} className="mt-3 flex items-start gap-2 rounded-2xl px-4 py-3 text-sm" style={{ background: `${world.color}12` }}>
           <GitBranch aria-hidden="true" size={16} className="mt-0.5 flex-none" style={{ color: world.color }} />
           <span>
-            <strong>{lines[active]!.isMain ? "AI가 먼저 간 세계" : "내가 고른 세계"}</strong>: {lines[active]!.title} (100번 중 {lines[active]!.count}번)
+            <strong>{lines[active]!.isMain ? "AI가 먼저 간 세계" : "내가 고른 세계"}</strong>: {lines[active]!.title} ({lines[active]!.count.toLocaleString("ko-KR")}번)
             <span className="block text-cap text-muted">다른 세계선의 나와 이야기하려면 눌러서 세계선을 고르세요</span>
           </span>
         </Link>

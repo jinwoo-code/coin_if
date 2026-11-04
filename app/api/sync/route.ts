@@ -11,6 +11,9 @@ import { currentUser, supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+// 대학 집계용 '바꿀 수 있는 것'을 1,000번씩 다시 살아 계산해서(진로 하나에 몇 초) 넉넉히 둔다(초).
+export const maxDuration = 60;
+
 export async function GET() {
   const sb = supabaseServer();
   const user = await currentUser();

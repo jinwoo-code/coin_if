@@ -1,7 +1,7 @@
 // 규칙 엔진의 한 달 단위 기록(Path)을 화면에 보여 줄 '역' 단위 장면으로 묶는다.
 // 브라우저와 서버 양쪽에서 쓴다(서버 전용 코드 import 금지).
 import { planStations } from "./calendar";
-import type { MonthLog, Path, SimEvent, WorldStats, WorldTemplate } from "./types";
+import type { ChoiceOdds, MonthLog, Path, SimEvent, WorldStats, WorldTemplate } from "./types";
 
 // 한 역(몇 달) 안에서 가장 중요한 일을 고른다: 갈림길·일 시작 > 큰 사건 > 일상
 function rank(m: MonthLog) {
@@ -47,6 +47,22 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
       } satisfies SimEvent;
     }
     const e = main.event!;
+    const b = e.choices[main.choiceIndex]?.base;
+    const k = main.pick;
+    const odds: ChoiceOdds | undefined =
+      b && k
+        ? {
+            base: Math.round(k.base * 100),
+            mine: Math.round(k.mine * 100),
+            grade: b.grade,
+            ...(b.grade === "assumed" ? {} : { ref: b.ref, n: b.n, population: b.population?.label }),
+            otherGroup: k.otherGroup,
+            byAi: k.byAi,
+            forced: k.forced || undefined,
+            situation: k.situation,
+            shift: k.shift,
+          }
+        : undefined;
     return {
       worldId: world.id,
       lineId,
@@ -60,6 +76,7 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
       choice: e.choices[main.choiceIndex]?.text ?? "",
       choiceIndex: main.choiceIndex,
       reason: main.reason,
+      odds,
       tierLabel: main.tierLabel,
       delta,
       state: last.state,
@@ -72,4 +89,23 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
       minor: withEvent.filter((m) => m !== main).map((m) => m.event!.title),
     } satisfies SimEvent;
   });
+}
+
+// 선택 아래 문구. 화면에 보이는 '보통 → 나' 숫자의 차이로 정해서 문구와 숫자 방향이 어긋나지 않게 한다.
+// 저장하지 않고 그릴 때 만든다: reason에 이야기 인용이 있을 수 있어 scrubStory가 reason 칸만 보고 지운다.
+export const ODDS_MARGIN = 3; // %p, 이 안이면 '비슷하다'(가정값)
+export function choiceLine(ev: Pick<SimEvent, "reason" | "odds">) {
+  const o = ev.odds;
+  if (!o) return "";
+  if (o.forced) return ev.reason;
+  const d = o.mine - o.base;
+  if (d > ODDS_MARGIN) return ev.reason ? `${joinReason(ev.reason)} 보통보다 이쪽을 더 골라요` : "보통보다 이쪽을 더 골라요";
+  if (d < -ODDS_MARGIN) return `보통보다 덜 고르는 편이지만, 이번 삶에선 이쪽으로 갔어요${o.situation ? `. ${o.situation}요` : ""}`;
+  return "보통 사람과 비슷하게 골랐어요";
+}
+
+// AI가 쓴 이유가 문장으로 끝나면 마침표로, '~해서'처럼 이어지면 그대로 잇는다.
+function joinReason(r: string) {
+  const t = r.replace(/[.。]+$/, "");
+  return /[요다]$/.test(t) ? `${t}.` : t;
 }

@@ -1,5 +1,5 @@
 // 시뮬레이션을 실시간으로 흘려보내는 API(Server-Sent Events).
-// 1) 진로마다 100번 살아 보고 세계선 나무를 먼저 보내고 2) AI가 먼저 가는 본선을 역마다 하나씩 보낸다.
+// 1) 진로마다 1,000번 살아 보고 세계선 나무를 먼저 보내고 2) AI가 먼저 가는 본선을 역마다 하나씩 보낸다.
 import { planStations } from "@/lib/calendar";
 import { buildMultiverse, replayLine } from "@/lib/multiverse";
 import { normalizeProfile } from "@/lib/profile";
@@ -10,7 +10,7 @@ import type { Profile, Selection, SimEvent } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
 export const dynamic = "force-dynamic";
-// 100번 돌리기 + AI 문장 스트리밍이 길어질 수 있다. Vercel 함수 최대 실행 시간(초). Fluid compute(새 프로젝트 기본값)면 Hobby도 300초까지 된다.
+// 1,000번 돌리기 + AI 문장 스트리밍이 길어질 수 있다. Vercel 함수 최대 실행 시간(초). Fluid compute(새 프로젝트 기본값)면 Hobby도 300초까지 된다.
 export const maxDuration = 300;
 
 export async function POST(req: Request) {

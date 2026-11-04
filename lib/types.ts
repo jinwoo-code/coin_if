@@ -117,6 +117,8 @@ export interface Profile {
   checkins: Checkin[];
   // 파일럿(lib/pilot.ts): 파일럿 동의 판·때, 빠진 때. 파일럿 답은 holdoutPicks의 p1~p20.
   pilot: { version: string; consentAt: string; withdrawnAt: string | null } | null;
+  // AI 분신 판단 캐시(lib/judge.ts). 큰 갈림길 × 상황 칸마다 보기별 확률·이유. 키에 프로필 해시가 있어 프로필이 바뀌면 안 쓰인다.
+  judges?: Record<string, { probs: number[]; reasons: string[]; shift?: string; src: "ai" | "mock" | "fallback" }>;
   // 어떤 검사를 했는지(입력한 정보 표시용)
   depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }
@@ -158,7 +160,27 @@ export interface Choice {
   raise?: number; // 연봉 변화(%). 예: 이직 +12
   quits?: boolean; // 직장을 그만둠
   label?: string; // 갈림길 이름(세계선 나무에 쓰임)
+  base?: BaseShare; // 같은 상황에서 실제 사람들이 이 보기를 고른 비율(data/base-shares.json에서 붙임)
 }
+
+// 기준 비율의 근거: stat = 공개 통계(ref에 출처·연도·URL), interview = 현직자 인터뷰(ref에 "현직자 N명"), assumed = 가정값
+export type BaseGrade = "stat" | "interview" | "assumed";
+export interface BasePopulation {
+  label: string; // 예: "일 경험 없는 15~29세 남성 실업자 기준"
+  noWork?: boolean; // 일 경험(경력·인턴)이 없는 사람 대상
+  unchecked?: string[]; // 통계 조건 중 앱이 묻지 않아 확인할 수 없는 것(예: 성별). 있으면 같은 집단이라고 말하지 않는다
+}
+export interface BaseShare {
+  share: number; // 상황을 가리지 않은 전체 비율(한 갈림길의 보기 합 1)
+  grade: BaseGrade;
+  ref?: string;
+  n?: number; // grade "interview"일 때 현직자 인원
+  population?: BasePopulation; // grade "stat"일 때 통계의 대상 집단
+  byState?: Record<string, number>; // 상황 칸(lib/base.ts bucketOf)별 비율. 없는 칸은 share를 쓴다
+}
+
+// 갈림길 기준 비율을 나누는 상황 키(lib/base.ts)
+export type StateKey = "stress" | "money" | "prep" | "tenure";
 
 // 진로 세계에 미리 넣어 두는 사건 카드
 export interface EventCard {
@@ -189,6 +211,7 @@ export interface EventCard {
   tags?: HateTag[]; // 이 사건이 '싫은 것'에 해당하면 만족도가 더 깎임
   text: string; // 목업 모드에서 쓰는 기본 서술
   choices: Choice[];
+  stateKeys?: StateKey[]; // 기준 비율을 상황별로 나누는 키 1~2개(보기가 2개 이상인 갈림길)
   effect: Partial<LifeState>;
   evidence?: StatEvidence;
 }
@@ -229,12 +252,24 @@ export interface WorldTemplate {
 
 // ---------- 시뮬레이션 결과 ----------
 
+// 갈림길에서 고른 보기의 숫자와 설명 재료
+export interface PickInfo {
+  base: number; // 기준 비율(이 상황 칸)
+  mine: number; // 내가 그 보기를 고를 확률
+  byAi: boolean; // 내 확률이 AI 분신 판단에서 왔는지(아니면 규칙 기울기)
+  forced: boolean; // '여기서 다르게 골랐다면'으로 강제한 선택
+  situation?: string; // 지금 상태 때문에 이쪽으로 민 이유(예: 스트레스가 많이 쌓여 있어서)
+  shift?: string; // AI가 쓴, 보통 사람과 비교해 어느 쪽으로 기우는지
+  otherGroup?: string; // 통계 대상 집단과 다르거나 확인할 수 없을 때 그 까닭
+}
+
 // 한 달에 일어난 일(규칙 엔진 결과)
 export interface MonthLog {
   month: number; // 0부터
   event: EventCard | null;
   choiceIndex: number;
   reason: string;
+  pick?: PickInfo; // 보기가 둘 이상일 때
   tierLabel?: string;
   delta: Partial<LifeState>;
   state: LifeState;
@@ -259,7 +294,7 @@ export interface LineNode {
   key: string; // 이 마디의 갈림길 키
   label: string;
   cause: "luck" | "choice" | "start";
-  count: number; // 100번 중 이 마디를 지난 횟수
+  count: number; // 1,000번 중 이 마디를 지난 횟수
   typicalMonth: number; // 보통 이 갈림길을 만나는 달
   children: LineNode[];
   other: number; // 너무 드물어서 묶은 가지들의 횟수
@@ -281,6 +316,21 @@ export interface Line {
   switched?: boolean;
 }
 
+// 갈림길 장면의 "보통은 60% → 나는 73%"
+export interface ChoiceOdds {
+  base: number; // 기준 비율(%)
+  mine: number; // 내 확률(%)
+  grade: BaseGrade;
+  ref?: string; // 통계·인터뷰 출처(가정값은 안 담음)
+  n?: number; // 현직자 인원
+  population?: string; // 통계의 대상 집단
+  otherGroup?: string; // 대상 집단과 다르거나 확인할 수 없는 까닭(있으면 배지가 '통계(다른 집단 기준)')
+  byAi: boolean;
+  forced?: boolean;
+  situation?: string;
+  shift?: string;
+}
+
 // 화면에 보여 주는 한 장면(분기 단위 역)
 export interface SimEvent {
   worldId: string;
@@ -295,13 +345,14 @@ export interface SimEvent {
   choice: string;
   choiceIndex: number;
   reason: string;
+  odds?: ChoiceOdds;
   tierLabel?: string;
   delta: Partial<LifeState>;
   state: LifeState;
   status: string;
   salary: number;
   evidence?: StatEvidence;
-  freq: number; // 100번 중 이 사건이 일어난 횟수
+  freq: number; // 1,000번 중 이 사건이 일어난 횟수
   routine: boolean;
   branch?: "luck" | "choice";
   minor: string[]; // 같은 역의 작은 일들
@@ -377,7 +428,7 @@ export interface PremiumItem {
   worldId: string;
   lineId: string;
   line: string;
-  share: number; // 100번 중 몇 번
+  share: number; // 살아본 횟수 중 몇 %(2026-11-03 전에 저장한 것은 100번 중 몇 번 = 같은 값)
   satisfied: number; // 만족하며 끝난 비율(%)
   steps: string[];
 }
