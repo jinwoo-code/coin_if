@@ -1,6 +1,6 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
-import { CalendarPlus, Check, Copy, Lock, Printer } from "lucide-react";
+import { CalendarPlus, Copy, Lock, Printer } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import type { Lever, Multiverse, PremiumItem, Profile, Report, Selection, SimEve
 import { getWorld } from "@/lib/worlds";
 import { LiveLives } from "@/components/live-lives";
 import { MyData } from "@/components/my-data";
+import { WeekPlan } from "@/components/week-plan";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
 function downloadCheckin() {
@@ -294,7 +295,6 @@ export default function ReportPage() {
   const [report, setReport] = useState<Report | null>(null);
   const [premium, setPremium] = useState<PremiumItem[] | null>(null);
   const [premiumBusy, setPremiumBusy] = useState(false);
-  const [done, setDone] = useState<Record<number, boolean>>({});
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
@@ -486,34 +486,18 @@ export default function ReportPage() {
                     <div>
                       <p className="text-cap font-semibold text-white/70">{s.label}</p>
                       <p className={s.key === "plan" ? "mt-0.5 text-lg font-bold" : "mt-0.5 text-base"}>{report.woop[s.key]}</p>
+                      {s.key === "obstacle" && report.woopForks?.length ? (
+                        <p className="mt-1 text-cap text-white/70" data-testid="woop-forks">
+                          자주 만난 갈림길: {report.woopForks.map((f) => `${f.worldName} '${f.label}' ${f.share}%`).join(", ")}(시뮬레이션 값)
+                        </p>
+                      ) : null}
                     </div>
                   </li>
                 ))}
               </ol>
             </section>
 
-            <section className="card p-5 sm:p-6" aria-labelledby="todo">
-              <h2 id="todo" className="text-xl font-bold">
-                이번 주 할 일
-              </h2>
-              <ul className="mt-3 flex flex-col">
-                {report.todos.map((t, i) => (
-                  <li key={i}>
-                    <label className="flex min-h-[52px] cursor-pointer items-center gap-3 border-b border-hair text-base last:border-0">
-                      <input type="checkbox" className="peer sr-only" checked={Boolean(done[i])} onChange={(e) => setDone((d) => ({ ...d, [i]: e.target.checked }))} />
-                      <span
-                        aria-hidden="true"
-                        className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-hair text-transparent transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink"
-                      >
-                        <Check size={15} strokeWidth={3} />
-                      </span>
-                      <span className={done[i] ? "text-muted line-through" : ""}>{t}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-3 text-cap text-muted">한 달 뒤 체크인에서 해 본 일을 입력하면 시뮬레이션을 다시 돌려 볼 수 있어요.</p>
-            </section>
+            <WeekPlan report={report} />
             <Programs region={profile.life.region} />
           </div>
         </div>

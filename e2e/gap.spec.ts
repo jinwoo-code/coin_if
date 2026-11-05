@@ -43,6 +43,9 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   const cs = page.getByTestId("plan-rerun-civil-servant");
   await cs.getByRole("button", { name: "다시 살아 보기" }).click();
   await expect(cs.getByText(/시험형은 주당 공부 시간을 고치면 달라져요/)).toBeVisible({ timeout: 60_000 });
+  // 합격자 평균 공부량 버튼 → 일정의 주당 시간이 공부 시간으로 들어가 전후가 달라진다
+  await cs.getByRole("button", { name: /합격자 평균 공부량/ }).click();
+  await expect(cs.getByText(/처음부터: 주당 공부 \d+시간 → 61시간/)).toBeVisible({ timeout: 60_000 });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
   await plan.scrollIntoViewIfNeeded();
@@ -173,4 +176,80 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
   await expect(again.getByRole("textbox", { name: "내 주제" })).toHaveValue(/수업·알바·동아리/, { timeout: 120_000 });
   await expect(again.getByText(/완성 기준 1\//)).toBeVisible();
   await expect(page.getByTestId("weak-civil-servant").getByText(/약점: 영어 평균 40점/)).toBeVisible();
+});
+
+test("간호학과 3학년 예시 인물로 간호사 리포트 전 과정이 나오고, 이번 주 할 일이 저장된다", async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "간호학과 3학년 예시로 보기" }).click();
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
+  await page.goto("/report");
+  const gap = page.getByTestId("gap-nurse");
+  await expect(gap).toBeVisible({ timeout: 120_000 });
+  await expect(gap.getByText("필수 — 없으면 이 길로 갈 수 없어요").first()).toBeVisible();
+  // 전공이 맞아 학과를 새로 안 다닌다
+  await expect(page.getByTestId("plan-nurse").getByText("학과 다시 다니기")).toHaveCount(0);
+  await expect(page.getByTestId("plan-nurse").getByText("학과 과정 마치기")).toBeVisible();
+  await expect(page.getByTestId("evidence-nurse").getByText("활력징후 측정")).toBeVisible();
+  const rerun = page.getByTestId("plan-rerun-nurse");
+  await rerun.getByRole("button", { name: "다시 살아 보기" }).click();
+  await expect(rerun.getByText(/이 계획대로 하면 .+ 안에/)).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("plan-extend-nurse")).toHaveCount(0);
+  // WOOP 장애물의 근거
+  await expect(page.getByTestId("woop-forks")).toContainText("자주 만난 갈림길");
+  // 이번 주 할 일: 예시 하나 + 고치면 저장
+  const week = page.getByTestId("week-plan");
+  await expect(week.getByText("예시예요", { exact: false })).toHaveCount(1);
+  await week.getByLabel("언제").first().fill("토요일 오전");
+  await expect(week.getByText("예시예요", { exact: false })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByTestId("week-plan").getByLabel("언제").first()).toHaveValue("토요일 오전", { timeout: 60_000 });
+  // 하단 고정 버튼이 맨 아래 내용을 가리지 않는다
+  // 부드러운 스크롤과 늦게 늘어나는 내용 때문에 맨 아래에 닿을 때까지 다시 잰다.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" });
+          const last = document.querySelector("main")!.lastElementChild!.getBoundingClientRect().bottom;
+          const bar = [...document.querySelectorAll("div")].find((d) => getComputedStyle(d).position === "sticky" && d.className.includes("bottom-0"))!.getBoundingClientRect().top;
+          return last - bar;
+        }),
+      { timeout: 15_000 },
+    )
+    .toBeLessThanOrEqual(0);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+  await week.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "test-results/week-390.png" });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await week.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "test-results/week-1280.png" });
+});
+
+test("예시 인물 김민준이 간호사를 고르면 0%에서 기간 늘리기 버튼이 뜬다", async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.evaluate(() => {
+    const k = Object.keys(localStorage).find((x) => x.endsWith(":selection"))!;
+    const v = JSON.parse(localStorage.getItem(k)!);
+    localStorage.setItem(k, JSON.stringify({ ...v, worldIds: ["nurse", "civil-servant"], months: 36 }));
+    Object.keys(localStorage).filter((x) => x.endsWith(":multiverses") || x.endsWith(":lines")).forEach((x) => localStorage.removeItem(x));
+  });
+  await page.goto("/simulate");
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && (localStorage.getItem(k) ?? "").includes("nurse")), null, { timeout: 180_000 });
+  await page.goto("/report");
+  const rerun = page.getByTestId("plan-rerun-nurse");
+  await expect(rerun).toBeVisible({ timeout: 120_000 });
+  await rerun.getByRole("button", { name: "다시 살아 보기" }).click();
+  const extend = page.getByTestId("plan-extend-nurse");
+  await expect(extend.getByText("기간을 늘려 볼까요?", { exact: false })).toBeVisible({ timeout: 60_000 });
+  await extend.getByRole("button", { name: "5년으로 보기" }).click();
+  await expect(rerun.getByText(/이 계획대로 하면 5년 안에/)).toBeVisible({ timeout: 60_000 });
+  await expect(extend).toHaveCount(0);
 });

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AccountButton } from "@/components/account";
-import { DEMO_PROFILE, demoSelection } from "@/lib/demo";
+import { DEMOS, demoSelection } from "@/lib/demo";
 import { store } from "@/lib/store";
 
 const BRANCHES = [
@@ -74,11 +74,11 @@ export default function Home() {
     return () => window.removeEventListener("cr:restored", check);
   }, []);
 
-  function startDemo() {
+  function startDemo(kind: keyof typeof DEMOS) {
     store.reset();
     store.setLocalOnly(true); // 예시 인물은 계정에 올리지 않는다
-    store.setProfile(DEMO_PROFILE);
-    store.setSelection(demoSelection());
+    store.setProfile(DEMOS[kind].profile);
+    store.setSelection(demoSelection(kind));
     router.push("/simulate");
   }
 
@@ -114,10 +114,13 @@ export default function Home() {
             <Link href="/interview" className="btn-primary sm:px-7">
               약 10분 인터뷰로 시작하기
             </Link>
-            <button onClick={startDemo} className="btn-ghost sm:px-7">
+            <button onClick={() => startDemo("developer")} className="btn-ghost sm:px-7">
               예시 인물로 바로 보기
             </button>
           </div>
+          <button onClick={() => startDemo("nurse")} className="mt-2 min-h-11 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
+            간호학과 3학년 예시로 보기
+          </button>
           {hasProgress ? (
             <Link href="/choose" className="mt-4 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
               하던 곳에서 이어서 하기

@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { DEMO_PROFILE } from "@/lib/demo";
-import { buildEvidence, buildExamPlan, cleanTopics, ruleTopics, pickCriteria, weakSubjects } from "@/lib/evidence";
+import { buildEvidence, buildExamPlan, cleanTopics, EVIDENCE_PROMPT_VERSION, ruleTopics, pickCriteria, topicKey, weakSubjects } from "@/lib/evidence";
 import { gapItems } from "@/lib/gap";
 import { ALL_WORLD_IDS } from "@/lib/job-codes";
 import type { Requirements } from "@/lib/requirements";
@@ -74,7 +74,47 @@ t("AI 응답: 후보에 없는 id·형식 틀린 값은 버리고 센다", () =>
   const { topics, dropped } = cleanTopics({ topics: [{ card: "a", title: "좋은 주제", why: "이유" }, { card: "x", title: "없는 후보", why: "" }, { card: "a", title: "", why: "" }, { card: "a", title: "가".repeat(60), why: "" }] }, ["a"]);
   assert.deepEqual(topics, { a: [{ title: "좋은 주제", why: "이유" }] });
   assert.equal(dropped, 3);
-  assert.deepEqual(cleanTopics(null, ["a"]), { topics: {}, dropped: 0 });
+  assert.deepEqual(cleanTopics(null, ["a"]), { topics: {}, dropped: 0, rejected: [] });
+  assert.equal(cleanTopics([{ card: "a", title: "배열로 온 답", why: "이유" }], ["a"]).topics.a.length, 1);
+});
+t("주제: 프로필·NCS 목록에 없는 기술은 버리고, NCS에서 온 건 새로 배울 기술로", () => {
+  const rules = { profileText: "학교 공지 알림 앱", ncsText: "형상관리 도구 활용 능력 SQL 활용 UI 설계", skillIds: { k1: "형상관리 도구 활용 능력" } };
+  const r = cleanTopics(
+    {
+      topics: [
+        { card: "a", title: "AWS 환경에서 배포", why: "이유" },
+        { card: "a", title: "스프링으로 게시판 만들기", why: "이유" },
+        { card: "a", title: "GitHub Actions 파이프라인", why: "이유" },
+        { card: "a", title: "SQL로 공지 알림 앱 데이터 정리", why: "이유", newSkills: ["k1", "k9"] },
+        { card: "a", title: "공지 알림 앱 화면 설계 보고서", why: "A4 2쪽으로 정리해요" },
+      ],
+    },
+    ["a"],
+    rules,
+  );
+  assert.deepEqual(r.rejected.toSorted(), ["AWS", "Actions", "GitHub", "스프링"].toSorted());
+  assert.equal(r.dropped, 3);
+  assert.deepEqual(r.topics.a[0].learn, ["SQL", "형상관리 도구 활용 능력"]);
+  assert.equal(r.topics.a[1].learn, undefined);
+});
+t("주제: 면허형 제목에 이전 전공·경험·앱을 쓰면 버린다", () => {
+  const rules = { profileText: "편의점 알바", ncsText: "활력징후 측정", titleBan: /알바|편의점|앱|시스템|컴퓨터/ };
+  const r = cleanTopics(
+    {
+      topics: [
+        { card: "a", title: "컴퓨터 전공을 살린 의료 시스템 보고서", why: "이유" },
+        { card: "a", title: "편의점 경험을 접목한 환자 응대", why: "이유" },
+        { card: "a", title: "낙상 위험 환자의 간호과정 기록", why: "편의점에서 사람을 살피던 관점으로 써 보세요" },
+      ],
+    },
+    ["a"],
+    rules,
+  );
+  assert.equal(r.topics.a.length, 1);
+  assert.equal(r.topics.a[0].title, "낙상 위험 환자의 간호과정 기록");
+});
+t("판이 바뀌면 저장 키가 달라진다", () => {
+  assert.equal(topicKey("abc"), `${EVIDENCE_PROMPT_VERSION}|abc`);
 });
 t("규칙 예시: 전공이 없어도 만든다", () => {
   assert.equal(ruleTopics([{ id: "a", label: "프로젝트" }], "")["a"].length, 1);

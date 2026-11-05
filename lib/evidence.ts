@@ -27,7 +27,10 @@ export interface ExamPlan {
   amount: string;
   subjects: { id: string; name: string }[];
 }
-export type Topic = { title: string; why: string };
+export type Topic = { title: string; why: string; learn?: string[] }; // learn: 프로필에 없고 NCS 목록에서 온 '새로 배울 기술'
+// 프롬프트를 고치면 올린다. 저장된 제안은 이 판과 프로필이 같을 때만 쓴다.
+export const EVIDENCE_PROMPT_VERSION = "t2";
+export const topicKey = (profileHash: string) => `${EVIDENCE_PROMPT_VERSION}|${profileHash}`;
 export interface MockRecord {
   ym: string;
   scores: Record<string, number>;
@@ -35,6 +38,7 @@ export interface MockRecord {
 export interface EvidenceSaved {
   suggestions?: Record<string, Topic[]>;
   ruleCards?: string[]; // AI 없이 만든 예시인 카드
+  suggestionsKey?: string; // topicKey. 다르면 제안을 안 쓴다
   topics?: Record<string, string>; // 고르거나 직접 쓴 주제
   checks?: Record<string, string[]>; // 완성한 기준
   mocks?: MockRecord[];
@@ -144,12 +148,32 @@ export function ruleTopics(cards: { id: string; label: string }[], major: string
 }
 
 // AI 응답 검사: 후보 id만 남기고, 버린 횟수를 돌려준다.
-export function cleanTopics(raw: unknown, validIds: string[]): { topics: Record<string, Topic[]>; dropped: number } {
+// 글에서 기술 이름을 뽑는다: 영문 낱말 + 한글로 쓴 도구 이름 사전(사전에 없는 한글 이름은 못 잡는다).
+export function techNames(text: string): string[] {
+  const out = new Set<string>();
+  for (const m of text.match(/[A-Za-z][A-Za-z0-9+#.-]*/g) ?? []) if (m.length > 1 && !forms.techIgnore.includes(m.toUpperCase())) out.add(m.replace(/[.-]+$/, ""));
+  for (const w of forms.techWords) if (text.includes(w)) out.add(w);
+  return [...out];
+}
+
+export interface TopicRules {
+  profileText: string; // (a) 사용자가 쓴 전공·경험·흥미
+  ncsText: string; // (b) 그 진로의 NCS KSA(면허형은 평가 항목) 전체
+  skillIds?: Record<string, string>; // 답에 쓸 수 있는 기술 id → 이름
+  titleBan?: RegExp; // 면허형: 주제 제목에 쓰면 안 되는 이전 전공·경험
+}
+
+const has = (hay: string, name: string) => hay.toLowerCase().replace(/\s/g, "").includes(name.toLowerCase().replace(/\s/g, ""));
+
+// 후보 id만, 두 목록에 있는 기술만 남긴다. rejected = 목록에 없어서 버린 기술 이름(다시 물을 때 알려 준다).
+export function cleanTopics(raw: unknown, validIds: string[], rules?: TopicRules): { topics: Record<string, Topic[]>; dropped: number; rejected: string[] } {
   const topics: Record<string, Topic[]> = {};
+  const rejected = new Set<string>();
   let dropped = 0;
-  const list = (raw as { topics?: unknown } | null)?.topics;
-  if (!Array.isArray(list)) return { topics, dropped };
-  for (const x of list as { card?: unknown; title?: unknown; why?: unknown }[]) {
+  // AI가 {"topics":[…]} 대신 배열만 줄 때가 있다.
+  const list = Array.isArray(raw) ? raw : (raw as { topics?: unknown } | null)?.topics;
+  if (!Array.isArray(list)) return { topics, dropped, rejected: [] };
+  for (const x of list as { card?: unknown; title?: unknown; why?: unknown; newSkills?: unknown }[]) {
     const id = typeof x?.card === "string" ? x.card : "";
     const title = typeof x?.title === "string" ? x.title.trim() : "";
     const why = typeof x?.why === "string" ? x.why.trim() : "";
@@ -157,8 +181,19 @@ export function cleanTopics(raw: unknown, validIds: string[]): { topics: Record<
       dropped++;
       continue;
     }
+    const learn = new Set<string>();
+    if (rules) {
+      const unknown = techNames(`${title} ${why}`).filter((t) => !has(rules.profileText, t) && !has(rules.ncsText, t));
+      if (unknown.length || rules.titleBan?.test(title)) {
+        unknown.forEach((t) => rejected.add(t));
+        dropped++;
+        continue;
+      }
+      for (const t of techNames(`${title} ${why}`)) if (!has(rules.profileText, t)) learn.add(t);
+      if (Array.isArray(x.newSkills)) for (const k of x.newSkills) if (typeof k === "string" && rules.skillIds?.[k] && !has(rules.profileText, rules.skillIds[k])) learn.add(rules.skillIds[k]);
+    }
     const cur = (topics[id] ??= []);
-    if (cur.length < 3 && !cur.some((t) => t.title === title)) cur.push({ title, why });
+    if (cur.length < 3 && !cur.some((t) => t.title === title)) cur.push({ title, why, ...(learn.size ? { learn: [...learn] } : {}) });
   }
-  return { topics, dropped };
+  return { topics, dropped, rejected: [...rejected] };
 }

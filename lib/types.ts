@@ -431,6 +431,15 @@ export interface Report {
     plan: string;
   };
   todos: string[];
+  example?: { when: string; where: string; what: string }; // 이번 주 할 일 예시 1개
+  woopForks?: WoopFork[]; // 장애물의 근거: 자주 나온 큰 갈림길(엔진 값)
+}
+
+export interface WoopFork {
+  worldId: string;
+  worldName: string;
+  label: string;
+  share: number; // 그 진로의 삶 중 이 갈림길을 만난 비율(%)
 }
 
 // 프리미엄 리포트: 막히는 세계선(엔진 값)과 그때 할 일(AI 문장)

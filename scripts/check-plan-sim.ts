@@ -1,6 +1,6 @@
 // 계획 넣고 다시 살아 보기 단위 테스트 + 시연 인물 표(AI·네트워크 없음).
 import assert from "node:assert/strict";
-import { DEMO_PROFILE } from "@/lib/demo";
+import { DEMO_PROFILE, NURSE_DEMO_PROFILE } from "@/lib/demo";
 import { simulatePath } from "@/lib/engine";
 import { gapItems, prioritize, type PriorityRow } from "@/lib/gap";
 import { gapDeltas } from "@/lib/gap-sim";
@@ -71,16 +71,21 @@ t("같은 조건은 한 번만, 이미 있는 자격은 안 넣는다", () => {
 });
 
 console.log(`통과 ${n}개\n`);
-console.log("진로 | 기간 | 전 → 후 | 넣은 조건 | 빠진 줄 | 시간(초)");
-  for (const id of ["developer", "nurse", "civil-servant", "marketer", "teacher-elem"]) {
-    const w = getWorld(id);
-    const f = JSON.parse(readFileSync(`data/requirements/${id}.json`, "utf8")) as RequirementsFile;
-    const fam = majorFamily(DEMO_PROFILE.major);
-    const req = (fam && f.byFamily?.[fam]) || f.default;
-    const gaps = gapItems(req, DEMO_PROFILE, w);
-    const rows: PriorityRow[] = prioritize(gaps, w, DEMO_PROFILE, gapDeltas(DEMO_PROFILE, w, 36, START, gaps));
-    const plan = buildPlan(rows, DEMO_PROFILE, w, 36);
-    const s = Date.now();
-    const r = planRerun(DEMO_PROFILE, w, planHorizon(plan), START, planInput(plan, rows, w))!;
-    console.log(`${id} | ${r.months}개월 | ${r.before}% → ${r.after}% | ${r.applied.map((a) => `${a.month}개월 ${a.label}`).join(", ") || "없음"} | 시뮬 밖 ${r.notInSim.length}·늦음 ${r.late.length}·시점 없음 ${r.undated.length} | ${((Date.now() - s) / 1000).toFixed(1)}`);
-  }
+console.log("인물 | 진로 | 기간 | 주당 | 전 → 후 | 넣은 조건 | 빠진 줄");
+const show = (who: string, p: Profile, id: string, months = 36, weekly?: number) => {
+  const w = getWorld(id);
+  const f = JSON.parse(readFileSync(`data/requirements/${id}.json`, "utf8")) as RequirementsFile;
+  const fam = majorFamily(p.major);
+  const req = (fam && f.byFamily?.[fam]) || f.default;
+  const gaps = gapItems(req, p, w);
+  const rows: PriorityRow[] = prioritize(gaps, w, p, gapDeltas(p, w, 36, START, gaps));
+  const plan = buildPlan(rows, p, w, 36, { months, weekly });
+  const r = planRerun(p, w, planHorizon(plan), START, planInput(plan, rows, w))!;
+  console.log(`${who} | ${id} | ${r.months}개월 | ${plan.weekly} | ${r.before}% → ${r.after}% | ${r.applied.map((a) => `${a.month}개월 ${a.label}`).join(", ") || "없음"} | 시뮬 밖 ${r.notInSim.length}·늦음 ${r.late.length}·시점 없음 ${r.undated.length}`);
+};
+for (const id of ["developer", "marketer"]) show("민준", DEMO_PROFILE, id);
+show("민준", DEMO_PROFILE, "civil-servant");
+show("민준", DEMO_PROFILE, "civil-servant", 36, 61);
+for (const m of [36, 60, 120]) show("민준", DEMO_PROFILE, "nurse", m);
+for (const m of [36, 60]) show("서연", NURSE_DEMO_PROFILE, "nurse", m);
+show("서연", NURSE_DEMO_PROFILE, "civil-servant");

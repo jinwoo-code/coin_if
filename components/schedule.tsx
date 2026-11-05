@@ -1,6 +1,6 @@
 "use client";
 // 리포트 월별 일정. 계산은 lib/schedule.ts(AI 없음), 고친 값은 이 기기에만.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CI_NOTE, Ci } from "@/components/ui";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import type { PriorityRow } from "@/lib/gap";
@@ -71,8 +71,10 @@ function Bar({ r, months }: { r: PlanRow; months: number }) {
   );
 }
 
+const STUDY_WEEKLY = 61; // 합격자 하루 평균 8.7시간 × 7(이대중 외, lib/factors examPower의 1.0 기준)
+
 // 계획대로 했다고 보고 다시 살아 보기. 무거워서 Worker에서, 누를 때만. 결과는 이 기기에만.
-function PlanRerunBox({ plan, rows, profile, world, startYm }: { plan: Plan; rows: PriorityRow[]; profile: Profile; world: WorldTemplate; startYm: string }) {
+function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: Plan; rows: PriorityRow[]; profile: Profile; world: WorldTemplate; startYm: string; onEdit: (e: Partial<PlanEdits>) => void }) {
   const months = planHorizon(plan);
   const input = useMemo(() => planInput(plan, rows, world), [plan, rows, world]);
   const sig = JSON.stringify([input, months, startYm, profile.readiness, profile.spec, profile.life]);
@@ -92,6 +94,18 @@ function PlanRerunBox({ plan, rows, profile, world, startYm }: { plan: Plan; row
       .catch(() => setFailed(true))
       .finally(() => setBusy(false));
   };
+  // 기간·공부 시간 버튼: 일정을 고친 뒤 새 계획으로 바로 다시 돈다.
+  const rerunNext = useRef(false);
+  const editAndRun = (e: Partial<PlanEdits>) => {
+    rerunNext.current = true;
+    onEdit(e);
+  };
+  useEffect(() => {
+    if (!rerunNext.current) return;
+    rerunNext.current = false;
+    run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sig]);
   const r: PlanRerun | null = saved?.result ?? null;
   const stale = saved !== null && saved.sig !== sig;
   const nothing = r !== null && r.applied.length === 0 && r.weekly === null;
@@ -116,6 +130,23 @@ function PlanRerunBox({ plan, rows, profile, world, startYm }: { plan: Plan; row
           {nothing && r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 계획의 항목은 시뮬레이션이 보는 조건을 바꾸지 않아요. 숫자가 같아도 소용없는 항목이라는 뜻은 아니에요.{world.archetype === "exam" ? " 시험형은 주당 공부 시간을 고치면 달라져요." : ""}</p> : null}
           {nothing && !r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 기간 안에 끝나는 항목이 없어요. 계획 기간을 늘리면 달라질 수 있어요.</p> : null}
           {!nothing && r.before === r.after ? <p className="mt-1 text-cap font-medium">이 기간 안에는 숫자가 달라지지 않았어요. 계획 기간을 늘리면 달라질 수 있어요.</p> : null}
+          {r.after === 0 && plan.schoolMonths > 0 && !stale ? (
+            <div className="mt-2" data-testid={`plan-extend-${world.id}`}>
+              <p className="text-cap font-medium">학과 과정 {plan.schoolMonths}개월 때문에 {durationLabel(r.months)} 안에는 닿지 못해요. 기간을 늘려 볼까요?</p>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {[60, 120].filter((m) => m > r.months).map((m) => (
+                  <button key={m} type="button" disabled={busy} className="min-h-11 rounded-full border border-hair bg-surface px-4 text-sm font-medium disabled:opacity-60" onClick={() => editAndRun({ months: m })}>
+                    {durationLabel(m)}으로 보기
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {world.archetype === "exam" && !stale && plan.weekly < STUDY_WEEKLY ? (
+            <button type="button" disabled={busy} className="mt-2 min-h-11 rounded-full border border-hair bg-surface px-4 text-sm font-medium disabled:opacity-60" onClick={() => editAndRun({ weekly: STUDY_WEEKLY })}>
+              합격자 평균 공부량(주 {STUDY_WEEKLY}시간)으로 해 보기
+            </button>
+          ) : null}
           {r.weekly || r.applied.length ? (
             <ul className="mt-2 flex flex-col gap-1 text-cap">
               {r.weekly ? <li>처음부터: 주당 공부 {r.weekly.from}시간 → {r.weekly.to}시간</li> : null}
@@ -247,7 +278,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
         </button>
       ) : null}
       <p className="mt-2 text-cap text-muted">시험 위치는 대략적인 자리예요. 실제 일정은 공식 사이트에서 확인하고 직접 고쳐 주세요.</p>
-      <PlanRerunBox plan={plan} rows={rows} profile={profile} world={world} startYm={startYm} />
+      <PlanRerunBox plan={plan} rows={rows} profile={profile} world={world} startYm={startYm} onEdit={(e) => save({ ...edits, ...e })} />
     </div>
   );
 }

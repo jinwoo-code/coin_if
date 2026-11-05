@@ -40,7 +40,7 @@ export function Screen({
           {right}
         </div>
       </header>
-      <main id="main" className={`mx-auto flex w-full ${width} flex-1 flex-col px-5 pb-8 sm:px-6`}>
+      <main id="main" className={`mx-auto flex w-full ${width} flex-1 flex-col px-5 ${footer ? "pb-28" : "pb-8"} sm:px-6`}>
         {children}
       </main>
       {footer ? (

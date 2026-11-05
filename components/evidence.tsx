@@ -1,9 +1,10 @@
 "use client";
 // 리포트 '증거물': 능력단위별 증거물과 완성 기준. 시험형은 모의고사 기록과 약점 과목 계획. 고친 값은 이 기기에만.
 import { useState } from "react";
-import { buildEvidence, buildExamPlan, isExamWorld, weakSubjects, type EvidenceCard, type EvidenceSaved, type ExamPlan, type MockRecord } from "@/lib/evidence";
+import { buildEvidence, buildExamPlan, isExamWorld, topicKey, weakSubjects, type EvidenceCard, type EvidenceSaved, type ExamPlan, type MockRecord } from "@/lib/evidence";
 import type { GapItem } from "@/lib/gap";
 import { majorFamily } from "@/lib/job-codes";
+import { profileHash } from "@/lib/judge";
 import { RIASEC_LABEL } from "@/lib/tests";
 import type { Requirements } from "@/lib/requirements";
 import { store } from "@/lib/store";
@@ -46,6 +47,7 @@ function Card({ card, saved, update }: { card: EvidenceCard; saved: EvidenceSave
                 <button type="button" aria-pressed={topic === s.title} onClick={() => setTopic(s.title)} className={`min-h-11 w-full rounded-lg border px-3 py-2 text-left text-sm ${topic === s.title ? "border-ink bg-ink text-surface" : "border-hair bg-surface"}`}>
                   {s.title}
                   {s.why ? <span className={`block text-cap ${topic === s.title ? "" : "text-muted"}`}>{s.why}</span> : null}
+                  {s.learn?.length ? <span className="mt-0.5 block text-cap font-medium">새로 배울 기술: {s.learn.join(", ")}</span> : null}
                 </button>
               </li>
             ))}
@@ -161,7 +163,10 @@ function ExamSection({ plan, world }: { plan: ExamPlan; world: WorldTemplate }) 
 
 function PortfolioSection({ req, profile, world, gaps }: { req: Requirements; profile: Profile; world: WorldTemplate; gaps: GapItem[] }) {
   const plan = buildEvidence(req, world, gaps);
-  const [saved, update] = useSaved(world.id);
+  const [stored, update] = useSaved(world.id);
+  // 프롬프트 판이나 프로필이 바뀌면 예전 제안은 안 쓴다(고른 주제와 체크는 그대로).
+  const key = topicKey(profileHash(profile));
+  const saved = stored.suggestionsKey === key ? stored : { ...stored, suggestions: undefined, ruleCards: undefined };
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const ask = async () => {
@@ -181,7 +186,7 @@ function PortfolioSection({ req, profile, world, gaps }: { req: Requirements; pr
       });
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { topics: EvidenceSaved["suggestions"]; ruleCards: string[] };
-      update({ ...saved, suggestions: data.topics, ruleCards: data.ruleCards });
+      update({ ...saved, suggestions: data.topics, ruleCards: data.ruleCards, suggestionsKey: key });
     } catch {
       setFailed(true);
     } finally {
