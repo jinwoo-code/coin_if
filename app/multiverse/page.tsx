@@ -247,6 +247,8 @@ interface Live {
   available: boolean;
   keyword?: string;
   regionLabel?: string;
+  wantedLocked?: boolean;
+  dutiesFailed?: boolean;
   wanted?: { total: number; salaryMedian: number | null; salarySample: number; items: { id: string; company: string; title: string; sal: string; region: string; url: string }[] } | null;
   duties?: { name: string; def: string }[];
   ncs?: string;
@@ -276,8 +278,12 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
     );
   if (!live.available) return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24 키를 넣으면 이 진로의 실제 신입 공고·하는 일·국비 과정이 여기 보여요.</p>;
   const w = live.wanted;
-  if (!w && !live.duties?.length && !(live.training && live.training.total > 0))
-    return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24에 연결하지 못했어요. 인터넷 연결이나 인증키를 확인해 주세요.</p>;
+  const hasTraining = Boolean(live.training && live.training.total > 0);
+  // 보여 줄 게 없을 때: 고용24 연결 실패면 안내, 공고가 기관 키 전이면 그 문구만, 원래 보여 줄 게 없는 진로(시험형 등 NCS 직무 없음)면 칸을 안 그린다.
+  if (!w && !live.duties?.length && !hasTraining) {
+    if (live.dutiesFailed) return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24에 연결하지 못했어요. 잠시 뒤 다시 열어 주세요.</p>;
+    if (!live.wantedLocked) return null;
+  }
   return (
     <section aria-labelledby="live" className="card mt-4 p-5">
       <h2 id="live" className="flex items-center gap-2 font-bold">
@@ -310,6 +316,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
           </ul>
         </div>
       ) : null}
+      {live.wantedLocked ? <p className="mt-3 rounded-xl bg-ground px-3 py-2 text-cap text-muted">채용 공고는 기관 키 연결 후 보여 드려요</p> : null}
       {live.duties?.length ? (
         <div className="mt-4">
           <p className="label">실제로 하는 일(NCS {live.ncs})</p>

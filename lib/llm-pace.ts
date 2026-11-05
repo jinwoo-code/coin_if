@@ -1,6 +1,7 @@
 // 무료 키 개발용(GEMINI_TIER=free) 호출 간격과 429 재시도. AI 호출을 인자로 받아서 가짜 응답으로 시험할 수 있다(scripts/check-judge.ts).
 
-export const FREE_GAP_MS = 4500; // 호출 사이 간격(분당 15회 미만)
+export const FREE_RPM = 15; // 3.5 Flash-Lite 무료 한도(대시보드 기준 분당 15회, 하루 500회)
+export const FREE_GAP_MS = 4500; // 앞 호출이 끝나고 다음 호출까지. 60초 ÷ 4.5초 = 분당 최대 13.3회라 FREE_RPM을 안 넘는다
 export const FREE_RETRIES = 3; // 첫 호출 뒤 다시 시도하는 횟수
 const DEFAULT_RETRY_MS = 60_000; // 응답에 재시도 시간이 없을 때
 
