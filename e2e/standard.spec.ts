@@ -28,7 +28,7 @@ test("표준 모드로 끝까지", async ({ page }) => {
   await page.locator("#cci-c4").fill(`${SECRET} 일단 해 보자가 좌우명이에요`);
   await next(page);
   await page.getByRole("button", { name: "맞아요, 이대로 저장" }).click();
-  await expect(counter(page)).toHaveText("27/26");
+  await expect(counter(page)).toHaveText("26/26");
   await page.getByRole("button", { name: "건너뛰기" }).click();
 
   await expect(page.getByRole("heading", { name: "입력한 정보" })).toBeVisible({ timeout: 60_000 });

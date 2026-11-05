@@ -3,7 +3,7 @@
 // AI는 안 부른다(설정에서 키를 비움, 이야기·대화·실시간 판단은 가짜). 로그인·실제 결제창 승인은 못 한다: 토큰은 /api/tokens 응답을 가짜로 줘서 화면만, 승인 API의 금액·중복 검사는 따로 실제로 확인했다(CLAUDE.md 2026-11-02).
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
-import { counter, EMPTY, mockStoryApis, next, pickAll, quickPart } from "./helpers";
+import { counter, EMPTY, mockStoryApis, next, pickAll, quickPart, REMOTE, SIM_WAIT } from "./helpers";
 
 const worldFile = (id: string) => JSON.parse(readFileSync(`data/worlds/${id}.json`, "utf8")) as { events: { id: string; choices: unknown[] }[] };
 const WORLDS = { developer: worldFile("developer"), "civil-servant": worldFile("civil-servant"), marketer: worldFile("marketer") };
@@ -25,13 +25,13 @@ async function mockLiveJudge(page: Page) {
 // 시뮬이 끝나고 세계선 지도까지
 async function simulateToMap(page: Page) {
   await expect(page).toHaveURL(/\/simulate/);
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).click({ timeout: 110_000 });
+  await page.getByRole("link", { name: /다른 세계선 보기/ }).click({ timeout: SIM_WAIT });
   await expect(page).toHaveURL(/\/multiverse/);
   await expect(page.getByText(/1,000번 중/).first()).toBeVisible({ timeout: 60_000 });
 }
 
 test("시연 인물 끝까지", async ({ page }) => {
-  test.setTimeout(300_000);
+  test.setTimeout(REMOTE ? 900_000 : 300_000);
   const errors = noErrors(page);
   await page.goto("/");
   await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
@@ -95,7 +95,7 @@ async function chooseAndRun(page: Page) {
 }
 
 test("검사 빠르게 → 지도", async ({ page }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(REMOTE ? 900_000 : 240_000);
   const errors = noErrors(page);
   await page.goto("/interview");
   await quickPart(page, "빠르게", 13);
@@ -106,12 +106,12 @@ test("검사 빠르게 → 지도", async ({ page }) => {
 });
 
 async function standardRest(page: Page) {
-  await expect(counter(page)).toHaveText("13/28");
+  await expect(counter(page)).toHaveText("13/26");
   await page.locator("#answer").fill("동아리에서 앱을 만들어 봤어요");
   await page.locator("#answer").press("Enter");
-  for (let k = 0; k < 11; k++) {
-    await expect(counter(page)).toHaveText(`${14 + k}/28`);
-    await pickAll(page, k < 8 ? 2 : 1);
+  for (let k = 0; k < 9; k++) {
+    await expect(counter(page)).toHaveText(`${14 + k}/26`);
+    await pickAll(page, k < 6 ? 2 : 1);
     await next(page);
   }
   await page.locator("#cci-c4").fill("일단 해 보자가 좌우명이에요");
@@ -122,20 +122,20 @@ async function standardRest(page: Page) {
 }
 
 test("검사 표준 → 지도", async ({ page }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(REMOTE ? 900_000 : 240_000);
   await mockStoryApis(page, { ...EMPTY, decisionStyle: { value: "impulsive", evidence: "일단 해 보자", confidence: 0.8 } });
   await page.goto("/interview");
-  await quickPart(page, "표준", 28);
+  await quickPart(page, "표준", 26);
   await standardRest(page);
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await chooseAndRun(page);
 });
 
 test("검사 정밀(이야기 1장) → 지도", async ({ page }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(REMOTE ? 900_000 : 240_000);
   await mockStoryApis(page, { ...EMPTY, regretType: { value: "inaction", evidence: "미술을 포기한 게 후회돼요" } });
   await page.goto("/interview");
-  await quickPart(page, "정밀", 28);
+  await quickPart(page, "정밀", 26);
   await standardRest(page);
   // 결과 화면에서 바로 들어간다(프로필을 저장하고 가야 검사로 안 돌아간다)
   await page.getByRole("link", { name: /인생 이야기 6장 시작하기/ }).click();

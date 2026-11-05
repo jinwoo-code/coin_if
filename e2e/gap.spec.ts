@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { REMOTE } from "./helpers";
 
 // 시연 인물로 리포트까지 가서 격차 칸과 모바일 넘침을 본다. AI 안 부름.
 test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) => {
@@ -139,13 +140,15 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
     if (r.url().includes("/api/evidence/topics")) sent.push(r.postData() ?? "");
   });
   await dev.getByRole("button", { name: /주제 제안받기/ }).click();
-  await expect(dev.getByText(/AI 없이 만든 예시예요/).first()).toBeVisible();
+  // 로컬은 키가 없어 규칙 예시, 배포 사이트는 실제 AI라 문구가 매번 다르다.
+  if (!REMOTE) await expect(dev.getByText(/AI 없이 만든 예시예요/).first()).toBeVisible();
+  await expect(dev.locator("button[aria-pressed]").first()).toBeVisible({ timeout: REMOTE ? 120_000 : 15_000 });
   expect(sent.length).toBe(1);
   expect(sent[0]).not.toContain("storyRaw");
 
   const card = dev.locator('[data-testid^="evidence-card-"]').first();
-  await card.getByRole("button", { name: /수업·알바·동아리/ }).click();
-  await expect(card.getByRole("textbox", { name: "내 주제" })).toHaveValue(/수업·알바·동아리/);
+  await card.locator("button[aria-pressed]").first().click();
+  await expect(card.getByRole("textbox", { name: "내 주제" })).toHaveValue(/.+/);
   await card.getByRole("checkbox").first().check();
   await expect(card.getByText(/완성 기준 1\//)).toBeVisible();
 
@@ -255,6 +258,7 @@ test("예시 인물 김민준이 간호사를 고르면 0%에서 기간 늘리�
 });
 
 test("상담사 공유: 미리 보기 → PDF 화면 → 링크 열기(AI 표시, 원문 없음) → 취소", async ({ page, context }) => {
+  test.skip(REMOTE && !process.env.E2E_SHARE_DB, "배포 사이트는 0007을 적용해야 링크가 만들어진다. 적용 뒤 E2E_SHARE_DB=1");
   test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");

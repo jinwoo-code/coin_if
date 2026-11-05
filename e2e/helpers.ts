@@ -8,6 +8,9 @@ export async function pickAll(page: Page, n: number) {
   for (let i = 0; i < (await groups.count()); i++) await groups.nth(i).getByRole("radio").nth(n).click();
 }
 
+// 배포 사이트는 실제 AI를 불러서 느리다(시연 인물 약 150초, 2026-11-06). 로컬은 키를 비워 빠르다.
+export const REMOTE = Boolean(process.env.BASE_URL);
+export const SIM_WAIT = REMOTE ? 300_000 : 110_000;
 export const counter = (page: Page) => page.locator("header .num");
 export const next = (page: Page) => page.getByRole("button", { name: "다음", exact: true }).click();
 export const savedProfile = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:profile") ?? "null"));
