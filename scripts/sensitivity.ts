@@ -70,7 +70,7 @@ interface Row {
   perPersona: Record<string, number>;
 }
 const rows: Row[] = [];
-const keys = Object.keys(WEIGHTS).filter((k) => !k.startsWith("reason.")); // reason.*은 이유 문장에만 쓴다
+const keys = Object.keys(WEIGHTS).filter((k) => !k.startsWith("reason.") && !k.startsWith("report.")); // reason.*은 이유 문장에만 쓴다
 const t0 = Date.now();
 keys.forEach((key, ki) => {
   const perPersona: Record<string, number> = {};

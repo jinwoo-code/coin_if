@@ -8,11 +8,12 @@ import { Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
+import { GapSection } from "@/components/gap";
 import { computeLevers } from "@/lib/levers-client";
 import { hasSupabase } from "@/lib/supabase/config";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
-import type { Lever, Multiverse, PremiumItem, Profile, Report, SimEvent, WorldTemplate } from "@/lib/types";
+import type { Lever, Multiverse, PremiumItem, Profile, Report, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 import { LiveLives } from "@/components/live-lives";
 import { MyData } from "@/components/my-data";
@@ -287,6 +288,7 @@ const WOOP_STEPS: { key: keyof Report["woop"]; label: string }[] = [
 export default function ReportPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [selection, setSelection] = useState<Selection | null>(null);
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [leverMap, setLeverMap] = useState<Record<string, Lever[]>>({});
   const [report, setReport] = useState<Report | null>(null);
@@ -304,6 +306,7 @@ export default function ReportPage() {
       return;
     }
     setProfile(p);
+    setSelection(s);
     setMvs(m);
     // 바꿀 수 있는 것: 브라우저에서 조건을 바꿔 가며 다시 살아본다.
     // 1,000번씩 여러 번 다시 사는 일이라 Web Worker에서(lib/levers-client.ts)
@@ -458,6 +461,14 @@ export default function ReportPage() {
                 );
               })}
             </div>
+
+            {profile && selection ? (
+              <section className="card flex flex-col gap-6 p-5 sm:p-6" aria-label="필요한 것과 내 격차">
+                {report.worlds.map((w) => (
+                  <GapSection key={w.worldId} profile={profile} world={getWorld(w.worldId)} months={selection.months} startYm={selection.startYm} />
+                ))}
+              </section>
+            ) : null}
 
             <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} />
           </div>
