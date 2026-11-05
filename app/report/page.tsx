@@ -1,6 +1,6 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
-import { CalendarPlus, Copy, Lock, Printer } from "lucide-react";
+import { CalendarPlus, Lock, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import type { Lever, Multiverse, PremiumItem, Profile, Report, Selection, SimEve
 import { getWorld } from "@/lib/worlds";
 import { LiveLives } from "@/components/live-lives";
 import { MyData } from "@/components/my-data";
+import { SharePanel } from "@/components/share-panel";
 import { WeekPlan } from "@/components/week-plan";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
@@ -199,7 +200,7 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
           <li>갈라진 세계선 전부를 나란히 비교한 표</li>
           <li>바꿀 수 있는 것 전체(조건을 바꿔 다시 살아본 결과)</li>
           <li>자주 막히는 길로 가고 있을 때 할 일</li>
-          <li>PDF로 저장해서 상담사에게 가져가기</li>
+          <li>상담사에게 PDF·읽기 전용 링크로 공유하기</li>
         </ul>
         {hasSupabase() ? (
           <button className="btn-primary mt-5 w-full" onClick={onOpen} disabled={busy}>
@@ -216,9 +217,6 @@ function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | nul
         <h2 id="premium" className="text-xl font-bold">
           프리미엄 리포트
         </h2>
-        <button className="chip print:hidden" onClick={() => window.print()}>
-          <Printer aria-hidden="true" size={16} /> PDF로 저장
-        </button>
       </div>
       {ids.map((id) => {
         const world = getWorld(id);
@@ -296,6 +294,7 @@ export default function ReportPage() {
   const [premium, setPremium] = useState<PremiumItem[] | null>(null);
   const [premiumBusy, setPremiumBusy] = useState(false);
   const [notice, setNotice] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     const p = store.getProfile();
@@ -356,23 +355,6 @@ export default function ReportPage() {
     }
   }
 
-  async function share() {
-    if (!profile || !report) return;
-    const text = [
-      `[진로 리허설 결과] ${profile.name} (${profile.major})`,
-      `고민: ${profile.dilemma}`,
-      ...report.worlds.map((w) => `- ${getWorld(w.worldId).name}: 가치관 부합도 ${w.fit}점 / 좋았던 점: ${w.good} / 힘든 점: ${w.hard}`),
-      `실행 계획: ${report.woop.plan}`,
-      `이번 주 할 일: ${report.todos.join(", ")}`,
-    ].join("\n");
-    try {
-      await navigator.clipboard.writeText(text);
-      setNotice("결과를 복사했어요. 상담 신청할 때 붙여 넣어 주세요.");
-    } catch {
-      setNotice("복사하지 못했어요. 화면을 캡처해서 공유해 주세요.");
-    }
-  }
-
   if (!profile) return null;
   const best = report ? Math.max(...report.worlds.map((w) => w.fit)) : 0;
 
@@ -386,8 +368,8 @@ export default function ReportPage() {
           <button className="btn-ghost flex-1 sm:flex-none" onClick={downloadCheckin} disabled={!report}>
             <CalendarPlus aria-hidden="true" size={18} /> 한 달 뒤 체크인
           </button>
-          <button className="btn-primary flex-1 sm:flex-none" onClick={share} disabled={!report}>
-            <Copy aria-hidden="true" size={18} /> 상담사에게 공유
+          <button className="btn-primary flex-1 sm:flex-none" onClick={() => setShareOpen(true)} disabled={!report}>
+            <Share2 aria-hidden="true" size={18} /> <span className="whitespace-nowrap">상담사에게 공유</span>
           </button>
         </div>
       }
@@ -507,6 +489,7 @@ export default function ReportPage() {
           {notice}
         </p>
       ) : null}
+      {report && selection ? <SharePanel open={shareOpen} onClose={() => setShareOpen(false)} profile={profile} selection={selection} report={report} mvs={mvs} /> : null}
       <div className="print:hidden">
         <MyData />
       </div>

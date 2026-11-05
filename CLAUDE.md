@@ -34,6 +34,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-requirements.ts   # 필요
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-gap.ts   # 격차 판정·우선순위 단위 테스트
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/gap-table.ts developer,nurse,civil-servant   # 시연 인물의 격차·우선순위 표(보기만)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-evidence.ts   # 증거물 단위 테스트(수행준거 줄이기, 능력단위 고르기, 모의고사 약점, AI 응답 거르기, 53개 진로)
+npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-share.ts   # 공유본 단위 테스트(모르는 칸 버리기, 원문 섞임 지우기)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-plan-sim.ts   # 계획 넣고 다시 살아 보기 단위 테스트 + 시연 인물 전후 표
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/diagnose-satisfaction.ts   # 10년 만족도 분포(대표 진로 5개 × 인물 2명, 보기만)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-retrain.ts 경영학과   # 전공 안 맞을 때 학과 다니기 전후(해당 진로만)
@@ -105,6 +106,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 | `lib/schedule.ts`, `components/schedule.tsx`, `app/api/training` | 월별 일정: 공부·경험 두 줄을 우선순위대로 달마다 채움, 여유 20%, 시간 초과 경고와 대안 2개, 시험은 대략적인 위치(직접 고침), 훈련과정은 누를 때 찾음. 고친 값은 이 기기에만 |
 | `data/demo/`, `lib/demo.ts` | 시연 인물(가상): 개발자 김민준, 간호학과 3학년 이서연. 첫 화면 버튼 둘 |
 | `lib/woop.ts`, `components/week-plan.tsx` | WOOP 장애물 근거(자주 나온 큰 갈림길 상위 2개, 엔진 값), 이번 주 할 일(언제·어디서·무엇을, 예시 1개, 이 기기에만) |
+| `lib/shared-report.ts`, `lib/shared-client.ts`, `lib/share-store.ts`, `components/share-panel.tsx`, `components/shared-report.tsx`, `app/s/[token]`, `app/report/print`, `app/api/share` | 상담사 공유: 무엇이 들어가는지 먼저 보여 주고 PDF(인쇄 창) 또는 읽기 전용 링크(14일, 취소 가능). 표는 0007. 결과와 계획 칸만 있고 맨 위에 AI 표시. 취소 키는 이 기기에만 |
 | `lib/plan-sim.ts` | 계획 넣고 다시 살아 보기: 일정 줄이 끝난 다음 달(자격증은 시험 위치 다음 달)부터 그 조건으로 합격·취업 확률을 계산(`simulatePath`의 `stages`), 같은 시드로 1,000번 전후 비교, Worker에서. 결과는 이 기기에만 |
 | `lib/evidence.ts`, `components/evidence.tsx`, `data/evidence-forms.json`, `app/api/evidence/topics` | 리포트 증거물: 능력단위 3개까지 + 유형별 형태·분량(가정값), 완성 기준은 NCS 수행준거를 짧게 고친 것(없으면 가정값), 주제는 눌렀을 때 AI가 제안(키 없음·실패는 규칙 예시). 시험형은 모의고사 점수와 약점 과목. 고른 값은 이 기기에만 |
 | `lib/assessment.ts` | 검사 깊이별 단계 목록(`stepsFor`), 이미 답한 단계(`isAnswered`), 깊이 올리기(`remainingSteps`) |
@@ -426,3 +428,4 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
   - 0%이고 학과 과정이 있으면 5년·10년 버튼. 김민준 간호사 36개월 0→0%, 60개월 94→97%, 120개월 95→97%.
   - 이서연(가상, 간호학과 3학년, 졸업까지 15개월, 면허 '공부 중', 실습 1번): 간호사 36개월 76→86%, 60개월 85→90%. 값은 팀이 정한 시연용이다.
   - 할 일: AI 예시는 1개만 채우고, 나머지 AI 할 일은 후보로 눌러 넣는다. WOOP 장애물은 갈림길 이름을 넣게 시키고 안 넣으면 규칙 문장. 갈림길 비율은 큰 갈림길(branch choice)의 '만난 삶 비율'이고 진로를 섞어 상위 2개라 한 진로에서만 나올 수 있다. 플랜 B·진행 체크·도움받을 곳 추가는 안 했다.
+- 2026-11-05 리포트 7단계(공유): 클립보드 복사를 없애고 PDF + 읽기 전용 링크만. 공유본은 칸을 정해 두고(`cleanShared`, 서버에서 한 번 더) 이름·전공·결과·계획만 담는다. 고민·제약·경험 글, 가치관 답도 뺐다(지시보다 좁게). AI 문장에 이야기 글이 8자 이상 그대로 섞이면 그 칸을 지운다. 표현을 바꿔 옮긴 건 못 잡는다. **0007을 SQL Editor에 적용해야 실제 링크가 된다**(전에는 "링크를 만들지 못했어요"). e2e는 메모리 저장(`SHARE_MEMORY=1`, 운영에서는 꺼짐)으로 봤고 실제 DB로는 안 해 봤다. 취소는 만든 기기에서만 된다(취소 키가 이 기기에만). 시연 인물은 로그인 없이 만들 수 있어서, 이름·전공만 맞추면 누구나 짧은 글을 14일 저장할 수 있다(칸·길이 제한, 요청 크기 200KB). AI 표시 문구는 팀장 지시이고 법률 검토는 안 받았다.

@@ -11,6 +11,7 @@ if (!remote) {
   } catch {
     // 파일이 없으면 기본값(전부 끔)
   }
+  process.env.SHARE_MEMORY = "1"; // 공유 링크를 메모리에(실제 표 0007 없이 흐름을 본다)
   if (process.env.E2E_BAD_KEY) {
     process.env.GEMINI_API_KEY = "invalid-key-for-test";
     process.env.GEMINI_TIER = "";

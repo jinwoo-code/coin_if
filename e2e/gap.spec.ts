@@ -253,3 +253,61 @@ test("예시 인물 김민준이 간호사를 고르면 0%에서 기간 늘리�
   await expect(rerun.getByText(/이 계획대로 하면 5년 안에/)).toBeVisible({ timeout: 60_000 });
   await expect(extend).toHaveCount(0);
 });
+
+test("상담사 공유: 미리 보기 → PDF 화면 → 링크 열기(AI 표시, 원문 없음) → 취소", async ({ page, context }) => {
+  test.setTimeout(240_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "간호학과 3학년 예시로 보기" }).click();
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
+  // 이야기 원문·문항별 답을 일부러 넣어 둔다
+  await page.evaluate(() => {
+    const k = Object.keys(localStorage).find((x) => x.endsWith(":profile"))!;
+    const p = JSON.parse(localStorage.getItem(k)!);
+    p.storyRaw = { c1: { "0:a": "비밀원문문장입니다 절대 나가면 안 돼요" } };
+    p.holdoutPicks = { s7: 2 };
+    localStorage.setItem(k, JSON.stringify(p));
+  });
+  await page.goto("/report");
+  await page.getByRole("button", { name: "상담사에게 공유" }).click();
+  const panel = page.getByTestId("share-panel");
+  await expect(panel.getByText("들어가지 않는 것")).toBeVisible();
+  const make = panel.getByRole("button", { name: /읽기 전용 링크 만들기/ });
+  await expect(make).toBeEnabled({ timeout: 120_000 });
+  await panel.screenshot({ path: "test-results/share-390.png" });
+  // PDF 화면
+  const [print] = await Promise.all([context.waitForEvent("page"), panel.getByRole("button", { name: "PDF 내려받기" }).click()]);
+  await expect(print.getByTestId("ai-notice")).toHaveText("AI로 만든 리포트입니다");
+  await print.close();
+  // 링크
+  let sent = "";
+  page.on("request", (r) => {
+    if (r.url().endsWith("/api/share") && r.method() === "POST") sent = r.postData() ?? "";
+  });
+  await make.click();
+  const link = page.getByTestId("share-links").getByRole("link").first();
+  await expect(link).toBeVisible({ timeout: 30_000 });
+  expect(sent).not.toContain("비밀원문문장");
+  expect(sent).not.toContain("holdoutPicks");
+  expect(sent).not.toContain("experiences");
+  const url = (await link.textContent())!;
+  const viewer = await context.browser()!.newContext(); // 로그인·저장값 없는 사람
+  const other = await viewer.newPage();
+  await other.goto(url);
+  await expect(other.getByTestId("ai-notice")).toHaveText("AI로 만든 리포트입니다");
+  await expect(other.getByTestId("shared-report")).toContainText("간호사");
+  const html = await other.content();
+  expect(html).not.toContain("비밀원문문장");
+  await other.screenshot({ path: "test-results/shared-390.png", fullPage: true });
+  await other.setViewportSize({ width: 1280, height: 900 });
+  await other.screenshot({ path: "test-results/shared-1280.png" });
+  const over = await other.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(over).toBeLessThanOrEqual(0);
+  // 취소하면 안 열린다
+  await page.getByRole("button", { name: "링크 취소" }).click();
+  await expect(panel.getByText("링크를 취소했어요")).toBeVisible();
+  await other.reload();
+  await expect(other.getByText("볼 수 없는 링크예요")).toBeVisible();
+  await viewer.close();
+});

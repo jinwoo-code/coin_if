@@ -19,3 +19,6 @@ export const DEMOS = {
 };
 
 export const demoSelection = (kind: keyof typeof DEMOS = "developer"): Selection => ({ worldIds: DEMOS[kind].worldIds, months: DEMOS[kind].months, startYm: nextMonthYm() });
+
+// 시연 인물인지(이름과 전공이 같으면). 로그인 없이 보는 발표 백업과, 무료 키에서 AI를 부를지 정할 때 쓴다.
+export const isDemoPerson = (p: { name?: string; major?: string }) => Object.values(DEMOS).some((d) => d.profile.name === p.name && d.profile.major === p.major);
