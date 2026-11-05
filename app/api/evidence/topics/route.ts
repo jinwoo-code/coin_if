@@ -5,6 +5,7 @@ import { hasCrisis } from "@/lib/crisis";
 import { cleanTopics, isExperienceForm, isProjectForm, ruleTopics, type Topic, type TopicRules } from "@/lib/evidence";
 import { ALL_WORLD_IDS, type MajorFamily } from "@/lib/job-codes";
 import { isDemoPerson } from "@/lib/demo";
+import { ruleOnly } from "@/lib/ai-guard";
 import { generateJSON } from "@/lib/llm";
 import { currentUser } from "@/lib/supabase/server";
 import { hasPremium } from "@/lib/tokens";
@@ -74,6 +75,7 @@ export async function POST(req: Request) {
   rules.experienceText = experiences;
   rules.projectCards = projectCards;
   const hints = (forms.license as { hints: Record<string, string> }).hints;
+  if (ruleOnly({ name: short(body?.person?.name, 40), major })) return NextResponse.json({ ...fallback, topics: Object.fromEntries(Object.entries(fallback.topics).map(([id, list]) => [id, projectCards.includes(id) ? list.map((x) => ({ ...x, isNew: true })) : list])) });
   const ask = (banned: string[]) =>
     generateJSON<unknown>({
       tag: "evidence topics",

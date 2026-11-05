@@ -3,6 +3,7 @@
 // 여기서는 '그 길로 갈 것 같을 때 할 일' 문장만 AI가 쓴다. 상황은 엔진이 낸 세계선 중에서만 고른다.
 import { NextResponse } from "next/server";
 import { isDemoPerson } from "@/lib/demo";
+import { ruleOnly } from "@/lib/ai-guard";
 import { generateJSON } from "@/lib/llm";
 import { paywall, spend } from "@/lib/tokens";
 import type { Multiverse, PremiumItem, Profile, SimEvent } from "@/lib/types";
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     })),
   });
 
-  const ai = await generateJSON<ReturnType<typeof fallback>>({
+  const ai: ReturnType<typeof fallback> = ruleOnly(profile) ? fallback() : await generateJSON<ReturnType<typeof fallback>>({
     tag: "premium_report",
     model: "smart",
     system:

@@ -1,5 +1,6 @@
 // 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일
 import { NextResponse } from "next/server";
+import { ruleOnly } from "@/lib/ai-guard";
 import { generateJSON } from "@/lib/llm";
 import { finalFit, getWorld, todoFor } from "@/lib/worlds";
 import { won } from "@/lib/format";
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     mainLine: (scenes[id] ?? []).filter((e) => e.eventId !== "quiet").map((e) => `${e.label} ${e.title} → ${e.choice}`),
   }));
 
-  const ai = await generateJSON<ReturnType<typeof fallback>>({
+  const ai: ReturnType<typeof fallback> = ruleOnly(profile) ? fallback() : await generateJSON<ReturnType<typeof fallback>>({
     tag: "report",
     model: "smart",
     system:

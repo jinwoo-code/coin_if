@@ -365,3 +365,31 @@ test("무료는 미리 보기까지, 프리미엄을 열면 격차~실행 전체
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
   await page.screenshot({ path: "test-results/premium-open-1280.png" });
 });
+
+test("리포트는 저장본을 그대로 열고, 내 정보가 바뀌면 다시 만들기가 나온다", async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
+  let calls = 0;
+  await page.route("**/api/report", (r) => { calls++; return r.continue(); });
+  await page.goto("/report");
+  await expect(page.getByTestId("gap-developer")).toBeVisible({ timeout: 120_000 });
+  expect(calls).toBe(1);
+  await page.reload();
+  await expect(page.getByTestId("gap-developer")).toBeVisible({ timeout: 60_000 });
+  expect(calls).toBe(1);
+  await expect(page.getByTestId("report-stale")).toHaveCount(0);
+  await page.evaluate(() => {
+    const k = Object.keys(localStorage).find((x) => x.endsWith(":profile"))!;
+    localStorage.setItem(k, JSON.stringify({ ...JSON.parse(localStorage.getItem(k)!), summary: "요약을 고쳤어요" }));
+  });
+  await page.reload();
+  const stale = page.getByTestId("report-stale");
+  await expect(stale).toBeVisible({ timeout: 60_000 });
+  expect(calls).toBe(1);
+  await stale.getByRole("button", { name: "다시 만들기" }).click();
+  await expect(stale).toHaveCount(0, { timeout: 60_000 });
+  expect(calls).toBe(2);
+});

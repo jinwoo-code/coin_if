@@ -418,6 +418,7 @@ export interface ChatMessage {
 }
 
 export interface Report {
+  stamp?: string; // 만들 때의 프로필·시뮬레이션. 지금 값과 다르면 화면에 다시 만들기 버튼
   worlds: {
     worldId: string;
     fit: number;

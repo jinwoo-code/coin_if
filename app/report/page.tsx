@@ -11,6 +11,7 @@ import { durationLabel, monthLabel } from "@/lib/calendar";
 import { GapSection } from "@/components/gap";
 import { computeLevers } from "@/lib/levers-client";
 import { isDemoPerson } from "@/lib/demo";
+import { profileHash } from "@/lib/judge";
 import { hasSupabase } from "@/lib/supabase/config";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
@@ -166,6 +167,11 @@ function Programs({ region }: { region: string }) {
 
 // 같은 결과의 리포트 요청은 하나만 보낸다. 개발 모드(Strict Mode)는 화면을 두 번 그려 AI를 두 번 부르고, 원가 실측도 두 배가 된다.
 let reportInflight: { key: string; promise: Promise<Report> } | null = null;
+// 리포트에 들어가는 프로필 값과 시뮬레이션. 계획(일정)은 이 기기 칸이라 안 넣는다(다시 살아 보기가 따로 안내).
+function reportStamp(p: Profile, m: Record<string, Multiverse>) {
+  return `${profileHash(p)}:${JSON.stringify([p.dilemma, p.constraints]).length}:${Object.values(m).map(runKey).sort().join("|")}`;
+}
+
 function requestReport(key: string, body: unknown): Promise<Report> {
   if (reportInflight?.key !== key) {
     const promise = fetch("/api/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((res) => {
@@ -321,6 +327,8 @@ export default function ReportPage() {
   const [report, setReport] = useState<Report | null>(null);
   const [premium, setPremium] = useState<PremiumItem[] | null>(null);
   const [premiumBusy, setPremiumBusy] = useState(false);
+  const [stale, setStale] = useState(false);
+  const [remaking, setRemaking] = useState(false);
   const [notice, setNotice] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -342,17 +350,39 @@ export default function ReportPage() {
     const saved = store.getReport();
     if (saved && saved.worlds.every((w) => m[w.worldId])) {
       setReport(saved);
+      // 예전에 저장한 리포트는 기준값이 없어 그대로 둔다.
+      setStale(Boolean(saved.stamp) && saved.stamp !== reportStamp(p, m));
       return;
     }
+    makeReport(p, s, m).catch(() => setNotice("리포트를 만들지 못했어요. 새로고침해 주세요."));
+  }, [router]);
+
+  async function makeReport(p: Profile, s: Selection, m: Record<string, Multiverse>) {
     const active = store.getActive();
     const scenes: Record<string, SimEvent[]> = Object.fromEntries(s.worldIds.map((id) => [id, store.getLine(id, active[id] ?? "") ?? []]));
-    requestReport(Object.values(m).map(runKey).sort().join("|"), { profile: p, multiverses: m, scenes })
-      .then((rep: Report) => {
-        store.setReport(rep);
-        setReport(rep);
-      })
-      .catch(() => setNotice("리포트를 만들지 못했어요. 새로고침해 주세요."));
-  }, [router]);
+    const stamp = reportStamp(p, m);
+    const rep: Report = { ...(await requestReport(stamp, { profile: p, multiverses: m, scenes })), stamp };
+    store.setReport(rep);
+    setReport(rep);
+    setStale(false);
+  }
+
+  // 프로필이나 시뮬레이션이 바뀐 뒤에만. 프리미엄을 열었으면 그 문장도 다시 받는다(같은 시뮬레이션이면 토큰을 다시 안 뺀다).
+  async function remake() {
+    const p = store.getProfile();
+    const s = store.getSelection();
+    const m = store.getMultiverses();
+    if (!p || !s || !m) return;
+    setRemaking(true);
+    try {
+      await makeReport(p, s, m);
+      if (store.getPremium()) await openPremium();
+    } catch {
+      setNotice("다시 만들지 못했어요. 지금 내용은 그대로예요.");
+    } finally {
+      setRemaking(false);
+    }
+  }
 
   // 프리미엄 리포트: 서버에서 5토큰을 빼고(같은 결과면 다시 안 뺌) '막혔을 때 할 일'을 받는다.
   async function openPremium() {
@@ -475,6 +505,14 @@ export default function ReportPage() {
               })}
             </div>
 
+            {stale ? (
+              <div className="card flex flex-col gap-3 p-5" data-testid="report-stale">
+                <p className="text-sm">이 리포트를 만든 뒤에 내 정보나 시뮬레이션이 바뀌었어요. 지금 보이는 글은 예전 기준이에요.</p>
+                <button className="btn-ghost" onClick={remake} disabled={remaking}>
+                  {remaking ? "만드는 중…" : "다시 만들기"}
+                </button>
+              </div>
+            ) : null}
             {selection && unlocked ? (
               <section className="card flex flex-col gap-6 p-5 sm:p-6" aria-label="필요한 것과 내 격차">
                 {report.worlds.map((w) => (
