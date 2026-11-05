@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { computeGapDeltas } from "@/lib/levers-client";
 import { gapItems, laterCerts, laterSkills, prioritize, SKILL_CHOICES, type GapItem, type PriorityRow, type SkillAnswers } from "@/lib/gap";
+import { EvidenceSection } from "@/components/evidence";
 import { ScheduleSection } from "@/components/schedule";
 import { ELIGIBILITY_SOURCE } from "@/lib/cert-eligibility";
 import { store } from "@/lib/store";
@@ -254,6 +255,7 @@ export function GapSection({ profile, world, months, startYm }: { profile: Profi
         </details>
       ) : null}
       <ScheduleSection rows={rows} profile={profile} world={world} months={months} startYm={startYm} />
+      <EvidenceSection req={req} profile={profile} world={world} gaps={gaps} />
 
       <p className="mt-3 text-cap text-muted">
         시뮬레이션 수치는 그 항목을 갖췄다고 가정하고 200번 다시 돌린 차이예요(시뮬레이션 가정 기준). 시간과 순서를 정하는 가중치는 가정값이에요. 기준일 {req.baseDate}. 이 목록은 준비 계획이고 합격·취업을 보장하지 않아요. 시험 일정은 공식
