@@ -80,7 +80,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
     <div className="mt-5" data-testid={`plan-${world.id}`}>
       <h4 className="text-sm font-bold">월별 일정</h4>
       <p className="mt-1 text-cap text-muted">
-        {monthLabel(startYm, 0)}부터 {plan.months}개월. 시간의 {Math.round(W("report.plan.spare") * 100)}%는 여유로 비웠어요(가정값). 시간은 전부 가정값이에요.
+        {monthLabel(startYm, 0)}부터 {plan.months}개월. 시간의 {Math.round(W("report.plan.spare") * 100)}%는 여유로 비웠어요(가정값). 시간은 항목마다 NCS 훈련 기준 또는 가정값이라고 적었어요.
       </p>
       <label className="mt-2 flex items-center gap-2 text-sm">
         주당 공부 시간
@@ -113,7 +113,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
             </p>
             <p className="text-cap text-muted">
               {rangeLabel(startYm, r)}
-              {r.hours ? ` · 약 ${r.hours}시간(가정값)` : ""}
+              {r.hours ? ` · 약 ${r.hours}시간(${r.hoursOfficial ? "NCS 훈련 기준" : "가정값"})` : ""}
               {r.lane === "school" ? " · 기간은 가정값이고 등록금은 안 넣었어요" : ""}
               {r.overflow ? " · 계획 기간을 넘겨요" : ""}
             </p>
@@ -148,6 +148,22 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
           {plan.milestones.map((m) => m.title).join(", ")}
         </p>
       ) : null}
+      {plan.later.length ? (
+        <details className="mt-2 text-sm" data-testid={`plan-later-${world.id}`}>
+          <summary className="flex min-h-11 cursor-pointer items-center font-medium">나중에 볼 자격 {plan.later.length}개</summary>
+          <p className="text-cap text-muted">우선순위 상위 {W("report.plan.certLimit")}개만 일정에 넣었어요(개수는 가정값).</p>
+          <ul className="mt-1 flex flex-col gap-1">
+            {plan.later.map((r) => (
+              <li key={r.item.id} className="flex flex-wrap items-center justify-between gap-2 text-cap">
+                {r.title}
+                <button type="button" className="min-h-11 underline" onClick={() => save({ ...edits, added: [...(edits.added ?? []), r.item.id] })}>
+                  일정에 넣기
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
       {plan.removed.length ? (
         <p className="mt-2 text-cap text-muted">
           뺀 항목: {plan.removed.map((r) => r.title).join(", ")}{" "}
@@ -156,7 +172,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
           </button>
         </p>
       ) : null}
-      {edits.months || edits.weekly !== undefined || removedIds.length || edits.examMonth ? (
+      {edits.months || edits.weekly !== undefined || removedIds.length || edits.examMonth || edits.added?.length ? (
         <button type="button" className="mt-1 min-h-11 text-cap underline" onClick={() => save({})}>
           처음 일정으로
         </button>

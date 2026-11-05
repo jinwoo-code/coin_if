@@ -6,7 +6,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import raw from "@/data/job-codes.json";
 import { ALL_WORLD_IDS, type MajorFamily } from "@/lib/job-codes";
 import { applyCertFilter, buildRequirements, type Requirements, type RequirementsFile } from "@/lib/requirements";
-import { aiFilterCerts, curatedOf, groupSkills, resolveSources, type Snapshot } from "@/lib/requirements-build";
+import { aiFilterCerts, curatedOf, groupSkills, ncsSourcesOf, resolveSources, type Snapshot } from "@/lib/requirements-build";
 import { getWorld } from "@/lib/worlds";
 
 const arg = (n: string) => process.argv.includes(n);
@@ -17,8 +17,9 @@ const none = { ncs: async () => null, careernet: async () => null, work24: async
 const certNames = (r: Requirements) => r.items.filter((i) => i.kind === "cert").map((i) => i.name);
 function reuse(fresh: Requirements, old: Requirements | undefined): Requirements | null {
   if (!old?.filter || old.filter.mode !== "ai") return null;
-  const before = [...certNames(old), ...old.filter.dropped.map((d) => d.name)].sort().join("|");
-  if (before !== certNames(fresh).sort().join("|")) return null;
+  // 지난번에 본 후보 안에 있으면 다시 묻지 않는다(자격이 아닌 값을 빼서 줄어든 경우 포함).
+  const before = new Set([...certNames(old), ...old.filter.dropped.map((d) => d.name)]);
+  if (!certNames(fresh).every((n) => before.has(n))) return null;
   const drop = new Set(old.filter.dropped.map((d) => d.name));
   return { ...fresh, items: fresh.items.filter((i) => !(i.kind === "cert" && drop.has(i.name))), filter: old.filter };
 }
@@ -34,7 +35,8 @@ function reuse(fresh: Requirements, old: Requirements | undefined): Requirements
     const fams = Object.keys((raw as unknown as Record<string, { byFamily?: object }>)[id].byFamily ?? {}) as MajorFamily[];
     const make = async (fam: MajorFamily | null, old: Requirements | undefined) => {
       const { src } = await resolveSources(id, fam, none, snap, snap.date);
-      const r = buildRequirements(id, w.archetype, src, snap.date, false, undefined, curatedOf(id));
+      // 능력·관련 자격은 고용24 검색 대신 NCS 저장 파일(data/ncs/)을 쓴다.
+      const r = buildRequirements(id, w.archetype, { ...src, ...ncsSourcesOf(id) }, snap.date, false, undefined, curatedOf(id));
       let out: Requirements;
       if (r.certPolicy === "curated-only") out = r;
       else out = reuse(r, old) ?? (arg("--no-ai") ? applyCertFilter(r, null) : await aiFilterCerts(r, w.name));

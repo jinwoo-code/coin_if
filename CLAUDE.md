@@ -27,6 +27,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/check-npc.
 npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/check-refund.ts   # 실시간 토큰 돌려주기를 실제 DB에서(시연용 가상 학생, 테스트 행은 지움)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/phone-timing.ts   # 빌드 뒤: 모바일 에뮬레이션 + CPU 4배 감속으로 무거운 계산 시간 재기(실제 폰 아님)
 npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/sync-requirements.ts   # 필요한 것 목록의 공식 데이터 받아 data/requirements/snapshot.json
+npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/sync-ncs.ts   # NCS 직무 데이터 받아 data/ncs/{직무코드}.json(DATA_GO_KR_KEY, 초당 10회, 약 5분). 진로→코드는 data/ncs/duties.json
 npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/build-requirements.ts   # 스냅샷·직접 정리 파일로 data/requirements/{진로id}.json. --sync(공식 데이터부터), --no-ai(자격증 안 거름), --only id,id. 걸러진 자격은 filter-log.json
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/requirements-table.ts   # 저장된 53개 진로 표 → docs/필요한-것-목록.md
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-requirements.ts   # 필요한 것 목록 단위 테스트(이름 펴기, 중복, 계열별 코드, API 실패, 직접 정리 후보·출처, AI 거르기, 저장 파일)
@@ -44,7 +45,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 
 기능 플래그(`lib/flags.ts`, 값이 1이면 켜짐, 빌드에 들어감): `NEXT_PUBLIC_FEATURE_CHECKIN_MAIL`, `NEXT_PUBLIC_FEATURE_COUNSELOR`. 둘 다 개발 환경(`.env.local`)에서만 켜고 배포에는 넣지 않는다(켜려면 0006 적용, 메일은 `vercel.json` crons도). 끄면 화면에 안 보이고 API는 404. 실시간 결과 잇기·토큰 돌려주기는 플래그 없이 켜져 있다.
 
-`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 모든 AI 호출을 3.5 Flash-Lite로 하나씩 4.5초 간격, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름). 절대 커밋하지 말 것.
+`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 모든 AI 호출을 3.5 Flash-Lite로 하나씩 4.5초 간격, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름), `DATA_GO_KR_KEY`(공공데이터포털, 스크립트 전용. 배포에는 안 넣어도 됨). 절대 커밋하지 말 것.
 
 스택: Next.js 14 App Router, React 18, TypeScript, Tailwind 3, `@google/genai`(Gemini 3.5 Flash-Lite / 3.6 Flash, 한도면 다른 모델로 돌려 씀), Pretendard 자체 호스팅, lucide-react, fast-xml-parser, unpdf. 브라우저 localStorage(`lib/store.ts`, 저장 버전 `v9`, v4~v8은 처음 읽을 때 옮김) + 로그인하면 Supabase.
 
@@ -80,7 +81,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 | 파일 | 역할 |
 |---|---|
 | `lib/engine.ts` | 규칙 엔진. 한 달씩: 관문(합격·취업) 확률 → 큰 사건(22%) → 일상(18%) → 조용한 달. 선택(`decide`/`choiceProbs`): 상황 칸의 기준 비율 + r(빠르게 0.5·표준 0.7·정밀 0.85, `REFLECT`) × 기울기(AI 판단 또는 규칙 기울기 = (내 규칙 확률 ÷ 평균 인물 규칙 확률)^`rule.scale`, `ruleProbs`/`normProbs`), 이유 문장. 돈 흐름(생활비·집 지원·알바 최저시급 10,320원·초임), 생활비 바닥 갈림길, 입대 18개월, 졸업 시기(`afterGrad`, `gradGrace`), 상태별 평소 수준으로 drift |
-| `data/weights.json`, `lib/weights.ts` | **가중치 한 곳**(77개, report.*은 리포트 우선순위, reason.traitMargin은 이유 문장에만): 선택 규칙(가치관·성격·상태·이야기·고친 선택), 개인 배수(자격증·지역·학교 …), 준비도 보기 배수. 항목마다 value·label·direction(근거)·magnitude(`assumed`/`fitted`)·n·ci. 엔진은 `W`/`WA`/`WT`로만 읽는다. 화면 근거 자료에 가정값/보정값으로 나눠 보여 줌(`components/weights.tsx`) |
+| `data/weights.json`, `lib/weights.ts` | **가중치 한 곳**(79개, report.*은 리포트 우선순위, reason.traitMargin은 이유 문장에만): 선택 규칙(가치관·성격·상태·이야기·고친 선택), 개인 배수(자격증·지역·학교 …), 준비도 보기 배수. 항목마다 value·label·direction(근거)·magnitude(`assumed`/`fitted`)·n·ci. 엔진은 `W`/`WA`/`WT`로만 읽는다. 화면 근거 자료에 가정값/보정값으로 나눠 보여 줌(`components/weights.tsx`) |
 | `lib/base.ts`, `data/base-shares.json`, `data/norms.json` | 갈림길 기준 비율(`Choice.base`: share·grade stat/interview/assumed·ref·상황 칸별 byState)과 상황 키(`stateKeys`: stress·money·prep·tenure, `bucketOf`). 묶음은 상세판 진로 id·유형 틀·`_global`. 성향 비교 집단 평균(norms, 3점을 평균으로 안 씀) |
 | `lib/factors.ts` | 개인 조건 → 확률 배수(이유 포함). `jobReady`(진로의 readiness 답 + 자격증 + 인턴·프로젝트·수상·학점), `examPower`(하루 공부 시간 ÷ 8.7h), `region`, `school`, `persistence`, `military` |
 | `lib/readiness.ts` | 직무 준비도 질문 15종(코딩, 포트폴리오, 면허, 실습, 체력, 교원 자격 …)과 보기별 배수 |
@@ -94,6 +95,8 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 | `lib/work24.ts` | 고용24 API 7종(서버 전용) |
 | `data/job-codes.json`, `lib/job-codes.ts` | 진로 → 커리어넷 번호·고용24 직업 코드(출처별 최대 2개, 대학원·중등교사는 전공 계열 `byFamily`). `data/jobcodes.ts`도 여기서 만든다 |
 | `lib/requirements.ts`, `lib/requirements-build.ts`, `lib/requirements-server.ts`, `data/requirements/{진로id}.json`, `data/requirements/curated/`, `app/api/requirements` | 리포트 '필요한 것' 목록: NCS 능력단위·자격(커리어넷+고용24, 이름 펴기·중복 합치기)·경험(유형별 가정값, `data/req-experience.json`)·시간(가정값, `data/req-hours.json`). 시험형·면허형 자격은 직접 정리한 값만, 그 외는 AI가 거름(id만). 리포트는 저장된 파일만 읽음 |
+| `data/ncs/`, `lib/ncs-data.ts`, `scripts/sync-ncs.ts` | NCS 저장 파일: 능력단위·수행준거·지식·기술·태도·평가 고려사항·훈련 시간·관련자격종목·직책 수준(공공기관 사무직만 직업기초능력). 앱은 이걸로 만든 `data/requirements/`만 읽는다 |
+| `data/cert-eligibility.json`, `lib/cert-eligibility.ts` | 자격 응시자격(시행령 별표 4의2)과 종류. 기술사·기능장은 신입 계획에서 뺀다, 기사·산업기사는 학교·전공으로 판정, 업체 자격은 맨 뒤 |
 | `lib/gap.ts`, `lib/gap-sim.ts`, `components/gap.tsx` | 리포트 격차: 항목마다 있음/부분적/없음(코드 규칙, `basis`·`asked`로 근거 표시), 같은 조건을 바꾸는 능력·시험 과목은 한 묶음, 우선순위 4가지(공고·시뮬레이션 200번·시간·흥미). 판정은 브라우저에서(프로필을 서버에 안 보냄), 시뮬레이션은 Worker |
 | `lib/retrain.ts` | 면허·교원 진로에서 전공이 안 맞으면 앞 구간에 학과 다니기(`retrain.months`, 가정값). 전공을 안 적었거나 면허·교원 답이 '공부 중' 이상이면 안 넣음. 엔진은 그 뒤부터 사건의 몇 개월째를 센다(`sim.offset`) |
 | `lib/schedule.ts`, `components/schedule.tsx`, `app/api/training` | 월별 일정: 공부·경험 두 줄을 우선순위대로 달마다 채움, 여유 20%, 시간 초과 경고와 대안 2개, 시험은 대략적인 위치(직접 고침), 훈련과정은 누를 때 찾음. 고친 값은 이 기기에만 |
@@ -123,7 +126,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 
 - 평균 확률은 공개 통계에 맞췄다: 공무원은 "합격자 2년 안 73.3%, 평균 준비 1년 8개월"(이대중 외), 취업은 "청년 첫 취업 평균 11.2개월"(통계청 2026). 그 외 직업별 채용 확률(`hazard`)·시험 합격률은 대부분 가정값.
 - 개인 배수(자격증 ×1.12 등)는 공개 데이터가 없어 가정값. 화면에 그대로 공개함.
-- **가중치(`data/weights.json`) 77개 중 76개가 가정값(`magnitude: "assumed"`), 보정값(`"fitted"`)은 9급 통계로 추정한 `exam.readyK` 1개뿐이고 사람 답으로 보정한 값은 0개.** 방향은 문서·연구를 따르지만 크기는 팀이 정했다. 화면 근거 자료에 가정값/보정값 개수와 항목별 표시가 있다.
+- **가중치(`data/weights.json`) 79개 중 78개가 가정값(`magnitude: "assumed"`), 보정값(`"fitted"`)은 9급 통계로 추정한 `exam.readyK` 1개뿐이고 사람 답으로 보정한 값은 0개.** 방향은 문서·연구를 따르지만 크기는 팀이 정했다. 화면 근거 자료에 가정값/보정값 개수와 항목별 표시가 있다.
   - 민감도(`docs/민감도-분석.md`, rule.scale 0.25 넣고 다시 잼): 결과를 가장 크게 움직이는 건 준비도 배수(합격률 최대 ±15~27%p)다. 시험형 보정 k(`exam.readyK`)가 2위(0배 −18.5%p·2배 +25%p)인데, 분석의 진로 10개 중 k를 쓰는 건 공무원 하나라 경찰·소방·중등·세무사는 이 숫자에 안 들어 있다. 배율을 넣기 전 1등이던 선택의 단호함(온도 2.2)은 0배여도 세계선 9.5%p 이동(예전 63%p)으로 잡음 기준(17.5%p) 안에 들어왔다. 평균으로는 판단 없는(규칙) 선택이 사람 사이 결과를 거의 안 가른다는 뜻이고, 합격 결과의 개인차는 대부분 준비도·개인 배수에서 나온다. 이야기 값 무게도 잡음 수준이다.
   - 보정(`scripts/fit-weights.ts`)은 채점용 상황 질문 답으로 **선택 규칙 가중치 19개만** 정할 수 있다(가치관 8·성격 6·이야기 5). 온도는 무게 전체 크기와 구분이 안 돼 고정, 상태(state.*)는 평소 상태에서 묻는 질문이라 정할 수 없음, 고친 선택은 분신과 다를 때만 남아 치우치므로 `--corrections`로 볼 때만 쓴다(반영 금지). 학습용 답은 성향 점수를 만든 답이라 순환이 돼서 안 쓴다.
   - 합격률을 크게 움직이는 개인 배수·준비도 배수는 이 방법으로 보정되지 않는다. 합격·취업 결과 데이터(청년패널 등)가 따로 필요하다.
@@ -131,7 +134,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
   - 0 이상 제한에 걸린 가중치는 제한 없는 추정값·구간을 같이 보여 주고 음수면 '방향 반대 가능'. 사용 인원은 그 값이 실제로 점수에 들어간 사람(이야기 값 없음·'후회 없음'·성향 3 이하·평소 상태 문항만 답한 사람의 상태 가중치는 뺌, 자체 확인에서 직접 센 수와 같음).
   - 가상 응답자 300명(1인 6문항)으로 확인: 일부러 바꾼 4개(안정 0.5→1, 위험 감수 0.15→0, 결정 방식 0.2→0.4, 신경성 0.12→0.18)를 1.0·0·0.37·0.17로 되찾고, 안 바꾼 값은 구간 안. 실제 사람 데이터로는 아직 안 돌려 봄. 사람이 적으면 구간이 넓어 '지금 값과 구분 안 됨'이 대부분일 것.
 - 경찰·소방·교사 첫 연봉은 2026년 공무원 봉급표 기본급 × 9급에서 추정한 수당 비율 1.339(`salary.allowanceRatio`, 3,428 ÷ 2,559.6, 가정값)다: 순경·소방사 3,428만원, 초등·중등 4,010만원. 수당 구성은 직렬·호봉마다 달라 실제와 다를 수 있다. 경력 없는 경우의 호봉이고 군 경력 등이 있으면 달라진다. 세무사 초봉은 가정값(3,595만원).
-- 리포트 필요한 것 목록: 공고 등장 비율은 비어 있다(기관 키 필요). 수행 기준(`ncsCriteria`)은 고용24 직무정보에 없어 비어 있고 지식·기술·태도 이름(`ksa`)만 있다(공공데이터포털 NCS API 3072161 키가 필요, 호출해 본 적 없음). 능력단위는 비슷한 말 검색 결과에서 이름이 같은 것만 골라, 실제 NCS 직무의 전체 단위보다 적을 수 있다. 같은 검색도 호출마다 조금 달라져서(개발자 능력 11개·10개) 저장된 파일을 쓴다. 다시 빌드하면 바뀔 수 있다. 학습 시간·경험은 전부 가정값. 공식 항목이 3개 미만인 진로 16개(`docs/필요한-것-목록.md`). 시험형·면허형이 아닌 진로의 자격은 공식 목록을 AI가 거른 것이라 잘못 빠지거나 남을 수 있다(`filter-log.json`).
+- 리포트 필요한 것 목록: 공고 등장 비율은 비어 있다(기관 키 필요). NCS 코드가 없는 진로 13개(간호·치위생·임상병리·물리치료·방사선, 교사 2, 학원 강사, 경찰, 기자, 통번역, 대학원, 창업)는 능력·수행준거가 없다. 응급구조사의 구조구급은 소방 쪽 직무라 면허 준비와 꼭 같지 않다. 평가 방법은 코드로만 와서(이름은 과정평가·결과평가뿐, 설명 비어 있음) 뜻을 몰라 화면에 안 쓰고 고려사항 문장만 쓴다. `ncsFusInfo`는 필수 인자를 못 찾아 안 쓴다. 훈련 시간은 훈련기관 기준이지 혼자 공부하는 시간이 아니다. 자격·경험 시간은 전부 가정값. 신입 단위 기준(직책 수준 3 이하)은 가정값. 응시자격은 입력한 학교·전공으로만 보고 실무 경력은 안 본다(프로필 경력이 같은 직무인지 몰라서). 관련 학과 판단도 진로의 전공 목록으로 한 근사다. 2026-04 기술사 경력 단축 입법예고는 확인한 현행본(시행 2026-01-02)에 없다. 재정경제부 공공기관 채용정보는 키 미등록(403)이라 칸을 못 봤다. 공식 항목이 3개 미만인 진로 16개(`docs/필요한-것-목록.md`). 시험형·면허형이 아닌 진로의 자격은 공식 목록을 AI가 거른 것이라 잘못 빠지거나 남을 수 있다(`filter-log.json`).
 - 리포트 격차: 프로필에 능력단위·과목별 답이 없어서 능력은 묶음 답(`skillGroups`, AI가 묶고 id 검증)이 있으면 그 답으로, 없으면 준비도 답 하나로 추정한다. 과목은 안 한 것으로 본다(화면에 근거 표시). 낱개가 아니라 묶음 효과다. 시뮬레이션 효과는 엔진이 보는 조건만 있고, 안 보는 자격(리눅스마스터 등)은 '시뮬레이션에 안 들어가는 항목'이라 뒤로 밀린다. 효과가 있어도 없다는 뜻이 아니다. 답하지 않은 준비도는 격차에서 '없음'이지만 엔진은 기본 보기로 돌아서 효과가 작게 나올 수 있다(시연 인물 간호사 +1%p). 같은 이름 계열만 윗 등급으로 친다(정보처리산업기사 → 정보처리기능사는 있음, 전자계산기기능사는 없음). 우선순위 가중치·항목과 흥미의 짝은 전부 가정값.
 - 유형 틀 진로 49개는 상세판보다 얕다(사건이 유형 공통).
 - 흥미 24문항은 자체 제작 간이 검사, IPIP 50문항은 자체 번역.
@@ -394,3 +397,11 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
   - 전공 불일치: 면허형 6개와 초등·중등 교사. 기간 30개월(응급구조 24, 초등 48), 등록금 없음. 전공을 안 적은 사람(check-all·validate 인물)은 안 넣어서 결과 차이 없음. 면허·교원 답을 올리는 '바꿀 수 있는 것'은 학과를 건너뛰는 걸로 나와서 뺐다.
   - 능력 묶음 질문은 지금 격차 칸에 있다(무료/프리미엄을 나누는 8단계에서 프리미엄 생성 때로 옮긴다). 답은 이 기기에만.
   - 일정은 달마다 공부·경험을 채운다. 경험 몫 30%·여유 20% 가정값. 학과가 필요한 진로의 학과·실습은 '학과 과정' 안으로 넣었다. 학과를 새로 다니는 사람의 시험 과목 공부는 학과를 마친 뒤로 잡는다.
+- 2026-11-05 NCS 연결·일정 현실화(팀장 지시):
+  - 진로→직무코드는 후보 표를 팀장이 확인했다(`data/ncs/duties.json`, 40개 진로 52개 직무, 13개 진로는 없음). 영업은 유통관리→일반영업, 응급구조사는 구조구급 추가.
+  - 수행준거는 `ncsCompeUnitFactrInfo`가 아니라 `ncsKsaInfo`에 있다. 기능마다 초당 30회 제한(HTTP 429)이라 스크립트는 초당 10회.
+  - 능력을 고용24 검색(개발자 11개) 대신 NCS 직무 전체(27개)로 바꿨다. 신입 계획에는 직책 수준 3 이하만(개발자 8개, 약 338시간), 나머지는 '신입 뒤에 익힐 능력'으로 접었다.
+  - 일정의 선택 자격은 상위 3개(`report.plan.certLimit`, 가정값), 나머지는 '나중에'로 접고 사용자가 올릴 수 있다. 순서: 국가기술+NCS 관련 → 국가기술 → NCS 관련 → 그 밖 → 업체 자격.
+  - NCS 관련자격종목 칸에 '해당없음'·'헤어디자인_L2'·'(가칭) 신설' 같은 값이 있어 `notCert` 규칙으로 뺀다.
+  - 남은 점: 시연 인물(전문대, 정보처리산업기사)은 정보처리기사가 법령상 실무 1년 전에는 안 돼서 일정 맨 앞 자격이 웹디자인기능사가 됐다. NCS 관련 자격이라 규칙은 맞지만 백엔드 개발자에게 좋은 추천은 아니다. AI 거르기가 '애매하면 남김'이라 남았다.
+  - 능력 묶음 5개 진로(자동차 정비·건설 현장·편집·승무원·반도체)는 AI 503으로 AI 없이 4등분한 묶음('…등 N개')이다.

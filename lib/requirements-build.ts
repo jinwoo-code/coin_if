@@ -3,7 +3,9 @@ import { readFileSync, existsSync } from "node:fs";
 import type { MajorFamily } from "./job-codes";
 import { codesFor } from "./job-codes";
 import { generateJSON } from "./llm";
-import { applyCertFilter, applySkillGroups, chunkSkills, type CareernetSource, type CuratedFile, type NcsUnit, type Requirements, type RequirementSources, type Work24Source } from "./requirements";
+import { isNotCert } from "./cert-eligibility";
+import { isEntryUnit, positionLevelOf, type NcsDutyFile } from "./ncs-data";
+import { applyCertFilter, applySkillGroups, chunkSkills, type CareernetSource, type CuratedFile, type NcsBasic, type NcsUnit, type Requirements, type RequirementSources, type Work24Source } from "./requirements";
 
 export interface Snapshot {
   date: string;
@@ -15,6 +17,30 @@ export interface Snapshot {
 export function curatedOf(worldId: string): CuratedFile | null {
   const p = `data/requirements/curated/${worldId}.json`;
   return existsSync(p) ? (JSON.parse(readFileSync(p, "utf8")) as CuratedFile) : null;
+}
+
+// 진로의 NCS 저장 파일(data/ncs/)을 목록 재료로 바꾼다. 코드가 없는 진로는 비어 있다.
+export function ncsSourcesOf(worldId: string): { ncs: NcsUnit[]; ncsCerts: { name: string; job: string }[]; ncsBasics: NcsBasic[] } {
+  const cfg = JSON.parse(readFileSync("data/ncs/duties.json", "utf8")) as { worlds: Record<string, { dutyCd: string }[]> };
+  const files = (cfg.worlds[worldId] ?? []).map((d) => JSON.parse(readFileSync(`data/ncs/${d.dutyCd}.json`, "utf8")) as NcsDutyFile);
+  return {
+    ncs: files.flatMap((f) =>
+      f.units.map((u) => ({
+        name: u.name,
+        def: u.def,
+        job: f.dutyNm,
+        ksa: [...u.knowledge, ...u.skills],
+        criteria: u.elements.flatMap((e) => e.criteria),
+        evalConsider: u.evalConsider,
+        trainTime: u.trainTime,
+        positionLevel: positionLevelOf(f, u),
+        entry: isEntryUnit(f, u),
+        ref: `국가직무능력표준 정보(${f.dutyNm} ${f.dutyCd}, 조회 ${f.fetchedAt})`,
+      })),
+    ),
+    ncsCerts: files.flatMap((f) => f.certs.filter((name) => !isNotCert(name)).map((name) => ({ name, job: f.dutyNm }))),
+    ncsBasics: files.flatMap((f) => f.basics ?? []),
+  };
 }
 
 export async function resolveSources(
@@ -57,7 +83,8 @@ export async function aiFilterCerts(r: Requirements, jobName: string): Promise<R
 // 능력단위를 3~4개로 묶는다. 시험형은 능력단위를 안 묻는다. 4개 이하면 AI 없이 낱개로.
 export async function groupSkills(r: Requirements, archetype: string, jobName: string, useAi: boolean): Promise<Requirements> {
   if (archetype === "exam") return r;
-  const skills = r.items.filter((i) => i.kind === "skill");
+  // 신입 뒤에 익힐 능력은 묻지 않는다.
+  const skills = r.items.filter((i) => i.kind === "skill" && i.entry !== false);
   if (!skills.length) return r;
   if (skills.length <= 4 || !useAi) return { ...r, skillGroups: chunkSkills(skills) };
   const res = await generateJSON<{ groups?: { name?: string; ids?: string[] }[] } | null>({

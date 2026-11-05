@@ -48,3 +48,47 @@ test("전공이 다른 진로를 고르면 학과부터라고 알려 준다", as
   await page.getByRole("button", { name: /간호사/ }).first().click();
   await expect(page.getByTestId("retrain-note").getByText(/전공이 달라 학과부터 다녀야 해요/)).toBeVisible();
 });
+
+// 시연 인물 3개 진로의 일정: NCS 근거, 나중에 볼 자격, 뺀 자격. 스크린샷은 test-results/.
+test("개발자·간호사·9급 일정과 NCS 근거가 나온다", async ({ page }) => {
+  test.setTimeout(420_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.goto("/choose");
+  const search = page.getByRole("searchbox").or(page.getByPlaceholder(/검색|찾/)).first();
+  for (const name of ["웹 백엔드 개발자", "9급 행정직 공무원", "간호사"]) {
+    await search.fill(name);
+    await page.getByRole("button", { name: new RegExp(name) }).first().click();
+  }
+  await page.getByRole("button", { name: /3개 진로를 .* 살아보기/ }).click({ timeout: 15_000 });
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && (localStorage.getItem(k) ?? "").includes("nurse")), null, { timeout: 300_000 });
+  await page.goto("/report");
+  const dev = page.getByTestId("gap-developer");
+  await expect(dev).toBeVisible({ timeout: 120_000 });
+  await expect(dev.getByText(/NCS 훈련 기준/).first()).toBeVisible();
+  // 수행준거·공부 목록은 펼치면 보인다
+  await dev.locator("details", { hasText: "직책 수준" }).first().locator("summary").click();
+  await expect(dev.getByText("포트폴리오 체크리스트(수행준거)").first()).toBeVisible();
+  await expect(dev.getByText(/공부 목록:/).first()).toBeVisible();
+  await expect(page.getByTestId("later-developer")).toContainText("신입 뒤에 익힐 능력");
+  await expect(page.getByTestId("later-certs-developer")).toContainText("기술사");
+  const later = page.getByTestId("plan-later-developer");
+  await expect(later).toContainText("MCSE");
+  await later.locator("summary").click();
+  const plan = page.getByTestId("plan-developer");
+  await expect(plan.getByText("MCSE")).toHaveCount(1); // 접힌 칸에만
+  await later.getByRole("listitem").filter({ hasText: "MCSE" }).getByRole("button", { name: "일정에 넣기" }).click();
+  await expect(plan.getByText("MCSE")).toHaveCount(1);
+  await expect(plan.locator("ol").getByText("MCSE")).toBeVisible();
+  await plan.getByRole("button", { name: "처음 일정으로" }).click();
+  await expect(plan.locator("ol").getByText("MCSE")).toHaveCount(0);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+  for (const [w, h] of [[390, 844], [1280, 900]] as const) {
+    await page.setViewportSize({ width: w, height: h });
+    for (const id of ["developer", "nurse", "civil-servant"]) await page.getByTestId(`plan-${id}`).screenshot({ path: `test-results/plan-${id}-${w}.png` });
+  }
+});

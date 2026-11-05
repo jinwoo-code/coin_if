@@ -2,11 +2,12 @@
 // 리포트 '필요한 것과 내 격차'. 목록은 서버의 저장 파일, 판정·점수는 이 기기에서(프로필을 안 보낸다).
 import { useEffect, useState } from "react";
 import { computeGapDeltas } from "@/lib/levers-client";
-import { gapItems, prioritize, SKILL_CHOICES, type GapItem, type PriorityRow, type SkillAnswers } from "@/lib/gap";
+import { gapItems, laterCerts, laterSkills, prioritize, SKILL_CHOICES, type GapItem, type PriorityRow, type SkillAnswers } from "@/lib/gap";
 import { ScheduleSection } from "@/components/schedule";
+import { ELIGIBILITY_SOURCE } from "@/lib/cert-eligibility";
 import { store } from "@/lib/store";
 import { majorFamily } from "@/lib/job-codes";
-import type { Requirements } from "@/lib/requirements";
+import type { RequirementItem, Requirements } from "@/lib/requirements";
 import type { Profile, WorldTemplate } from "@/lib/types";
 
 const SHOW = 8;
@@ -19,6 +20,7 @@ function Source({ g }: { g: GapItem }) {
   return (
     <p className="mt-1 text-cap text-muted">
       {KIND[i.kind]} · {GRADE[i.grade]}
+      {i.ncsRelated ? " · NCS 관련 자격" : ""}
       {i.ref ? ` · ${i.ref}` : ""}
       {i.refUrl ? (
         <>
@@ -40,6 +42,46 @@ function Source({ g }: { g: GapItem }) {
   );
 }
 
+// NCS 능력단위 하나: 수행준거(포트폴리오 체크리스트), 지식·기술(공부 목록), 평가 고려사항(증거물 근거).
+function NcsDetail({ i }: { i: RequirementItem }) {
+  if (!i.ncsCriteria?.length && !i.ksa?.length && !i.def) return null;
+  return (
+    <details className="mt-1 text-cap">
+      <summary className="flex min-h-11 cursor-pointer items-center font-medium">
+        {i.name}
+        {i.positionLevel ? ` · 직책 수준 ${i.positionLevel}` : ""}
+      </summary>
+      {i.def ? <p className="text-muted">{i.def}</p> : null}
+      {i.ncsCriteria?.length ? (
+        <>
+          <p className="mt-1.5 font-medium">포트폴리오 체크리스트(수행준거)</p>
+          <ul className="list-disc pl-4">
+            {i.ncsCriteria.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      {i.ksa?.length ? (
+        <p className="mt-1.5">
+          <span className="font-medium">공부 목록: </span>
+          {i.ksa.join(", ")}
+        </p>
+      ) : null}
+      {i.evalConsider?.length ? (
+        <>
+          <p className="mt-1.5 font-medium">평가할 때 보는 것(증거물을 만들 때 참고)</p>
+          <ul className="list-disc pl-4">
+            {i.evalConsider.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+    </details>
+  );
+}
+
 function Row({ r, rank }: { r: PriorityRow; rank: number }) {
   return (
     <li className="rounded-xl border border-hair p-3">
@@ -50,6 +92,9 @@ function Row({ r, rank }: { r: PriorityRow; rank: number }) {
       {r.members.length > 1 ? <p className="mt-1 text-cap">{r.members.map((m) => m.item.name).join(", ")}</p> : r.item.detail ? <p className="mt-1 text-cap">{r.item.detail}</p> : null}
       <p className="mt-1 text-sm">{r.evidence.join(" · ")}</p>
       <p className="mt-1 text-cap text-muted">{r.basis}</p>
+      {r.members.map((m) => (
+        <NcsDetail key={m.item.id} i={m.item} />
+      ))}
       <Source g={r} />
     </li>
   );
@@ -96,6 +141,8 @@ export function GapSection({ profile, world, months, startYm }: { profile: Profi
   const rows = prioritize(gaps, world, profile, deltas ?? {});
   const steps = gaps.filter((g) => g.item.kind === "step");
   const shown = all ? rows : rows.slice(0, SHOW);
+  const later = laterSkills(req, world);
+  const blocked = laterCerts(req, profile, world);
   return (
     <div data-testid={`gap-${world.id}`}>
       <h3 className="text-lg font-bold">{world.name}: 필요한 것과 내 격차</h3>
@@ -172,6 +219,39 @@ export function GapSection({ profile, world, months, startYm }: { profile: Profi
             ))}
           </ul>
         </>
+      ) : null}
+      {later.length ? (
+        <details className="mt-3 text-sm" data-testid={`later-${world.id}`}>
+          <summary className="flex min-h-11 cursor-pointer items-center font-medium">신입 뒤에 익힐 능력 {later.length}개</summary>
+          <p className="text-cap text-muted">NCS 직책 수준이 높은 능력이라 일정에 넣지 않았어요. 신입으로 보는 수준은 가정값이에요.</p>
+          <ul className="mt-1 list-disc pl-5 text-cap">
+            {later.map((i) => (
+              <li key={i.id}>
+                {i.name}
+                {i.positionLevel ? ` (수준 ${i.positionLevel})` : ""}
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+      {blocked.length ? (
+        <details className="mt-1 text-sm" data-testid={`later-certs-${world.id}`}>
+          <summary className="flex min-h-11 cursor-pointer items-center font-medium">경력·학력 조건이 있어 뺀 자격 {blocked.length}개</summary>
+          <ul className="mt-1 list-disc pl-5 text-cap">
+            {blocked.map((b) => (
+              <li key={b.item.id}>
+                {b.item.name}: {b.why}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-1 text-cap text-muted">
+            기준:{" "}
+            <a className="underline" href={ELIGIBILITY_SOURCE.url} target="_blank" rel="noreferrer">
+              {ELIGIBILITY_SOURCE.name}
+            </a>{" "}
+            ({ELIGIBILITY_SOURCE.version}). 내 조건은 입력한 전공·학교로만 봤어요. 경력은 따지지 않았어요.
+          </p>
+        </details>
       ) : null}
       <ScheduleSection rows={rows} profile={profile} world={world} months={months} startYm={startYm} />
 

@@ -646,5 +646,19 @@
     "kind": "share",
     "direction": "배운 능력을 바로 작업물로 만들게 공부와 나란히 둔다. 크기 근거 없음.",
     "magnitude": "assumed"
+  },
+  "report.ncs.entryLevel": {
+    "label": "신입으로 보는 NCS 직책 수준",
+    "value": 3,
+    "kind": "scale",
+    "direction": "NCS 수준 2는 초급, 3은 일반 실무 담당이라 신입 계획의 끝으로 본다. 이 숫자를 신입 기준으로 쓰라는 공식 문서는 없다.",
+    "magnitude": "assumed"
+  },
+  "report.plan.certLimit": {
+    "label": "일정에 넣는 선택 자격 개수",
+    "value": 3,
+    "kind": "scale",
+    "direction": "팀장 지시(상위 2~3개). 나머지는 접어 둔다. 크기 근거 없음.",
+    "magnitude": "assumed"
   }
 }

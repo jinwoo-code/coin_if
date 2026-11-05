@@ -22,10 +22,14 @@ export interface RequirementItem {
   def?: string; // 능력단위 정의
   postingShare?: number; // 공고 등장 비율(0~1). 채용정보 기관 키 전까지 비어 있다
   postingN?: number; // 집계한 공고 수
-  hours?: { value: number; grade: "assumed" | "interview" };
+  hours?: { value: number; grade: "official" | "assumed" | "interview" }; // official은 NCS 훈련 기준 시간
   officialUrl?: string; // 자격증 공식 사이트(시험 일정은 연동하지 않는다)
-  ncsCriteria?: string[]; // 능력단위 수행 기준(수행 기준 API 키 전까지 비어 있다)
-  ksa?: string[]; // 능력단위의 지식·기술·태도 이름(고용24 직무정보)
+  ncsCriteria?: string[]; // 능력단위 수행준거(NCS). 포트폴리오 체크리스트
+  ksa?: string[]; // 공부 목록: 능력단위의 지식·기술 이름(NCS)
+  evalConsider?: string[]; // 평가 고려사항(NCS). 증거물 형식의 근거
+  positionLevel?: number; // 이 단위를 맡는 가장 낮은 NCS 직책 수준. 신입 순서
+  entry?: boolean; // false면 신입 뒤에 익힐 능력(수준 기준은 가정값)
+  ncsRelated?: boolean; // NCS 관련자격종목에 있는 자격
 }
 
 // 공고 집계가 없을 때 화면 문구. postingShare가 들어오면 안 쓴다.
@@ -37,6 +41,17 @@ export interface NcsUnit {
   def: string;
   job: string;
   ksa: string[];
+  criteria?: string[];
+  evalConsider?: string[];
+  trainTime?: number | null;
+  positionLevel?: number;
+  entry?: boolean;
+  ref?: string;
+}
+export interface NcsBasic {
+  name: string;
+  desc: string;
+  subs: string[];
 }
 export interface CareernetSource {
   name: string;
@@ -54,6 +69,8 @@ export interface RequirementSources {
   ncs: NcsUnit[];
   careernet: CareernetSource[];
   work24: Work24Source[];
+  ncsCerts?: { name: string; job: string }[]; // NCS 관련자격종목
+  ncsBasics?: NcsBasic[]; // NCS 직업기초능력(공공기관 사무직)
 }
 export interface CuratedFile {
   worldId: string;
@@ -168,13 +185,35 @@ export function buildRequirements(worldId: string, archetype: string, src: Requi
     if (i.ref && old.ref && !old.ref.includes(i.ref)) old.ref = `${old.ref} · ${i.ref}`;
     if (i.name.length > old.name.length && i.kind === "cert") old.name = i.name;
     if (!old.def && i.def) old.def = i.def;
+    if (i.entry) old.entry = true;
   };
 
-  for (const u of src.ncs) add({ id: `ncs:${key(u.name)}`, kind: "skill", name: u.name, grade: "official", source: "ncs", ref: `고용24 직무정보(NCS ${u.job})`, def: u.def, ksa: u.ksa, hours: hoursOf("skill", u.name) });
-  if (BASIC_WORLDS.has(worldId)) for (const n of NCS_BASIC) add({ id: `ncs-basic:${key(n)}`, kind: "skill", name: n, grade: "official", source: "ncs", ref: "NCS 직업기초능력(ncs.go.kr)", hours: hoursOf("skill", n) });
+  for (const u of src.ncs)
+    add({
+      id: `ncs:${key(u.name)}`,
+      kind: "skill",
+      name: u.name,
+      grade: "official",
+      source: "ncs",
+      ref: u.ref ?? `고용24 직무정보(NCS ${u.job})`,
+      def: u.def,
+      ksa: u.ksa,
+      ncsCriteria: u.criteria,
+      evalConsider: u.evalConsider,
+      positionLevel: u.positionLevel,
+      entry: u.entry,
+      hours: u.trainTime ? { value: u.trainTime, grade: "official" } : hoursOf("skill", u.name),
+    });
+  if (BASIC_WORLDS.has(worldId))
+    for (const n of NCS_BASIC) {
+      const b = src.ncsBasics?.find((x) => x.name === n);
+      add({ id: `ncs-basic:${key(n)}`, kind: "skill", name: n, grade: "official", source: "ncs", ref: "NCS 직업기초능력(ncs.go.kr)", def: b?.desc, ksa: b?.subs, hours: hoursOf("skill", n) });
+    }
 
   // 시험형·면허형의 자격증은 공식 목록을 그대로 쓰지 않는다(경찰에 전자산업기사가 나오는 식이라서). 직접 정리한 후보만.
   if (policy !== "curated-only") {
+    for (const c of src.ncsCerts ?? [])
+      for (const n of parseCerts(c.name)) add({ id: `cert:${certKey(n)}`, kind: "cert", name: n, grade: "official", source: "ncs", ref: `NCS 관련자격종목(${c.job})`, officialUrl: officialUrlOf(n), hours: hoursOf("cert", n) });
     for (const c of src.careernet)
       for (const n of c.certs.flatMap(parseCerts))
         add({ id: `cert:${certKey(n)}`, kind: "cert", name: n, grade: "official", source: "careernet", ref: `커리어넷 직업정보(${c.name})`, officialUrl: officialUrlOf(n), hours: hoursOf("cert", n) });
@@ -204,6 +243,9 @@ export function buildRequirements(worldId: string, archetype: string, src: Requi
     const exp = (experience as unknown as Record<string, { id: string; name: string; hours: number }[]>)[archetype] ?? [];
     for (const e of exp) add({ id: `exp:${archetype}:${e.id}`, kind: "experience", name: e.name, grade: "assumed", source: "assumed", ref: "팀이 정한 가정값", hours: hoursOf("experience", e.name, e.hours) });
   }
+
+  const related = new Set((src.ncsCerts ?? []).flatMap((c) => parseCerts(c.name)).map(certKey));
+  for (const i of items) if (i.kind === "cert" && related.has(certKey(i.name))) i.ncsRelated = true;
 
   const prep = [
     ...src.careernet.flatMap((c) => c.prep.map((p) => ({ source: "careernet" as const, ref: `커리어넷 직업정보(${c.name})`, text: p.text }))),

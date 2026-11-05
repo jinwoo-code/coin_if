@@ -10,6 +10,7 @@ export interface PlanEdits {
   months?: number; // 계획 기간
   weekly?: number; // 주당 공부 시간
   removed?: string[]; // 뺀 항목(row id)
+  added?: string[]; // '나중에'에서 일정으로 올린 자격
   examMonth?: Record<string, number>; // 사용자가 고친 시험 위치(시작부터 몇 개월째)
 }
 export interface PlanRow {
@@ -18,6 +19,7 @@ export interface PlanRow {
   kind: PriorityRow["item"]["kind"];
   lane: "study" | "practice" | "school";
   hours: number;
+  hoursOfficial: boolean; // NCS 훈련 기준 시간이면 true
   start: number; // 시작 달(0부터)
   end: number; // 끝나는 달(포함)
   overflow: boolean; // 계획 기간을 넘김
@@ -31,6 +33,7 @@ export interface Plan {
   rows: PlanRow[];
   milestones: PriorityRow[]; // 시간 없는 필수 항목(면허 등)
   removed: PriorityRow[];
+  later: PriorityRow[]; // 상위 몇 개 밖의 선택 자격. 접어 둔다
   months: number;
   weekly: number;
   capacityPerMonth: number;
@@ -63,7 +66,13 @@ export function buildPlan(rows: PriorityRow[], p: Profile, w: WorldTemplate, def
   const capacityPerMonth = weekly * WEEKS_PER_MONTH * (1 - W("report.plan.spare"));
   const removedIds = new Set(edits.removed ?? []);
   const removed = rows.filter((r) => removedIds.has(r.item.id));
-  const active = rows.filter((r) => !removedIds.has(r.item.id));
+  const addedIds = new Set(edits.added ?? []);
+  // 필수가 아닌 자격은 우선순위 상위 몇 개만 일정에 넣는다(개수는 가정값).
+  const optionalCerts = rows.filter((r) => r.item.kind === "cert" && !r.item.required && !removedIds.has(r.item.id));
+  const inPlan = new Set(optionalCerts.slice(0, W("report.plan.certLimit")).map((r) => r.item.id));
+  const later = optionalCerts.filter((r) => !inPlan.has(r.item.id) && !addedIds.has(r.item.id));
+  const laterIds = new Set(later.map((r) => r.item.id));
+  const active = rows.filter((r) => !removedIds.has(r.item.id) && !laterIds.has(r.item.id));
 
   const retrain = retrainMonths(p, w); // 학과를 새로 다니면 그 뒤 일정이 시작된다. 지금 학과에 다니는 사람은 졸업 전에 나란히 준비한다.
   const schoolMonths = Math.max(retrain, needsSchool(w) && !retrainMonths(p, w) ? p.spec.gradIn : 0);
@@ -117,6 +126,7 @@ export function buildPlan(rows: PriorityRow[], p: Profile, w: WorldTemplate, def
       kind: r.item.kind,
       lane: isPractice(r) ? "practice" : "study",
       hours: r.hoursLeft!,
+      hoursOfficial: r.hoursOfficial,
       start: s,
       end: e,
       overflow: capacityPerMonth <= 0 || e >= months,
@@ -134,6 +144,7 @@ export function buildPlan(rows: PriorityRow[], p: Profile, w: WorldTemplate, def
       kind: "experience",
       lane: "school",
       hours: school.reduce((a, r) => a + (r.hoursLeft ?? 0), 0),
+      hoursOfficial: false,
       start: 0,
       end: Math.max(0, schoolMonths - 1),
       overflow: schoolMonths > months,
@@ -152,6 +163,7 @@ export function buildPlan(rows: PriorityRow[], p: Profile, w: WorldTemplate, def
     rows: [...(schoolMonths > 0 ? schoolRows : []), ...planRows.toSorted((a, b) => a.start - b.start || a.end - b.end)],
     milestones,
     removed,
+    later,
     months,
     weekly,
     capacityPerMonth,
@@ -165,7 +177,8 @@ export function buildPlan(rows: PriorityRow[], p: Profile, w: WorldTemplate, def
 // '항목 줄이기': 필수가 아닌 항목을 우선순위 뒤에서부터 빼서 시간 안에 맞춘다.
 export function itemsToCut(rows: PriorityRow[], p: Profile, w: WorldTemplate, months: number, weekly: number, already: string[] = []): string[] {
   const removed = [...already];
-  const cuttable = rows.filter((r) => !r.item.required && !removed.includes(r.item.id) && r.hoursLeft !== null && !isSchool(r, w)).toReversed();
+  const later = new Set(buildPlan(rows, p, w, months, { months, weekly, removed: already }).later.map((r) => r.item.id));
+  const cuttable = rows.filter((r) => !r.item.required && !removed.includes(r.item.id) && !later.has(r.item.id) && r.hoursLeft !== null && !isSchool(r, w)).toReversed();
   for (const r of cuttable) {
     if (!buildPlan(rows, p, w, months, { months, weekly, removed }).over) break;
     removed.push(r.item.id);

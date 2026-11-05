@@ -1,5 +1,6 @@
 // 필요한 것 목록과 내 프로필 비교(격차), 우선순위. 판정은 전부 코드 규칙이고 AI를 안 쓴다.
 // 프로필에 능력단위별 답은 없어서 능력은 준비도 답으로 추정한다. 물어본 적 없는 것은 asked: false로 화면에 그대로 말한다.
+import { certClass, eligibilityOf, type EligibilityResult } from "./cert-eligibility";
 import { hasCert } from "./factors";
 import { iGa } from "./josa";
 import { answerOf, READINESS } from "./readiness";
@@ -27,8 +28,10 @@ export interface PriorityRow extends GapItem {
   title: string;
   members: GapItem[]; // 묶음이면 2개 이상. 3단계 일정은 이것을 편다
   hoursLeft: number | null;
+  hoursOfficial: boolean; // 시간이 전부 NCS 훈련 기준이면 true, 아니면 가정값
   months: number | null; // 지금 공부 시간으로 몇 개월
   evidence: string[];
+  eligibility: EligibilityResult | null; // 자격증 응시자격
 }
 
 // 능력을 재는 준비도 질문. 면허·체력·외국어 등은 능력단위 근거로 안 본다.
@@ -155,14 +158,28 @@ export function judgeItem(i: RequirementItem, p: Profile, w: WorldTemplate): Gap
 export function gapItems(r: Requirements, p: Profile, w: WorldTemplate, answers: SkillAnswers = {}): GapItem[] {
   const groupOf = new Map((r.skillGroups ?? []).flatMap((g) => g.itemIds.map((id) => [id, g] as const)));
   return r.items
-    .filter((i) => !(w.archetype === "exam" && i.kind === "skill"))
+    .filter((i) => !(w.archetype === "exam" && i.kind === "skill") && !(i.kind === "skill" && i.entry === false))
     .map((i) => {
       const g = i.kind === "skill" ? groupOf.get(i.id) : undefined;
       const a = g ? answers[g.id] : undefined;
       if (a === undefined) return judgeItem(i, p, w);
       return make(i, a === 2 ? "have" : a === 1 ? "partial" : "none", `직접 답했어요('${g!.name}': ${SKILL_CHOICES.find((c) => c.v === a)?.t})`);
-    });
+    })
+    .filter((g) => !isLaterCert(g, p, w));
 }
+
+// 경력·학력 조건 때문에 신입 계획에 못 넣는 자격(이미 가졌거나 필수인 것은 그대로 둔다).
+const isLaterCert = (g: GapItem, p: Profile, w: WorldTemplate) => g.item.kind === "cert" && g.status !== "have" && g.item.required !== true && eligibilityOf(g.item.name, p, w).status === "blocked";
+export function laterCerts(r: Requirements, p: Profile, w: WorldTemplate): { item: RequirementItem; why: string }[] {
+  return r.items
+    .filter((i) => i.kind === "cert")
+    .map((i) => judgeItem(i, p, w))
+    .filter((g) => isLaterCert(g, p, w))
+    .map((g) => ({ item: g.item, why: eligibilityOf(g.item.name, p, w).why }));
+}
+
+// 신입 뒤에 익힐 능력(직책 수준이 기준보다 높음). 격차·일정에는 안 넣고 따로 보여 준다.
+export const laterSkills = (r: Requirements, w: WorldTemplate): RequirementItem[] => (w.archetype === "exam" ? [] : r.items.filter((i) => i.kind === "skill" && i.entry === false).toSorted((a, b) => (a.positionLevel ?? 0) - (b.positionLevel ?? 0)));
 
 const up = (id: string, label: string): Tweak => ({
   key: `readiness:${id}`,
@@ -268,11 +285,13 @@ export function prioritize(gaps: GapItem[], w: WorldTemplate, p: Profile, deltas
     groups.set(key, [...(groups.get(key) ?? []), g]);
   }
   const rows = [...groups.values()].map((members): PriorityRow => {
+    members.sort((a, b) => (a.item.positionLevel ?? 0) - (b.item.positionLevel ?? 0)); // 신입 순서: 낮은 직책 수준부터
     const g = members[0];
     const t = tweakOf(g.item, w);
     const delta = t && !g.item.required && deltas[t.key] !== undefined ? deltas[t.key] : null;
     const hours = members.map(hoursLeftOf).filter((h): h is number => h !== null);
     const hoursLeft = hours.length ? hours.reduce((a, b) => a + b, 0) : null;
+    const hoursOfficial = members.every((m) => m.item.hours?.grade === "official");
     const months = monthsOf(hoursLeft, p);
     const score = scoreOf({
       posting: g.item.postingShare ?? null,
@@ -288,10 +307,20 @@ export function prioritize(gaps: GapItem[], w: WorldTemplate, p: Profile, deltas
       if (delta !== null) evidence.push(`${delta > 0 ? `시뮬레이션에서 +${delta}%p` : "시뮬레이션에서 차이 없음"}${members.length > 1 || t!.key === "study" ? `(${t!.label})` : ""}`);
       else evidence.push("시뮬레이션에 안 들어가는 항목");
     }
-    if (hoursLeft !== null) evidence.push(`${months ? `약 ${months}개월` : `약 ${hoursLeft}시간`}(가정값)`);
+    const eligibility = g.item.kind === "cert" && !g.item.required ? eligibilityOf(g.item.name, p, w) : null;
+    if (eligibility?.why) evidence.push(eligibility.why);
+    if (hoursLeft !== null) evidence.push(`${months ? `약 ${months}개월` : `약 ${hoursLeft}시간`}(${hoursOfficial ? "NCS 훈련 기준 시간" : "가정값"})`);
     const title = members.length > 1 ? `${g.item.kind === "skill" ? "직무 능력" : "시험 과목"} ${members.length}개` : g.item.name;
     const status: GapStatus = members.every((m) => m.status === "none") ? "none" : "partial";
-    return { ...g, status, title, members, score, simDelta: delta, simLabel: t?.label ?? null, hoursLeft, months, evidence };
+    return { ...g, status, title, members, score, simDelta: delta, simLabel: t?.label ?? null, hoursLeft, hoursOfficial, months, evidence, eligibility };
   });
-  return rows.toSorted((a, b) => tier(a.item) - tier(b.item) || b.score - a.score || a.item.id.localeCompare(b.item.id));
+  // 업체 자격은 맨 뒤로. 그 밖 자격은 자리를 그대로 두고 자격끼리 국가기술·NCS 관련 순으로 바꾼다.
+  const tierOf = (r: PriorityRow) => (r.item.kind === "cert" && !r.item.required && certClass(r.item.name, r.item.ncsRelated) === 4 ? 3 : tier(r.item));
+  const sorted = rows.toSorted((a, b) => tierOf(a) - tierOf(b) || b.score - a.score || a.item.id.localeCompare(b.item.id));
+  for (const t of [1, 2]) {
+    const slots = sorted.flatMap((r, i) => (r.item.kind === "cert" && tierOf(r) === t ? [i] : []));
+    const certs = slots.map((i) => sorted[i]).toSorted((a, b) => certClass(a.item.name, a.item.ncsRelated) - certClass(b.item.name, b.item.ncsRelated) || b.score - a.score || a.item.id.localeCompare(b.item.id));
+    slots.forEach((s, k) => (sorted[s] = certs[k]));
+  }
+  return sorted;
 }

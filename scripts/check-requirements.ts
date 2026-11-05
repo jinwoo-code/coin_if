@@ -1,4 +1,5 @@
 // 필요한 것 목록 단위 테스트(네트워크 없음). 실행: npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-requirements.ts
+import { isEntryUnit } from "@/lib/ncs-data";
 import assert from "node:assert/strict";
 import { ALL_WORLD_IDS, codesFor, majorFamily } from "@/lib/job-codes";
 import { existsSync, readFileSync } from "node:fs";
@@ -49,6 +50,30 @@ const t = async (name: string, f: () => void | Promise<void>) => {
     const r = buildRequirements("pub-office", "public", empty, "2026-11-05");
     assert.equal(r.items.filter((i) => i.id.startsWith("ncs-basic:")).length, 10);
     assert.equal(buildRequirements("developer", "open", empty, "2026-11-05").items.filter((i) => i.id.startsWith("ncs-basic:")).length, 0);
+  });
+  await t("NCS 재료: 수행준거·공부 목록·훈련 시간·신입 표시·관련 자격이 항목에 들어간다", () => {
+    const r = buildRequirements(
+      "developer",
+      "open",
+      { ...empty, ncs: [{ name: "화면 구현", def: "d", job: "J", ksa: ["k"], criteria: ["c"], evalConsider: ["e"], trainTime: 40, positionLevel: 3, entry: true, ref: "R" }], ncsCerts: [{ name: "정보처리기사", job: "J" }], work24: [{ name: "w", certs: ["정보처리기사"], majors: [], techn: "" }] },
+      "2026-11-05",
+    );
+    const s = r.items.find((i) => i.kind === "skill")!;
+    assert.deepEqual([s.ncsCriteria, s.ksa, s.evalConsider, s.hours, s.entry, s.ref], [["c"], ["k"], ["e"], { value: 40, grade: "official" }, true, "R"]);
+    const c = r.items.filter((i) => i.kind === "cert");
+    assert.equal(c.length, 1);
+    assert.equal(c[0].ncsRelated, true);
+  });
+  await t("시험형·면허형은 NCS 관련 자격을 후보로 안 넣는다", () => {
+    const r = buildRequirements("emt", "license", { ...empty, ncsCerts: [{ name: "소방설비기사", job: "J" }] }, "2026-11-05");
+    assert.equal(r.items.filter((i) => i.kind === "cert").length, 0);
+  });
+  await t("NCS 신입 단위: 수준 기준 이하, 없으면 가장 낮은 수준", () => {
+    const u = (name: string, level: number) => ({ compUnitCd: name, ncsClCd: "", name, def: "", level, trainTime: 1, elements: [], knowledge: [], skills: [], attitude: [], evalConsider: [], evalMethodCodes: [] });
+    const f = { dutyCd: "1", dutyNm: "J", dutyDef: "", fetchedAt: "", certs: [], units: [u("a", 2), u("b", 5), u("c", 3)], positions: [{ level: 2, name: "P", units: ["a"] }, { level: 5, name: "Q", units: ["b", "c"] }] };
+    assert.deepEqual(f.units.map((x) => isEntryUnit(f, x)), [true, false, false]);
+    const high = { ...f, units: [u("a", 5), u("b", 6)], positions: [] };
+    assert.deepEqual(high.units.map((x) => isEntryUnit(high, x)), [true, false]);
   });
   await t("전공 계열로 코드를 고른다", () => {
     assert.equal(majorFamily("컴퓨터공학과"), "자연");

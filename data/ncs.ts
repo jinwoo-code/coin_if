@@ -43,7 +43,7 @@ export const NCS: Record<string, NcsDuty[]> = {
   beauty: same("헤어미용", "메이크업"),
   accountant: [{ q: "회계감사", name: "회계·감사" }],
   hr: same("인사", "총무"),
-  sales: same("유통관리"),
+  sales: same("일반영업"),
   "trade-log": same("수출입관리", "유통관리"),
   banker: same("창구사무", "여신심사"),
   "tax-acct": same("세무"),
@@ -60,4 +60,5 @@ export const NCS: Record<string, NcsDuty[]> = {
   musician: same("음악콘텐츠제작", "실용음악"),
   childcare: same("보육"),
   firefighter: same("구조구급"),
+  emt: same("구조구급"),
 };

@@ -1,7 +1,8 @@
 // 격차 판정·우선순위 단위 테스트(AI·네트워크 없음).
 import assert from "node:assert/strict";
+import { certClass, eligibilityOf, gradeOf, isNotCert, isVendorCert } from "@/lib/cert-eligibility";
 import { DEMO_PROFILE } from "@/lib/demo";
-import { gapItems, higherCert, judgeItem, monthsOf, postingText, prioritize, REQUIRED_TEXT, scoreOf, tweakOf } from "@/lib/gap";
+import { gapItems, higherCert, judgeItem, laterCerts, laterSkills, monthsOf, postingText, prioritize, REQUIRED_TEXT, scoreOf, tweakOf } from "@/lib/gap";
 import { retrainMonths } from "@/lib/retrain";
 import { buildPlan, itemsToCut, overText, weeklyOf } from "@/lib/schedule";
 import { simulatePath } from "@/lib/engine";
@@ -245,5 +246,54 @@ t("일정: 학과가 필요한 진로는 학과가 맨 앞, 공부 시간 0도 �
   const short = buildPlan(rows, study, nurse, 24);
   assert.equal(short.over, true);
   assert.match(overText(short), /학과 과정만 30개월/);
+});
+t("응시자격: 시행령 별표 4의2 기준", () => {
+  const cs = (school: Profile["spec"]["school"], major: string) => prof({ school }, { major });
+  assert.equal(gradeOf("소방설비기사 (전기·기계분야)"), "기사");
+  assert.equal(gradeOf("리눅스마스터"), null);
+  assert.equal(eligibilityOf("정보처리기능사", cs("고졸", ""), dev).status, "open");
+  assert.equal(eligibilityOf("컴퓨터시스템응용기술사", cs("4년제", "컴퓨터공학"), dev).status, "blocked");
+  assert.equal(eligibilityOf("조리기능장", cs("4년제", "조리"), dev).status, "blocked");
+  assert.equal(eligibilityOf("정보처리기사", cs("4년제", "컴퓨터공학"), dev).status, "ok");
+  assert.equal(eligibilityOf("정보처리기사", cs("전문대", "컴퓨터공학"), dev).status, "blocked");
+  assert.equal(eligibilityOf("정보처리기사", cs("4년제", "국어국문"), dev).status, "blocked");
+  assert.equal(eligibilityOf("정보처리기사", cs("4년제", ""), dev).status, "check");
+  assert.equal(eligibilityOf("정보처리산업기사", cs("전문대", "컴퓨터공학"), dev).status, "ok");
+  assert.equal(eligibilityOf("정보처리산업기사", cs("고졸", "컴퓨터공학"), dev).status, "blocked");
+  assert.equal(eligibilityOf("사회조사분석사 1급", cs("4년제", ""), dev).status, "blocked");
+});
+t("자격 종류: 국가기술·NCS 관련이 먼저, 업체 자격이 맨 뒤, 자격이 아닌 값은 뺀다", () => {
+  assert.ok(certClass("정보처리기사", true) < certClass("정보처리기능사") && certClass("정보처리기능사") < certClass("ADsP", true) && certClass("ADsP", true) < certClass("리눅스마스터") && certClass("리눅스마스터") < certClass("MCSE"));
+  for (const v of ["MCSE", "SCJP", "OCP", "오라클 자격인증제도", "마이크로소프트 인증 전문가 자격증(MCP)"]) assert.ok(isVendorCert(v), v);
+  assert.ok(!isVendorCert("정보처리기사"));
+  for (const v of ["해당없음", "없음", "해당사항 없음", "출판기획기사(가칭) 신설", "과정평가자격(일반)", "헤어디자인_L2", "기계시스템설계L6"]) assert.ok(isNotCert(v), v);
+  assert.ok(!isNotCert("정보처리기사"));
+});
+t("일정: 선택 자격은 상위 3개만, 나머지는 나중에, 올리면 들어간다", () => {
+  const p = prof({ school: "4년제" }, { major: "컴퓨터공학" });
+  const names = ["정보처리기사", "정보처리산업기사", "정보처리기능사", "리눅스마스터", "MCSE", "SCJP"];
+  const req: Requirements = { worldId: "developer", certPolicy: "ai-filter", items: names.map((name) => item({ id: name, name, hours: { value: 100, grade: "assumed" } })), prep: [], majors: [], baseDate: "", stale: false };
+  const rows = prioritize(gapItems(req, p, dev), dev, p, {});
+  assert.deepEqual(rows.slice(-2).map((r) => r.item.name).sort(), ["MCSE", "SCJP"]);
+  assert.equal(rows[0].item.kind, "cert");
+  const plan = buildPlan(rows, p, dev, 36, { weekly: 20 });
+  assert.equal(plan.rows.length, 3);
+  assert.equal(plan.later.length, 3);
+  assert.ok(plan.later.some((r) => r.item.name === "MCSE"));
+  const up = buildPlan(rows, p, dev, 36, { weekly: 20, added: ["MCSE"] });
+  assert.equal(up.rows.length, 4);
+  assert.equal(up.later.length, 2);
+});
+t("격차: 기술사는 신입 목록에서 빠지고 따로 보인다, 이미 가졌으면 있음", () => {
+  const req: Requirements = { worldId: "developer", certPolicy: "ai-filter", items: [item({ id: "a", name: "컴퓨터시스템응용기술사" })], prep: [], majors: [], baseDate: "", stale: false };
+  assert.equal(gapItems(req, prof(), dev).length, 0);
+  assert.equal(laterCerts(req, prof(), dev).length, 1);
+  assert.equal(gapItems(req, prof({ certs: ["컴퓨터시스템응용기술사"] }), dev)[0].status, "have");
+  assert.equal(laterCerts(req, prof({ certs: ["컴퓨터시스템응용기술사"] }), dev).length, 0);
+});
+t("신입 뒤에 익힐 능력은 격차에서 빠진다", () => {
+  const req: Requirements = { worldId: "developer", certPolicy: "ai-filter", items: [item({ id: "s1", kind: "skill", name: "화면 구현", entry: true, positionLevel: 3 }), item({ id: "s2", kind: "skill", name: "요구사항 확인", entry: false, positionLevel: 7 })], prep: [], majors: [], baseDate: "", stale: false };
+  assert.deepEqual(gapItems(req, prof(), dev).map((g) => g.item.id), ["s1"]);
+  assert.deepEqual(laterSkills(req, dev).map((i) => i.id), ["s2"]);
 });
 console.log(`${n}개 통과`);

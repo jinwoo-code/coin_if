@@ -1,0 +1,324 @@
+{
+ "_설명": "진로 → NCS 직무(세분류) 코드. 팀장 확인 2026-11-05. 국가직무능력표준 정보_GW(apis.data.go.kr/B490007/ncsInfo) ncsDutyInfo 기준. 저장 파일은 scripts/sync-ncs.ts",
+ "worlds": {
+  "developer": [
+   {
+    "dutyCd": "20010202",
+    "name": "응용SW엔지니어링"
+   }
+  ],
+  "civil-servant": [
+   {
+    "dutyCd": "02020302",
+    "name": "사무행정"
+   }
+  ],
+  "data-analyst": [
+   {
+    "dutyCd": "20010105",
+    "name": "빅데이터분석"
+   }
+  ],
+  "marketer": [
+   {
+    "dutyCd": "02010301",
+    "name": "마케팅전략기획"
+   }
+  ],
+  "app-dev": [
+   {
+    "dutyCd": "20010202",
+    "name": "응용SW엔지니어링"
+   }
+  ],
+  "security": [
+   {
+    "dutyCd": "20010206",
+    "name": "보안엔지니어링"
+   }
+  ],
+  "sys-eng": [
+   {
+    "dutyCd": "20010301",
+    "name": "IT시스템관리"
+   },
+   {
+    "dutyCd": "20010205",
+    "name": "NW엔지니어링"
+   }
+  ],
+  "game-dev": [
+   {
+    "dutyCd": "08030205",
+    "name": "게임콘텐츠제작"
+   }
+  ],
+  "mech-eng": [
+   {
+    "dutyCd": "15010201",
+    "name": "기계요소설계"
+   },
+   {
+    "dutyCd": "15010202",
+    "name": "기계시스템설계"
+   }
+  ],
+  "elec-eng": [
+   {
+    "dutyCd": "19010601",
+    "name": "전기설비설계"
+   }
+  ],
+  "semi-eng": [
+   {
+    "dutyCd": "19030602",
+    "name": "반도체제조"
+   }
+  ],
+  "chem-eng": [
+   {
+    "dutyCd": "17010203",
+    "name": "화학공정유지운영"
+   }
+  ],
+  "architect": [
+   {
+    "dutyCd": "14030101",
+    "name": "건축설계"
+   }
+  ],
+  "civil-eng": [
+   {
+    "dutyCd": "14010204",
+    "name": "건설공사공무관리"
+   },
+   {
+    "dutyCd": "14010202",
+    "name": "건설공사품질관리"
+   }
+  ],
+  "car-tech": [
+   {
+    "dutyCd": "15060302",
+    "name": "자동차엔진정비"
+   },
+   {
+    "dutyCd": "15060303",
+    "name": "자동차섀시정비"
+   }
+  ],
+  "food-qc": [
+   {
+    "dutyCd": "21010111",
+    "name": "식품품질관리"
+   }
+  ],
+  "env-consult": [
+   {
+    "dutyCd": "23040201",
+    "name": "환경영향평가"
+   },
+   {
+    "dutyCd": "23010201",
+    "name": "대기환경관리"
+   }
+  ],
+  "trainer": [
+   {
+    "dutyCd": "12040303",
+    "name": "건강운동관리"
+   }
+  ],
+  "chef": [
+   {
+    "dutyCd": "13010101",
+    "name": "한식조리"
+   },
+   {
+    "dutyCd": "13010102",
+    "name": "양식조리"
+   }
+  ],
+  "beauty": [
+   {
+    "dutyCd": "12010101",
+    "name": "헤어미용"
+   },
+   {
+    "dutyCd": "12010103",
+    "name": "메이크업"
+   }
+  ],
+  "accountant": [
+   {
+    "dutyCd": "02030201",
+    "name": "회계·감사"
+   }
+  ],
+  "hr": [
+   {
+    "dutyCd": "02020201",
+    "name": "인사"
+   },
+   {
+    "dutyCd": "02020101",
+    "name": "총무"
+   }
+  ],
+  "sales": [
+   {
+    "dutyCd": "10010101",
+    "name": "일반영업"
+   }
+  ],
+  "trade-log": [
+   {
+    "dutyCd": "02040302",
+    "name": "수출입관리"
+   },
+   {
+    "dutyCd": "02010304",
+    "name": "유통관리"
+   }
+  ],
+  "banker": [
+   {
+    "dutyCd": "03010101",
+    "name": "창구사무"
+   },
+   {
+    "dutyCd": "03010303",
+    "name": "여신심사"
+   }
+  ],
+  "tax-acct": [
+   {
+    "dutyCd": "02030202",
+    "name": "세무"
+   }
+  ],
+  "pub-office": [
+   {
+    "dutyCd": "02020302",
+    "name": "사무행정"
+   },
+   {
+    "dutyCd": "02020101",
+    "name": "총무"
+   }
+  ],
+  "social-worker": [
+   {
+    "dutyCd": "07010201",
+    "name": "사회복지프로그램운영"
+   },
+   {
+    "dutyCd": "07010204",
+    "name": "사회복지사례관리"
+   }
+  ],
+  "hotelier": [
+   {
+    "dutyCd": "12030202",
+    "name": "객실관리"
+   },
+   {
+    "dutyCd": "12030205",
+    "name": "접객서비스"
+   }
+  ],
+  "flight-crew": [
+   {
+    "dutyCd": "12030105",
+    "name": "항공객실서비스"
+   }
+  ],
+  "editor": [
+   {
+    "dutyCd": "22010101",
+    "name": "출판기획"
+   },
+   {
+    "dutyCd": "22010103",
+    "name": "편집"
+   }
+  ],
+  "pd": [
+   {
+    "dutyCd": "08030401",
+    "name": "영상연출"
+   },
+   {
+    "dutyCd": "08030201",
+    "name": "방송콘텐츠제작"
+   }
+  ],
+  "ux-designer": [
+   {
+    "dutyCd": "08020104",
+    "name": "디지털디자인"
+   }
+  ],
+  "visual-designer": [
+   {
+    "dutyCd": "08020101",
+    "name": "시각디자인"
+   }
+  ],
+  "webtoon": [
+   {
+    "dutyCd": "08030207",
+    "name": "만화콘텐츠제작"
+   }
+  ],
+  "fashion": [
+   {
+    "dutyCd": "18020102",
+    "name": "패션디자인"
+   }
+  ],
+  "musician": [
+   {
+    "dutyCd": "08030203",
+    "name": "음악콘텐츠제작"
+   },
+   {
+    "dutyCd": "08010201",
+    "name": "실용음악"
+   }
+  ],
+  "childcare": [
+   {
+    "dutyCd": "07030101",
+    "name": "보육"
+   }
+  ],
+  "emt": [
+   {
+    "dutyCd": "05020103",
+    "name": "구조구급"
+   }
+  ],
+  "firefighter": [
+   {
+    "dutyCd": "05020103",
+    "name": "구조구급"
+   }
+  ]
+ },
+ "none": {
+  "researcher": "연구 직무를 묶는 NCS 직무가 없음",
+  "journalist": "취재·기사 작성 NCS 직무가 없음",
+  "translator": "번역·통역 NCS 직무가 없음",
+  "tutor": "학원 강사 NCS 직무가 없음(평생교육은 다른 일)",
+  "teacher-elem": "교원 NCS 직무가 없음(평생교육·기업교육은 다른 일)",
+  "teacher-sec": "교원 NCS 직무가 없음(평생교육·기업교육은 다른 일)",
+  "nurse": "간호 NCS 직무가 없음",
+  "physio": "물리치료 NCS 직무가 없음",
+  "clinical-lab": "임상병리 NCS 직무가 없음(임상심리는 다른 일)",
+  "dental-hyg": "치위생 NCS 직무가 없음",
+  "radiologist": "의료 방사선 NCS 직무가 없음(측정평가·비파괴검사는 산업용)",
+  "police": "경찰 NCS 직무가 없음(경호는 다른 일)",
+  "startup": "창업 NCS 직무가 없음"
+ }
+}
