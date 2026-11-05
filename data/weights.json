@@ -660,5 +660,19 @@
     "kind": "scale",
     "direction": "팀장 지시(상위 2~3개). 나머지는 접어 둔다. 크기 근거 없음.",
     "magnitude": "assumed"
+  },
+  "satisfaction.repeatDecay": {
+    "label": "되풀이되는 나쁜 일에 적응하는 정도(한 번 겪을 때마다 곱함)",
+    "value": 0.8,
+    "kind": "mult",
+    "direction": "같은 일을 되풀이하면 덜 힘들어진다(적응). 일하는 동안 반복되는 사건의 만족도 감소에만 쓴다. 크기 근거 없음.",
+    "magnitude": "assumed"
+  },
+  "satisfaction.repeatFloor": {
+    "label": "적응해도 남는 최소 비율",
+    "value": 0.25,
+    "kind": "share",
+    "direction": "적응해도 나쁜 일이 아예 없어지지는 않는다. 크기 근거 없음.",
+    "magnitude": "assumed"
   }
 }

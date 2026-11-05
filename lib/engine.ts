@@ -8,7 +8,7 @@ import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./
 import norms from "@/data/norms.json";
 import { judgeFailed, judgeFor, type JudgeEntry } from "./judge";
 import { retrainMonths, retrainTuition, TUITION_SOURCE } from "./retrain";
-import { blendPersistence, blendValueFit, storyReason } from "./story";
+import { blendPersistence, blendValueFit, storyReason, VALUE_KEYS } from "./story";
 import { examChance, W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
 
@@ -50,11 +50,17 @@ function addDelta(a: Partial<LifeState>, b: Partial<LifeState> | undefined): Par
 // 시간이 지나면 스트레스와 만족도는 '지금 처지의 평소 수준'으로 조금씩 돌아온다.
 // 일하는 중: 만족도 60(공무원 직무만족 5점 중 3.43 ≈ 60점, 한국행정연구원 2025), 스트레스는 근무시간이 길수록 높게.
 // 준비 중: 오래 준비할수록 만족도 평소 수준이 내려간다(가정).
+// 만족도는 정수라, 그냥 반올림하면 평소 수준과 차가 8 이하일 때 멈춘다(docs/만족-비율-진단.md). 차가 1 이상이면 적어도 1은 움직인다.
+function driftStep(gap: number): number {
+  const step = Math.round(gap * 0.06);
+  return step !== 0 || Math.abs(gap) < 1 ? step : Math.sign(gap);
+}
+
 function drift(state: LifeState, target: { sat: number; stress: number }): LifeState {
   return {
     ...state,
     stress: Math.round(state.stress + (target.stress - state.stress) * 0.08),
-    satisfaction: Math.round(state.satisfaction + (target.sat - state.satisfaction) * 0.06),
+    satisfaction: state.satisfaction + driftStep(target.sat - state.satisfaction),
   };
 }
 
@@ -134,7 +140,10 @@ const RETRAIN_END: EventCard = {
 export const GLOBAL_EVENTS = [ENLIST, DISCHARGE, BROKE];
 const [ENLIST_B, DISCHARGE_B, BROKE_B] = GLOBAL_EVENTS.map((e) => attachBase(e, "_global"));
 
+// 1순위 가치에 가장 큰 가중치(value.fitRank). 이야기에서 확인한 핵심 가치가 있으면 story.coreValueShare만큼 섞는다.
+// 가치관을 안 고른 사람은 0이 아니라 8개 가치관의 기대값으로 본다(data/norms.json과 같은 생각).
 export function valueFit(world: WorldTemplate, p: Profile) {
+  if (!p.values.length) return blendValueFit(VALUE_KEYS.reduce((s, v) => s + (world.fitValues[v] ?? 0.5), 0) / VALUE_KEYS.length, world.fitValues, p.story);
   return blendValueFit(
     p.values.reduce((s, v, i) => s + (WA("value.fitRank")[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
     world.fitValues,
@@ -414,6 +423,7 @@ export interface Force {
 }
 
 interface Sim {
+  routineSeen: Map<string, number>; // 일하면서 되풀이된 사건을 겪은 횟수
   state: LifeState;
   used: Set<string>; // 일어난 사건 + 켜진 상태
   employedSince: number | null;
@@ -555,6 +565,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
   const habit: Record<Tone, number> = { push: 0, change: 0, safe: 0 };
   const sim: Sim = {
     state: { skill: startSkill(p, world), stress: 40, satisfaction: 50, relation: 50, money: p.life.savings },
+    routineSeen: new Map(),
     used: new Set(),
     employedSince: null,
     salary: 0,
@@ -654,6 +665,12 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       }
       const choice = event.choices[choiceIndex];
       delta = addDelta(addDelta(event.effect, choice?.effect), choice ? TONE_EFFECT[choice.tone] : undefined);
+      // 일하면서 되풀이되는 나쁜 일은 겪을수록 덜 깎인다(적응, 크기는 가정값). 싫다고 한 일은 아래에서 그대로 더 깎인다.
+      if (event.repeatable && event.needsJob) {
+        const times = sim.routineSeen.get(event.id) ?? 0;
+        sim.routineSeen.set(event.id, times + 1);
+        if ((delta.satisfaction ?? 0) < 0) delta.satisfaction = Math.round((delta.satisfaction ?? 0) * Math.max(W("satisfaction.repeatFloor"), W("satisfaction.repeatDecay") ** times));
+      }
       // 싫다고 한 일에 걸리면 만족도가 더 깎인다.
       const hits = hateHit(p, event);
       if (hits) delta = addDelta(delta, { satisfaction: -4 * hits, stress: 3 * hits });

@@ -8,7 +8,7 @@ import extraFacts from "@/data/jobdata/extra-facts.json";
 import { JOBS } from "@/data/jobs";
 import { buildWorld } from "./archetypes";
 import { withBase } from "./base";
-import { blendValueFit } from "./story";
+import { valueFit } from "./engine";
 import type { BigFive, Fact, Interests, Profile, WorldStats, WorldTemplate } from "./types";
 import { examChance, WA } from "./weights";
 
@@ -59,15 +59,6 @@ export const DEFAULT_TODOS: Record<string, string> = {
   marketer: "관심 브랜드의 SNS 캠페인 3개 분석해 보기",
 };
 
-// 1순위 가치에 가장 큰 가중치(value.fitRank). 이야기에서 확인한 핵심 가치가 있으면 story.coreValueShare만큼 섞는다(가정값)
-export function valueFit(world: WorldTemplate, profile: Profile): number {
-  return blendValueFit(
-    profile.values.reduce((sum, v, i) => sum + (WA("value.fitRank")[i] ?? 0) * (world.fitValues[v] ?? 0.5), 0),
-    world.fitValues,
-    profile.story,
-  );
-}
-
 function traitFit(world: WorldTemplate, bigFive: BigFive): number {
   const keys = Object.keys(world.fitTraits) as (keyof BigFive)[];
   if (keys.length === 0) return 0.5;
@@ -101,3 +92,5 @@ export function suggestThirdPath(profile: Profile, chosen: string[]): WorldTempl
   if (rest.length === 0) return null;
   return rest.toSorted((a, b) => preFit(b, profile) - preFit(a, profile))[0];
 }
+
+export { valueFit };
