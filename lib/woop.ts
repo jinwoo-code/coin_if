@@ -21,7 +21,8 @@ export function ruleObstacle(forks: WoopFork[], old: string) {
   return `${forks.map((f) => `'${f.label}'`).join(", ")} 같은 갈림길이 오면 마음이 흔들려 하던 일을 미루게 됨`;
 }
 
-export const obstacleUsesFork = (text: string, forks: WoopFork[]) => !forks.length || forks.some((f) => text.replace(/\s/g, "").includes(f.label.replace(/\s/g, "")));
+// 갈림길 이름과 숫자만 옮겨 적은 건 걸림돌 문장이 아니다(실측: "개발자 국비 교육 49%").
+export const obstacleUsesFork = (text: string, forks: WoopFork[]) => text.trim().length >= 15 && !/\d+\s*%/.test(text) && (!forks.length || forks.some((f) => text.replace(/\s/g, "").includes(f.label.replace(/\s/g, ""))));
 
 export interface WeekEntry {
   id: string;
