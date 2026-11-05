@@ -25,6 +25,7 @@ export interface RequirementItem {
   hours?: { value: number; grade: "official" | "assumed" | "interview" }; // official은 NCS 훈련 기준 시간
   officialUrl?: string; // 자격증 공식 사이트(시험 일정은 연동하지 않는다)
   ncsCriteria?: string[]; // 능력단위 수행준거(NCS). 포트폴리오 체크리스트
+  ncsElements?: { name: string; criteria: string[] }[]; // 능력단위요소별 수행준거. 증거물 완성 기준을 요소마다 하나씩 고른다
   ksa?: string[]; // 공부 목록: 능력단위의 지식·기술 이름(NCS)
   evalConsider?: string[]; // 평가 고려사항(NCS). 증거물 형식의 근거
   positionLevel?: number; // 이 단위를 맡는 가장 낮은 NCS 직책 수준. 신입 순서
@@ -42,6 +43,7 @@ export interface NcsUnit {
   job: string;
   ksa: string[];
   criteria?: string[];
+  elements?: { name: string; criteria: string[] }[];
   evalConsider?: string[];
   trainTime?: number | null;
   positionLevel?: number;
@@ -199,6 +201,7 @@ export function buildRequirements(worldId: string, archetype: string, src: Requi
       def: u.def,
       ksa: u.ksa,
       ncsCriteria: u.criteria,
+      ncsElements: u.elements,
       evalConsider: u.evalConsider,
       positionLevel: u.positionLevel,
       entry: u.entry,

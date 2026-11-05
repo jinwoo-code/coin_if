@@ -11,8 +11,9 @@ export interface EvidenceCard {
   form: string;
   amount: string; // 가정값
   checks: string[];
-  checksGrade: "ncs" | "assumed";
+  checksGrade: "ncs" | "curated" | "assumed";
   checksTotal: number; // 수행준거 전체 개수
+  checksRef?: { label: string; url: string; notice: string }; // 공식 문서로 직접 정리한 기준의 출처
   evalConsider: string[];
   noTopic?: boolean; // 기록이라 주제를 고르지 않는다
 }
@@ -33,7 +34,7 @@ export interface MockRecord {
 }
 export interface EvidenceSaved {
   suggestions?: Record<string, Topic[]>;
-  suggestSource?: "ai" | "rule";
+  ruleCards?: string[]; // AI 없이 만든 예시인 카드
   topics?: Record<string, string>; // 고르거나 직접 쓴 주제
   checks?: Record<string, string[]>; // 완성한 기준
   mocks?: MockRecord[];
@@ -44,26 +45,24 @@ type Form = { form: string; amount: string };
 type Extra = Form & { id: string; checks: string[]; noTopic?: boolean };
 const ARCH = forms as unknown as Record<string, { unit?: Form; total: string; extras?: Extra[]; amount?: string }>;
 const UNIT_LIMIT = forms.unitLimit;
-const MAX_CHECKS = forms.maxChecks;
+const WORLD_CHECKS = forms.worldChecks as Record<string, Record<string, { checks: string[]; label: string; url: string; notice: string }>>;
 
 export const isExamWorld = (w: Pick<WorldTemplate, "archetype">) => w.archetype === "exam";
 
-// "…을 계획할 수 있다." → "…을 계획했다". 다른 동사(만들 수 있다 등)는 끝의 마침표만 뗀다.
-const LEAD = /^.{4,}?(?:에 따라|을 바탕으로|를 바탕으로|을 고려하여|를 고려하여|을 활용하여|를 활용하여)\s+/;
-export function shortCriterion(text: string): string {
-  let t = text.trim().replace(/\s+/g, " ");
-  if (t.length > 45) t = t.replace(LEAD, "");
-  if (/할 수 있다\.?$/.test(t)) return t.replace(/할 수 있다\.?$/, "했다");
-  return t.replace(/\.$/, "");
+// 완성 기준은 수행준거 원문 그대로, 능력단위요소마다 하나. 증거물로 남는 말(작성·기록 등)이 든 문장을 먼저, 없으면 그 요소의 첫 문장.
+const ARTIFACT = /작성|문서|기록|보고|산출|결과/;
+export function pickCriteria(elements: { criteria: string[] }[]): string[] {
+  return elements
+    .filter((e) => e.criteria.length)
+    .map((e) => (e.criteria.find((c) => ARTIFACT.test(c)) ?? e.criteria[0]).trim());
 }
 
 // 공고 비율이 있으면 그 순서, 없으면 격차가 큰 쪽 → 직책 수준이 높은 쪽(신입 범위 안) → 파일 순서.
 function pickUnits(req: Requirements, gaps: GapItem[]): { units: RequirementItem[]; byPosting: boolean } {
   const status = new Map(gaps.map((g) => [g.item.id, g.status]));
   const rank = { none: 0, partial: 1, have: 2 } as const;
-  const pool = req.items.filter((i) => i.kind === "skill" && i.entry !== false);
-  const withCriteria = pool.filter((i) => i.ncsCriteria?.length);
-  const list = withCriteria.length ? withCriteria : pool;
+  // 수행준거가 없는 단위는 완성 기준을 못 만들어서 고르지 않는다(공공기관 직업기초능력 등은 기술서로 간다).
+  const list = req.items.filter((i) => i.kind === "skill" && i.entry !== false && i.ncsElements?.some((x) => x.criteria.length));
   const byPosting = list.some((i) => i.postingShare !== undefined);
   const units = list
     .map((i, at) => ({ i, at }))
@@ -77,7 +76,7 @@ function pickUnits(req: Requirements, gaps: GapItem[]): { units: RequirementItem
   return { units, byPosting };
 }
 
-export function buildEvidence(req: Requirements, world: Pick<WorldTemplate, "archetype">, gaps: GapItem[]): EvidencePlan {
+export function buildEvidence(req: Requirements, world: Pick<WorldTemplate, "archetype" | "id">, gaps: GapItem[]): EvidencePlan {
   const a = ARCH[world.archetype as Archetype] ?? ARCH.open;
   const { units, byPosting } = pickUnits(req, gaps);
   const unitForm = a.unit ?? { form: "증거물", amount: "1개" };
@@ -86,15 +85,27 @@ export function buildEvidence(req: Requirements, world: Pick<WorldTemplate, "arc
     unit: u.name,
     form: unitForm.form,
     amount: unitForm.amount,
-    checks: (u.ncsCriteria ?? []).slice(0, MAX_CHECKS).map(shortCriterion),
-    checksGrade: u.ncsCriteria?.length ? "ncs" : "assumed",
+    checks: pickCriteria(u.ncsElements ?? []),
+    checksGrade: "ncs",
     checksTotal: u.ncsCriteria?.length ?? 0,
     evalConsider: u.evalConsider ?? [],
   }));
   // 능력단위가 있는 진로는 같은 이름의 증거물을 또 만들지 않는다.
   for (const e of a.extras ?? []) {
     if (units.length && e.form === unitForm.form) continue;
-    cards.push({ id: e.id, unit: null, form: e.form, amount: e.amount, checks: e.checks, checksGrade: "assumed", checksTotal: e.checks.length, evalConsider: [], noTopic: e.noTopic });
+    const own = WORLD_CHECKS[world.id]?.[e.id];
+    cards.push({
+      id: e.id,
+      unit: null,
+      form: e.form,
+      amount: e.amount,
+      checks: own?.checks ?? e.checks,
+      checksGrade: own ? "curated" : "assumed",
+      checksTotal: (own?.checks ?? e.checks).length,
+      checksRef: own ? { label: own.label, url: own.url, notice: own.notice } : undefined,
+      evalConsider: [],
+      noTopic: e.noTopic,
+    });
   }
   const basis = !units.length ? null : byPosting ? "공고에 많이 나오는 능력단위 순으로 골랐어요." : "공고 집계가 없어서(기관 키 필요) 격차가 큰 신입 능력 순으로 골랐어요.";
   return { total: a.total, basis, cards };

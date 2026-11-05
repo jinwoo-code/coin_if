@@ -113,7 +113,7 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
   const dev = page.getByTestId("evidence-developer");
   await expect(dev).toBeVisible({ timeout: 120_000 });
   await expect(dev.getByText(/공고 집계가 없어서/)).toBeVisible();
-  await expect(dev.getByText(/NCS 수행준거/).first()).toBeVisible();
+  await expect(dev.getByText(/NCS 수행준거 원문/).first()).toBeVisible();
 
   const sent: string[] = [];
   page.on("request", (r) => {
@@ -133,6 +133,8 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
   const nurse = page.getByTestId("evidence-nurse");
   await expect(nurse.getByText("실습 사례 보고서").first()).toBeVisible();
   await expect(nurse.getByText(/가정값\(팀이 정함\)/).first()).toBeVisible();
+  await expect(nurse.getByText("활력징후 측정")).toBeVisible();
+  await expect(nurse.getByText("공식 항목")).toBeVisible();
 
   const exam = page.getByTestId("evidence-civil-servant");
   await expect(exam.getByText(/포트폴리오 대신/)).toBeVisible();

@@ -31,6 +31,7 @@ export function ncsSourcesOf(worldId: string): { ncs: NcsUnit[]; ncsCerts: { nam
         job: f.dutyNm,
         ksa: [...u.knowledge, ...u.skills],
         criteria: u.elements.flatMap((e) => e.criteria),
+        elements: u.elements,
         evalConsider: u.evalConsider,
         trainTime: u.trainTime,
         positionLevel: positionLevelOf(f, u),

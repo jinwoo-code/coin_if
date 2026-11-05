@@ -39,7 +39,7 @@ function Card({ card, saved, update }: { card: EvidenceCard; saved: EvidenceSave
 
       {!card.noTopic && suggestions.length ? (
         <div className="mt-2">
-          <p className="text-cap text-muted">{saved.suggestSource === "ai" ? "AI 제안이에요. 정답이 아니니 고치거나 직접 써 주세요." : "AI 없이 만든 예시예요. 고치거나 직접 써 주세요."}</p>
+          <p className="text-cap text-muted">{saved.ruleCards?.includes(card.id) ? "AI 없이 만든 예시예요. 고치거나 직접 써 주세요." : "AI 제안이에요. 정답이 아니니 고치거나 직접 써 주세요."}</p>
           <ul className="mt-1 flex flex-col gap-1.5">
             {suggestions.map((s) => (
               <li key={s.title}>
@@ -62,9 +62,21 @@ function Card({ card, saved, update }: { card: EvidenceCard; saved: EvidenceSave
       <p className="mt-3 text-sm font-medium">
         완성 기준 {done.filter((c) => card.checks.includes(c)).length}/{card.checks.length}
         <span className="ml-1.5 text-cap font-normal text-muted">
-          {card.checksGrade === "ncs" ? `NCS 수행준거${card.checksTotal > card.checks.length ? ` ${card.checksTotal}개 중 ${card.checks.length}개` : ""}를 짧게 고친 문장` : "가정값(팀이 정함)"}
+          {card.checksGrade === "ncs" ? `NCS 수행준거 원문. 전체 ${card.checksTotal}개 중 능력단위요소마다 하나` : card.checksGrade === "curated" ? "공식 항목" : "가정값(팀이 정함)"}
         </span>
       </p>
+      {card.checksRef ? (
+        <p className="mt-0.5 text-cap text-muted">
+          {card.checksRef.label}{" "}
+          <a className="underline" href={card.checksRef.url} target="_blank" rel="noreferrer">
+            사본
+          </a>{" "}
+          ·{" "}
+          <a className="underline" href={card.checksRef.notice} target="_blank" rel="noreferrer">
+            평가원 공지
+          </a>
+        </p>
+      ) : null}
       <ul className="mt-1">
         {card.checks.map((c) => (
           <li key={c}>
@@ -168,8 +180,8 @@ function PortfolioSection({ req, profile, world, gaps }: { req: Requirements; pr
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as { topics: EvidenceSaved["suggestions"]; source: "ai" | "rule" };
-      update({ ...saved, suggestions: data.topics, suggestSource: data.source });
+      const data = (await res.json()) as { topics: EvidenceSaved["suggestions"]; ruleCards: string[] };
+      update({ ...saved, suggestions: data.topics, ruleCards: data.ruleCards });
     } catch {
       setFailed(true);
     } finally {
