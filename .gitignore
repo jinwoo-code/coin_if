@@ -13,3 +13,6 @@ next-env.d.ts
 /data/pilot/
 pilot*.json
 *-export.json
+
+# 동기화 프로그램이 만드는 복사본(예: "page 2.tsx")
+* [0-9].*

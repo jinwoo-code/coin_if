@@ -38,13 +38,14 @@ export async function POST(req: Request) {
       const send = (data: unknown) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       send({ type: "plan", labels, multiverses: built });
       const done: Record<string, SimEvent[]> = Object.fromEntries(worlds.map((w) => [w.id, []]));
+      const npcUsed: Record<string, number> = {}; // 한 삶에서 등장인물을 부른 장면 수(원가 상한)
       try {
         // 무료 키의 분당 호출 제한 때문에 4역씩, 모든 진로를 묶어서 부른다.
         for (let from = 0; from < labels.length; from += 4) {
           const chunk = worlds.flatMap((w) => mains[w.id].slice(from, from + 4));
           const memories = Object.fromEntries(worlds.map((w) => [w.id, memoriesOf(done[w.id])]));
           const narrated = await narrate(profile, worlds, chunk, memories);
-          const told = npcAgentsOn() ? await addReactions(profile, worlds, narrated) : narrated;
+          const told = npcAgentsOn() ? await addReactions(profile, worlds, narrated, "simulate", npcUsed) : narrated;
           for (let st = from; st < Math.min(labels.length, from + 4); st++) {
             const events = told.filter((e) => e.station === st);
             events.forEach((e) => done[e.worldId].push(e));

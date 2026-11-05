@@ -53,7 +53,7 @@ export function CorrectChoice({ ev, world }: { ev: SimEvent; world: WorldTemplat
       ))}
     </div>
   ) : (
-    <button type="button" onClick={() => setOpen(true)} className="chip mt-2 min-h-[44px] whitespace-nowrap text-cap font-semibold">
+    <button type="button" onClick={() => setOpen(true)} className="chip mt-2 min-h-[44px] w-full max-w-max justify-center px-3 text-center text-cap font-semibold">
       나라면 이렇게 안 해
     </button>
   );

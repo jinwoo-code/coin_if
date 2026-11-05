@@ -57,6 +57,7 @@ function TalkPage() {
     const s = store.getSelection();
     const mvs = store.getMultiverses();
     const act = store.getActive();
+    const live = store.getLiveResults();
     if (!p || !s || !mvs) {
       router.replace("/simulate");
       return;
@@ -66,6 +67,14 @@ function TalkPage() {
     const ls: Record<string, Line | undefined> = {};
     for (const id of s.worldIds) {
       const mv: Multiverse | undefined = mvs[id];
+      // '이 삶의 나와 대화'로 30개의 삶에서 고른 갈래가 있으면 그쪽
+      const liveId = live?.active[id];
+      const liveLine = liveId ? live?.mvs[id]?.lines.find((l) => l.id === liveId) : undefined;
+      if (liveId && liveLine) {
+        ls[id] = liveLine;
+        sc[id] = live?.scenes[id]?.[liveId] ?? [];
+        continue;
+      }
       const lineId = act[id] ?? mv?.lines.find((l) => l.isMain)?.id ?? "";
       ls[id] = mv?.lines.find((l) => l.id === lineId);
       sc[id] = store.getLine(id, lineId) ?? [];
@@ -201,7 +210,7 @@ function TalkPage() {
         <Link href={`/multiverse?world=${active}`} className="mt-3 flex items-start gap-2 rounded-2xl px-4 py-3 text-sm" style={{ background: `${world.color}12` }}>
           <GitBranch aria-hidden="true" size={16} className="mt-0.5 flex-none" style={{ color: world.color }} />
           <span>
-            <strong>{lines[active]!.isMain ? "AI가 먼저 간 세계" : "내가 고른 세계"}</strong>: {lines[active]!.title} ({lines[active]!.count.toLocaleString("ko-KR")}번)
+            <strong>{lines[active]!.id.startsWith("live:") ? "AI가 직접 살아 본 삶" : lines[active]!.isMain ? "AI가 먼저 간 세계" : "내가 고른 세계"}</strong>: {lines[active]!.title} ({lines[active]!.count.toLocaleString("ko-KR")}번)
             <span className="block text-cap text-muted">다른 세계선의 나와 이야기하려면 눌러서 세계선을 고르세요</span>
           </span>
         </Link>

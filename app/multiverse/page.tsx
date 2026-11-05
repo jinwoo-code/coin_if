@@ -4,13 +4,14 @@ import { ArrowLeftRight, BarChart3, Check, CornerDownRight, GitBranch, MessageCi
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { Ci, CI_NOTE, LineBadge, LiveNotice, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
+import { Ci, CI_NOTE, LineBadge, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { baseSummary } from "@/lib/base";
 import { computeLevers } from "@/lib/levers-client";
 import { CorrectChoice } from "@/components/correct";
+import { LiveLives } from "@/components/live-lives";
 import { choiceLine } from "@/lib/scenes";
 import { store } from "@/lib/store";
 import { WeightSources } from "@/components/weights";
@@ -110,7 +111,7 @@ function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: Li
 
 // ---------- 세계선 안의 장면(시트) ----------
 
-function SceneRow({ ev, world, onFlip, live }: { ev: SimEvent; world: WorldTemplate; onFlip: (ev: SimEvent) => void; live?: boolean }) {
+function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; onFlip: (ev: SimEvent) => void }) {
   if (ev.eventId === "quiet")
     return (
       <li className="relative pl-6 text-cap text-muted">
@@ -143,9 +144,9 @@ function SceneRow({ ev, world, onFlip, live }: { ev: SimEvent; world: WorldTempl
           <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" /> {ev.evidence.label} ({ev.evidence.source})
         </p>
       ) : null}
-      {live ? null : <CorrectChoice ev={ev} world={world} />}
-      {canFlip && !live ? (
-        <button onClick={() => onFlip(ev)} className="chip mt-2 min-h-[40px] text-cap font-semibold">
+      <CorrectChoice ev={ev} world={world} />
+      {canFlip ? (
+        <button onClick={() => onFlip(ev)} className="chip mt-2 min-h-[44px] text-cap font-semibold">
           <Shuffle aria-hidden="true" size={14} /> {ev.branch === "luck" ? "운이 반대였다면" : "여기서 다르게 골랐다면"}
         </button>
       ) : null}
@@ -192,14 +193,14 @@ function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
   );
 }
 
-function LeverList({ items, world, live }: { items: Lever[] | null; world: WorldTemplate; live?: boolean }) {
+function LeverList({ items, world }: { items: Lever[] | null; world: WorldTemplate }) {
   return (
     <section aria-labelledby="levers" className="mt-8">
       <h2 id="levers" className="flex items-center gap-2 text-xl font-bold">
         <Sparkles aria-hidden="true" size={20} style={{ color: world.color }} /> 내가 바꿀 수 있는 것 Top 3
       </h2>
       <p className="mt-1 text-sm text-muted">
-        {live ? "실시간 판단 30번이 아니라 기본 모드 계산이에요. 조건은 200번씩, 갈림길은 1,000번 살아서 비교해요." : "조건을 바꾼 결과는 200번씩, 갈림길은 1,000번 살아본 결과예요. 그래서 위 통계와 조금 다를 수 있어요."}
+        {"조건을 바꾼 결과는 200번씩, 갈림길은 1,000번 살아본 결과예요. 그래서 위 통계와 조금 다를 수 있어요."}
       </p>
       {items === null ? (
         <p className="mt-4 flex items-center gap-2 text-sm text-muted">
@@ -246,6 +247,8 @@ interface Live {
   available: boolean;
   keyword?: string;
   regionLabel?: string;
+  wantedLocked?: boolean;
+  dutiesFailed?: boolean;
   wanted?: { total: number; salaryMedian: number | null; salarySample: number; items: { id: string; company: string; title: string; sal: string; region: string; url: string }[] } | null;
   duties?: { name: string; def: string }[];
   ncs?: string;
@@ -275,8 +278,12 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
     );
   if (!live.available) return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24 키를 넣으면 이 진로의 실제 신입 공고·하는 일·국비 과정이 여기 보여요.</p>;
   const w = live.wanted;
-  if (!w && !live.duties?.length && !(live.training && live.training.total > 0))
-    return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24에 연결하지 못했어요. 인터넷 연결이나 인증키를 확인해 주세요.</p>;
+  const hasTraining = Boolean(live.training && live.training.total > 0);
+  // 보여 줄 게 없을 때: 고용24 연결 실패면 안내, 공고가 기관 키 전이면 그 문구만, 원래 보여 줄 게 없는 진로(시험형 등 NCS 직무 없음)면 칸을 안 그린다.
+  if (!w && !live.duties?.length && !hasTraining) {
+    if (live.dutiesFailed) return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24에 연결하지 못했어요. 잠시 뒤 다시 열어 주세요.</p>;
+    if (!live.wantedLocked) return null;
+  }
   return (
     <section aria-labelledby="live" className="card mt-4 p-5">
       <h2 id="live" className="flex items-center gap-2 font-bold">
@@ -309,6 +316,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
           </ul>
         </div>
       ) : null}
+      {live.wantedLocked ? <p className="mt-3 rounded-xl bg-ground px-3 py-2 text-cap text-muted">채용 공고는 기관 키 연결 후 보여 드려요</p> : null}
       {live.duties?.length ? (
         <div className="mt-4">
           <p className="label">실제로 하는 일(NCS {live.ncs})</p>
@@ -425,6 +433,7 @@ function MultiversePage() {
   function talkTo(line: Line) {
     if (!world) return;
     store.setActive(world.id, line.id);
+    store.setLiveActive(world.id, null);
     router.push(`/talk?world=${world.id}`);
   }
 
@@ -437,7 +446,7 @@ function MultiversePage() {
   return (
     <Screen
       title="세계선 지도"
-      back={mv.live ? "/live" : "/simulate"}
+      back="/simulate"
       footer={
         <div className="flex gap-2">
           <Link href={`/talk?world=${world.id}`} className="btn-ghost flex-1">
@@ -450,7 +459,6 @@ function MultiversePage() {
       }
     >
       <MockNotice />
-      {mv.live ? <LiveNotice /> : null}
       {/* 진로 탭 */}
       <div role="tablist" aria-label="진로" className="mt-2 flex gap-2 overflow-x-auto pb-1">
         {selection.worldIds.map((id) => {
@@ -462,7 +470,7 @@ function MultiversePage() {
               role="tab"
               aria-selected={on}
               onClick={() => router.replace(`/multiverse?world=${id}`)}
-              className={`chip flex-none ${on ? "border-transparent font-bold text-white" : ""}`}
+              className={`chip min-h-[44px] flex-none ${on ? "border-transparent font-bold text-white" : ""}`}
               style={on ? { background: w.color, color: w.onColor } : undefined}
             >
               <LineBadge world={w} size={20} outline={on} /> {w.short}
@@ -574,7 +582,9 @@ function MultiversePage() {
         </ul>
       </section>
 
-      <LeverList items={leverMap[world.id] ?? null} world={world} live={mv.live} />
+      <LeverList items={leverMap[world.id] ?? null} world={world} />
+
+      <LiveLives world={world} />
 
       {/* 세계선 하나 살아보기 */}
       <Sheet open={open !== null} onClose={() => setOpen(null)} title={explored ? "반대로 간 세계" : (open?.title ?? "")}>
@@ -608,7 +618,7 @@ function MultiversePage() {
             {scenes ? (
               <ol className="mt-4 flex flex-col gap-4">
                 {scenes.map((ev) => (
-                  <SceneRow key={ev.station} ev={ev} world={world} onFlip={flip} live={mv.live} />
+                  <SceneRow key={ev.station} ev={ev} world={world} onFlip={flip} />
                 ))}
               </ol>
             ) : (

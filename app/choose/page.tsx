@@ -188,7 +188,7 @@ export default function ChoosePage() {
         {chosenWorlds.length ? (
           <div className="mt-4 flex flex-wrap gap-1.5" aria-label="고른 진로">
             {chosenWorlds.map((w) => (
-              <button key={w.id} onClick={() => toggle(w.id)} className="chip min-h-[36px] text-sm font-semibold" style={{ borderColor: w.color }}>
+              <button key={w.id} onClick={() => toggle(w.id)} className="chip min-h-[44px] text-sm font-semibold" style={{ borderColor: w.color }}>
                 <LineBadge world={w} size={18} /> {w.short} ✕
               </button>
             ))}
@@ -208,7 +208,7 @@ export default function ChoosePage() {
                 role="tab"
                 aria-selected={family === f}
                 onClick={() => setFamily(f)}
-                className={`min-h-[40px] flex-none rounded-full border px-3.5 text-sm transition-colors ${family === f ? "border-ink bg-ink font-semibold text-white" : "border-hair bg-surface"}`}
+                className={`min-h-[44px] flex-none rounded-full border px-3.5 text-sm transition-colors ${family === f ? "border-ink bg-ink font-semibold text-white" : "border-hair bg-surface"}`}
               >
                 {f}
               </button>

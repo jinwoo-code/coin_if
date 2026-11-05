@@ -9,10 +9,10 @@ import { keyTier, loadRun, replayAll, runLive, type LiveStop } from "@/lib/live-
 import { LIVE_RUNS, liveMultiverse, liveSummary } from "@/lib/live";
 import { gateLabel } from "@/lib/multiverse";
 import { choiceLine, scenesOf } from "@/lib/scenes";
-import { store, type LiveRun } from "@/lib/store";
-import { FLAGS } from "@/lib/flags";
+import { computeMultiverse } from "@/lib/levers-client";
+import { store, type LiveResults, type LiveRun } from "@/lib/store";
 import { scrubStory } from "@/lib/story";
-import type { Multiverse, Path, Profile, Selection, WorldTemplate } from "@/lib/types";
+import type { Path, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
 const monthsText = (m: number | null) => (m === null ? "" : m < 12 ? `보통 ${m}개월 뒤` : `보통 ${Math.floor(m / 12)}년${m % 12 ? ` ${m % 12}개월` : ""} 뒤`);
@@ -109,6 +109,7 @@ export default function LivePage() {
   const [run, setRun] = useState<LiveRun | null>(null);
   const [state, setState] = useState<"running" | LiveStop | "denied">("running");
   const [message, setMessage] = useState("");
+  const [linking, setLinking] = useState(false);
   const [tier, setTier] = useState<"free" | "paid">("paid");
   const abort = useRef<AbortController | null>(null);
 
@@ -172,7 +173,6 @@ export default function LivePage() {
     store.setLive(next);
     setRun(next);
     setState("done");
-    if (!FLAGS.liveRefund) return;
     // AI가 판단하지 못한 몫의 토큰을 돌려준다(로그인 안 했거나 대학 계약이면 뺀 게 없어서 0)
     fetch("/api/live/refund", {
       method: "POST",
@@ -187,20 +187,40 @@ export default function LivePage() {
       })
       .catch(() => undefined);
   }
-  // 세계선 지도·대화·리포트는 저장된 결과를 읽는다. 이 결과로 바꿔 넣고 그쪽으로 간다(장면은 그 삶 그대로).
-  function continueWith() {
-    if (!profile || !sel || !lives) return;
-    store.clearResults();
-    const mvs: Record<string, Multiverse> = {};
-    for (const id of sel.worldIds) {
-      const { mv, scenes } = liveMultiverse(profile, getWorld(id), sel.months, sel.startYm, lives.done[id] ?? []);
-      mvs[id] = mv;
-      for (const [lineId, evs] of Object.entries(scenes)) store.setLine(id, lineId, evs);
-      const main = mv.lines.find((l) => l.isMain) ?? mv.lines[0];
-      if (main) store.setActive(id, main.id);
+  // 세계선 지도·리포트는 1,000번 결과를 읽고, 이 30개의 삶은 별도 칸으로 붙는다. 1,000번 결과가 없으면 이 기기에서 계산한다(토큰 없음).
+  async function continueWith() {
+    if (!profile || !sel || !lives || linking) return;
+    setLinking(true);
+    try {
+      const saved = store.getMultiverses();
+      const hasBasic = saved && sel.worldIds.every((id) => saved[id]?.months === sel.months && saved[id]?.startYm === sel.startYm);
+      if (!hasBasic) {
+        store.clearResults();
+        const built = await Promise.all(sel.worldIds.map((id) => computeMultiverse(profile, id, sel.months, sel.startYm)));
+        store.setMultiverses(Object.fromEntries(built.map((m) => [m.worldId, m])));
+        // 본선 장면(대화·리포트가 읽는다). 실패해도 세계선 지도에서 다시 받는다.
+        await Promise.all(
+          built.map(async (m) => {
+            const main = m.lines.find((l) => l.isMain);
+            if (!main) return;
+            store.setActive(m.worldId, main.id);
+            const res = await fetch("/api/line", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, selection: { ...sel, mode: "basic" }, worldId: m.worldId, lineId: main.id }) }).catch(() => null);
+            const data = (await res?.json().catch(() => null)) as { scenes?: SimEvent[] } | null;
+            if (data?.scenes) store.setLine(m.worldId, main.id, data.scenes);
+          }),
+        );
+      }
+      const results: LiveResults = { mvs: {}, scenes: {}, active: {} };
+      for (const id of sel.worldIds) {
+        const { mv, scenes } = liveMultiverse(profile, getWorld(id), sel.months, sel.startYm, lives.done[id] ?? []);
+        results.mvs[id] = mv;
+        results.scenes[id] = scenes;
+      }
+      store.setLiveResults(results);
+      router.push(`/multiverse?world=${sel.worldIds[0]}`);
+    } finally {
+      setLinking(false);
     }
-    store.setMultiverses(mvs);
-    router.push(`/multiverse?world=${sel.worldIds[0]}`);
   }
   function basicMode() {
     if (!sel) return;
@@ -223,9 +243,9 @@ export default function LivePage() {
       back="/choose"
       footer={
         <div className="flex flex-col gap-2">
-          {finished && FLAGS.liveLink ? (
-            <button className="btn-primary w-full" onClick={continueWith}>
-              이 결과로 세계선 지도·대화·리포트 보기
+          {finished ? (
+            <button className="btn-primary w-full" onClick={continueWith} disabled={linking}>
+              {linking ? "1,000번 결과와 같이 준비하는 중…" : "세계선 지도·대화·리포트에서 이어 보기"}
             </button>
           ) : null}
           <button className="btn-secondary w-full" onClick={basicMode}>
@@ -254,7 +274,7 @@ export default function LivePage() {
         </p>
         {tier === "free" && !finished ? <p className="mt-2 text-cap text-muted">무료 키라 오래 걸리고 한도에 걸릴 수 있어요.</p> : null}
         {message ? <p className="mt-2 text-sm">{message}</p> : null}
-        {finished && FLAGS.liveLink ? <p className="mt-2 text-cap text-muted">세계선 지도로 가면 지금 있는 기본 모드 결과는 이 결과로 바뀌어요.</p> : null}
+        {finished ? <p className="mt-2 text-cap text-muted">세계선 지도·리포트에는 1,000번 통계와 따로 'AI가 직접 살아 본 30개의 삶' 칸으로 나와요.</p> : null}
         {state === "failed" && !finished ? (
           <div className="mt-3">
             <p className="text-sm">AI가 답을 못 줬어요. 한도에 걸렸을 수 있어요. 나중에 이어서 할 수 있어요.</p>

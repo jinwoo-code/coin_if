@@ -38,7 +38,7 @@ function restFor(key: number, model: string, err: unknown) {
   return ms;
 }
 
-// 무료 키일 때 pace를 켠 호출(지금은 AI 판단): 이 모델 하나만, 한 번에 하나씩, 호출 사이 4.5초, 429면 기다렸다가 다시.
+// 무료 키(GEMINI_TIER=free)면 모든 호출을 이 모델 하나로, 한 번에 하나씩, 호출 사이 4.5초, 429면 재시도 시간만큼 기다렸다가 최대 3번 다시.
 const FREE_PACED_MODEL = "gemini-3.5-flash-lite";
 const freeQueue = makeQueue();
 
@@ -133,11 +133,10 @@ export async function generateJSON<T>(opts: {
   system: string;
   prompt: string;
   fallback: () => T;
-  pace?: boolean; // 무료 키일 때 위 설정을 쓴다. 유료 키에서는 아무 일도 안 한다.
 }): Promise<T> {
   if (!clients.length) return opts.fallback();
   const who = caller();
-  if (opts.pace && geminiTier() === "free") return generatePaced(opts, who);
+  if (geminiTier() === "free") return generatePaced(opts, who);
   // 지금 키부터. 쉬는 모델은 건너뛰고, 키 하나에서 한도로 다 실패하면 다음 키(유료는 키가 하나라 예전과 같다).
   const order = keys.order();
   const usable = order.filter((k) => MODELS[opts.model].some((m) => !keys.resting(k, m)));

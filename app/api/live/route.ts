@@ -19,9 +19,9 @@ export async function GET(req: Request) {
     regionCd = codes.filter((c) => names.some((n) => c.name.startsWith(n))).map((c) => c.code).join("|") || undefined;
   }
 
-  const recruit = ["exam", "grad", "startup"].includes(world.archetype);
+  const noPostings = ["exam", "grad", "startup"].includes(world.archetype); // 시험·대학원·창업형은 공고를 안 찾는다
   const [wanted, duties, training] = await Promise.all([
-    recruit ? null : searchWanted({ keyword: kw, newbie: true, region: regionCd, display: 50 }),
+    noPostings ? null : searchWanted({ keyword: kw, newbie: true, region: regionCd, display: 50 }),
     dutiesFor(world.id, 4),
     ["open", "portfolio", "trade"].includes(world.archetype) ? trainingCourses({ keyword: kw, months: 3 }) : null,
   ]);
@@ -35,6 +35,8 @@ export async function GET(req: Request) {
     available: true,
     keyword: kw,
     regionLabel: regionCd ? region : "전국",
+    wantedLocked: !noPostings && !wanted, // 채용정보는 개인회원 키로 막혀 있다(기관 키 전까지)
+    dutiesFailed: duties === null,
     wanted: wanted ? { total: wanted.total, salaryMedian: sals.length ? sals[Math.floor(sals.length / 2)] : null, salarySample: sals.length, items: wanted.items.slice(0, 4) } : null,
     duties: duties ?? [],
     ncs: [...new Set((duties ?? []).map((d) => d.job))].join(", "),

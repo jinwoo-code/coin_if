@@ -634,7 +634,7 @@ export default function InterviewPage() {
           </section>
           <InputChecklist p={profile} onDeepen={deepen} />
           {mode === "deep" && chaptersDone(profile) < 6 ? (
-            <Link href="/story" className="card flex min-h-[56px] items-center justify-between gap-3 p-5 hover:border-ink">
+            <Link href="/story" onClick={save} className="card flex min-h-[56px] items-center justify-between gap-3 p-5 hover:border-ink">
               <span>
                 <strong className="text-base font-bold">인생 이야기 6장 시작하기</strong>
                 <span className="mt-0.5 block text-cap text-muted">정밀 단계예요. 장마다 15~20분, 멈췄다가 이어서 할 수 있어요.</span>
@@ -643,7 +643,7 @@ export default function InterviewPage() {
             </Link>
           ) : null}
           {store.isPilotInvited() && !(pilotActive(profile) && pilotAnswered(profile) >= PILOT_SJT.length) && !profile.pilot?.withdrawnAt ? (
-            <Link href="/pilot" className="card flex min-h-[56px] items-center justify-between gap-3 border-[#0B6B4B] p-5 hover:border-ink">
+            <Link href="/pilot" onClick={save} className="card flex min-h-[56px] items-center justify-between gap-3 border-[#0B6B4B] p-5 hover:border-ink">
               <span>
                 <strong className="text-base font-bold">파일럿 상황 질문 {PILOT_SJT.length}개 더 하기</strong>
                 <span className="mt-0.5 block text-cap text-muted">파일럿 참여자만 보여요. 따로 동의를 받고, 성향 점수에는 안 들어가요.</span>
