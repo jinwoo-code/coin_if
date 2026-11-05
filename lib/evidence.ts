@@ -27,9 +27,9 @@ export interface ExamPlan {
   amount: string;
   subjects: { id: string; name: string }[];
 }
-export type Topic = { title: string; why: string; learn?: string[] }; // learn: 프로필에 없고 NCS 목록에서 온 '새로 배울 기술'
+export type Topic = { title: string; why: string; learn?: string[]; isNew?: boolean }; // learn: 프로필에 없고 NCS 목록에서 온 '새로 배울 기술'. isNew: 앞으로 만들 프로젝트
 // 프롬프트를 고치면 올린다. 저장된 제안은 이 판과 프로필이 같을 때만 쓴다.
-export const EVIDENCE_PROMPT_VERSION = "t2";
+export const EVIDENCE_PROMPT_VERSION = "t3";
 export const topicKey = (profileHash: string) => `${EVIDENCE_PROMPT_VERSION}|${profileHash}`;
 export interface MockRecord {
   ym: string;
@@ -161,6 +161,24 @@ export interface TopicRules {
   ncsText: string; // (b) 그 진로의 NCS KSA(면허형은 평가 항목) 전체
   skillIds?: Record<string, string>; // 답에 쓸 수 있는 기술 id → 이름
   titleBan?: RegExp; // 면허형: 주제 제목에 쓰면 안 되는 이전 전공·경험
+  experienceCards?: string[]; // 이미 한 경험을 쓰는 증거물: 사용자가 쓴 경험을 그대로 인용해야 한다
+  experienceText?: string;
+  projectCards?: string[]; // 새로 만드는 증거물: 알바·직장을 프로젝트처럼 쓰지 않는다
+}
+
+// 형식 이름으로 나눈다. 경험을 쓰는 글인지, 앞으로 새로 만드는 것인지.
+export const isExperienceForm = (form: string) => /경험/.test(form);
+export const isProjectForm = (form: string) => /프로젝트|작업물|작품|시제품/.test(form);
+
+// 인용이 사용자가 쓴 경험에 그대로 있고, 제목이 그 인용의 낱말을 쓰면 있는 경험으로 본다.
+export function usesRealExperience(title: string, quote: unknown, experience: string): boolean {
+  if (typeof quote !== "string" || quote.trim().length < 2) return false;
+  const flat = (s: string) => s.replace(/\s/g, "");
+  if (!flat(experience).includes(flat(quote))) return false;
+  return quote.split(/\s+/).some((w) => {
+    const stem = w.replace(/[.,!?]/g, "");
+    return stem.length >= 2 && (title.includes(stem) || (stem.length >= 3 && title.includes(stem.slice(0, -1))));
+  });
 }
 
 const has = (hay: string, name: string) => hay.toLowerCase().replace(/\s/g, "").includes(name.toLowerCase().replace(/\s/g, ""));
@@ -173,7 +191,7 @@ export function cleanTopics(raw: unknown, validIds: string[], rules?: TopicRules
   // AI가 {"topics":[…]} 대신 배열만 줄 때가 있다.
   const list = Array.isArray(raw) ? raw : (raw as { topics?: unknown } | null)?.topics;
   if (!Array.isArray(list)) return { topics, dropped, rejected: [] };
-  for (const x of list as { card?: unknown; title?: unknown; why?: unknown; newSkills?: unknown }[]) {
+  for (const x of list as { card?: unknown; title?: unknown; why?: unknown; newSkills?: unknown; quote?: unknown }[]) {
     const id = typeof x?.card === "string" ? x.card : "";
     const title = typeof x?.title === "string" ? x.title.trim() : "";
     const why = typeof x?.why === "string" ? x.why.trim() : "";
@@ -184,7 +202,9 @@ export function cleanTopics(raw: unknown, validIds: string[], rules?: TopicRules
     const learn = new Set<string>();
     if (rules) {
       const unknown = techNames(`${title} ${why}`).filter((t) => !has(rules.profileText, t) && !has(rules.ncsText, t));
-      if (unknown.length || rules.titleBan?.test(title)) {
+      const fake = rules.experienceCards?.includes(id) && !usesRealExperience(title, x.quote, rules.experienceText ?? "");
+      const jobAsProject = rules.projectCards?.includes(id) && /알바|아르바이트|편의점/.test(title);
+      if (unknown.length || rules.titleBan?.test(title) || fake || jobAsProject) {
         unknown.forEach((t) => rejected.add(t));
         dropped++;
         continue;

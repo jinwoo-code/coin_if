@@ -85,7 +85,7 @@ const show = (who: string, p: Profile, id: string, months = 36, weekly?: number)
 };
 for (const id of ["developer", "marketer"]) show("민준", DEMO_PROFILE, id);
 show("민준", DEMO_PROFILE, "civil-servant");
-show("민준", DEMO_PROFILE, "civil-servant", 36, 61);
+show("민준", DEMO_PROFILE, "civil-servant", 36, 71);
 for (const m of [36, 60, 120]) show("민준", DEMO_PROFILE, "nurse", m);
 for (const m of [36, 60]) show("서연", NURSE_DEMO_PROFILE, "nurse", m);
 show("서연", NURSE_DEMO_PROFILE, "civil-servant");

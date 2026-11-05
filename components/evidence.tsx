@@ -47,6 +47,7 @@ function Card({ card, saved, update }: { card: EvidenceCard; saved: EvidenceSave
                 <button type="button" aria-pressed={topic === s.title} onClick={() => setTopic(s.title)} className={`min-h-11 w-full rounded-lg border px-3 py-2 text-left text-sm ${topic === s.title ? "border-ink bg-ink text-surface" : "border-hair bg-surface"}`}>
                   {s.title}
                   {s.why ? <span className={`block text-cap ${topic === s.title ? "" : "text-muted"}`}>{s.why}</span> : null}
+                  {s.isNew ? <span className="mt-0.5 block text-cap font-medium">새로 만들 프로젝트(아직 한 일이 아니에요)</span> : null}
                   {s.learn?.length ? <span className="mt-0.5 block text-cap font-medium">새로 배울 기술: {s.learn.join(", ")}</span> : null}
                 </button>
               </li>

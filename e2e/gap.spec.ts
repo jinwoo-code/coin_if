@@ -45,7 +45,7 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   await expect(cs.getByText(/시험형은 주당 공부 시간을 고치면 달라져요/)).toBeVisible({ timeout: 60_000 });
   // 합격자 평균 공부량 버튼 → 일정의 주당 시간이 공부 시간으로 들어가 전후가 달라진다
   await cs.getByRole("button", { name: /합격자 평균 공부량/ }).click();
-  await expect(cs.getByText(/처음부터: 주당 공부 \d+시간 → 61시간/)).toBeVisible({ timeout: 60_000 });
+  await expect(cs.getByText(/처음부터: 주당 공부 \d+시간 → 71시간/)).toBeVisible({ timeout: 60_000 });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
   await plan.scrollIntoViewIfNeeded();

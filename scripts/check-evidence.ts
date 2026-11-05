@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { DEMO_PROFILE } from "@/lib/demo";
-import { buildEvidence, buildExamPlan, cleanTopics, EVIDENCE_PROMPT_VERSION, ruleTopics, pickCriteria, topicKey, weakSubjects } from "@/lib/evidence";
+import { buildEvidence, buildExamPlan, cleanTopics, EVIDENCE_PROMPT_VERSION, isExperienceForm, isProjectForm, ruleTopics, pickCriteria, topicKey, weakSubjects } from "@/lib/evidence";
 import { gapItems } from "@/lib/gap";
 import { ALL_WORLD_IDS } from "@/lib/job-codes";
 import type { Requirements } from "@/lib/requirements";
@@ -112,6 +112,29 @@ t("주제: 면허형 제목에 이전 전공·경험·앱을 쓰면 버린다", 
   );
   assert.equal(r.topics.a.length, 1);
   assert.equal(r.topics.a[0].title, "낙상 위험 환자의 간호과정 기록");
+});
+t("주제: 경험 기술서는 쓴 경험만, 프로젝트는 알바를 소재로 지어내지 않는다", () => {
+  const exp = "동아리에서 학교 공지 알림 앱을 만들어 봤고, 편의점 알바를 1년 했어요";
+  const rules = { profileText: exp, ncsText: "", experienceCards: ["c"], experienceText: exp, projectCards: ["p"] };
+  const r = cleanTopics(
+    {
+      topics: [
+        { card: "c", title: "편의점 알바로 배운 책임감", why: "이유", quote: "편의점 알바를 1년 했어요" },
+        { card: "c", title: "해커톤 수상 경험", why: "이유", quote: "해커톤에서 수상했어요" },
+        { card: "c", title: "인턴 때 고객 응대 개선", why: "이유" },
+        { card: "c", title: "봉사 활동 리더 경험", why: "이유", quote: "편의점 알바를 1년 했어요" },
+        { card: "p", title: "편의점 아르바이트 정산 시스템 테스트", why: "이유" },
+        { card: "p", title: "도서 대출 웹 서비스 만들기", why: "이유" },
+      ],
+    },
+    ["c", "p"],
+    rules,
+  );
+  assert.deepEqual(r.topics.c.map((t) => t.title), ["편의점 알바로 배운 책임감"]);
+  assert.deepEqual(r.topics.p.map((t) => t.title), ["도서 대출 웹 서비스 만들기"]);
+  assert.equal(r.dropped, 4);
+  assert.ok(isExperienceForm("경험·경력 기술서") && isExperienceForm("NCS 기반 경험 기술 문항"));
+  assert.ok(isProjectForm("프로젝트로 보여 줄 능력") && !isProjectForm("실습 사례 보고서"));
 });
 t("판이 바뀌면 저장 키가 달라진다", () => {
   assert.equal(topicKey("abc"), `${EVIDENCE_PROMPT_VERSION}|abc`);

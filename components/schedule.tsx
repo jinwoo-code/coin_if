@@ -71,7 +71,9 @@ function Bar({ r, months }: { r: PlanRow; months: number }) {
   );
 }
 
-const STUDY_WEEKLY = 61; // 합격자 하루 평균 8.7시간 × 7(이대중 외, lib/factors examPower의 1.0 기준)
+// 합격자 하루 평균 10.2시간 × 7(수험생 평균은 8.7시간). 9급 공무원 조사 값이라 다른 시험에도 같다는 근거는 없다.
+const STUDY_WEEKLY = 71;
+const STUDY_SOURCE = { label: "이대중 외 「7급, 9급 공무원시험 합격자 실태에 관한 연구」(2016 조사)", url: "https://v.daum.net/v/738XCOSgCW" };
 
 // 계획대로 했다고 보고 다시 살아 보기. 무거워서 Worker에서, 누를 때만. 결과는 이 기기에만.
 function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: Plan; rows: PriorityRow[]; profile: Profile; world: WorldTemplate; startYm: string; onEdit: (e: Partial<PlanEdits>) => void }) {
@@ -143,9 +145,18 @@ function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: P
             </div>
           ) : null}
           {world.archetype === "exam" && !stale && plan.weekly < STUDY_WEEKLY ? (
-            <button type="button" disabled={busy} className="mt-2 min-h-11 rounded-full border border-hair bg-surface px-4 text-sm font-medium disabled:opacity-60" onClick={() => editAndRun({ weekly: STUDY_WEEKLY })}>
-              합격자 평균 공부량(주 {STUDY_WEEKLY}시간)으로 해 보기
-            </button>
+            <div className="mt-2">
+              <button type="button" disabled={busy} className="min-h-11 rounded-full border border-hair bg-surface px-4 text-sm font-medium disabled:opacity-60" onClick={() => editAndRun({ weekly: STUDY_WEEKLY })}>
+                합격자 평균 공부량(주 {STUDY_WEEKLY}시간)으로 해 보기
+              </button>
+              <p className="mt-1 text-cap text-muted">
+                합격자 하루 평균 10.2시간 × 7일(수험생 평균은 8.7시간).{" "}
+                <a className="underline" href={STUDY_SOURCE.url} target="_blank" rel="noreferrer">
+                  {STUDY_SOURCE.label}
+                </a>
+                . 9급 합격자 조사라 다른 시험에 그대로 맞는다는 근거는 없어요.
+              </p>
+            </div>
           ) : null}
           {r.weekly || r.applied.length ? (
             <ul className="mt-2 flex flex-col gap-1 text-cap">
