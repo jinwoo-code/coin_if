@@ -1,7 +1,9 @@
 // 필요한 것 목록과 내 프로필 비교(격차), 우선순위. 판정은 전부 코드 규칙이고 AI를 안 쓴다.
 // 프로필에 능력단위별 답은 없어서 능력은 준비도 답으로 추정한다. 물어본 적 없는 것은 asked: false로 화면에 그대로 말한다.
 import { hasCert } from "./factors";
+import { iGa } from "./josa";
 import { answerOf, READINESS } from "./readiness";
+import { RETRAIN_READINESS, retrainMonths } from "./retrain";
 import type { RequirementItem, Requirements } from "./requirements";
 import type { Profile, WorldTemplate } from "./types";
 import { W } from "./weights";
@@ -42,10 +44,35 @@ const level = (p: Profile, id: string) => {
 const byFrac = (f: number): GapStatus => (f >= 1 ? "have" : f > 0 ? "partial" : "none");
 const qOf = (w: WorldTemplate, id: string) => w.readiness.includes(id);
 
+// 같은 계열 자격 등급. 윗 등급이 있으면 아랫 등급은 있음으로 본다.
+const TECH_RANK: Record<string, number> = { 기능사: 1, 산업기사: 2, 기능장: 3, 기사: 3, 기술사: 4 };
+function certGrade(name: string): { stem: string; rank: number } | null {
+  const n = name
+    .replace(/\s/g, "")
+    .replace(/한국사능력검정(시험)?/, "한국사")
+    .replace("컴퓨터활용능력", "컴활");
+  const t = n.match(/^(.+?)(기능사|산업기사|기능장|기술사|기사)$/);
+  if (t) return { stem: t[1], rank: TECH_RANK[t[2]] };
+  const g = n.match(/^(.+?)(\d)급/);
+  return g ? { stem: g[1], rank: 10 - Number(g[2]) } : null;
+}
+export function higherCert(p: Profile, name: string): string | null {
+  const want = certGrade(name);
+  if (!want) return null;
+  return (
+    p.spec.certs.find((c) => {
+      const g = certGrade(c);
+      return g && g.stem === want.stem && g.rank >= want.rank;
+    }) ?? null
+  );
+}
+
 const make = (item: RequirementItem, status: GapStatus, basis: string, asked = true): GapItem => ({ item, status, basis, asked });
 
 function judgeCert(i: RequirementItem, p: Profile, w: WorldTemplate): GapItem {
   if (hasCert(p, i.name)) return make(i, "have", "입력한 자격증에 있어요");
+  const upper = higherCert(p, i.name);
+  if (upper) return make(i, "have", `${upper}${iGa(upper).slice(upper.length)} 있어서 따로 안 따도 돼요`);
   const text = `${i.name} ${i.detail ?? ""}`;
   const toeic = text.match(/토익\s*(\d+)/);
   if (toeic && p.spec.toeic) return make(i, p.spec.toeic >= Number(toeic[1]) ? "have" : "partial", `토익 ${p.spec.toeic}점, 기준 ${toeic[1]}점`);
@@ -76,6 +103,14 @@ function judgeExam(i: RequirementItem, p: Profile, w: WorldTemplate): GapItem {
   return make(i, "none", "과목별 진도는 묻지 않았어요. 아직 안 한 것으로 봤어요", false);
 }
 
+// 프리미엄 리포트에서 능력 묶음에 답한 값. 2 할 줄 알아요, 1 조금, 0 아직.
+export type SkillAnswers = Record<string, number>;
+export const SKILL_CHOICES = [
+  { v: 2, t: "할 줄 알아요" },
+  { v: 1, t: "조금" },
+  { v: 0, t: "아직" },
+];
+
 function judgeSkill(i: RequirementItem, p: Profile, w: WorldTemplate): GapItem {
   const qs = w.readiness.filter((id) => SKILL_Q.includes(id));
   if (qs.length) {
@@ -89,9 +124,9 @@ function judgeSkill(i: RequirementItem, p: Profile, w: WorldTemplate): GapItem {
 function judgeExperience(i: RequirementItem, p: Profile, w: WorldTemplate): GapItem {
   const s = p.spec;
   const n = i.name;
-  const major = n.match(/(\S{2,})학과/);
-  if (major) {
-    if (!p.major.includes(major[1].slice(-2))) return make(i, "none", `전공(${p.major || "없음"})이 ${major[1]}학과가 아니에요`);
+  if (/학과|졸업/.test(n)) {
+    const m = p.major.replace(/\s/g, "");
+    if (!m || !w.majors.some((k) => m.includes(k))) return make(i, "none", `전공(${p.major || "안 적음"})이 이 학과가 아니에요`);
     return make(i, s.status === "졸업" ? "have" : "partial", `전공 ${p.major} · ${s.status}`);
   }
   if (/실습/.test(n) && qOf(w, "practice")) {
@@ -117,8 +152,16 @@ export function judgeItem(i: RequirementItem, p: Profile, w: WorldTemplate): Gap
 }
 
 // 시험형은 NCS 능력단위가 시험에 안 나와서 격차에 넣지 않는다.
-export function gapItems(r: Requirements, p: Profile, w: WorldTemplate): GapItem[] {
-  return r.items.filter((i) => !(w.archetype === "exam" && i.kind === "skill")).map((i) => judgeItem(i, p, w));
+export function gapItems(r: Requirements, p: Profile, w: WorldTemplate, answers: SkillAnswers = {}): GapItem[] {
+  const groupOf = new Map((r.skillGroups ?? []).flatMap((g) => g.itemIds.map((id) => [id, g] as const)));
+  return r.items
+    .filter((i) => !(w.archetype === "exam" && i.kind === "skill"))
+    .map((i) => {
+      const g = i.kind === "skill" ? groupOf.get(i.id) : undefined;
+      const a = g ? answers[g.id] : undefined;
+      if (a === undefined) return judgeItem(i, p, w);
+      return make(i, a === 2 ? "have" : a === 1 ? "partial" : "none", `직접 답했어요('${g!.name}': ${SKILL_CHOICES.find((c) => c.v === a)?.t})`);
+    });
 }
 
 const up = (id: string, label: string): Tweak => ({
@@ -134,6 +177,13 @@ const better = (id: string) => up(id, READINESS[id].better ?? `${READINESS[id].l
 
 // 그 항목을 갖췄다고 가정할 때 프로필에서 바뀌는 곳. 엔진이 안 보는 항목은 null(시뮬레이션 효과 없음으로 지어내지 않는다).
 export function tweakOf(i: RequirementItem, w: WorldTemplate): Tweak | null {
+  const t = rawTweak(i, w);
+  if (!t || !RETRAIN_READINESS.some((id) => t.key === `readiness:${id}`)) return t;
+  // 전공이 달라 학과부터 다니는 사람은 면허·교원 답을 올려도 학과를 건너뛸 수 없다.
+  return { ...t, apply: (p) => (retrainMonths(p, w) ? null : t.apply(p)) };
+}
+
+function rawTweak(i: RequirementItem, w: WorldTemplate): Tweak | null {
   if (i.kind === "skill") {
     const id = w.readiness.find((x) => SKILL_Q.includes(x));
     return id ? better(id) : null;
@@ -142,7 +192,7 @@ export function tweakOf(i: RequirementItem, w: WorldTemplate): Tweak | null {
     if (/체력/.test(i.name)) return qOf(w, "fitness") ? better("fitness") : null;
     if (/면접|적성|실기/.test(i.name)) return null;
     if (qOf(w, "license")) return better("license");
-    if (w.archetype === "exam") return { key: "study", label: "하루 공부를 2시간 늘리면", apply: (p) => (p.life.studyHours >= 12 ? null : { ...p, life: { ...p.life, studyHours: Math.min(12, p.life.studyHours + 2) } }) };
+    if (w.archetype === "exam") return { key: "study", label: "하루 공부를 2시간 늘렸을 때", apply: (p) => (p.life.studyHours >= 12 ? null : { ...p, life: { ...p.life, studyHours: Math.min(12, p.life.studyHours + 2) } }) };
     return null;
   }
   if (i.kind === "cert") {
@@ -186,6 +236,8 @@ export function monthsOf(hours: number | null, p: Profile): number | null {
   return perDay > 0 ? Math.max(1, Math.round(hours / (perDay * 30))) : null;
 }
 
+export const REQUIRED_TEXT = "필수 — 없으면 이 길로 갈 수 없어요";
+
 const SCORE_KEYS = ["posting", "sim", "time", "fit"] as const;
 // 공고 집계가 없으면 그 칸을 빼고 남은 가중치로 다시 나눈다(키가 생기면 자동으로 들어간다). 시뮬레이션 효과·시간을 모르는 항목은 0점이다: 근거 없는 항목이 근거 있는 항목을 앞지르면 안 돼서.
 export function scoreOf(parts: Partial<Record<(typeof SCORE_KEYS)[number], number | null>>): number {
@@ -218,7 +270,7 @@ export function prioritize(gaps: GapItem[], w: WorldTemplate, p: Profile, deltas
   const rows = [...groups.values()].map((members): PriorityRow => {
     const g = members[0];
     const t = tweakOf(g.item, w);
-    const delta = t && deltas[t.key] !== undefined ? deltas[t.key] : null;
+    const delta = t && !g.item.required && deltas[t.key] !== undefined ? deltas[t.key] : null;
     const hours = members.map(hoursLeftOf).filter((h): h is number => h !== null);
     const hoursLeft = hours.length ? hours.reduce((a, b) => a + b, 0) : null;
     const months = monthsOf(hoursLeft, p);
@@ -228,9 +280,14 @@ export function prioritize(gaps: GapItem[], w: WorldTemplate, p: Profile, deltas
       time: hoursLeft === null ? 0 : 1 / (1 + hoursLeft / W("report.priority.timeHalf")),
       fit: fitOf(g.item, p),
     });
-    const evidence = [postingText(g.item)];
-    if (delta !== null) evidence.push(`${delta > 0 ? `시뮬레이션에서 +${delta}%p` : "시뮬레이션에서 차이 없음"}${members.length > 1 ? `(${t!.label})` : ""}`);
-    else evidence.push("시뮬레이션에 안 들어가는 항목");
+    const evidence: string[] = [];
+    if (g.item.required) evidence.push(REQUIRED_TEXT);
+    else {
+      evidence.push(postingText(g.item));
+      // 공부 시간처럼 항목 자체가 아니라 다른 조건을 바꾼 효과면 무엇을 바꿨는지 붙인다.
+      if (delta !== null) evidence.push(`${delta > 0 ? `시뮬레이션에서 +${delta}%p` : "시뮬레이션에서 차이 없음"}${members.length > 1 || t!.key === "study" ? `(${t!.label})` : ""}`);
+      else evidence.push("시뮬레이션에 안 들어가는 항목");
+    }
     if (hoursLeft !== null) evidence.push(`${months ? `약 ${months}개월` : `약 ${hoursLeft}시간`}(가정값)`);
     const title = members.length > 1 ? `${g.item.kind === "skill" ? "직무 능력" : "시험 과목"} ${members.length}개` : g.item.name;
     const status: GapStatus = members.every((m) => m.status === "none") ? "none" : "partial";

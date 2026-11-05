@@ -8,7 +8,8 @@ export function gapDeltas(p: Profile, w: WorldTemplate, months: number, startYm:
   const base = statsOf(p, w, runAll(p, w, months, startYm, undefined, n)).gate?.share ?? 0;
   const out: Record<string, number> = {};
   for (const g of gaps) {
-    if (g.status === "have") continue;
+    // 답을 바꿔도 다시 안 돌리게 '있음'도 계산해 둔다. 필수는 효과를 안 보여 준다.
+    if (g.item.required) continue;
     const t = tweakOf(g.item, w);
     if (!t || out[t.key] !== undefined) continue;
     const q = t.apply(p);

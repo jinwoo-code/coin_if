@@ -184,6 +184,36 @@
    "호텔·관광경영학과"
   ],
   "baseDate": "2026-11-05",
-  "stale": false
+  "stale": false,
+  "skillGroups": [
+   {
+    "id": "g1",
+    "name": "승객 하기 후 관리",
+    "itemIds": [
+     "ncs:승객하기후관리"
+    ]
+   },
+   {
+    "id": "g2",
+    "name": "기내음료 서비스",
+    "itemIds": [
+     "ncs:기내음료서비스"
+    ]
+   },
+   {
+    "id": "g3",
+    "name": "항공서비스 매너",
+    "itemIds": [
+     "ncs:항공서비스매너"
+    ]
+   },
+   {
+    "id": "g4",
+    "name": "기내 안전관리",
+    "itemIds": [
+     "ncs:기내안전관리"
+    ]
+   }
+  ]
  }
 }

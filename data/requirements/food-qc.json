@@ -339,6 +339,34 @@
    "농업학과"
   ],
   "baseDate": "2026-11-05",
-  "stale": false
+  "stale": false,
+  "skillGroups": [
+   {
+    "id": "g1",
+    "name": "위생 및 법규 관리",
+    "itemIds": [
+     "ncs:영업장위생관리",
+     "ncs:식품관련법규관리"
+    ]
+   },
+   {
+    "id": "g2",
+    "name": "HACCP 및 모니터링",
+    "itemIds": [
+     "ncs:모니터링개선조치수립",
+     "ncs:haccp준비단계평가",
+     "ncs:중요관리점결정한계기준설정"
+    ]
+   },
+   {
+    "id": "g3",
+    "name": "검사 및 공정 관리",
+    "itemIds": [
+     "ncs:입고검사",
+     "ncs:공정관리",
+     "ncs:식품안전위기관리"
+    ]
+   }
+  ]
  }
 }

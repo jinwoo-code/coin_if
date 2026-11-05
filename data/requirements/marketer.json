@@ -231,6 +231,33 @@
    "행정학과"
   ],
   "baseDate": "2026-11-05",
-  "stale": false
+  "stale": false,
+  "skillGroups": [
+   {
+    "id": "g1",
+    "name": "시장 분석 및 전략 수립",
+    "itemIds": [
+     "ncs:마케팅시장환경분석",
+     "ncs:마케팅전략계획수립",
+     "ncs:stp전략수립"
+    ]
+   },
+   {
+    "id": "g2",
+    "name": "마케팅 실행 및 제휴",
+    "itemIds": [
+     "ncs:마케팅믹스전략수립",
+     "ncs:신상품기획",
+     "ncs:전략적제휴"
+    ]
+   },
+   {
+    "id": "g3",
+    "name": "성과 평가",
+    "itemIds": [
+     "ncs:마케팅성과관리"
+    ]
+   }
+  ]
  }
 }

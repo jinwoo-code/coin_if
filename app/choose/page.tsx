@@ -8,6 +8,7 @@ import { LineBadge, Screen } from "@/components/ui";
 import { nextMonthYm, planStations } from "@/lib/calendar";
 import { waGwa } from "@/lib/josa";
 import { answerOf, READINESS } from "@/lib/readiness";
+import { retrainMonths } from "@/lib/retrain";
 import { CostNote } from "@/components/account";
 import { PILOT_SJT, pilotAnswered } from "@/lib/pilot";
 import { keyTier } from "@/lib/live-client";
@@ -240,6 +241,18 @@ export default function ChoosePage() {
           <button onClick={() => toggle(third.id)} className="chip mt-4 font-semibold">
             <Plus aria-hidden="true" size={16} /> 이 길도 살아보기
           </button>
+        </section>
+      ) : null}
+
+      {chosenWorlds.some((w) => retrainMonths({ major: profile.major, readiness }, w)) ? (
+        <section className="card mt-8 p-5" data-testid="retrain-note">
+          {chosenWorlds
+            .filter((w) => retrainMonths({ major: profile.major, readiness }, w))
+            .map((w) => (
+              <p key={w.id} className="text-sm">
+                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월(가정값)을 학과 다니는 데 써요. 등록금은 안 넣었어요.
+              </p>
+            ))}
         </section>
       ) : null}
 

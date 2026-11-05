@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from "node:fs";
 import type { MajorFamily } from "./job-codes";
 import { codesFor } from "./job-codes";
 import { generateJSON } from "./llm";
-import { applyCertFilter, type CareernetSource, type CuratedFile, type NcsUnit, type Requirements, type RequirementSources, type Work24Source } from "./requirements";
+import { applyCertFilter, applySkillGroups, chunkSkills, type CareernetSource, type CuratedFile, type NcsUnit, type Requirements, type RequirementSources, type Work24Source } from "./requirements";
 
 export interface Snapshot {
   date: string;
@@ -52,4 +52,23 @@ export async function aiFilterCerts(r: Requirements, jobName: string): Promise<R
     fallback: () => null,
   });
   return applyCertFilter(r, res);
+}
+
+// 능력단위를 3~4개로 묶는다. 시험형은 능력단위를 안 묻는다. 4개 이하면 AI 없이 낱개로.
+export async function groupSkills(r: Requirements, archetype: string, jobName: string, useAi: boolean): Promise<Requirements> {
+  if (archetype === "exam") return r;
+  const skills = r.items.filter((i) => i.kind === "skill");
+  if (!skills.length) return r;
+  if (skills.length <= 4 || !useAi) return { ...r, skillGroups: chunkSkills(skills) };
+  const res = await generateJSON<{ groups?: { name?: string; ids?: string[] }[] } | null>({
+    tag: "req-groups",
+    model: "fast",
+    system:
+      '직업 능력단위를 비슷한 일끼리 3~4개로 묶습니다. 목록의 id만 쓰고 모든 id를 한 번씩 넣습니다. 이름은 학생이 "할 줄 안다"고 답할 수 있는 짧은 말(12자 이내)로 씁니다. JSON으로만 답합니다: {"groups":[{"name":"묶음 이름","ids":["목록의 id"]}]}',
+    prompt: `직업: ${jobName}\n능력단위:\n${skills.map((s) => `- ${s.id}: ${s.name}`).join("\n")}`,
+    fallback: () => null,
+  });
+  const out = applySkillGroups(skills, res);
+  if (out.invented) console.log(`[능력 묶음] ${r.worldId}: 목록에 없는 id ${out.invented}개 버림`);
+  return { ...r, skillGroups: out.groups };
 }

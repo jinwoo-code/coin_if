@@ -7,6 +7,7 @@ import type { EventCard, FactorKey, Lever, LifeState, Line, LineNode, Multiverse
 import { durationLabel } from "./calendar";
 import { euro, eulReul } from "./josa";
 import { answerOf, READINESS } from "./readiness";
+import { RETRAIN_READINESS, retrainMonths } from "./retrain";
 
 export const RUNS = 1000;
 // '바꿀 수 있는 것'에서 조건을 바꿔 다시 사는 횟수. 조건마다 다시 돌려서 무겁다(휴대폰 약 29초 → 약 6초, 추정). 세계선 통계는 RUNS 그대로.
@@ -308,7 +309,11 @@ function tweaksFor(world: WorldTemplate): Tweak[] {
   for (const id of world.readiness) {
     const q = READINESS[id];
     if (!q?.better) continue;
-    out.push({ title: q.better, apply: (p) => (answerOf(p.readiness, id) >= q.options.length - 1 ? null : { ...p, readiness: { ...p.readiness, [id]: answerOf(p.readiness, id) + 1 } }) });
+    // 전공이 달라 학과부터 다니는 사람은 면허·교원 답을 올려도 학과를 건너뛸 수 없다.
+    out.push({
+      title: q.better,
+      apply: (p) => (answerOf(p.readiness, id) >= q.options.length - 1 || (RETRAIN_READINESS.includes(id) && retrainMonths(p, world)) ? null : { ...p, readiness: { ...p.readiness, [id]: answerOf(p.readiness, id) + 1 } }),
+    });
   }
   const cert = world.certs[0];
   if (cert) out.push({ title: `${eulReul(cert)} 따면`, apply: (p) => (hasCert(p, cert) ? null : withSpec(p, { certs: [...p.spec.certs, cert] })) });

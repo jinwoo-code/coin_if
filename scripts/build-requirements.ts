@@ -6,7 +6,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import raw from "@/data/job-codes.json";
 import { ALL_WORLD_IDS, type MajorFamily } from "@/lib/job-codes";
 import { applyCertFilter, buildRequirements, type Requirements, type RequirementsFile } from "@/lib/requirements";
-import { aiFilterCerts, curatedOf, resolveSources, type Snapshot } from "@/lib/requirements-build";
+import { aiFilterCerts, curatedOf, groupSkills, resolveSources, type Snapshot } from "@/lib/requirements-build";
 import { getWorld } from "@/lib/worlds";
 
 const arg = (n: string) => process.argv.includes(n);
@@ -35,11 +35,18 @@ function reuse(fresh: Requirements, old: Requirements | undefined): Requirements
     const make = async (fam: MajorFamily | null, old: Requirements | undefined) => {
       const { src } = await resolveSources(id, fam, none, snap, snap.date);
       const r = buildRequirements(id, w.archetype, src, snap.date, false, undefined, curatedOf(id));
-      if (r.certPolicy === "curated-only") return r;
-      const again = reuse(r, old);
-      if (again) return again;
-      if (arg("--no-ai")) return applyCertFilter(r, null);
-      return aiFilterCerts(r, w.name);
+      let out: Requirements;
+      if (r.certPolicy === "curated-only") out = r;
+      else out = reuse(r, old) ?? (arg("--no-ai") ? applyCertFilter(r, null) : await aiFilterCerts(r, w.name));
+      // 능력 목록이 그대로면 지난 묶음을 쓴다(같은 목록 유지). AI 없이 나눈 묶음은 --no-ai가 아닐 때 다시 묶는다.
+      const ids = (x: Requirements | undefined) =>
+        x?.items
+          .filter((i) => i.kind === "skill")
+          .map((i) => i.id)
+          .sort()
+          .join("|");
+      const oldGroups = ids(old) === ids(out) && old?.skillGroups?.length && (arg("--no-ai") || !old.skillGroups.some((g) => g.name.includes(" 등 "))) ? old.skillGroups : null;
+      return oldGroups ? { ...out, skillGroups: oldGroups } : groupSkills(out, w.archetype, w.name, !arg("--no-ai"));
     };
     const def = await make(null, prev?.default);
     const file: RequirementsFile = { worldId: id, builtAt: snap.date, default: def };

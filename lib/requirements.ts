@@ -65,6 +65,11 @@ export interface CuratedFile {
   items: { id: string; kind: ReqKind; name: string; detail?: string; grade: "curated" | "assumed"; ref?: string; required?: boolean; officialUrl?: string; hours?: { value: number; grade: "assumed" } }[];
 }
 export const certPolicyOf = (archetype: string): CertPolicy => (archetype === "exam" || archetype === "license" ? "curated-only" : "ai-filter");
+export interface SkillGroup {
+  id: string;
+  name: string;
+  itemIds: string[];
+}
 export interface FilteredCert {
   name: string;
   why: string;
@@ -74,6 +79,7 @@ export interface Requirements {
   certPolicy: CertPolicy;
   filter?: { mode: "ai" | "none" | "curated"; dropped: FilteredCert[]; invented: number }; // 걸러진 자격증과 목록에 없어 버린 AI 응답 수
   notes?: string[]; // 가산점 없음 등 진로 전체 안내
+  skillGroups?: SkillGroup[]; // 능력단위를 3~4개로 묶은 것. 리포트에서 '할 줄 알아요/조금/아직'으로 묻는다
   items: RequirementItem[];
   prep: { source: ReqSource; ref: string; text: string }[]; // 되는 길(문장. 항목이 아니라 설명)
   majors: string[];
@@ -227,4 +233,37 @@ export interface RequirementsFile {
   builtAt: string;
   default: Requirements;
   byFamily?: Record<string, Requirements>;
+}
+
+const nameOfGroup = (items: { name: string }[]) => (items.length > 1 ? `${items[0].name} 등 ${items.length}개` : items[0].name);
+
+// AI 없이 묶기: 4개 이하면 낱개로, 많으면 목록 순서대로 4등분.
+export function chunkSkills(items: { id: string; name: string }[]): SkillGroup[] {
+  const per = Math.max(1, Math.ceil(items.length / 4));
+  const out: SkillGroup[] = [];
+  for (let i = 0; i < items.length; i += per) {
+    const part = items.slice(i, i + per);
+    out.push({ id: `g${out.length + 1}`, name: nameOfGroup(part), itemIds: part.map((x) => x.id) });
+  }
+  return out;
+}
+
+// AI가 묶은 결과 적용. 후보 id만 믿는다: 목록에 없는 id는 버리고 세고, 빠진 능력은 마지막 묶음에 넣는다. 응답이 쓸모없으면 AI 없이 묶는다.
+export function applySkillGroups(items: { id: string; name: string }[], res: { groups?: { name?: string; ids?: string[] }[] } | null): { groups: SkillGroup[]; invented: number; ai: boolean } {
+  const known = new Set(items.map((i) => i.id));
+  const seen = new Set<string>();
+  let invented = 0;
+  const groups: SkillGroup[] = [];
+  for (const g of res?.groups ?? []) {
+    const ids: string[] = [];
+    for (const id of g.ids ?? []) {
+      if (!known.has(id)) invented++;
+      else if (!seen.has(id)) (seen.add(id), ids.push(id));
+    }
+    if (ids.length) groups.push({ id: `g${groups.length + 1}`, name: String(g.name ?? "").slice(0, 20) || nameOfGroup(items.filter((i) => ids.includes(i.id))), itemIds: ids });
+  }
+  if (groups.length < 2 || groups.length > 4) return { groups: chunkSkills(items), invented, ai: false };
+  const left = items.filter((i) => !seen.has(i.id)).map((i) => i.id);
+  groups[groups.length - 1].itemIds.push(...left);
+  return { groups, invented, ai: true };
 }

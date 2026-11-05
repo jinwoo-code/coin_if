@@ -1,6 +1,8 @@
 // 브라우저에 진행 상황을 저장한다(로그인 없이 데모가 돌도록).
 // 로그인하면 lib/sync.ts가 onWrite로 저장을 듣고 계정에도 올린다. 이 파일은 브라우저 저장만 맡는다.
 "use client";
+import type { SkillAnswers } from "./gap";
+import type { PlanEdits } from "./schedule";
 import { normalizeProfile } from "./profile";
 import type { LiveEntries } from "./live";
 import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } from "./types";
@@ -22,6 +24,8 @@ const KEYS = {
   report: `cr:${VERSION}:report`,
   live: `cr:${VERSION}:live`, // 실시간 판단 모드 진행(이 기기에만)
   liveResults: `cr:${VERSION}:liveResults`, // 끝난 실시간 판단 30개의 삶(1,000번 결과와 따로, 이 기기에만)
+  gapAnswers: `cr:${VERSION}:gapAnswers`, // 능력 묶음 답(이 기기에만)
+  planEdits: `cr:${VERSION}:planEdits`, // 월별 일정 수정(이 기기에만)
   premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
   localOnly: `cr:${VERSION}:localOnly`,
   pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
@@ -95,6 +99,10 @@ export const store = {
     return p ? normalizeProfile(p) : null;
   },
   setProfile: (p: Profile) => write(KEYS.profile, p),
+  getGapAnswers: () => read<Record<string, SkillAnswers>>(KEYS.gapAnswers) ?? {},
+  setGapAnswers: (a: Record<string, SkillAnswers>) => write(KEYS.gapAnswers, a),
+  getPlanEdits: () => read<Record<string, PlanEdits>>(KEYS.planEdits) ?? {},
+  setPlanEdits: (a: Record<string, PlanEdits>) => write(KEYS.planEdits, a),
   getSelection: () => read<Selection>(KEYS.selection),
   setSelection: (s: Selection) => write(KEYS.selection, s),
   getMultiverses: () => read<Record<string, Multiverse>>(KEYS.multiverses),

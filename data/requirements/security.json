@@ -329,6 +329,32 @@
    "통계학과"
   ],
   "baseDate": "2026-11-05",
-  "stale": false
+  "stale": false,
+  "skillGroups": [
+   {
+    "id": "g1",
+    "name": "보안 계획 및 분석",
+    "itemIds": [
+     "ncs:보안구축요구사항분석",
+     "ncs:보안구축계획수립"
+    ]
+   },
+   {
+    "id": "g2",
+    "name": "시스템 및 SW 보안",
+    "itemIds": [
+     "ncs:db보안구축",
+     "ncs:sw개발보안구축"
+    ]
+   },
+   {
+    "id": "g3",
+    "name": "관리 및 물리 보안",
+    "itemIds": [
+     "ncs:관리적보안구축",
+     "ncs:물리적보안구축"
+    ]
+   }
+  ]
  }
 }

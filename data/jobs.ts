@@ -4,6 +4,11 @@
 // - hazard: 상시 채용 직업에서 한 달에 붙을 기본 확률. 공개 통계가 없어 가정값이며, 청년 첫 취업 평균 11.2개월(통계청)에 맞춰 0.07 근처로 둔다.
 // - 숫자를 지어내지 않는다. 출처가 있는 사실만 facts에 넣는다.
 import { sizeTiers, type Job } from "@/lib/archetypes";
+import { W } from "@/lib/weights";
+
+// 봉급표 기본급(만원/년)에 9급에서 추정한 수당 비율을 곱한다. 9급 3,428만원과 기준을 맞추려고.
+const ALLOWANCE = W("salary.allowanceRatio");
+const withAllowance = (base: number) => Math.round(base * ALLOWANCE);
 
 const NURSE_URL = "https://www.newsis.com/view/NISX20240319_0002666727";
 const TEACHER_URL = "https://www.segye.com/newsView/20251002506181";
@@ -560,11 +565,21 @@ export const JOBS: Job[] = [
     hours: 42,
     place: "학교",
     people: { boss: "교감 선생님", peer: "임용 스터디원 하", other: "옆 반 선생님", otherRole: "선배 교사" },
-    exam: { months: [2], chance: 0.447, warmup: 6, label: "초등 임용시험", salary: 2995, salaryNote: "정교사(2급) 교대 졸업 9호봉 월 2,495,600원 × 12. 수당 제외 기본급(경력 없을 때)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 11·15·23·25)", firstPost: "첫 발령: 담임을 맡았다" },
+    exam: {
+      months: [2],
+      chance: 0.447,
+      warmup: 6,
+      label: "초등 임용시험",
+      salary: withAllowance(2995),
+      salaryNote: `정교사(2급) 교대 졸업 9호봉 월 2,495,600원 × 12 = 2,995만원 × ${ALLOWANCE}(9급에서 추정한 수당 비율, 가정값)`,
+      salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 11·15·23·25)",
+      firstPost: "첫 발령: 담임을 맡았다",
+    },
     facts: [
       {
         label: "2026학년도 경북 초등교사 경쟁률(일반)",
-        value: "2.18대 1 (294명 선발, 641명 지원, 접수 기준). 부산 2.29대 1과 평균 내 약 2.24대 1로 씀(전국 값·응시자 수는 못 찾음). 시험 한 번 합격 확률 = 1 ÷ 경쟁률. 경쟁률이 낮아 다른 시험형의 보정 k를 곱하면 한 번에 0.85가 돼서 초등만 k를 뺐음",
+        value:
+          "2.18대 1 (294명 선발, 641명 지원, 접수 기준). 부산 2.29대 1과 평균 내 약 2.24대 1로 씀(전국 값·응시자 수는 못 찾음). 시험 한 번 합격 확률 = 1 ÷ 경쟁률. 경쟁률이 낮아 다른 시험형의 보정 k를 곱하면 한 번에 0.85가 돼서 초등만 k를 뺐음",
         source: "경북교육청 발표(경북매일 보도)",
         year: "2025년 10월",
         url: "https://kbmaeil.com/article/20251002500181",
@@ -586,7 +601,16 @@ export const JOBS: Job[] = [
     hours: 42,
     place: "학교",
     people: { boss: "교감 선생님", peer: "임용 스터디원 하", other: "같은 교과 선배 교사", otherRole: "선배 교사" },
-    exam: { months: [2], competition: 5.67, warmup: 10, label: "중등 임용시험", salary: 2995, salaryNote: "정교사(2급) 사범계 졸업 9호봉 월 2,495,600원 × 12. 수당 제외 기본급(경력 없을 때, 교직 이수는 8호봉 2,478,600원)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 11·15·23·25)", firstPost: "첫 발령: 교과 수업을 맡았다" },
+    exam: {
+      months: [2],
+      competition: 5.67,
+      warmup: 10,
+      label: "중등 임용시험",
+      salary: withAllowance(2995),
+      salaryNote: `정교사(2급) 사범계 졸업 9호봉 월 2,495,600원 × 12 = 2,995만원 × ${ALLOWANCE}(9급에서 추정한 수당 비율, 가정값). 교직 이수는 8호봉 2,478,600원`,
+      salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 11·15·23·25)",
+      firstPost: "첫 발령: 교과 수업을 맡았다",
+    },
     facts: [
       {
         label: "2026학년도 경북 공립 중등교사 경쟁률",
@@ -752,7 +776,16 @@ export const JOBS: Job[] = [
     hours: 46,
     place: "지구대",
     people: { boss: "팀장 경위 박", peer: "같은 기수 순경 오", other: "선배 경장 김", otherRole: "선배" },
-    exam: { months: [5, 11], competition: 9.36, warmup: 12, label: "순경 공채", salary: 2560, salaryNote: "순경 1호봉 월 2,133,000원 × 12. 수당 제외 기본급(경력 없을 때)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 10·15)", firstPost: "지구대로 첫 발령을 받았다" },
+    exam: {
+      months: [5, 11],
+      competition: 9.36,
+      warmup: 12,
+      label: "순경 공채",
+      salary: withAllowance(2560),
+      salaryNote: `순경 1호봉 월 2,133,000원 × 12 = 2,560만원 × ${ALLOWANCE}(9급에서 추정한 수당 비율, 가정값)`,
+      salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 10·15)",
+      firstPost: "지구대로 첫 발령을 받았다",
+    },
     facts: [
       {
         label: "2026년 제1차 순경 공채",
@@ -778,7 +811,16 @@ export const JOBS: Job[] = [
     hours: 46,
     place: "소방서",
     people: { boss: "팀장 소방위 이", peer: "같은 기수 소방사 정", other: "선배 소방교 문", otherRole: "선배" },
-    exam: { months: [6], competition: 9.14, warmup: 12, label: "소방공무원 공채", salary: 2560, salaryNote: "소방사 1호봉 월 2,133,000원 × 12. 수당 제외 기본급(경력 없을 때)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 10·15)", firstPost: "소방서로 첫 발령을 받았다" },
+    exam: {
+      months: [6],
+      competition: 9.14,
+      warmup: 12,
+      label: "소방공무원 공채",
+      salary: withAllowance(2560),
+      salaryNote: `소방사 1호봉 월 2,133,000원 × 12 = 2,560만원 × ${ALLOWANCE}(9급에서 추정한 수당 비율, 가정값)`,
+      salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 10·15)",
+      firstPost: "소방서로 첫 발령을 받았다",
+    },
     facts: [
       {
         label: "2025년 소방공무원 필기 응시 경쟁률(공채·경채 합계)",

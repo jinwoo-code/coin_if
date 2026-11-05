@@ -1,7 +1,11 @@
 // 격차 판정·우선순위 단위 테스트(AI·네트워크 없음).
 import assert from "node:assert/strict";
 import { DEMO_PROFILE } from "@/lib/demo";
-import { gapItems, judgeItem, monthsOf, postingText, prioritize, scoreOf, tweakOf } from "@/lib/gap";
+import { gapItems, higherCert, judgeItem, monthsOf, postingText, prioritize, REQUIRED_TEXT, scoreOf, tweakOf } from "@/lib/gap";
+import { retrainMonths } from "@/lib/retrain";
+import { buildPlan, itemsToCut, overText, weeklyOf } from "@/lib/schedule";
+import { simulatePath } from "@/lib/engine";
+import { applySkillGroups, chunkSkills } from "@/lib/requirements";
 import type { RequirementItem, Requirements } from "@/lib/requirements";
 import type { Profile } from "@/lib/types";
 import { W } from "@/lib/weights";
@@ -127,5 +131,119 @@ t("근거 없는 항목과 선택 항목은 뒤로", () => {
 t("개월: 알바 시간을 빼고, 공부 시간이 0이면 없음", () => {
   assert.equal(monthsOf(120, prof({}, { life: { ...DEMO_PROFILE.life, studyHours: 2, partTimeHours: 0 } })), 2);
   assert.equal(monthsOf(120, prof({}, { life: { ...DEMO_PROFILE.life, studyHours: 0, partTimeHours: 0 } })), null);
+});
+t("윗 등급 자격이 있으면 아랫 등급은 있음", () => {
+  const p = prof({ certs: ["정보처리산업기사", "한국사능력검정시험 1급"] });
+  assert.equal(judgeItem(item({ name: "정보처리기능사" }), p, dev).status, "have");
+  assert.equal(judgeItem(item({ name: "정보처리기사" }), p, dev).status, "none");
+  assert.equal(judgeItem(item({ name: "전자계산기기능사" }), p, dev).status, "none");
+  assert.equal(higherCert(p, "한국사능력검정 3급 이상"), "한국사능력검정시험 1급");
+  assert.equal(higherCert(prof({ certs: ["한국사 4급"] }), "한국사능력검정 3급 이상"), null);
+});
+t("필수는 효과 %p 대신 필수 문구", () => {
+  const p = prof({}, { readiness: {} });
+  const l = item({ name: "간호사 면허", required: true });
+  const rows = prioritize([judgeItem(l, p, nurse)], nurse, p, { "readiness:license": 9 });
+  assert.equal(rows[0].simDelta, null);
+  assert.deepEqual(rows[0].evidence, [REQUIRED_TEXT]);
+});
+t("공부 시간 효과는 무엇을 바꿨는지 붙인다", () => {
+  const e = item({ kind: "exam", name: "국어", hours: { value: 100, grade: "assumed" } });
+  const rows = prioritize([judgeItem(e, prof(), cs)], cs, prof(), { study: 17 });
+  assert.ok(rows[0].evidence.join().includes("+17%p(하루 공부를 2시간 늘렸을 때)"));
+});
+t("능력 묶음 답이 추정보다 먼저", () => {
+  const r = { items: [item({ id: "a", kind: "skill", name: "화면구현" }), item({ id: "b", kind: "skill", name: "서버구현" })], skillGroups: [{ id: "g1", name: "화면", itemIds: ["a"] }] } as Requirements;
+  const g = gapItems(r, prof({}, { readiness: { coding: 0 } }), dev, { g1: 2 });
+  assert.equal(g[0].status, "have");
+  assert.equal(g[0].asked, true);
+  assert.equal(g[1].status, "none"); // 안 답한 묶음은 추정
+});
+t("능력 묶기: 없는 id는 버리고 빠진 것은 넣고, 쓸모없으면 AI 없이", () => {
+  const s = [1, 2, 3, 4, 5, 6].map((i) => ({ id: `s${i}`, name: `능력${i}` }));
+  const a = applySkillGroups(s, {
+    groups: [
+      { name: "가", ids: ["s1", "s2", "없음"] },
+      { name: "나", ids: ["s3", "s1"] },
+    ],
+  });
+  assert.equal(a.invented, 1);
+  assert.equal(a.ai, true);
+  assert.deepEqual(a.groups.flatMap((g) => g.itemIds).sort(), ["s1", "s2", "s3", "s4", "s5", "s6"]);
+  const b = applySkillGroups(s, null);
+  assert.equal(b.ai, false);
+  assert.ok(b.groups.length <= 4);
+  assert.equal(chunkSkills(s.slice(0, 3)).length, 3);
+});
+t("전공이 다르면 학과 다니기: 그 기간에 합격·취업 없음", () => {
+  const p = prof({ gradIn: 0, status: "졸업" }, { major: "경영학", readiness: {} });
+  assert.equal(retrainMonths(p, nurse), 30);
+  assert.equal(retrainMonths({ ...p, major: "간호학과" }, nurse), 0);
+  assert.equal(retrainMonths({ ...p, major: "" }, nurse), 0);
+  assert.equal(retrainMonths({ ...p, readiness: { license: 1 } }, nurse), 0);
+  assert.equal(retrainMonths(p, dev), 0);
+  for (const seed of [1, 2, 3, 4, 5]) {
+    const path = simulatePath(p, nurse, 60, "2026-11", String(seed));
+    assert.equal(path.months[0].event?.id, "retrain-start");
+    assert.equal(path.months[0].status, "학과 다시 다니는 중");
+    assert.equal(path.months[30].event?.id, "retrain-end");
+    assert.ok(path.employedAt === null || path.employedAt > 30);
+  }
+  assert.equal(tweakOf(item({ name: "간호사 면허", required: true }), nurse)!.apply(p), null);
+});
+t("일정: 우선순위대로, 여유 20%, 시간 초과를 알린다", () => {
+  const p = prof({}, { life: { ...DEMO_PROFILE.life, studyHours: 2, partTimeHours: 0 }, readiness: { coding: 0 } });
+  const items = [
+    item({ id: "s1", kind: "skill", name: "화면구현", hours: { value: 40, grade: "assumed" } }),
+    item({ id: "c1", name: "정보처리기사", hours: { value: 300, grade: "assumed" } }),
+    item({ id: "e1", kind: "experience", name: "프로젝트", hours: { value: 100, grade: "assumed" } }),
+  ];
+  const rows = prioritize(
+    items.map((i) => judgeItem(i, p, dev)),
+    dev,
+    p,
+    {},
+  );
+  assert.equal(weeklyOf(p), 14);
+  const plan = buildPlan(rows, p, dev, 36);
+  assert.ok(Math.abs(plan.capacityPerMonth - 14 * 4.345 * 0.8) < 0.01);
+  assert.equal(plan.over, false);
+  assert.equal(plan.rows.find((r) => r.id === "c1")!.examMonth, plan.rows.find((r) => r.id === "c1")!.end);
+  assert.ok(plan.rows.find((r) => r.id === "e1")!.lane === "practice" && plan.rows.find((r) => r.id === "e1")!.start === 0);
+  const tight = buildPlan(rows, p, dev, 36, { months: 3, weekly: 5 });
+  assert.equal(tight.over, true);
+  assert.match(overText(tight), /주 \d+시간이 필요한데 지금은 5시간이에요/);
+  assert.ok(tight.rows.some((r) => r.overflow));
+  const cut = itemsToCut(rows, p, dev, 3, 40);
+  assert.ok(cut.length >= 0);
+  assert.equal(buildPlan(rows, p, dev, 3, { months: 3, weekly: 40, removed: cut }).over, false);
+  const edited = buildPlan(rows, p, dev, 36, { examMonth: { c1: 0 } });
+  assert.equal(edited.rows.find((r) => r.id === "c1")!.examTooEarly, true);
+});
+t("일정: 학과가 필요한 진로는 학과가 맨 앞, 공부 시간 0도 멈추지 않는다", () => {
+  const p = prof({ gradIn: 0 }, { major: "경영학", readiness: {}, life: { ...DEMO_PROFILE.life, studyHours: 0, partTimeHours: 0 } });
+  const items = [
+    item({ id: "m", kind: "experience", name: "인증받은 간호학과 졸업", required: true }),
+    item({ id: "x", kind: "exam", name: "기본간호학", hours: { value: 80, grade: "assumed" } }),
+    item({ id: "l", name: "간호사 면허", required: true }),
+  ];
+  const rows = prioritize(
+    items.map((i) => judgeItem(i, p, nurse)),
+    nurse,
+    p,
+    {},
+  );
+  const plan = buildPlan(rows, p, nurse, 36);
+  assert.equal(plan.rows[0].id, "school");
+  assert.equal(plan.schoolMonths, 30);
+  assert.ok(plan.milestones.some((m) => m.item.id === "l"));
+  assert.equal(plan.over, true);
+  assert.equal(plan.neededMonths, null);
+  const study = { ...p, life: { ...p.life, studyHours: 4 } };
+  const after = buildPlan(rows, study, nurse, 36);
+  assert.equal(after.rows.find((r) => r.id === "x")!.start, 30);
+  const short = buildPlan(rows, study, nurse, 24);
+  assert.equal(short.over, true);
+  assert.match(overText(short), /학과 과정만 30개월/);
 });
 console.log(`${n}개 통과`);

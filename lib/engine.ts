@@ -7,6 +7,7 @@ import { eulReul, iGa } from "./josa";
 import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./base";
 import norms from "@/data/norms.json";
 import { judgeFailed, judgeFor, type JudgeEntry } from "./judge";
+import { retrainMonths } from "./retrain";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
 import { examChance, W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
@@ -109,6 +110,27 @@ const BROKE: EventCard = {
 };
 
 // 진로마다 같은 공통 사건(기준 비율은 data/base-shares.json의 "_global")
+// 전공이 달라 학과부터 다니는 구간(lib/retrain.ts). 기간은 가정값이고 등록금은 안 넣었다.
+const RETRAIN_START: EventCard = {
+  id: "retrain-start",
+  title: "학과를 다시 다니기 시작했다",
+  kind: "neutral",
+  weight: 0,
+  text: "이 길은 해당 학과를 마쳐야 자격이 나온다. 편입·재입학으로 다시 학교에 들어갔다.",
+  choices: [{ text: "학과 과정부터 차근차근 밟는다", tone: "push" }],
+  effect: { stress: 6 },
+  evidence: { label: "학과를 다니는 기간은 가정값(편입·재입학 기준, 등록금 제외)", source: "가정값" },
+};
+const RETRAIN_END: EventCard = {
+  id: "retrain-end",
+  title: "학과 과정을 마쳤다",
+  kind: "good",
+  weight: 0,
+  text: "졸업 요건을 채웠다. 이제 시험과 채용에 나설 수 있다.",
+  choices: [{ text: "바로 다음 준비를 시작한다", tone: "push" }],
+  effect: { satisfaction: 6, skill: 8 },
+};
+
 export const GLOBAL_EVENTS = [ENLIST, DISCHARGE, BROKE];
 const [ENLIST_B, DISCHARGE_B, BROKE_B] = GLOBAL_EVENTS.map((e) => attachBase(e, "_global"));
 
@@ -400,6 +422,7 @@ interface Sim {
   tierId: string;
   idle: number;
   gradIn: number; // 일 없이 준비한 개월 수
+  offset: number; // 학과를 다시 다닌 기간. 사건의 '몇 개월째'는 그 뒤부터 센다
 }
 
 const BIG_PER_MONTH = 0.22;
@@ -415,9 +438,9 @@ function none(sim: Sim, ids?: string[]) {
 function eligible(e: EventCard, sim: Sim, month: number, calMonth: number) {
   const employed = sim.employedSince !== null;
   return (
-    (e.minMonth ?? 0) <= month &&
+    (e.minMonth ?? 0) <= month - sim.offset &&
     (!e.afterGrad || month >= sim.gradIn - (e.gradGrace ?? 0)) &&
-    (e.maxMonth ?? Infinity) >= month &&
+    (e.maxMonth ?? Infinity) >= month - sim.offset &&
     (!e.calendar || e.calendar.includes(calMonth)) &&
     has(sim, e.requires) &&
     none(sim, e.excludes) &&
@@ -444,7 +467,7 @@ function gateChance(e: EventCard, p: Profile, sim: Sim, world: WorldTemplate, mo
   if ((e.chance ?? 0) >= 1) return 1; // 반드시 일어나는 일(시작, 불합격 통보 등)
   // 시험은 k ÷ 경쟁률. 민감도 분석이 k를 바꿀 수 있게 여기서 읽는다.
   let pr = (e.competition ? examChance(e.competition) : (e.chance ?? 0)) * factorMult(p, world, e.factors);
-  if (e.warmup) pr *= Math.min(1, (month + 1) / e.warmup);
+  if (e.warmup) pr *= Math.min(1, (month - sim.offset + 1) / e.warmup);
   // 준비가 쌓일수록(역량) 조금씩 유리해진다.
   pr *= clamp(0.55 + sim.state.skill / 90, 0.55, 1.5);
   // 생활비 때문에 알바를 늘렸으면 준비 시간이 줄어든다.
@@ -491,8 +514,9 @@ function hateHit(p: Profile, e: EventCard) {
   return (e.tags ?? []).filter((t) => p.wants.hates.includes(t)).length;
 }
 
-function statusOf(world: WorldTemplate, sim: Sim, month: number, inService: boolean) {
+function statusOf(world: WorldTemplate, sim: Sim, month: number, inService: boolean, inRetrain = false) {
   if (inService) return "군 복무 중";
+  if (inRetrain) return "학과 다시 다니는 중";
   if (sim.employedSince !== null) return `${sim.tier} ${month - sim.employedSince + 1}개월차`;
   if (sim.used.has("switched")) return "다른 길 준비 중";
   if (sim.used.has("quit")) return "그만두고 다시 찾는 중";
@@ -538,8 +562,16 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     tierId: "",
     idle: 0,
     gradIn: p.spec.gradIn,
+    offset: 0,
   };
   const enlist = p.life.military === "미필" && p.life.enlistIn !== null ? p.life.enlistIn : null;
+  const retrain = retrainMonths(p, world);
+  // 학과를 다니는 중에 입대하면 그만큼 뒤로 밀린다.
+  const retrainEnd = retrain ? retrain + (enlist !== null && enlist < retrain ? SERVICE_MONTHS : 0) : 0;
+  if (retrainEnd) {
+    sim.gradIn = Math.max(sim.gradIn, retrainEnd);
+    sim.offset = retrainEnd + 1; // 끝난 달은 '학과 과정을 마쳤다' 사건이 쓴다
+  }
   const runway = p.story?.runwayMonths?.value ?? null;
   // 일하는 중의 평소 만족도: 이 일이 내 가치관을 얼마나 채우는지에 따라 45~75
   const jobSat = Math.round(48 + W("value.jobSat") * valueFit(world, p));
@@ -552,6 +584,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
   for (let month = 0; month < months; month++) {
     const cal = ymAt(startYm, month).month;
     const inService = enlist !== null && month >= enlist && month < enlist + SERVICE_MONTHS;
+    const inRetrain = month < retrainEnd && !inService;
 
     // 사건 고르기
     let event: EventCard | null = null;
@@ -566,7 +599,9 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE_B;
     // 생활비 바닥: 모은 돈이 바닥나거나, 이야기에서 말한 '집 지원 없이 버틸 수 있는 기간'이 졸업 뒤 지났을 때(더 이른 쪽)
     else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway))) event = BROKE_B;
-    else if (!inService) event = pickEvent(world, p, sim, month, cal, rand, force);
+    else if (retrain && month === 0) event = RETRAIN_START;
+    else if (retrain && month === retrainEnd) event = RETRAIN_END;
+    else if (!inService && !inRetrain) event = pickEvent(world, p, sim, month, cal, rand, force);
 
     let delta: Partial<LifeState> = {};
     let choiceIndex = 0;
@@ -585,7 +620,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
         live && event.branch === "choice" && event.choices.length >= 2
           ? live(event, {
               month,
-              status: statusOf(world, sim, month, inService),
+              status: statusOf(world, sim, month, inService, inRetrain),
               bucket,
               state: sim.state,
               recent: log
@@ -669,14 +704,16 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
 
     const target = inService
       ? { sat: 45, stress: 50 }
-      : sim.used.has("switched") && sim.employedSince === null
-        ? { sat: 50, stress: 45 } // 다른 노선으로 갈아탐: 이 진로의 시계는 멈춘다
-        : sim.employedSince !== null
-          ? { sat: jobSat, stress: 38 + Math.max(0, world.hoursPerWeek - 40) * 1.5 }
-          : { sat: Math.max(35, 52 - sim.idle * 0.6), stress: 48 };
-    if (!inService && sim.employedSince === null && !sim.used.has("switched")) sim.idle += 1;
+      : inRetrain
+        ? { sat: 50, stress: 50 }
+        : sim.used.has("switched") && sim.employedSince === null
+          ? { sat: 50, stress: 45 } // 다른 노선으로 갈아탐: 이 진로의 시계는 멈춘다
+          : sim.employedSince !== null
+            ? { sat: jobSat, stress: 38 + Math.max(0, world.hoursPerWeek - 40) * 1.5 }
+            : { sat: Math.max(35, 52 - sim.idle * 0.6), stress: 48 };
+    if (!inService && !inRetrain && sim.employedSince === null && !sim.used.has("switched")) sim.idle += 1;
     sim.state = applyDelta(drift(sim.state, target), delta);
-    log.push({ month, event, choiceIndex, reason, pick, tierLabel, delta, state: sim.state, status: statusOf(world, sim, month, inService), salary: sim.salary });
+    log.push({ month, event, choiceIndex, reason, pick, tierLabel, delta, state: sim.state, status: statusOf(world, sim, month, inService, inRetrain), salary: sim.salary });
   }
 
   return { seed, months: log, signature, sigMonths, choiceKeys, final: sim.state, employedAt, salary: sim.salary };

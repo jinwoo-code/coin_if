@@ -495,6 +495,46 @@
    "호텔·관광경영학과"
   ],
   "baseDate": "2026-11-05",
-  "stale": false
+  "stale": false,
+  "skillGroups": [
+   {
+    "id": "g1",
+    "name": "객실 예약 및 마감 관리",
+    "itemIds": [
+     "ncs:객실예약관리",
+     "ncs:객실매출관리",
+     "ncs:객실일일마감"
+    ]
+   },
+   {
+    "id": "g2",
+    "name": "프런트 및 고객 관리",
+    "itemIds": [
+     "ncs:체크인checkin",
+     "ncs:재실inhouse고객관리",
+     "ncs:groguestrelationsofficer",
+     "ncs:귀빈층라운지efl",
+     "ncs:고객서비스센터"
+    ]
+   },
+   {
+    "id": "g3",
+    "name": "안내 및 의전 서비스",
+    "itemIds": [
+     "ncs:컨시어지concierge",
+     "ncs:벨데스크",
+     "ncs:도어데스크",
+     "ncs:발렛valet"
+    ]
+   },
+   {
+    "id": "g4",
+    "name": "지원 및 운영 관리",
+    "itemIds": [
+     "ncs:비즈니스센터",
+     "ncs:당직"
+    ]
+   }
+  ]
  }
 }

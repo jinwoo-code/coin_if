@@ -548,6 +548,53 @@
   "prep": [],
   "majors": [],
   "baseDate": "2026-11-05",
-  "stale": false
+  "stale": false,
+  "skillGroups": [
+   {
+    "id": "g1",
+    "name": "사무행정 및 문서관리",
+    "itemIds": [
+     "ncs:사무행정업무관리",
+     "ncs:자료관리",
+     "ncs:사무환경조성",
+     "ncs:회의운영",
+     "ncs:문서작성",
+     "ncs:문서관리",
+     "ncs:사무자동화프로그램활용",
+     "ncs:그룹웨어활용"
+    ]
+   },
+   {
+    "id": "g2",
+    "name": "총무 및 사업지원",
+    "itemIds": [
+     "ncs:사업계획수립",
+     "ncs:복리후생지원",
+     "ncs:행사지원관리",
+     "ncs:비품관리",
+     "ncs:용역관리",
+     "ncs:총무보안관리",
+     "ncs:차량운영관리",
+     "ncs:총무문서관리",
+     "ncs:업무지원"
+    ]
+   },
+   {
+    "id": "g3",
+    "name": "기초 직업능력",
+    "itemIds": [
+     "ncs-basic:의사소통능력",
+     "ncs-basic:수리능력",
+     "ncs-basic:문제해결능력",
+     "ncs-basic:자기개발능력",
+     "ncs-basic:자원관리능력",
+     "ncs-basic:대인관계능력",
+     "ncs-basic:정보능력",
+     "ncs-basic:기술능력",
+     "ncs-basic:조직이해능력",
+     "ncs-basic:직업윤리"
+    ]
+   }
+  ]
  }
 }

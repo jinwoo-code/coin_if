@@ -5,6 +5,7 @@ import { gapItems, prioritize } from "@/lib/gap";
 import { gapDeltas } from "@/lib/gap-sim";
 import { majorFamily } from "@/lib/job-codes";
 import type { RequirementsFile } from "@/lib/requirements";
+import { buildPlan, rangeLabel } from "@/lib/schedule";
 import { getWorld } from "@/lib/worlds";
 
 const ids = (process.argv[2] ?? "developer,nurse,civil-servant").split(",");
@@ -27,4 +28,7 @@ for (const id of ids) {
       .join(", ") || "없음",
   );
   rows.slice(0, 6).forEach((x, i) => console.log(`${i + 1}. [${x.status}${x.item.required ? " 필수" : ""}] ${x.title} ${x.score.toFixed(2)} | ${x.evidence.join(" · ")} | ${x.basis}`));
+  const plan = buildPlan(rows, DEMO_PROFILE, w, 36);
+  console.log(`일정: 주 ${plan.weekly}시간, 필요 주 ${plan.neededWeekly}시간${plan.over ? " (초과)" : ""}`);
+  plan.rows.slice(0, 6).forEach((x) => console.log(`  ${rangeLabel("2026-11", x)} | ${x.title} ${x.hours}시간 ${x.lane}${x.examMonth !== null ? ` 시험 위치 ${x.examMonth}개월 뒤` : ""}`));
 }
