@@ -417,7 +417,7 @@
       "calendar": [
         7
       ],
-      "minMonth": 6,
+      "minMonth": 5,
       "requires": [
         "study-start"
       ],

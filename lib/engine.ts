@@ -488,6 +488,11 @@ function gateChance(e: EventCard, p: Profile, sim: Sim, world: WorldTemplate, mo
   return clamp(pr, 0, 0.95);
 }
 
+// 달력이 정해진 관문(시험·발표)이 이번 달에 있는가. pickEvent의 관문과 같은 조건.
+function calendarGateDue(world: WorldTemplate, sim: Sim, month: number, calMonth: number) {
+  return world.events.some((e) => e.calendar && e.chance !== undefined && (e.repeatable || !sim.used.has(e.id)) && eligible(e, sim, month, calMonth));
+}
+
 function pickEvent(world: WorldTemplate, p: Profile, sim: Sim, month: number, calMonth: number, rand: () => number, force?: Force) {
   const open = world.events.filter((e) => eligible(e, sim, month, calMonth));
 
@@ -616,7 +621,8 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       }
     } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE_B;
     // 생활비 바닥: 모은 돈이 바닥나거나, 이야기에서 말한 '집 지원 없이 버틸 수 있는 기간'이 졸업 뒤 지났을 때(더 이른 쪽)
-    else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway))) event = BROKE_B;
+    // 한 달에 사건은 하나라서, 그 달에 치를 시험·발표가 있으면 그걸 먼저 하고 다음 달로 미룬다(안 미루면 시험이 통째로 사라진다).
+    else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway)) && (inRetrain || !calendarGateDue(world, sim, month, cal))) event = BROKE_B;
     else if (retrain && month === 0) event = RETRAIN_START;
     else if (retrain && month === retrainEnd) event = RETRAIN_END;
     else if (!inService && !inRetrain) event = pickEvent(world, ready, sim, month, cal, rand, force);

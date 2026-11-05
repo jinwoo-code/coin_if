@@ -12,7 +12,7 @@ import { buildPlan } from "@/lib/schedule";
 import type { Profile } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
-const START = "2026-12"; // 2026-11에 화면을 연 것과 같은 시작 달. 시험형은 시작 달에 따라 값이 크게 달라진다(아래 문장)
+const START = "2026-12"; // 2026-11에 화면을 연 것과 같은 시작 달
 const cell = (s: string) => s.replace(/\|/g, "/").replace(/\s+/g, " ").trim();
 
 function section(who: string, p: Profile, id: string, tries: { months: number; weekly?: number }[]) {
@@ -51,7 +51,7 @@ const doc = [
   "",
   `\`scripts/report-summary.ts\`로 만든 표입니다. 인물은 팀이 정한 가상 시연 인물이고, 값은 시작 달 ${START} 기준 엔진 계산이고, 배포 화면과는 몇 %p 다를 수 있습니다(9급 주 71시간: 화면 62%, 표 64%).`,
   "계획을 제때 다 해낸다는 가정의 값이라 실제 효과가 아니고, 배수 대부분은 가정값입니다. 합격·취업을 보장하지 않습니다.",
-  "9급 3년 안 값은 같은 사람도 시작 달에 따라 달라집니다(2026-12 41%, 2027-01 36%, 2027-03 25%, 2027-06 43%). 원인은 아직 확인하지 않았습니다.",
+  "9급 3년 안 값은 시작 달에 따라 40~45%입니다(남은 차이는 3년 안에 드는 시험 횟수 차이로 보임).",
   "",
   section("김민준", DEMO_PROFILE, "developer", [{ months: 36 }]),
   section("이서연", NURSE_DEMO_PROFILE, "nurse", [{ months: 36 }, { months: 60 }]),
