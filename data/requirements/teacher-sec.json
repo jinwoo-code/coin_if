@@ -1,0 +1,505 @@
+{
+ "worldId": "teacher-sec",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "teacher-sec",
+  "certPolicy": "curated-only",
+  "filter": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "curated:cert-teacher",
+    "kind": "cert",
+    "name": "중등학교 정교사(2급) 자격증",
+    "detail": "사범대 졸업, 대학 교육과 졸업, 교직과정 이수, 교육대학원 석사 등. 표시 과목이 응시 교과와 맞아야 합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "초·중등교육법 제21조, 별표 2 (시행 2026. 10. 29.)",
+    "refUrl": "https://www.law.go.kr/법령/초ㆍ중등교육법"
+   },
+   {
+    "id": "curated:cert-history",
+    "kind": "cert",
+    "name": "한국사능력검정",
+    "detail": "1차 한국사 과목을 대체합니다. 인정 등급은 규칙에 없어 해마다 공고를 확인해야 합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+    "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-edu",
+    "kind": "exam",
+    "name": "교육학",
+    "detail": "1차 시험. 배점은 공고에서 확인",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+    "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-major",
+    "kind": "exam",
+    "name": "전공",
+    "detail": "1차 시험. 교과내용학과 교과교육학",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+    "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+    "hours": {
+     "value": 1500,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-interview",
+    "kind": "exam",
+    "name": "교직적성 심층면접",
+    "detail": "2차 시험",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+    "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-teaching",
+    "kind": "exam",
+    "name": "수업실연",
+    "detail": "2차 시험. 보건·사서·전문상담·영양 교과는 제외",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+    "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+    "hours": {
+     "value": 120,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-practical",
+    "kind": "exam",
+    "name": "실기평가",
+    "detail": "2차 시험. 체육·음악·미술만 해당",
+    "grade": "curated",
+    "source": "curated",
+    "required": false,
+    "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+    "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:practice",
+    "kind": "experience",
+    "name": "교육실습",
+    "detail": "실습 기간은 공식 문서로 확인하지 못한 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 160,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(인문계중등학교교사)",
+    "text": "국공립 중학교와 고등학교 교사가 되기 위해서는 중등학교 2급 정교사 자격 취득 후 각 시도교육청에서 시행하는 중등교사 임용시험에 합격해야 합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(인문계중등학교교사)",
+    "text": "사립 중학교 및 고등학교에 취업하기 위해서는 채용 공고를 통해 지원하고 일정 과정을 거쳐 합격해야 합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(인문계중등학교교사)",
+    "text": "국가자격증으로 중등학교 정교사 1급, 2급이 있습니다. 사범대학 및 교직과정을 이수하고 졸업을 했을 경우 중등학교 정교사 2급 자격을 취득할 수 있으며, 2급 자격 취득 후 일정 자격요건을 갖추면 1급 자격을 취득할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(인문계중등학교교사)",
+    "text": "대학교의 사범대학의 관련 학과를 졸업하면 유리합니다. 사범대학 혹은 교직과정이 개설된 학과에서 교직 이수를 하면 중등학교 2급 정교사 자격을 취득할 수 있습니다. 혹은 교육대학원 또는 교육부장관이 지정한 대학원에서 석사학위를 받으면 학부 전공과 관련 있는 교과의 중등학교 2급 정교사 자격을 취득할 수 있습니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(중·고등학교 교사)",
+    "text": "중고등학교교사가 되기 위해서는 대학교의 사범계열 학과를 졸업하거나 비사범계열 학과에서 교직 과목을 이수하여 중등학교 2급 정교사 자격을 취득해야 한다. 비사범계열학과 졸업 후 교육대학원에 진학하여 석사학위를 취득해도 2급 정교사 자격을 취득할 수 있다. 사범계열학과에 진학하면 각 교과목의 내용과 전달방법, 각 교과목을 가르치는 데 필요한 교육학 영역에 대해 배울 수 있다. 이밖에 교육학과 전공자가 국어국문학과(국어교육학과), 영어영문학과(영어교육학과) 등을 부전공으로 이수하여 해당 교과목의 교사자격증을 취득할 수도 있다. 보통 4학년 1학기에는 중고등학교에서 학생들을 대상으로 그동안 배운 지식과 이론을 기초로 교육실습(교생실습)을 한다."
+   }
+  ],
+  "majors": [
+   "국어교육과",
+   "윤리교육과",
+   "미술교육과",
+   "영어교육과",
+   "체육교육과",
+   "음악교육과",
+   "사회교육과",
+   "역사교육과",
+   "일반사회교육과",
+   "지리교육과",
+   "한문교육과",
+   "일어교육과",
+   "독일어교육과",
+   "불어교육과",
+   "종교교육과",
+   "교육학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ },
+ "byFamily": {
+  "인문": {
+   "worldId": "teacher-sec",
+   "certPolicy": "curated-only",
+   "filter": {
+    "mode": "curated",
+    "dropped": [],
+    "invented": 0
+   },
+   "items": [
+    {
+     "id": "curated:cert-teacher",
+     "kind": "cert",
+     "name": "중등학교 정교사(2급) 자격증",
+     "detail": "사범대 졸업, 대학 교육과 졸업, 교직과정 이수, 교육대학원 석사 등. 표시 과목이 응시 교과와 맞아야 합니다.",
+     "grade": "curated",
+     "source": "curated",
+     "required": true,
+     "ref": "초·중등교육법 제21조, 별표 2 (시행 2026. 10. 29.)",
+     "refUrl": "https://www.law.go.kr/법령/초ㆍ중등교육법"
+    },
+    {
+     "id": "curated:cert-history",
+     "kind": "cert",
+     "name": "한국사능력검정",
+     "detail": "1차 한국사 과목을 대체합니다. 인정 등급은 규칙에 없어 해마다 공고를 확인해야 합니다.",
+     "grade": "curated",
+     "source": "curated",
+     "required": true,
+     "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+     "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+     "hours": {
+      "value": 80,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-edu",
+     "kind": "exam",
+     "name": "교육학",
+     "detail": "1차 시험. 배점은 공고에서 확인",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+     "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-major",
+     "kind": "exam",
+     "name": "전공",
+     "detail": "1차 시험. 교과내용학과 교과교육학",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+     "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+     "hours": {
+      "value": 1500,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-interview",
+     "kind": "exam",
+     "name": "교직적성 심층면접",
+     "detail": "2차 시험",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+     "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+     "hours": {
+      "value": 80,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-teaching",
+     "kind": "exam",
+     "name": "수업실연",
+     "detail": "2차 시험. 보건·사서·전문상담·영양 교과는 제외",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+     "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+     "hours": {
+      "value": 120,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-practical",
+     "kind": "exam",
+     "name": "실기평가",
+     "detail": "2차 시험. 체육·음악·미술만 해당",
+     "grade": "curated",
+     "source": "curated",
+     "required": false,
+     "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+     "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:practice",
+     "kind": "experience",
+     "name": "교육실습",
+     "detail": "실습 기간은 공식 문서로 확인하지 못한 가정값입니다.",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 160,
+      "grade": "assumed"
+     }
+    }
+   ],
+   "prep": [
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(인문계중등학교교사)",
+     "text": "국공립 중학교와 고등학교 교사가 되기 위해서는 중등학교 2급 정교사 자격 취득 후 각 시도교육청에서 시행하는 중등교사 임용시험에 합격해야 합니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(인문계중등학교교사)",
+     "text": "사립 중학교 및 고등학교에 취업하기 위해서는 채용 공고를 통해 지원하고 일정 과정을 거쳐 합격해야 합니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(인문계중등학교교사)",
+     "text": "국가자격증으로 중등학교 정교사 1급, 2급이 있습니다. 사범대학 및 교직과정을 이수하고 졸업을 했을 경우 중등학교 정교사 2급 자격을 취득할 수 있으며, 2급 자격 취득 후 일정 자격요건을 갖추면 1급 자격을 취득할 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(인문계중등학교교사)",
+     "text": "대학교의 사범대학의 관련 학과를 졸업하면 유리합니다. 사범대학 혹은 교직과정이 개설된 학과에서 교직 이수를 하면 중등학교 2급 정교사 자격을 취득할 수 있습니다. 혹은 교육대학원 또는 교육부장관이 지정한 대학원에서 석사학위를 받으면 학부 전공과 관련 있는 교과의 중등학교 2급 정교사 자격을 취득할 수 있습니다."
+    },
+    {
+     "source": "work24-job",
+     "ref": "고용24 직업정보(중·고등학교 교사)",
+     "text": "중고등학교교사가 되기 위해서는 대학교의 사범계열 학과를 졸업하거나 비사범계열 학과에서 교직 과목을 이수하여 중등학교 2급 정교사 자격을 취득해야 한다. 비사범계열학과 졸업 후 교육대학원에 진학하여 석사학위를 취득해도 2급 정교사 자격을 취득할 수 있다. 사범계열학과에 진학하면 각 교과목의 내용과 전달방법, 각 교과목을 가르치는 데 필요한 교육학 영역에 대해 배울 수 있다. 이밖에 교육학과 전공자가 국어국문학과(국어교육학과), 영어영문학과(영어교육학과) 등을 부전공으로 이수하여 해당 교과목의 교사자격증을 취득할 수도 있다. 보통 4학년 1학기에는 중고등학교에서 학생들을 대상으로 그동안 배운 지식과 이론을 기초로 교육실습(교생실습)을 한다."
+    }
+   ],
+   "majors": [
+    "국어교육과",
+    "윤리교육과",
+    "미술교육과",
+    "영어교육과",
+    "체육교육과",
+    "음악교육과",
+    "사회교육과",
+    "역사교육과",
+    "일반사회교육과",
+    "지리교육과",
+    "한문교육과",
+    "일어교육과",
+    "독일어교육과",
+    "불어교육과",
+    "종교교육과",
+    "교육학과"
+   ],
+   "baseDate": "2026-11-05",
+   "stale": false
+  },
+  "자연": {
+   "worldId": "teacher-sec",
+   "certPolicy": "curated-only",
+   "filter": {
+    "mode": "curated",
+    "dropped": [],
+    "invented": 0
+   },
+   "items": [
+    {
+     "id": "curated:cert-teacher",
+     "kind": "cert",
+     "name": "중등학교 정교사(2급) 자격증",
+     "detail": "사범대 졸업, 대학 교육과 졸업, 교직과정 이수, 교육대학원 석사 등. 표시 과목이 응시 교과와 맞아야 합니다.",
+     "grade": "curated",
+     "source": "curated",
+     "required": true,
+     "ref": "초·중등교육법 제21조, 별표 2 (시행 2026. 10. 29.)",
+     "refUrl": "https://www.law.go.kr/법령/초ㆍ중등교육법"
+    },
+    {
+     "id": "curated:cert-history",
+     "kind": "cert",
+     "name": "한국사능력검정",
+     "detail": "1차 한국사 과목을 대체합니다. 인정 등급은 규칙에 없어 해마다 공고를 확인해야 합니다.",
+     "grade": "curated",
+     "source": "curated",
+     "required": true,
+     "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+     "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+     "hours": {
+      "value": 80,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-edu",
+     "kind": "exam",
+     "name": "교육학",
+     "detail": "1차 시험. 배점은 공고에서 확인",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+     "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-major",
+     "kind": "exam",
+     "name": "전공",
+     "detail": "1차 시험. 교과내용학과 교과교육학",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+     "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+     "hours": {
+      "value": 1500,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-interview",
+     "kind": "exam",
+     "name": "교직적성 심층면접",
+     "detail": "2차 시험",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+     "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+     "hours": {
+      "value": 80,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-teaching",
+     "kind": "exam",
+     "name": "수업실연",
+     "detail": "2차 시험. 보건·사서·전문상담·영양 교과는 제외",
+     "grade": "curated",
+     "source": "curated",
+     "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+     "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+     "hours": {
+      "value": 120,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:exam-practical",
+     "kind": "exam",
+     "name": "실기평가",
+     "detail": "2차 시험. 체육·음악·미술만 해당",
+     "grade": "curated",
+     "source": "curated",
+     "required": false,
+     "ref": "경기도교육청 2027학년도 중등 시행계획 보도자료 (2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+     "refUrl": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:practice",
+     "kind": "experience",
+     "name": "교육실습",
+     "detail": "실습 기간은 공식 문서로 확인하지 못한 가정값입니다.",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 160,
+      "grade": "assumed"
+     }
+    }
+   ],
+   "prep": [
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연계중등학교교사)",
+     "text": "국공립 중학교와 고등학교 교사가 되기 위해서는 중등학교 2급 정교사 자격 취득 후 각 시도교육청에서 시행하는 중등교사 임용시험 합격을 통해 취업할 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연계중등학교교사)",
+     "text": "사립 중학교와 고등학교 교사는 결원이나 추가 모집이 있는 경우에 대학의 추천, 채용 사이트, 신문 공고 등을 통해 지원할 수 있으며, 학교장과 사학재단의 이사회의 결정을 통해 취업할 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연계중등학교교사)",
+     "text": "국가자격증으로는 교육부가 주관하는 중등학교 정교사 1급, 2급 자격증이 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연계중등학교교사)",
+     "text": "자연계열의 사범대학에 입학하여 4년 동안 교육과 실습을 받거나, 교직과정이 개설된 학과에서 교직 이수를 하면 중등학교 2급 정교사 자격을 취득할 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연계중등학교교사)",
+     "text": "교직과정이 개설되지 않은 4년제 대학을 졸업한 경우에는 교육대학원 또는 교육부장관이 지정한 대학원 교육과에서 석사학위를 받음으로써 학부 전공과 관련 있는 교과의 중등학교 2급 정교사 자격을 취득할 수 있습니다."
+    },
+    {
+     "source": "work24-job",
+     "ref": "고용24 직업정보(중·고등학교 교사)",
+     "text": "중고등학교교사가 되기 위해서는 대학교의 사범계열 학과를 졸업하거나 비사범계열 학과에서 교직 과목을 이수하여 중등학교 2급 정교사 자격을 취득해야 한다. 비사범계열학과 졸업 후 교육대학원에 진학하여 석사학위를 취득해도 2급 정교사 자격을 취득할 수 있다. 사범계열학과에 진학하면 각 교과목의 내용과 전달방법, 각 교과목을 가르치는 데 필요한 교육학 영역에 대해 배울 수 있다. 이밖에 교육학과 전공자가 국어국문학과(국어교육학과), 영어영문학과(영어교육학과) 등을 부전공으로 이수하여 해당 교과목의 교사자격증을 취득할 수도 있다. 보통 4학년 1학기에는 중고등학교에서 학생들을 대상으로 그동안 배운 지식과 이론을 기초로 교육실습(교생실습)을 한다."
+    }
+   ],
+   "majors": [
+    "물리교육과",
+    "가정교육과",
+    "지구과학교육과",
+    "교육학과",
+    "화학교육과",
+    "수학교육과"
+   ],
+   "baseDate": "2026-11-05",
+   "stale": false
+  }
+ }
+}

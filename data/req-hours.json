@@ -1,0 +1,19 @@
+{
+  "_설명": "준비에 걸리는 시간(시간). 공식 자료가 거의 없어 전부 가정값(grade assumed). 현직자·합격자 인터뷰 값이 들어오면 byName에 grade interview로 넣는다. 이름은 공백 없이 정확히 같을 때만 쓴다.",
+  "defaults": {
+    "skill": 40,
+    "cert": 150,
+    "experience": 120
+  },
+  "certByPattern": [
+    { "pattern": "기술사$", "hours": 800 },
+    { "pattern": "기능장$", "hours": 500 },
+    { "pattern": "산업기사$", "hours": 200 },
+    { "pattern": "기사$", "hours": 300 },
+    { "pattern": "기능사$", "hours": 120 },
+    { "pattern": "1급$", "hours": 200 },
+    { "pattern": "2급$", "hours": 100 },
+    { "pattern": "3급$", "hours": 60 }
+  ],
+  "byName": {}
+}

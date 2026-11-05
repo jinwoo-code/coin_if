@@ -1,0 +1,163 @@
+{
+ "worldId": "firefighter",
+ "sources": {
+  "rule": {
+   "name": "소방공무원 임용령 제42·43·44·46조, 별표 2·3·6·9",
+   "url": "https://www.law.go.kr/법령/소방공무원임용령",
+   "version": "시행 2026. 7. 1."
+  },
+  "fit": {
+   "name": "소방공무원 임용령 시행규칙 제23조의2·24조, 별표 6·7",
+   "url": "https://www.law.go.kr/법령/소방공무원임용령시행규칙",
+   "version": "시행 2026. 7. 1."
+  }
+ },
+ "certCandidates": [
+  "cert-license",
+  "exam-english",
+  "exam-history",
+  "bonus-related5",
+  "bonus-related3",
+  "bonus-related1",
+  "bonus-office"
+ ],
+ "noBonusNote": "자격증 가점은 2027년 8월 31일까지의 표입니다. 2027년 9월 1일부터는 제1종 대형 운전면허 1%만 남습니다. 최종 성적은 필기 50·체력 25·면접 25이고, 가점은 분야별로 하나씩 합쳐 5% 이내입니다. 2028년 1월 1일 시행 조문이 더 있어 공고를 확인해야 합니다.",
+ "items": [
+  {
+   "id": "req-age",
+   "kind": "step",
+   "name": "응시 나이 18~40세",
+   "detail": "최종시험 예정일이 속한 해 기준",
+   "grade": "curated",
+   "ref": "rule"
+  },
+  {
+   "id": "cert-license",
+   "kind": "cert",
+   "name": "제1종 운전면허(대형 또는 보통)",
+   "detail": "소방사 공채 응시 자격",
+   "grade": "curated",
+   "ref": "rule",
+   "required": true
+  },
+  {
+   "id": "exam-fire",
+   "kind": "exam",
+   "name": "소방학개론",
+   "detail": "소방조직, 재난관리, 연소·화재이론, 소화이론",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-law",
+   "kind": "exam",
+   "name": "소방관계법규",
+   "detail": "소방기본법, 화재조사법, 소방시설공사업법, 소방시설법, 화재예방법, 위험물안전관리법과 하위 법령",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-admin",
+   "kind": "exam",
+   "name": "행정법총론",
+   "detail": "필기 필수 과목",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-english",
+   "kind": "cert",
+   "name": "영어능력검정",
+   "detail": "시험 대체 기준. 토익 550·토플 IBT 52·텝스 241·지텔프 Level 2 43·플렉스 457·토셀 Advanced 510 이상",
+   "grade": "curated",
+   "ref": "rule",
+   "required": true,
+   "hours": {
+    "value": 150,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-history",
+   "kind": "cert",
+   "name": "한국사능력검정 3급 이상",
+   "detail": "한국사 과목을 대체합니다.",
+   "grade": "curated",
+   "ref": "rule",
+   "required": true,
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "fit",
+   "kind": "exam",
+   "name": "체력시험 6종목",
+   "detail": "악력, 배근력, 앉아 윗몸 앞으로 굽히기, 제자리 멀리 뛰기, 윗몸 일으키기, 왕복 오래 달리기. 60점 중 30점 이상 합격",
+   "grade": "curated",
+   "ref": "fit",
+   "hours": {
+    "value": 200,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "bonus-related5",
+   "kind": "cert",
+   "name": "가점 5%: 소방 관련 기술사·기능장, 소방시설관리사, 의사, 변호사 등",
+   "detail": "2027년 8월 31일까지",
+   "grade": "curated",
+   "ref": "fit",
+   "required": false
+  },
+  {
+   "id": "bonus-related3",
+   "kind": "cert",
+   "name": "가점 3%: 소방 관련 기사, 응급구조사 1급, 간호사, 소방안전교육사 등",
+   "detail": "2027년 8월 31일까지",
+   "grade": "curated",
+   "ref": "fit",
+   "required": false
+  },
+  {
+   "id": "bonus-related1",
+   "kind": "cert",
+   "name": "가점 1%: 소방 관련 산업기사·기능사, 응급구조사 2급, 제1종 대형면허 등",
+   "detail": "제1종 대형면허 1%만 2027년 9월 1일 뒤에도 남습니다.",
+   "grade": "curated",
+   "ref": "fit",
+   "required": false
+  },
+  {
+   "id": "bonus-office",
+   "kind": "cert",
+   "name": "가점 사무·어학: 컴퓨터활용능력, 토익 600·800 이상, 한국어 검정 등",
+   "detail": "2027년 8월 31일까지. 분야별로 하나만",
+   "grade": "curated",
+   "ref": "fit",
+   "required": false
+  },
+  {
+   "id": "step-final",
+   "kind": "step",
+   "name": "면접과 최종 성적",
+   "detail": "면접 총점 50% 이상. 최종 성적은 필기 50%·체력 25%·면접 25%",
+   "grade": "curated",
+   "ref": "rule"
+  }
+ ],
+ "checkedAt": "2026-11-05"
+}

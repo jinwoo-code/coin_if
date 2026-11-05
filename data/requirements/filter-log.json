@@ -1,0 +1,485 @@
+{
+ "developer": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "전자계산기기능사",
+     "why": "하드웨어 및 회로 중심 자격증임"
+    },
+    {
+     "name": "전자계산기제어산업기사",
+     "why": "하드웨어 및 제어 중심 자격증임"
+    },
+    {
+     "name": "전자계산기기사",
+     "why": "하드웨어 및 전자회로 중심 자격증임"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "civil-servant": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "data-analyst": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "marketer": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "app-dev": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "전자계산기기능사",
+     "why": "하드웨어 중심 자격증으로 모바일 앱 개발과 무관함"
+    },
+    {
+     "name": "전자계산기제어산업기사",
+     "why": "하드웨어 및 제어 중심 자격증임"
+    },
+    {
+     "name": "전자계산기기사",
+     "why": "하드웨어 설계 및 전자계산기 중심 자격증임"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "security": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "sys-eng": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "데이터아키텍처",
+     "why": "데이터 관리 중심 자격증으로 시스템 엔지니어와 무관"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "game-dev": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "mech-eng": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "elec-eng": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "semi-eng": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "의료전자기능사",
+     "why": "의료기기 분야로 공정 엔지니어와 무관"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "chem-eng": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "화약류관리기사",
+     "why": "폭발물 관리 중심이라 화학공정과 무관함"
+    },
+    {
+     "name": "화약류관리기술사",
+     "why": "폭발물 관리 중심이라 화학공정과 무관함"
+    },
+    {
+     "name": "화약류관리산업기사",
+     "why": "폭발물 관리 중심이라 화학공정과 무관함"
+    },
+    {
+     "name": "화약류제조기사",
+     "why": "화약 제조 중심이라 일반 화학공정과 거리 있음"
+    },
+    {
+     "name": "화약류제조산업기사",
+     "why": "화약 제조 중심이라 일반 화학공정과 거리 있음"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "architect": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "건설기계기술사",
+     "why": "건설기계 분야로 건축 설계와 무관함"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "civil-eng": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "car-tech": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "금속가공기술사",
+     "why": "자동차 정비와 직접 관련이 없음"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "food-qc": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "env-consult": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "researcher": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  },
+  "자연": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  },
+  "사회": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  },
+  "인문": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "trainer": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "chef": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "beauty": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "accountant": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "hr": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "sales": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "전산세무회계",
+     "why": "영업 관리 직무와 직접 관련이 적음"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "trade-log": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "banker": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "tax-acct": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "pub-office": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "social-worker": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "hotelier": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "국내여행안내사",
+     "why": "국내 여행 안내 중심이라 호텔리어와 무관"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "flight-crew": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "editor": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "journalist": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "translator": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "pd": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "ux-designer": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "visual-designer": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "ACS",
+     "why": "시각디자인과 무관한 자격증임"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "webtoon": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "fashion": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "musician": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "teacher-elem": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "teacher-sec": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "인문": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "자연": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "tutor": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "정교사",
+     "why": "학교 교사 자격증으로 학원 강사와 무관함"
+    }
+   ],
+   "invented": 0
+  }
+ },
+ "childcare": {
+  "기본": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "nurse": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "physio": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "clinical-lab": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "dental-hyg": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "radiologist": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "emt": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "police": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "firefighter": {
+  "기본": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  }
+ },
+ "startup": {
+  "기본": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  }
+ }
+}

@@ -560,7 +560,7 @@ export const JOBS: Job[] = [
     hours: 42,
     place: "학교",
     people: { boss: "교감 선생님", peer: "임용 스터디원 하", other: "옆 반 선생님", otherRole: "선배 교사" },
-    exam: { months: [2], chance: 0.447, warmup: 6, label: "초등 임용시험", salary: 3428, salaryNote: "교사 초봉은 가정값(9급 초임 수준으로 둠, 교원 봉급표 확인 필요)", firstPost: "첫 발령: 담임을 맡았다" },
+    exam: { months: [2], chance: 0.447, warmup: 6, label: "초등 임용시험", salary: 2995, salaryNote: "정교사(2급) 교대 졸업 9호봉 월 2,495,600원 × 12. 수당 제외 기본급(경력 없을 때)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 11·15·23·25)", firstPost: "첫 발령: 담임을 맡았다" },
     facts: [
       {
         label: "2026학년도 경북 초등교사 경쟁률(일반)",
@@ -586,7 +586,7 @@ export const JOBS: Job[] = [
     hours: 42,
     place: "학교",
     people: { boss: "교감 선생님", peer: "임용 스터디원 하", other: "같은 교과 선배 교사", otherRole: "선배 교사" },
-    exam: { months: [2], competition: 5.67, warmup: 10, label: "중등 임용시험", salary: 3428, salaryNote: "교사 초봉은 가정값(9급 초임 수준으로 둠, 교원 봉급표 확인 필요)", firstPost: "첫 발령: 교과 수업을 맡았다" },
+    exam: { months: [2], competition: 5.67, warmup: 10, label: "중등 임용시험", salary: 2995, salaryNote: "정교사(2급) 사범계 졸업 9호봉 월 2,495,600원 × 12. 수당 제외 기본급(경력 없을 때, 교직 이수는 8호봉 2,478,600원)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 11·15·23·25)", firstPost: "첫 발령: 교과 수업을 맡았다" },
     facts: [
       {
         label: "2026학년도 경북 공립 중등교사 경쟁률",
@@ -752,7 +752,7 @@ export const JOBS: Job[] = [
     hours: 46,
     place: "지구대",
     people: { boss: "팀장 경위 박", peer: "같은 기수 순경 오", other: "선배 경장 김", otherRole: "선배" },
-    exam: { months: [5, 11], competition: 9.36, warmup: 12, label: "순경 공채", salary: 3428, salaryNote: "순경(9급 상당) 초봉은 일반직 9급 초임으로 둔 가정값", firstPost: "지구대로 첫 발령을 받았다" },
+    exam: { months: [5, 11], competition: 9.36, warmup: 12, label: "순경 공채", salary: 2560, salaryNote: "순경 1호봉 월 2,133,000원 × 12. 수당 제외 기본급(경력 없을 때)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 10·15)", firstPost: "지구대로 첫 발령을 받았다" },
     facts: [
       {
         label: "2026년 제1차 순경 공채",
@@ -778,7 +778,7 @@ export const JOBS: Job[] = [
     hours: 46,
     place: "소방서",
     people: { boss: "팀장 소방위 이", peer: "같은 기수 소방사 정", other: "선배 소방교 문", otherRole: "선배" },
-    exam: { months: [6], competition: 9.14, warmup: 12, label: "소방공무원 공채", salary: 3428, salaryNote: "소방사(9급 상당) 초봉은 일반직 9급 초임으로 둔 가정값", firstPost: "소방서로 첫 발령을 받았다" },
+    exam: { months: [6], competition: 9.14, warmup: 12, label: "소방공무원 공채", salary: 2560, salaryNote: "소방사 1호봉 월 2,133,000원 × 12. 수당 제외 기본급(경력 없을 때)", salarySource: "인사혁신처 2026년 공무원 봉급표(공무원보수규정 별표 10·15)", firstPost: "소방서로 첫 발령을 받았다" },
     facts: [
       {
         label: "2025년 소방공무원 필기 응시 경쟁률(공채·경채 합계)",

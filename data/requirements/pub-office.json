@@ -1,0 +1,553 @@
+{
+ "worldId": "pub-office",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "pub-office",
+  "certPolicy": "ai-filter",
+  "filter": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "ncs:사무행정업무관리",
+    "kind": "skill",
+    "name": "사무행정 업무 관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "사무행정 업무 관리란 내·외부 업무 협력 요청사항을 접수하고, 내부의원활한 업무 진행을 위해 구성원들을 지원하는 능력이다.",
+    "ksa": [
+     "경비 처리 지침",
+     "공지 문서 종류와 기준",
+     "근태, 출장, 교육과 관련된 회사 규정",
+     "경비내역 파악 능력",
+     "그룹웨어 사용 기술",
+     "그룹웨어 사용 기술",
+     "객관적인 자세로 일정을 조정하려는 태도",
+     "고객지향 의지",
+     "구성원들과의 협력적 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:자료관리",
+    "kind": "skill",
+    "name": "자료 관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "자료 관리란 업무와 관련된 자료를 수집·분석하고 안전하게 관리하여 관련 부서에 제공함으로써 업무에 활용하게 하는 능력이다.",
+    "ksa": [
+     "개인정보보호법",
+     "보안 규정",
+     "부서의 업무 분장",
+     "개인정보 보호기술",
+     "데이터 분석 능력",
+     "데이터마이닝 활용 능력",
+     "부서의 업무 분장을 파악하려는 노력",
+     "부서의 업무 분장을 파악하려는 노력",
+     "부서의 업무 분장을 파악하려는 노력"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:사무환경조성",
+    "kind": "skill",
+    "name": "사무환경 조성",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "사무환경 조성이란 구성원들의 업무 능률 향상을 위하여 사무기기 운용,사무물품 관리, 사무환경 관리, 네트워크 관리 지원 등의 업무를 실행하는능력이다.",
+    "ksa": [
+     "네트워크 보안 규정",
+     "네트워크 오류 발생 시 대응 매뉴얼",
+     "네트워크 장비 운영 매뉴얼",
+     "네트워크 변경 및 오류에 따른 대응 능력",
+     "불용처분 의뢰 및 처리 능력",
+     "비품, 소모품 관리의 응용 소프트웨어 작업 능력",
+     "기술적 위험에 적극적으로 대처하려는 노력",
+     "꼼꼼한 관리 태도",
+     "문제해결 의지"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:회의운영",
+    "kind": "skill",
+    "name": "회의 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "회의 운영이란 원활한 회의 진행을 위하여 사전 준비, 운영 보조, 회의 후정리 등과 관련한 업무를 수행하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:문서작성",
+    "kind": "skill",
+    "name": "문서 작성",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "문서 작성이란 부서 내ㆍ외부에서 요청된 문서를 작성하기 위하여 내용을계획하고 자료를 조사ㆍ정리ㆍ편집하여 목적에 맞는 문서를 완성하는 능력이다.",
+    "ksa": [
+     "매체의 특성",
+     "문서 유형의 특성",
+     "문서 작성 규칙",
+     "매체 선정 능력",
+     "매체 활용 능력",
+     "명확하게 표현할 수 있는 디자인 능력",
+     "꼼꼼함",
+     "문서 보고 일정 계획을 준수하려는 노력",
+     "문서 작성 계획을 위한 성실한 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:문서관리",
+    "kind": "skill",
+    "name": "문서 관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "문서 관리는 문서를 효율적으로 활용하기 위하여 문서 관리 규정에 따라문서를 수·발신하고 정리하며, 보관하는 능력이다.",
+    "ksa": [
+     "문서 관리 규정",
+     "문서 관리 규정",
+     "문서 대장 관리 규정",
+     "문서 대장 기록 능력",
+     "문서 배포 능력",
+     "문서 분류 능력",
+     "구성원을 배려하는 자세",
+     "업무 규정을 준수하려는 태도",
+     "업무 규정을 준수하려는 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:사무자동화프로그램활용",
+    "kind": "skill",
+    "name": "사무자동화 프로그램 활용",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "사무자동화 프로그램 활용이란 사무행정 처리에 수반되는 워드프로세서,스프레드시트, 데이터베이스. 프레젠테이션 프로그램을 활용하여 사무문서작성 업무를 수행하는 능력이다.",
+    "ksa": [
+     "PC운영체제의 기본 기능",
+     "PC운영체제의 기본 기능",
+     "PC운영체제의 기본 기능",
+     "데이터베이스 프로그램의 보고서 활용 능력",
+     "데이터베이스 프로그램의 보고서 활용 능력",
+     "데이터베이스 프로그램의 입력 및 편집 능력",
+     "개인정보보호법 준수하려는 노력",
+     "개인정보보호법을 준수하려는 노력",
+     "구성원을 지원하려는 의지"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:그룹웨어활용",
+    "kind": "skill",
+    "name": "그룹웨어 활용",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 사무행정)",
+    "def": "그룹웨어 활용이란 업무 효율성 향상을 위하여 조직 구성원들이 정보통신망으로 연결된 공동의 소프트웨어를 활용하여 사무행정 업무를 수행하는능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:사업계획수립",
+    "kind": "skill",
+    "name": "사업계획수립",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "사업계획 수립이란 조직의 목표달성에 필요한 총무 업무를 원활하게 수행하기 위하여 대ㆍ내외적 환경을 분석 하고, 전략과제를 설정 및 예산 운영을 계획하는 능력이다.",
+    "ksa": [
+     "관리회계",
+     "기업재무회계",
+     "문서작성 기법",
+     "분석 기법 활용 능력",
+     "예산 전산시스템 활용 기술",
+     "우선순위 설정 기법",
+     "논리적 사고력",
+     "분석적 사고력",
+     "분석적 접근"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:복리후생지원",
+    "kind": "skill",
+    "name": "복리후생지원",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "복리후생지원이란 관계 법령 및 경영전략에 따라 조직원들의 근로조건 개선 및 복지 증진을 위한 복리후생제도와 시설을 운영하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:행사지원관리",
+    "kind": "skill",
+    "name": "행사지원관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "행사지원관리란 조직에서 시행하는 행사의 목적을 반영 하여 계획 수립,운영, 사후관리의 업무를 수행하는 능력이다.",
+    "ksa": [
+     "설문지 작성방법",
+     "시나리오 작성법",
+     "영상기기 조작법",
+     "문제해결 능력",
+     "시나리오 작성 기술",
+     "영상기기 조작 기술",
+     "꼼꼼한 자세",
+     "서비스 자세",
+     "솔선수범하는 자세"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:비품관리",
+    "kind": "skill",
+    "name": "비품관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "비품관리란 조직원들의 원활한 업무 지원을 위하여 집기, 소모품 등 업무에 필요한 비품의 구매, 유지 및 처분에 요구되는 능력이다.",
+    "ksa": [
+     "MRO 관련 지식",
+     "구매실무계약",
+     "비품관리 규정",
+     "결단력",
+     "대인관계 기술",
+     "물가정보검색 기술",
+     "검소한 자세",
+     "관찰 적 자세",
+     "분석적 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:용역관리",
+    "kind": "skill",
+    "name": "용역관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "용역관리란 예산 및 인력을 효율적으로 운영하기 위하여 업무의 경중과비용효과 분석을 통해 용역 대상 업무를 선정하고 관리하는 능력이다.",
+    "ksa": [
+     "구매절차 관련규정",
+     "단체협약",
+     "사내 인력관리 제반규정",
+     "계약서 작성기술",
+     "기회비용 분석",
+     "문서작성기술",
+     "객관적인 태도",
+     "객관적인 태도",
+     "공정하고 정확한 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:총무보안관리",
+    "kind": "skill",
+    "name": "총무보안관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "총무보안관리란 조직의 주요 자산을 보호하기 위하여 인적,시설물, 정보유출 등의 사전 예방과 보안사고 발생 시 대응할 수 있는 능력이다.",
+    "ksa": [
+     "보안 장비 기능ㆍ특징",
+     "보안규정",
+     "보안규정",
+     "도면해독능력",
+     "도면해독능력",
+     "배관ㆍ전기 도면해독능력",
+     "보안의식",
+     "보안의식",
+     "신중한 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:차량운영관리",
+    "kind": "skill",
+    "name": "차량운영관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "차량운영관리란 조직의 업무수행에 필요한 차량을 효율적으로 지원하기위하여 차량 운영계획을 수립하여 유지 관리 및 처분할 수 있는 능력이다.",
+    "ksa": [
+     "차량관리규정",
+     "폐기물 관리규정",
+     "회계규정",
+     "정보수집능력",
+     "판단력",
+     "협상 기술",
+     "법규사항 준수",
+     "사내 규정 절차 준수",
+     "타부서와 협업적 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:총무문서관리",
+    "kind": "skill",
+    "name": "총무문서관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "총무문서관리란 문서관리 규정에 따라 문서의 분류, 보관ㆍ보존ㆍ폐기와우편물 관리, 인쇄물의 제작ㆍ배포ㆍ재고 관리 업무를 수행하는 능력이다.",
+    "ksa": [
+     "문서 분류 방법",
+     "문서 작성법",
+     "문서관리 프로세스",
+     "문서 분류 기술",
+     "문서작성 기술",
+     "업체와의 분쟁 해결 능력",
+     "계약사항을 꼼꼼히 확인 하려는 자세",
+     "꼼꼼한 일처리 태도",
+     "서비스 정신"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:업무지원",
+    "kind": "skill",
+    "name": "업무지원",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 총무)",
+    "def": "업무지원이란 조직 구성원들이 업무상 발생되는 인장, 출장, 제 증명 관련요청 사항을 적시에 지원하고 업무용 시설을 관리 및 개선할 수 있는 능력이다.",
+    "ksa": [
+     "비자발급 프로세스",
+     "사무 공간 배치 방법",
+     "사무 공간 지원 사내 규정",
+     "개정사유 파악 능력",
+     "공사비용 견적 분석 능력",
+     "기초 외국어 능력",
+     "공평한 원칙 준수",
+     "꼼꼼한 일처리 태도",
+     "내부고객에 대한 서비스 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:의사소통능력",
+    "kind": "skill",
+    "name": "의사소통능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:수리능력",
+    "kind": "skill",
+    "name": "수리능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:문제해결능력",
+    "kind": "skill",
+    "name": "문제해결능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:자기개발능력",
+    "kind": "skill",
+    "name": "자기개발능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:자원관리능력",
+    "kind": "skill",
+    "name": "자원관리능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:대인관계능력",
+    "kind": "skill",
+    "name": "대인관계능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:정보능력",
+    "kind": "skill",
+    "name": "정보능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:기술능력",
+    "kind": "skill",
+    "name": "기술능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:조직이해능력",
+    "kind": "skill",
+    "name": "조직이해능력",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs-basic:직업윤리",
+    "kind": "skill",
+    "name": "직업윤리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "NCS 직업기초능력(ncs.go.kr)",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:public:ncs-note",
+    "kind": "experience",
+    "name": "NCS 기반 경험·경력 기술서",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 30,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:public:intern",
+    "kind": "experience",
+    "name": "공공기관 체험형 인턴",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 320,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:public:ncs-test",
+    "kind": "experience",
+    "name": "NCS 필기 모의고사 기록",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [],
+  "majors": [],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

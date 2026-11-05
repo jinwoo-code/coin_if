@@ -1,0 +1,61 @@
+{
+ "worldId": "researcher",
+ "sources": {},
+ "certCandidates": [],
+ "items": [
+  {
+   "id": "major",
+   "kind": "experience",
+   "name": "전공 성적과 기초 과목",
+   "grade": "assumed",
+   "hours": {
+    "value": 300,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "lab",
+   "kind": "experience",
+   "name": "학부 연구 경험",
+   "detail": "연구실 인턴",
+   "grade": "assumed",
+   "hours": {
+    "value": 240,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "advisor",
+   "kind": "experience",
+   "name": "지도교수 상담과 연구실 조사",
+   "grade": "assumed",
+   "hours": {
+    "value": 20,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "paper",
+   "kind": "experience",
+   "name": "논문 읽기·연구 계획서",
+   "grade": "assumed",
+   "hours": {
+    "value": 120,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "lang",
+   "kind": "experience",
+   "name": "공인 영어 성적",
+   "detail": "학교마다 다릅니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 150,
+    "grade": "assumed"
+   }
+  }
+ ],
+ "checkedAt": "2026-11-05",
+ "sourceNote": "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+}

@@ -1,0 +1,317 @@
+{
+ "worldId": "semi-eng",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "semi-eng",
+  "certPolicy": "ai-filter",
+  "filter": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "의료전자기능사",
+     "why": "의료기기 분야로 공정 엔지니어와 무관"
+    }
+   ],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "ncs:박막/확산장비운영",
+    "kind": "skill",
+    "name": "박막/확산 장비 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "박막/확산 장비 운영이란 반도체 생산 시 반도체의 특성을 결정 지을 수 있는 불순물 주입공정, 주입된 불순물을 원하는 접합깊이와 농도로 확산하는 공정, 반도체에 결정적인 영향을 미치는 박막 성장 및 증착 공정, 그리고 절연막층 및 금속배선을 위한 금속막층을 형성시키는 공정 등을 진행하는 장비들에 대해서 Set-Up하고 유지·개선하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:반도체클린룸시설운영",
+    "kind": "skill",
+    "name": "반도체 클린룸시설 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "반도체 클린룸시설 운영이란 반도체 공장에서 운영 되고 있는 클린룸의온도, 습도, 풍속, 기류, 차압, 정전기, 각종 오염(청정도) 등이 일정 규격에맞게 유지, 관리되는지 점검하고, 최적의 클린룸 환경을 지원하는 능력이다.",
+    "ksa": [
+     "공조장비(냉동기, 공조기, 냉각탑, 펌프 등)의 기본 원리 및 구조",
+     "공조장비(냉동기, 공조기, 냉각탑, 펌프 등)의 기본 원리 및 구조",
+     "무진장비 및 클린룸 부속장비 등의 기본원리 및 구조",
+     "반도체 장비 및 생산이 되고 있는 부분에 청정도와 불량의 요인이 되는풍속, 기류, 이물 등 기본적인 환경 인자(Factor)에 대한 기술",
+     "반도체 장비 및 생산이 되고 있는 부분에 청정도와 불량의 요인이 되는풍속, 기류, 이물 등 기본적인 환경 인자(Factor)에 대한 기술",
+     "측정 장비들의 측정기술",
+     "반도체 제조에서의 환경 안전수칙 준수",
+     "반도체 제조에서의 환경 안전수칙 준수",
+     "철저한 PM(Preventive Maintenance) 수행 자세"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:etch장비운영",
+    "kind": "skill",
+    "name": "Etch 장비 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "Etch 장비 운영이란 반도체 Etch 장비의 올바른 초기 설치를 위한 Etch 장비 Set-up하기와 Set-up시와 동일한 결과가 나오도록 Etch 장비의 유지·개선 및 반도체 Ashing장비의 올바른 초기 설치를 위한 Ashing장비 Set-up하기와 Set-up시와 동일한 결과가 나오도록 Ashing장비의 유지·개선하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:반도체패키지레벨테스트장비운영",
+    "kind": "skill",
+    "name": "반도체 패키지레벨 테스트장비 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "반도체 패키지레벨 테스트 장비운영이란 패키지 완료 후 반도체 제품에대해 전기적 특성 테스트를 통하여 양품과 불량품을 선별하는 테스트 장비를 유지·관리하는 능력이다.",
+    "ksa": [
+     "P&ID(Piping&Instrumentation Diagram) 지식",
+     "P&ID(Piping&Instrumentation Diagram) 지식",
+     "공압 및 센서류의 동작 원리",
+     "각종 공정 및 장비 파라메터 점검 기술",
+     "각종 센서 등의 제어기술",
+     "각종 유틸리티 점검 기술",
+     "문제에 대해 정확하게 분석하는 태도",
+     "문제에 대해 정확하게 분석하는 태도",
+     "반도체 제조에서의 환경 안전수칙 준수"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:mi장비운영",
+    "kind": "skill",
+    "name": "MI 장비 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "MI(Metrology & Inspection) 장비 운영이란 반도체공정의 패터닝(Patterning) 공정 후 진행된 결과를 측정하는 장비인 CD SEM, Pattern Inspection 장비, 두께 측정 장비 및 Particle  Count 장비를 Set-up 및 유지/관리하는 능력이다.",
+    "ksa": [
+     "Beam Path 구조 및 원리, Laser Spot 원리, 측정 원리 및 결과",
+     "Laser Source, Optic Fiber, Analyzer, Monochromator의 역할 및 조작방법",
+     "Layer별 최대 검출기준, 신호대 잡음비, 검출감도, 데이터처리 및민감도(Sensitivity)",
+     "Auto Loader부 조작 및 고정 진단 기술",
+     "Job File 생성, Wafer Stage 조작, 결과물 측정 및 장비운영 기술",
+     "Robot 교정하는 기술",
+     "로봇의 동작 특성 이해를 위한 노력과 로봇 조작법을 숙달하기 위한끈임 없는 자기개발에 대한 노력",
+     "반도체 제조에서의 환경 안전수칙 준수",
+     "반도체 제조에서의 환경 안전수칙 준수"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:c&c장비운영",
+    "kind": "skill",
+    "name": "C&C 장비 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "C&C 장비 운영이란 반도체생산을 위한 제조공정 중 웨이퍼 표면의 오염물, 자연 산화막 등을 제어하기 위한 세정 및 Wet Etch 공정 장비와 웨이퍼 표면의 Silicon Oxide 및 Metal 박막의 단차를 제어하기 위한 CMP 공정 장비를 Set-up 및 유지·개선하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:반도체웨이퍼레벨테스트장비운영",
+    "kind": "skill",
+    "name": "반도체 웨이퍼레벨 테스트장비 운영",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "반도체 웨이퍼레벨 테스트장비 운영이란 전 공정 완료 후 웨이퍼 상 칩의정상여부를 검사하기 위해 Probe Station에 있는 프로브 카드와 Tester의 전기적 신호를 통해 칩의 정상 유무를 판별하는 웨이퍼 테스트 장비를 유지·관리하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:반도체품질관리",
+    "kind": "skill",
+    "name": "반도체 품질관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "반도체 품질관리란 고객에게 승인된 결함 없는 제품을 생산하고 출하하기위한 수입품질관리, 공정품질관리 및 제품의 불량분석을 수행하는 능력이다.",
+    "ksa": [
+     "ISO9001, 14001, 45001, ISO/TS 16949 규격",
+     "TQM(Total Quality Management) 및 6시그마의 이해",
+     "각 공정단위별 핵심품질특성(CTQ)",
+     "Six Sigma 기법을 활용하여 문제 해결하는 기술",
+     "각 공정별 특성을 측정하기 위한 측정기 운영 기술",
+     "분석결과 해석 기술",
+     "기준에 따른 판단을 하기 위한 세심한 분석력",
+     "명확한 판정을 위한 객관적인 판단력",
+     "반도체 제조에서의 환경 안전수칙 준수"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:반도체생산성향상",
+    "kind": "skill",
+    "name": "반도체 생산성 향상",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 반도체제조)",
+    "def": "반도체 생산성 향상이란 생산제품의 수율향상과 원가절감 및 TAT(Turn Around Time) 단축을 수행하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:반도체설계산업기사",
+    "kind": "cert",
+    "name": "반도체설계산업기사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(반도체공학 기술자 및 연구원)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:반도체설계기사",
+    "kind": "cert",
+    "name": "반도체설계기사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(반도체공학 기술자 및 연구원)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:산업계측제어기술사",
+    "kind": "cert",
+    "name": "산업계측제어기술사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(반도체공학 기술자 및 연구원)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자산업기사",
+    "kind": "cert",
+    "name": "전자산업기사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(반도체공학 기술자 및 연구원)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자기사",
+    "kind": "cert",
+    "name": "전자기사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(반도체공학 기술자 및 연구원)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:intern",
+    "kind": "experience",
+    "name": "인턴·현장실습",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 320,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:project",
+    "kind": "experience",
+    "name": "직무 관련 프로젝트 2~3개",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 240,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:career-note",
+    "kind": "experience",
+    "name": "경험·경력 기술서",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 20,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(반도체공학기술자)",
+    "text": "공개 채용이나 교육기관의 소개 등을 통해 반도체 개발업체, 시스템 개발업체, H/W 개발업체, 통신업체 등에 채용될 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(반도체공학기술자)",
+    "text": "반도체공학기술자가 되기 위해서는 대학교의 반도체 관련 학과를 졸업하는 것이 유리하며, 연구소나 업체에 따라서는 반도체 관련 분야의 석사 이상의 학위를 요구하기도 합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(반도체공학 기술자 및 연구원)",
+    "text": "반도체공학기술자가 되기 위해서는 2~3년제 대학 및 4년제 대학교에서 전자공학, 전기공학, 통신공학 등을 전공하는 것이 유리하다. 연구·개발업무 종사자 중에는 대학원 이상을 졸업하고 진출하는 경우도 많다. 대학교의 전자공학과에서는 수학, 물리학 등 반도체공학에 필요한 기초과목을 비롯해 전자회로, 제어공학, 계측공학, 반도체소자 등의 관련 이론과 실습을 병행하여 공부한다. 그러나 전자공학과 전기공학은 서로 중복되는 분야가 많기 때문에 하나의 학과나 학부로 통합하여 개설하는 대학도 있다."
+   }
+  ],
+  "majors": [
+   "반도체학과",
+   "신소재공학과",
+   "전기공학과",
+   "전기전자공학과",
+   "전자공학과",
+   "(안경)광학과",
+   "물리·과학과",
+   "반도체·세라믹공학과",
+   "재료·금속공학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

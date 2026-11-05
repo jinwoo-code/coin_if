@@ -1,0 +1,136 @@
+{
+ "worldId": "tax-acct",
+ "sources": {
+  "rule": {
+   "name": "세무사법 시행령 제1조의4, 별표 1·2·3",
+   "url": "https://www.law.go.kr/법령/세무사법시행령",
+   "version": "시행 2026. 10. 2."
+  }
+ },
+ "certCandidates": [
+  "lic",
+  "cert-eng"
+ ],
+ "items": [
+  {
+   "id": "cert-eng",
+   "kind": "cert",
+   "name": "영어시험 기준 점수",
+   "detail": "1차 영어 과목을 대체합니다. 토익 700·토플 IBT 71 이상 등",
+   "grade": "curated",
+   "ref": "rule",
+   "required": true,
+   "hours": {
+    "value": 150,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-1a",
+   "kind": "exam",
+   "name": "재정학",
+   "detail": "1차",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 300,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-1b",
+   "kind": "exam",
+   "name": "회계학개론",
+   "detail": "1차",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-1c",
+   "kind": "exam",
+   "name": "세법학개론",
+   "detail": "1차. 국세기본법, 국세징수법, 조세범처벌법, 소득세법, 법인세법, 부가가치세법, 국제조세조정법",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-1d",
+   "kind": "exam",
+   "name": "상법·민법·행정소송법 중 하나",
+   "detail": "1차 선택",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 200,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-2a",
+   "kind": "exam",
+   "name": "세법학 1부",
+   "detail": "2차. 국세기본법, 소득세법, 법인세법, 상속세 및 증여세법",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 600,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-2b",
+   "kind": "exam",
+   "name": "세법학 2부",
+   "detail": "2차. 부가가치세법, 개별소비세법, 지방세 일부, 조세특례제한법",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 600,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-2c",
+   "kind": "exam",
+   "name": "회계학 1부",
+   "detail": "2차. 재무회계, 원가관리회계",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-2d",
+   "kind": "exam",
+   "name": "회계학 2부",
+   "detail": "2차. 세무회계",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "lic",
+   "kind": "cert",
+   "name": "세무사",
+   "detail": "1차·2차 합격 뒤 자격증 교부와 등록",
+   "grade": "curated",
+   "ref": "rule",
+   "required": true,
+   "officialUrl": "https://www.q-net.or.kr"
+  }
+ ],
+ "checkedAt": "2026-11-05"
+}

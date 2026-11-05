@@ -1,0 +1,53 @@
+{
+ "worldId": "translator",
+ "sources": {},
+ "certCandidates": [],
+ "items": [
+  {
+   "id": "lang",
+   "kind": "experience",
+   "name": "외국어 고급 성적",
+   "detail": "언어마다 시험이 다릅니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 600,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "grad",
+   "kind": "experience",
+   "name": "통번역 전문 교육",
+   "detail": "대학원이나 전문 과정",
+   "grade": "assumed",
+   "hours": {
+    "value": 1200,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "works",
+   "kind": "experience",
+   "name": "번역·통역 실적",
+   "detail": "샘플과 납품 기록",
+   "grade": "assumed",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "client",
+   "kind": "experience",
+   "name": "첫 의뢰 경험",
+   "detail": "에이전시 등록 등",
+   "grade": "assumed",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  }
+ ],
+ "checkedAt": "2026-11-05",
+ "sourceNote": "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+}

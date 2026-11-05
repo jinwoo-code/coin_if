@@ -1,0 +1,164 @@
+{
+ "worldId": "nurse",
+ "checkedAt": "2026-11-05",
+ "sources": {
+  "exam": {
+   "name": "국시원 간호사 시험정보(시험시간표·응시자격·합격기준)",
+   "url": "https://www.kuksiwon.or.kr/subcnt/c_2005/7/view.do?seq=7",
+   "version": "2026-11-05 확인"
+  },
+  "law": {
+   "name": "간호법 시행규칙 제4·7·11조, 별표 1",
+   "url": "https://www.law.go.kr/법령/간호법시행규칙",
+   "version": "시행 2025. 6. 21."
+  }
+ },
+ "certCandidates": [
+  "lic-nurse",
+  "lic-specialist"
+ ],
+ "items": [
+  {
+   "id": "edu-accredited",
+   "kind": "experience",
+   "name": "인증받은 간호학과 졸업",
+   "detail": "평가인증기구의 인증을 받은 간호학 전공 대학·전문대학 졸업이 응시 자격입니다.",
+   "grade": "curated",
+   "ref": "exam",
+   "required": true
+  },
+  {
+   "id": "exam-adult",
+   "kind": "exam",
+   "name": "성인간호학",
+   "detail": "70문항(1교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 250,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-mat",
+   "kind": "exam",
+   "name": "모성간호학",
+   "detail": "35문항(1교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 100,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-child",
+   "kind": "exam",
+   "name": "아동간호학",
+   "detail": "35문항(2교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 100,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-comm",
+   "kind": "exam",
+   "name": "지역사회간호학",
+   "detail": "35문항(2교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 100,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-psy",
+   "kind": "exam",
+   "name": "정신간호학",
+   "detail": "35문항(2교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 100,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-mgmt",
+   "kind": "exam",
+   "name": "간호관리학",
+   "detail": "35문항(3교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 100,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-basic",
+   "kind": "exam",
+   "name": "기본간호학",
+   "detail": "30문항(3교시)",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-law",
+   "kind": "exam",
+   "name": "보건의약관계법규",
+   "detail": "20문항(3교시). 의료법·감염병예방법 등 12개 법률과 그 시행령·시행규칙",
+   "grade": "curated",
+   "ref": "exam",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "lic-nurse",
+   "kind": "cert",
+   "name": "간호사 면허",
+   "detail": "국가시험 295문항, 전 과목 총점 60% 이상·매 과목 40% 이상. 졸업증명서·의사 진단서·사진을 내 면허증을 받습니다.",
+   "grade": "curated",
+   "ref": "law",
+   "required": true,
+   "officialUrl": "https://www.kuksiwon.or.kr"
+  },
+  {
+   "id": "lic-specialist",
+   "kind": "cert",
+   "name": "전문간호사(면허 뒤 선택)",
+   "detail": "13개 분야. 간호사 면허, 3년 이상 실무, 2년 석사 과정 뒤 자격시험",
+   "grade": "curated",
+   "ref": "exam",
+   "required": false
+  },
+  {
+   "id": "practice",
+   "kind": "experience",
+   "name": "병원 임상 실습",
+   "detail": "실습 없이는 졸업할 수 없습니다. 총 시간 1,000시간은 공식 문서로 확인하지 못한 가정값입니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 1000,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "hire",
+   "kind": "step",
+   "name": "병원 채용 절차",
+   "detail": "서류·면접 뒤 부서 배치와 신규 교육. 병원마다 달라 팀이 정리한 가정값입니다.",
+   "grade": "assumed"
+  }
+ ]
+}

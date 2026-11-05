@@ -1,0 +1,167 @@
+{
+ "worldId": "physio",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "physio",
+  "certPolicy": "curated-only",
+  "filter": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "curated:edu",
+    "kind": "experience",
+    "name": "물리치료사 관련 학과 졸업",
+    "detail": "해당 학과 졸업과 현장실습 이수가 응시 요건입니다(법 제4조·시행규칙 제7조).",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙"
+   },
+   {
+    "id": "curated:practice",
+    "kind": "experience",
+    "name": "현장실습 640시간 이상",
+    "detail": "교내가 아닌 의료기관 등 현장에서 이수해야 합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 640,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-0",
+    "kind": "exam",
+    "name": "물리치료 기초",
+    "detail": "해부생리, 운동학, 물리적 인자치료, 공중보건",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-1",
+    "kind": "exam",
+    "name": "물리치료 진단평가",
+    "detail": "진단평가원리, 검사와 평가, 임상의사결정",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-2",
+    "kind": "exam",
+    "name": "물리치료 중재",
+    "detail": "근골격계, 신경계, 심폐혈관계, 피부계",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-law",
+    "kind": "exam",
+    "name": "의료관계법규",
+    "detail": "의료법, 의료기사법, 장애인복지법, 노인복지법, 국민건강보험법과 하위 법령",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 60,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-prac",
+    "kind": "exam",
+    "name": "실기시험",
+    "detail": "물리치료사 업무에 관한 실기. 만점의 60% 이상",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:lic",
+    "kind": "cert",
+    "name": "물리치료사 면허",
+    "detail": "필기는 각 과목 40% 이상·전 과목 60% 이상, 실기는 60% 이상. 졸업증명서·성적증명서·진단서 등을 내 면허증을 받습니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "officialUrl": "https://www.kuksiwon.or.kr"
+   },
+   {
+    "id": "curated:hire",
+    "kind": "step",
+    "name": "채용 절차",
+    "detail": "서류·면접 뒤 현장 교육. 기관마다 달라 팀이 정리한 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값"
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(물리치료사)",
+    "text": "물리치료사 자격증을 취득한 후 병원 및 의원, 재활원, 보건소 등 보건의료기관의 물리치료실로 취업할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(물리치료사)",
+    "text": "노인복지시설, 장애인복지시설, 특수학교 등 사회복지 분야에 취업할 수도 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(물리치료사)",
+    "text": "국가자격증으로 물리치료사가 있으며, 전문대학 및 대학교에 개설되어 있는 물리치료(학)과를 졸업해야만 응시할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(물리치료사)",
+    "text": "전문대학이나 대학교에서 물리치료학과를 전공해야 합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(물리치료사)",
+    "text": "물리치료사가 되기 위해서는 전문대학 및 대학교에 개설되어 있는 물리치료(학)과를 졸업하고 물리치료사 국가면허시험에 합격해야 한다. 2017년 현재 4년제 대학교 48개, 전문대학교 39개교에 물리치료학과가 있다.\n물리치료 기초, 물리치료 진단평가, 물리치료 중재, 의료법규 그리고 실기로 구성되어 있는 시험에 응시해야 한다. 2016년 12월에 시행된 물리치료사 면허시험에는 4,522명이 응시하여 3,838명(84.9%)이 합격하였다."
+   }
+  ],
+  "majors": [
+   "물리치료학과",
+   "재활학과",
+   "작업치료과",
+   "작업치료학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

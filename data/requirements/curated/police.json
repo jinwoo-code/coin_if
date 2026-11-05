@@ -1,0 +1,142 @@
+{
+  "worldId": "police",
+  "checkedAt": "2026-11-05",
+  "sources": {
+    "rule": {
+      "name": "경찰공무원 임용령 제39·41·43조, 별표 1의3·2·5·7",
+      "url": "https://www.law.go.kr/법령/경찰공무원임용령",
+      "version": "시행 2026. 9. 1."
+    },
+    "fit": {
+      "name": "경찰공무원 임용령 시행규칙 제34조의2, 별표 3·5의3",
+      "url": "https://www.law.go.kr/법령/경찰공무원임용령시행규칙",
+      "version": "시행 2026. 3. 17."
+    },
+    "notice": {
+      "name": "중앙경찰학교 공고 제2026-1호(2026년 제1차 순경 공채)",
+      "url": "https://daegu.koreapolice.co.kr/gnu/bbs/board.php?bo_table=info_jab&wr_id=144",
+      "version": "2026. 2. 6. 공고. 학원 게시판에 올라온 공고문 PDF로 확인"
+    }
+  },
+  "certCandidates": [
+    "cert-license",
+    "cert-budo",
+    "exam-english",
+    "exam-history"
+  ],
+  "noBonusNote": "순경 공채에는 일반 자격증 가산점이 없습니다. 임용령 별표 2·제43조에 자격증 가산이 없고 최종 성적은 체력 25·필기 50·면접 25입니다. 시행규칙 별표 3의 자격증은 경력경쟁채용용입니다. 취업지원대상자·의사상자 가점은 자격증이 아닙니다.",
+  "items": [
+    {
+      "id": "req-age",
+      "kind": "step",
+      "name": "응시 나이 18~40세",
+      "detail": "최종시험 예정일이 속한 해 기준",
+      "grade": "curated",
+      "ref": "rule"
+    },
+    {
+      "id": "cert-license",
+      "kind": "cert",
+      "name": "제1종 운전면허(대형 또는 보통)",
+      "detail": "응시 자격. 자동변속기도 가능, 최종시험 예정일까지 유효해야 합니다.",
+      "grade": "curated",
+      "ref": "rule",
+      "required": true
+    },
+    {
+      "id": "exam-criminal",
+      "kind": "exam",
+      "name": "형사법",
+      "detail": "100점. 형법총론 35%·형법각론 35%·형사소송법 30% 내외",
+      "grade": "curated",
+      "ref": "rule",
+      "hours": {
+        "value": 500,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "exam-const",
+      "kind": "exam",
+      "name": "헌법",
+      "detail": "50점. 기본권 80%·헌법총론과 기본질서 20% 내외",
+      "grade": "curated",
+      "ref": "rule",
+      "hours": {
+        "value": 200,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "exam-police",
+      "kind": "exam",
+      "name": "경찰학",
+      "detail": "100점. 경찰행정법 35%·기초이론 30%·경찰행정학 15%·분야별 활동 15%·역사와 비교 5% 내외",
+      "grade": "curated",
+      "ref": "rule",
+      "hours": {
+        "value": 400,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "exam-english",
+      "kind": "cert",
+      "name": "영어능력검정",
+      "detail": "시험 대체 기준. 토익 550·토플 IBT 52·텝스 241·지텔프 Level 2 43·플렉스 457·토셀 Advanced 510 이상",
+      "grade": "curated",
+      "ref": "rule",
+      "required": true,
+      "hours": {
+        "value": 150,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "exam-history",
+      "kind": "cert",
+      "name": "한국사능력검정 3급 이상",
+      "detail": "한국사 과목을 대체합니다.",
+      "grade": "curated",
+      "ref": "rule",
+      "required": true,
+      "hours": {
+        "value": 80,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "fit-circuit",
+      "kind": "exam",
+      "name": "순환식 체력검사",
+      "detail": "4.2kg 조끼를 입고 장애물코스 달리기·장대 허들 넘기·당기기와 밀기·구조하기·방아쇠 당기기를 연이어 수행. 4분 40초 이하(우수)만 합격, 합격 시 48점",
+      "grade": "curated",
+      "ref": "fit",
+      "hours": {
+        "value": 200,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "cert-budo",
+      "kind": "cert",
+      "name": "무도 단증(2단 이상)",
+      "detail": "체력검사 성적에 2·3단 +1점, 4단 이상 +2점(50점 만점). 인정 종류는 경찰청장이 정합니다.",
+      "grade": "curated",
+      "ref": "fit",
+      "required": false,
+      "hours": {
+        "value": 300,
+        "grade": "assumed"
+      }
+    },
+    {
+      "id": "step-aptitude",
+      "kind": "step",
+      "name": "신체검사·적성검사·면접",
+      "detail": "면접 50점 만점. 최종 성적은 필기 50%·체력 25%·면접 25%",
+      "grade": "curated",
+      "ref": "rule"
+    }
+  ]
+}

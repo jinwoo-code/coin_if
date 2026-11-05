@@ -1,0 +1,524 @@
+{
+ "worldId": "elec-eng",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "elec-eng",
+  "certPolicy": "ai-filter",
+  "filter": {
+   "mode": "ai",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "ncs:동력설비설계",
+    "kind": "skill",
+    "name": "동력설비 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "동력설비 설계란 각종 기계설비의 전동기를 선정하고 기동방식에 따른 결선도 및 제어회로 구성 등의 설계업무를 수행하는 능력이다.",
+    "ksa": [
+     "동력설비의 분류와 특성",
+     "유도전동기의 4E 보호 관련지식",
+     "유도전동기의 기동방식",
+     "동력제어반(MCC) 결선도 작성",
+     "부하의 특성에 따른 전동기 기동방식 선정 능력",
+     "역률개선 방법과 콘덴서 설치",
+     "법적사항과 기술기준을 준수하려는 태도",
+     "법적사항과 기술기준을 준수하려는 태도",
+     "전동기 보호방식에 대한 합리적인 사고"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:전기bim작성",
+    "kind": "skill",
+    "name": "전기BIM 작성",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "전기BIM 작성이란 기초단계로서 BIM개념을 이해하고 전기설계에 필요한기본 템플릿설정과 라이브러리 제작을 통해 간단한 전기설계 모델링을 할수 있는 능력이다.",
+    "ksa": [
+     "BIM 사용법",
+     "BIM 필수용어",
+     "BIM소프트웨어 종류",
+     "BIM소프트웨어특성 파악 능력",
+     "BIM적용 지침서 활용 능력",
+     "MEP설정 능력",
+     "2D방식에서 3D으로 개념변화의 의지",
+     "3D 공간의 이해의 태도",
+     "3D 소프트웨어 활용 사항 준수"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:배선설비설계",
+    "kind": "skill",
+    "name": "배선설비 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "배선설비란 전원설비와 조명, 전열 및 동력설비 등의 부하설비를 연결하는 배선으로 전원 공급설비의 역할을 수행하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:수변전설비설계",
+    "kind": "skill",
+    "name": "수변전설비 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "수변전설비설계란 수전지점에서 전력을 수전하고 변전설비에서 전압을 변성하여 배전반까지 전력을 공급하는 설비를 설계하는 능력이다.",
+    "ksa": [
+     "모선방식 종류 및 특성",
+     "변압기 특성 관련지식",
+     "부하별 운전 특성",
+     "과전류, 절연레벨 파악 능력",
+     "기기의 정격전류 계산 능력",
+     "단락용량, 부하용량 고려 능력",
+     "기술기준을 준수하려는 의지",
+     "설비용량의 적합성 확보",
+     "인체와 기기의 안전을 최우선으로 생각하는 자세"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:전기설비설계기본계획",
+    "kind": "skill",
+    "name": "전기설비설계 기본계획",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "전기설비설계 기본계획이란 사업 타당성을 분석하기 위하여 현장여건 및관련법령, 기준과 설계지침을 확인하고, 최적의 시스템을 구성하기 위한기본계획을 수립하는 능력이다.",
+    "ksa": [
+     "공종별 관련 법령",
+     "과업지시서 해석에 필요한 공학적 지식",
+     "대상물 용도별 시설등급 분류 방법",
+     "개략공사비 산출 능력",
+     "견적서 작성 능력",
+     "경제성 분석 능력",
+     "관계 설계지침에 대해 세밀하게 검토하려는 의지",
+     "관련 법령과 기술기준 준수",
+     "세밀하게 현장 여건을 분석하려는 의지"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:설계관련서류작성",
+    "kind": "skill",
+    "name": "설계관련 서류 작성",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "설계도서류 작성이란 설계개요서, 설계도면, 기술계산서, 설계시방서, 산출서, 원가계산서, 에너지사용계획서 등을 작성하는 능력이다.",
+    "ksa": [
+     "ESCO(Energy Service Company) 사업효과 관련지식",
+     "고효율기기별 설치지원금 제도 관련지식",
+     "공량산출 기준 관련지식",
+     "LCC(Life Cycle Cost) 계산 능력",
+     "VE(Value Engineering) 검토 능력",
+     "도면해석 능력",
+     "관련부서간의 상호 협력적인 태도",
+     "관련부서간의 상호 협력적인 태도",
+     "대안별 기술 분석력"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:전기방재설비설계",
+    "kind": "skill",
+    "name": "전기방재설비 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "전기방재설비 설계란 재해를 예방하기 위하여 피뢰설비, 접지설비, 소방설비 및 방범설비 등을 설계하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:보호계전시스템설계",
+    "kind": "skill",
+    "name": "보호계전시스템 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "보호계전시스템 설계란 계통의 이상 시 보호계전기를 이용하여 고장의 범위를 최소화하여 기기의 소손을 방지하고 전력공급신뢰도를 향상시키는능력이다.",
+    "ksa": [
+     "고장전류의 크기",
+     "보호구간의 중첩화 관련지식",
+     "보호방식 종류 및 특성",
+     "단락전류 계산 능력",
+     "보호협조시간 확보 능력",
+     "인체와 기기의 안전확보 능력",
+     "보호기기 동작의 완벽한 보증",
+     "사고구간을 최소화 하기 위한 의지",
+     "신뢰도 유지를 하고자 하는 노력"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:감시시스템설계",
+    "kind": "skill",
+    "name": "감시시스템 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "감시시스템 설계란 실시간 상태감시, 경보관리를 위하여 통합자동제어설비, 주차관제설비, 객실관리설비 등을 설계하는 능력이다.",
+    "ksa": [
+     "객실관리대상 및 시스템 이해",
+     "건물 자동제어 대상과 범위",
+     "단말장치 및 현장제어 장치 이해",
+     "KEY SENSOR 및 카드키 제어 방식 선정",
+     "각층 서비스실에서 객실을 관리하기 위한 중간설비(FIP) 구성",
+     "객실설비시스템의 위치 선정",
+     "건축환경과 조화시키는 태도",
+     "고정설비로써의 장래성을 수용하려는 태도",
+     "관련 법령을 준수하려는 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:예비전원설비설계",
+    "kind": "skill",
+    "name": "예비전원설비 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "예비전원설비설계란 유지보수 및 계획․사고정전 시 자가발전설비, 축전지설비, 무정전전원설비, 에너지저장장치 등으로 전력을 공급하는 시스템을 설계하는 능력이다.",
+    "ksa": [
+     "계측장치 종류",
+     "계측장치 종류 관련지식",
+     "계통과의 연동 및 시퀀스 이해",
+     "계측장치 특성파악 능력",
+     "부하설비의 설계 조합 기술",
+     "설치된 부하의 총 전력 계산 능력",
+     "기술기준 준수",
+     "상시 및 정기 점검 의지",
+     "설치후의 보수관리 고려"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:옥내조명설비설계",
+    "kind": "skill",
+    "name": "옥내 조명설비 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS 전기설비설계)",
+    "def": "옥내 조명설비 설계란 주어진 옥내 장소의 사용목적에 가장 알맞은 광환경과 시각작업에 적합하도록 광원 및 조명방식의 선정, 조도를 계산하여설계에 적용하는 능력이다.",
+    "ksa": [
+     "LED 등의 신광원 요구조건",
+     "건축구조와 의장의 기본설계에 대한 기술적 지식",
+     "건축화 조명의 적용에 대한 기술적 지식",
+     "TAL(Task and Ambient Lighting ; 전반국부병용조명방식) 조명 설계기술",
+     "VDT(Visual Display Terminal)조명 설계 기술",
+     "감광보상률 결정 능력",
+     "건축환경과 조명을 조화롭게 배치하려는 의지",
+     "건축환경과 조명을 조화롭게 배치하려는 의지",
+     "다양한 선택사항을 합리적으로 선택하려는 노력"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전기철도기사",
+    "kind": "cert",
+    "name": "전기철도기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:건축전기설비기술사",
+    "kind": "cert",
+    "name": "건축전기설비기술사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전기응용기술사",
+    "kind": "cert",
+    "name": "전기응용기술사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전기철도기술사",
+    "kind": "cert",
+    "name": "전기철도기술사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전기공사산업기사",
+    "kind": "cert",
+    "name": "전기공사산업기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자) · 고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:전기공사기사",
+    "kind": "cert",
+    "name": "전기공사기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자) · 고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:전기기능사",
+    "kind": "cert",
+    "name": "전기기능사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자) · 고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 120,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:전기기능장",
+    "kind": "cert",
+    "name": "전기기능장",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자) · 고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 500,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:전기산업기사",
+    "kind": "cert",
+    "name": "전기산업기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자) · 고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:전기기사",
+    "kind": "cert",
+    "name": "전기기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자) · 고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:전기안전기술사",
+    "kind": "cert",
+    "name": "전기안전기술사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전기철도산업기사",
+    "kind": "cert",
+    "name": "전기철도산업기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:산업계측제어기술사",
+    "kind": "cert",
+    "name": "산업계측제어기술사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(전기안전기술자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:intern",
+    "kind": "experience",
+    "name": "인턴·현장실습",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 320,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:project",
+    "kind": "experience",
+    "name": "직무 관련 프로젝트 2~3개",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 240,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:career-note",
+    "kind": "experience",
+    "name": "경험·경력 기술서",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 20,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "text": "전자, 정보통신과 접목된 전기 분야의 확장으로 인해 전문대학, 대학교에서 전기공학, 원자력공학 등을 전공한 사람뿐만 아니라 전자공학, 정보통신공학, 재료공학(반도체, 소자 등), 기계공학 등을 전공한 사람도 많이 진출하고 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "text": "연구개발 업무를 하는 경우에는 석사 이상의 학위와 그에 걸맞은 전문 지식이 필요합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "text": "한국산업인력공단에서 시행하는 전기산업기사, 전기기사, 전기기능사, 전기기능장, 전기안전기술사, 건축전기설비기술사, 전기응용기술사, 전기공사산업기사, 전기공사기사, 전기철도산업기사, 전기철도기사, 전기철도기술사가 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "text": "폴리텍대학교, 관련 협회, 사설 학원에서 자격증 취득 및 기술 교육 훈련 과정을 받을 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(전기공학기술자)",
+    "text": "전문대학 및 대학교, 대학원에서 전기공학, 전자공학, 원자력공학, 통신공학 등을 졸업하는 것이 유리합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(전기안전기술자)",
+    "text": "전기, 전자 계통의 대학, 2~3년제 대학 혹은 특성화 고등학교에서 관련 교과목을 교육받은 후 각 회사에 취업하는 것이 일반적이다. 이러한 교육기관에서는 전력계통, 에너지, 고전압, 제어 및 시스템, 전기 전자재료 분야 등 다양한 전기응용분야와 전자관련 학문을 배운다. 그 밖에도 서울정수기능대학 외 22개 기능대학을 통해서도 교육받을 수 있다. 관련자격증은 『전기공사업법』에 의거 전기공사의 규모별 전기기술자의 시공관리구분을 규정함으로써 전기기술자 이외의 자가 전기공사업무를 수행할 수 없도록 규정하고 있는데 자격증을 취득하면 취업에 유리할 수 있다."
+   }
+  ],
+  "majors": [
+   "전기공학과",
+   "전기과",
+   "전기전자공학과",
+   "전기제어공학과",
+   "(안경)광학과",
+   "에너지공학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

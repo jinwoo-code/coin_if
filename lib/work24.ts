@@ -179,6 +179,37 @@ export async function dutiesFor(worldId: string, limit = 4) {
   return [...units.values()].slice(0, limit);
 }
 
+// 프리미엄 리포트 '필요한 것': 능력단위 전부와 지식·기술·태도 이름. 수행 준거는 이 API에 없다(공공데이터포털 NCS API 키 필요). 실패 null, NCS에 맞는 직무가 없으면 빈 배열.
+export async function ncsUnitsFor(worldId: string) {
+  if (!KEYS.duty) return null;
+  const duties = NCS[worldId] ?? [];
+  if (!duties.length) return [];
+  const results = await Promise.all(duties.map((d) => call("wk/callOpenApiSvcInfo215L01.do", { authKey: KEYS.duty, jobCont: d.q, limit: 1000, returnType: "JSON" }, "json", 3600 * 24))); // 비슷한 말 검색이라 60개면 맞는 직무가 잘린다(개발자 5개 → 1000개면 더 잡힘)
+  if (results.every((r) => !r || r.message_cd)) return null;
+  const units = new Map<string, { name: string; def: string; job: string; ksa: string[] }>();
+  results.forEach((data, i) => {
+    const result = (data?.result ?? {}) as Record<string, { job_sdvn?: string; ablt_def?: string; knwg_tchn_attd?: { knwg_tchn_attd_label?: string }[] }>;
+    for (const [unit, u] of Object.entries(result)) {
+      if (u.job_sdvn === duties[i].name && !units.has(unit)) units.set(unit, { name: unit, def: u.ablt_def ?? "", job: u.job_sdvn, ksa: list(u.knwg_tchn_attd).map((k) => k.knwg_tchn_attd_label ?? "").filter(Boolean).slice(0, 12) });
+    }
+  });
+  return [...units.values()];
+}
+
+// 직업정보 상세 212D03: 되는 길, 관련 학과·자격. 실패 null.
+export async function jobWay(code: string, name: string) {
+  if (!KEYS.job) return null;
+  const data = await call("wk/callOpenApiSvcInfo212D03.do", { authKey: KEYS.job, returnType: "XML", target: "JOBDTL", jobGb: "1", jobCd: code, dtlGb: "3" }, "xml", 3600 * 24);
+  const w = data?.way;
+  if (!w) return null;
+  return {
+    name,
+    certs: list<{ certNm?: string }>(w.relCertList).map((c) => c.certNm ?? "").filter(Boolean),
+    majors: list<{ majorNm?: string }>(w.relMajorList).map((m) => m.majorNm ?? "").filter(Boolean),
+    techn: String(w.technKnow ?? ""),
+  };
+}
+
 // ---------- 국민내일배움카드 훈련과정 ----------
 
 const ymd = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, "");

@@ -1,0 +1,559 @@
+{
+ "worldId": "sys-eng",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "sys-eng",
+  "certPolicy": "ai-filter",
+  "filter": {
+   "mode": "ai",
+   "dropped": [
+    {
+     "name": "데이터아키텍처",
+     "why": "데이터 관리 중심 자격증으로 시스템 엔지니어와 무관"
+    }
+   ],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "ncs:it시스템변경관리",
+    "kind": "skill",
+    "name": "IT시스템 변경관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "IT시스템 변경관리는 IT시스템에 대한 연간 구성관리계획에 따라 구성관리시스템을 구축하고, 변경 요청사항을 접수, 분석 및 반영하고, 유지보수 계약을 체결하고 이를 체계적으로 관리하는 능력이다.",
+    "ksa": [
+     "ISO/IEC 20000 국제표준",
+     "ITIL(IT Infrastructure Library)",
+     "ITSM(IT Service Management)",
+     "SQL 문법",
+     "SQL 활용 능력",
+     "Unix, Linux, x86 서버 관리 기술",
+     "객관적이고, 중립적인 관점에서 점검하려는 태도",
+     "변경관리 절차 준수",
+     "변경에 대한 사전 테스트 및 예상결과를 확인하려는 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:응용sw운영관리",
+    "kind": "skill",
+    "name": "응용SW 운영관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "응용SW 운영관리란 응용SW의 상태와 문제점들을 분석하여 발생된 문제에 대한 적절한 조치를 취하며, 장애 원인별 대응 방안을 모색하고, 장애가 재발되지 않도록 방지 대책을 강구하여 응용SW를 안정적으로 운영하는 능력이다.",
+    "ksa": [],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:it시스템통합운영관리",
+    "kind": "skill",
+    "name": "IT시스템 통합운영관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "IT시스템 통합운영관리란 하드웨어, 네트워크, 소프트웨어, 보안 분야의 전문지식과 IT서비스 운영관리 지식을 바탕으로 정보시스템을 운영하고 다른 운영요소들과 유기적으로 연동하여 정보시스템의 서비스 품질을 향상시키는 능력이다.",
+    "ksa": [
+     "데이터베이스 관리 방법",
+     "데이터베이스 관리시스템 운영관리 지침",
+     "모니터링 관리 절차",
+     "Unix, Linux, x86 서버 관리 기술",
+     "데이터베이스 관리시스템 운영 기술",
+     "모니터링 도구 활용 능력",
+     "객관적인 근거자료를 바탕으로 상대방의 이해를 구하려는 태도",
+     "다양한 이해관계자와의 원만한 의사소통을 하려는 의지",
+     "사용자 및 관리자의 요구사항을 적극적으로 수용하려는 의지"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:it시스템자원획득관리",
+    "kind": "skill",
+    "name": "IT시스템 자원획득관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "IT시스템 자원획득관리란 정보서비스 운영에 필요한 제품을 구매하기 위하여 구매계획 수립 및 계약 체결을 하고, 계약이행 및 공급업체를 관리하는 능력이다.",
+    "ksa": [
+     "IT 기술 동향",
+     "IT제품 구매 절차",
+     "검수 절차",
+     "계약 협상 능력",
+     "계약 협상 능력",
+     "계약 협상 능력",
+     "객관적이고 합리적인 보고서를 작성하고자 하는 의지",
+     "객관적이고 합리적인 보고서를 작성하고자 하는 의지",
+     "계획서 승인을 받기 위하여 원활한 의사소통을 하려는 의식"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:hw단말장치운영관리",
+    "kind": "skill",
+    "name": "HW 단말장치 운영관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "HW 단말장치 운영관리란 하드웨어의 안정적인 운영을 위하여 시스템 운영계획에 따라 단말장치의 운용 환경을 구성하고 장애 발생 시 대응하고복구하는 능력이다.",
+    "ksa": [
+     "HW단말 장치 장애처리 SOP(Standard Operating Procedure)",
+     "단말장치 구동 소프트웨어(Device Driver)",
+     "단말장치 연계 구조",
+     "PC, 주변장치 등 설치 및 환경 구성 기술",
+     "Unix, Linux, x86 서버 관리 기술",
+     "단말 응용프로그램 설치 및 업그레이드 기술",
+     "사용자의 요구사항을 최대한 수용하여 반영할 수 있도록 하는 적극적의지",
+     "사용자의 요구사항을 최대한 수용하여 반영할 수 있도록 하는 적극적인의지",
+     "상이한 환경의 하드웨어별 특성을 이해하고자 하는 능동적 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:서비스데스크구축",
+    "kind": "skill",
+    "name": "서비스데스크 구축",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "서비스데스크 구축이란 IT시스템 사용자 지원 서비스를 위하여 서비스데스크 구축 전략을 수립하고 IT 운영 프로세스 정의, 관련 서비스 조직의설계와 구축할 수 있는 능력이다.",
+    "ksa": [
+     "벤치마킹 기법",
+     "서비스데스크 기술 동향",
+     "서비스데스크 운영 프로세스",
+     "ARS(Automatic Response Service) 기술",
+     "CTI(Computer Telephony Integration) 기술",
+     "IVR(Interactive Voice Response) 기술",
+     "객관적이고 종합적으로 사고하려는 태도",
+     "시스템 개선에 대한 의지",
+     "시스템의 안정적 운용을 위한 강한 의식"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:보안운영관리",
+    "kind": "skill",
+    "name": "보안 운영관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "보안 운영관리란 정보서비스 보안기획 후 서비스 자원(기반 인프라 시설의 장비에 운영되는 운영체제, 데이터베이스, 응용)을 기밀성, 무결성, 가용성 있게 운영하고 다른 운영 요소들과 유기적으로 연동하여 고객 정보시스템의 보안을 향상시키는 서비스를 제공하는 능력이다.",
+    "ksa": [
+     "IEEE 802.1x 표준규격",
+     "ISO/IEC 27001 국제표준",
+     "MPEG-21(Moving Picture Experts Group-21) 표준 규격",
+     "IT 보안 성과평가 능력",
+     "SQL 해석 능력",
+     "구현 및 이관에 대한 보안 기술",
+     "객관적인 관점에서 종합적으로 분석, 사고하려는 의식",
+     "객관적인 관점에서 종합적으로 분석, 사고하려는 의식",
+     "객관적인 관점에서 종합적으로 분석, 사고하려는 의식"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:nw운영관리",
+    "kind": "skill",
+    "name": "NW 운영관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "NW 운영관리란 네트워크 지식을 토대로 네트워크 보안기술, 설계, 트래픽분산기술 등 네트워크 전문 기술자로서 필요한 IT기술 및 네트워크를 운영하고 관리하는 능력이다.",
+    "ksa": [
+     "네트워크 개념",
+     "네트워크 계측기 운용 방법",
+     "네트워크 기술 동향",
+     "네트워크 구성 및 구축 능력",
+     "네트워크 구성 및 구축 능력",
+     "네트워크 솔루션 및 관련 소프트웨어 운영 능력",
+     "기술 기준 준수",
+     "기술 기준 준수",
+     "네트워크 운영 환경을 개선하려는 의지"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:it시스템통합운영안정성관리",
+    "kind": "skill",
+    "name": "IT시스템 통합운영안정성관리",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "IT시스템 통합운영안정성관리란 하드웨어, 네트워크, 소프트웨어, 보안 분야의 전문지식과 IT서비스 운영관리 전문지식을 바탕으로 정보시스템의서비스 연속성 확보와 적시 재해복구로 IT시스템을 안정적으로 운영하는능력이다.",
+    "ksa": [
+     "IT서비스 연속성 관리",
+     "가용성 및 연속성 관리 절차 이해",
+     "가용성 측정 기법",
+     "Unix, Linux, x86 서버 관리 기술",
+     "고가용성(HA), 결함허용(Fault Tolerance) 구성 및 운영 능력",
+     "네트워크 관리 능력",
+     "가동준비상태의 시스템을 상시 유지하려는 의지",
+     "다양한 이해관계자와 적극적으로 의사소통하려는 의지",
+     "다양한 이해관계자와 적극적으로 의사소통하려는 의지"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:nw유지보수",
+    "kind": "skill",
+    "name": "NW 유지보수",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS IT시스템관리)",
+    "def": "NW 유지보수란 네트워크 지식을 토대로 네트워크 장애대응과 트래픽 분석, 용량분석을 통해 네트워크의 기능과 성능을 유지하고 최적화하는 능력이다.",
+    "ksa": [
+     "네트워크 서비스 개념",
+     "네트워크 유지보수 방법",
+     "요구사항 관리 기법",
+     "네트워크 구성 및 구축 능력",
+     "네트워크 시험 및 분석 기술",
+     "네트워크 운영 요구사항 분석 기술",
+     "고객의 요구사항을 수용하는 태도",
+     "규정을 준수하여 작업하는 태도",
+     "네트워크 표준, 방식 등의 신기술 동향에 대한 능동적 습득 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:네트워크토폴로지설계",
+    "kind": "skill",
+    "name": "네트워크 토폴로지 설계",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS NW엔지니어링)",
+    "def": "네트워크 토폴로지 설계란 네트워크 구성요소인 링크와 노드의 물리적,논리적 연결성을 분석하고 장단점을 파악하여 네트워크 설계 요구사항을충족시키는 네트워크 토폴로지를 설계하고 구축하는 능력이다.",
+    "ksa": [
+     "OSI 7 Layer, TCP/IP",
+     "OSI 7 Layer, TCP/IP",
+     "OSI 7 Layer, TCP/IP",
+     "기술문서 작성 능력",
+     "기술문서 작성 능력",
+     "기술문서 작성 능력",
+     "관련부서 및 조직원 간 원활하게 의사소통을 하려는 태도",
+     "관련부서 및 조직원 간 원활하게 의사소통을 하려는 태도",
+     "관련부서 및 조직원 간 원활하게 의사소통을 하려는 태도"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "ncs:네트워크환경분석",
+    "kind": "skill",
+    "name": "네트워크 환경 분석",
+    "grade": "official",
+    "source": "ncs",
+    "ref": "고용24 직무정보(NCS NW엔지니어링)",
+    "def": "네트워크 환경 분석이란 시장의 니즈(needs)를 반영한 네트워킹 제품을 개발하기 위하여 기술 트렌드, 법제도를 포함한 거시적인 시장 상황, 경쟁환경 및 내부 역량을 분석하는 능력이다.",
+    "ksa": [
+     "DRM(Digital Right Management) 개념",
+     "QoS(Quality of Service)",
+     "경쟁 기업 특성",
+     "개발 플랫폼 선정 능력",
+     "기술문서 작성 능력",
+     "기술문서 작성 능력",
+     "거시환경을 분석하고 이해하려는 태도",
+     "경쟁환경을 분석하고 이해하려는 태도",
+     "기술과 비즈니스의 상호 관련성 수용"
+    ],
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자계산기기능사",
+    "kind": "cert",
+    "name": "전자계산기기능사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 120,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자계산기기사",
+    "kind": "cert",
+    "name": "전자계산기기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자계산기제어산업기사",
+    "kind": "cert",
+    "name": "전자계산기제어산업기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자계산기조직응용기사",
+    "kind": "cert",
+    "name": "전자계산기조직응용기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어) · 고용24 직업정보(정보 시스템 운영자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:정보관리기술사",
+    "kind": "cert",
+    "name": "정보관리기술사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:정보처리산업기사",
+    "kind": "cert",
+    "name": "정보처리산업기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어) · 고용24 직업정보(정보 시스템 운영자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 200,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:정보처리기사",
+    "kind": "cert",
+    "name": "정보처리기사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어) · 고용24 직업정보(정보 시스템 운영자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:컴퓨터시스템응용기술사",
+    "kind": "cert",
+    "name": "컴퓨터시스템응용기술사",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:sql",
+    "kind": "cert",
+    "name": "SQL",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:리눅스마스터",
+    "kind": "cert",
+    "name": "리눅스마스터",
+    "grade": "official",
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어) · 고용24 직업정보(정보 시스템 운영자)",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    },
+    "alsoIn": [
+     "work24-job"
+    ]
+   },
+   {
+    "id": "cert:네트워크관리사",
+    "kind": "cert",
+    "name": "네트워크관리사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(정보 시스템 운영자)",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:전자계산기조직응용기술사",
+    "kind": "cert",
+    "name": "전자계산기조직응용기술사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(정보 시스템 운영자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 800,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:정보처리기능사",
+    "kind": "cert",
+    "name": "정보처리기능사",
+    "grade": "official",
+    "source": "work24-job",
+    "ref": "고용24 직업정보(정보 시스템 운영자)",
+    "officialUrl": "https://www.q-net.or.kr",
+    "hours": {
+     "value": 120,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:intern",
+    "kind": "experience",
+    "name": "인턴·현장실습",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 320,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:project",
+    "kind": "experience",
+    "name": "직무 관련 프로젝트 2~3개",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 240,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "exp:open:career-note",
+    "kind": "experience",
+    "name": "경험·경력 기술서",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 20,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "text": "주로 소프트웨어 개발 및 유지·운영 업체나 대기업의 정보시스템 구축과 정보관리, 정보화사업에 관련된 부서로 취업하거나 공공기관의 정보화 부서로 취업하기도 합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "text": "시스템 운영 및 관리의 경우에는 전문대 졸업 또는 대학교 졸업 이상의 학력이 필요하며, 시스템 개발과 관련된 분야로 취업하기 위해서는 정보통신학, 컴퓨터공학 등을 전공하고 대학교 이상의 학력이 요구됩니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "text": "국가자격증으로는 컴퓨터시스템응용기술사, 정보관리기술사, 정보처리기사, 전자계산기기사가 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "text": "직업훈련포털을 통해 사설 학원에서 운영하는 시스템개발과 관련된 교육 과정을 통해 훈련을 받을 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(시스템엔지니어)",
+    "text": "전문대학 및 대학교에서 전자공학과, 컴퓨터공학과, 컴퓨터응용기계과 등을 전공하고 졸업하는 것이 유리합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(정보 시스템 운영자)",
+    "text": "정보시스템운영자로 일하려면 각종 컴퓨터 운영체제(OS)와 OS에 탑재되는 소프트웨어 설치와 운영, 보안, 데이터베이스 등 시스템운영에 대한 지식과 기술을 기본적으로 갖춰야 한다. 전문대학 이상에서 관련 학문을 전공하거나 사설교육기관에서 관련 교육을 받고 취업하는 것이 일반적이다."
+   }
+  ],
+  "majors": [
+   "시스템경영공학과",
+   "컴퓨터응용기계과",
+   "스마트정보과",
+   "시스템공학과",
+   "컴퓨터공학과",
+   "공학교육과",
+   "산업공학과",
+   "응용소프트웨어공학과",
+   "전자공학과",
+   "정보·통신공학과",
+   "제어계측공학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

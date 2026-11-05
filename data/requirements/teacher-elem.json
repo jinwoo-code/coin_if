@@ -1,0 +1,157 @@
+{
+ "worldId": "teacher-elem",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "teacher-elem",
+  "certPolicy": "curated-only",
+  "filter": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "curated:cert-teacher",
+    "kind": "cert",
+    "name": "초등학교 정교사(2급) 자격증",
+    "detail": "교육대학 졸업, 사범대 초등교육과정 전공, 교육대학원 초등교육과정 석사 등. 시험은 교원자격증 소지자(졸업예정자 포함)가 봅니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "초·중등교육법 제21조, 별표 2 (시행 2026. 10. 29.)",
+    "refUrl": "https://www.law.go.kr/법령/초ㆍ중등교육법"
+   },
+   {
+    "id": "curated:cert-history",
+    "kind": "cert",
+    "name": "한국사능력검정",
+    "detail": "1차 한국사 과목을 대체합니다. 인정 등급은 규칙에 없어 해마다 공고를 확인해야 합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+    "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-essay",
+    "kind": "exam",
+    "name": "교직논술",
+    "detail": "1차 시험. 배점은 공고에서 확인",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "경기도교육청 2027학년도 시행계획 보도자료 (2026. 9. 9. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+    "refUrl": "https://goe.go.kr/goe/na/ntt/selectNttInfo.do?mi=10102&nttSn=2370767",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-curriculum",
+    "kind": "exam",
+    "name": "교육과정",
+    "detail": "1차 시험. 배점은 공고에서 확인",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "경기도교육청 2027학년도 시행계획 보도자료 (2026. 9. 9. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+    "refUrl": "https://goe.go.kr/goe/na/ntt/selectNttInfo.do?mi=10102&nttSn=2370767",
+    "hours": {
+     "value": 1000,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-interview",
+    "kind": "exam",
+    "name": "교직적성 심층면접",
+    "detail": "2차 시험. 적성, 교직관, 인격과 소양을 평가합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+    "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-teaching",
+    "kind": "exam",
+    "name": "수업실연",
+    "detail": "2차 시험. 모의 수업으로 의사소통과 학습지도 능력을 평가합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조 (시행 2025. 3. 1.)",
+    "refUrl": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+    "hours": {
+     "value": 120,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-english",
+    "kind": "exam",
+    "name": "영어수업실연·영어면접",
+    "detail": "2차 시험(초등만 해당)",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "경기도교육청 2027학년도 시행계획 보도자료 (2026. 9. 9. 경기 기준. 과목·배점은 시험실시기관이 정합니다)",
+    "refUrl": "https://goe.go.kr/goe/na/ntt/selectNttInfo.do?mi=10102&nttSn=2370767",
+    "hours": {
+     "value": 100,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:practice",
+    "kind": "experience",
+    "name": "교육실습",
+    "detail": "실습 기간은 이번에 공식 문서로 확인하지 못해 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 160,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(초등학교교사)",
+    "text": "초등학교 2급 자격을 취득한 후 각 시도교육청에서 시행하는 초등교원 임용고사에 합격하면 각 지역의 국공립 초등학교에 취업할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(초등학교교사)",
+    "text": "사립 초등학교의 경우 교사 결원이 있으면 채용 공고를 통해 취업할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(초등학교교사)",
+    "text": "국가자격증으로 초등학교 정교사 1급, 2급 자격이 있습니다. 교육대학교 및 사범대학의 초등교육과에 입학하여 교육과 실습을 받으면 초등학교 정교사 2급 자격을 무시험 검정으로 취득할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(초등학교교사)",
+    "text": "각시도의 교육대학교나 교원대학교, 대학교의 초등교육과 또는 대학원에서 초등교육과정을 전공해야 합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(초등학교교사)",
+    "text": "초등교사가 되려면 전국의 10개 교육대학교, 또는 한국교원대학교, 이화여자대학교 혹은 제주대학교의 초등교육과에 입학해야 한다. 이들 대학교에서는 교육현장을 이해하기 위한 이론, 교육행정, 생활지도에 대한 내용과 각 교과목을 효과적으로 가르치기 위한 교수법, 교재연구 등에 대해 교육한다. 특히 전 교과목을 가르쳐야 하는 초등학교교사의 특성상 음악, 미술, 체육을 비롯해 다양한 교과목에 대한 폭넓은 이론과 실기를 배우며, 초등학교로 교육실습을 나간다."
+   }
+  ],
+  "majors": [
+   "초등교육과",
+   "초등교육학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

@@ -1,0 +1,115 @@
+{
+ "worldId": "emt",
+ "sources": {
+  "act": {
+   "name": "응급의료에 관한 법률 제36조",
+   "url": "https://www.law.go.kr/법령/응급의료에관한법률",
+   "version": "2026-11-05 확인"
+  },
+  "rule": {
+   "name": "응급의료에 관한 법률 시행규칙 제26조, 별표 11",
+   "url": "https://www.law.go.kr/법령/응급의료에관한법률시행규칙",
+   "version": "시행 2026. 8. 14."
+  }
+ },
+ "certCandidates": [
+  "lic-1",
+  "lic-2"
+ ],
+ "items": [
+  {
+   "id": "edu-1",
+   "kind": "experience",
+   "name": "1급: 응급구조학 전공 졸업",
+   "detail": "지정 대학·전문대학 졸업. 또는 2급으로 3년 이상 종사",
+   "grade": "curated",
+   "ref": "act",
+   "required": true
+  },
+  {
+   "id": "edu-2",
+   "kind": "experience",
+   "name": "2급: 지정 양성기관 과정 수료",
+   "detail": "대통령령으로 정한 양성과정을 마친 사람",
+   "grade": "curated",
+   "ref": "act",
+   "required": false
+  },
+  {
+   "id": "exam-1",
+   "kind": "exam",
+   "name": "1급 필기",
+   "detail": "기초의학, 전문응급처치학총론·각론, 응급의료관련법령, 응급환자관리",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-2",
+   "kind": "exam",
+   "name": "2급 필기",
+   "detail": "기본응급처치학총론·각론, 응급의료관련법령, 응급의료장비, 기본응급환자관리",
+   "grade": "curated",
+   "ref": "rule",
+   "required": false,
+   "hours": {
+    "value": 250,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-prac",
+   "kind": "exam",
+   "name": "실기시험",
+   "detail": "업무에 필요한 기능. 방법은 보건복지부장관이 정합니다.",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 100,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "lic-1",
+   "kind": "cert",
+   "name": "1급 응급구조사",
+   "detail": "시험 합격 뒤 보건복지부장관의 자격인정",
+   "grade": "curated",
+   "ref": "act",
+   "required": true,
+   "officialUrl": "https://www.kuksiwon.or.kr"
+  },
+  {
+   "id": "lic-2",
+   "kind": "cert",
+   "name": "2급 응급구조사",
+   "detail": "시험 합격 뒤 보건복지부장관의 자격인정",
+   "grade": "curated",
+   "ref": "act",
+   "required": false,
+   "officialUrl": "https://www.kuksiwon.or.kr"
+  },
+  {
+   "id": "practice",
+   "kind": "experience",
+   "name": "병원·구급 현장 실습",
+   "detail": "실습 시간은 공식 문서로 확인하지 못한 가정값입니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "hire",
+   "kind": "step",
+   "name": "채용 절차",
+   "detail": "소방·병원·민간 이송 등 기관마다 달라 팀이 정리한 가정값입니다.",
+   "grade": "assumed"
+  }
+ ],
+ "checkedAt": "2026-11-05"
+}

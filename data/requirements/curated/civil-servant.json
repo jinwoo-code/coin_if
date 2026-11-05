@@ -1,0 +1,86 @@
+{
+ "worldId": "civil-servant",
+ "sources": {
+  "rule": {
+   "name": "공무원임용시험령 제31조, 별표 1·11·12",
+   "url": "https://www.law.go.kr/법령/공무원임용시험령",
+   "version": "시행 2026. 10. 13."
+  }
+ },
+ "certCandidates": [
+  "bonus-admin"
+ ],
+ "noBonusNote": "일반행정 9급 가산 자격증은 변호사·변리사뿐입니다. 컴퓨터활용능력 등 정보화 자격은 가산 대상이 아닙니다.",
+ "items": [
+  {
+   "id": "exam-kor",
+   "kind": "exam",
+   "name": "국어",
+   "detail": "9급 공채 1차 필수",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-eng",
+   "kind": "exam",
+   "name": "영어",
+   "detail": "9급 공채 1차 필수",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-his",
+   "kind": "exam",
+   "name": "한국사",
+   "detail": "9급 공채 1차 필수",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 300,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-adminlaw",
+   "kind": "exam",
+   "name": "행정법총론",
+   "detail": "일반행정 9급 2차 필수",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-adminsci",
+   "kind": "exam",
+   "name": "행정학개론",
+   "detail": "일반행정 9급 2차 필수",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "bonus-admin",
+   "kind": "cert",
+   "name": "가산 5%: 변호사, 변리사",
+   "detail": "일반행정 직류. 과목별 득점에 가산하며 40% 이상일 때만",
+   "grade": "curated",
+   "ref": "rule",
+   "required": false
+  }
+ ],
+ "checkedAt": "2026-11-05"
+}

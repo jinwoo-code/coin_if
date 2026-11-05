@@ -1,0 +1,156 @@
+{
+ "worldId": "clinical-lab",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "clinical-lab",
+  "certPolicy": "curated-only",
+  "filter": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "curated:edu",
+    "kind": "experience",
+    "name": "임상병리사 관련 학과 졸업",
+    "detail": "해당 학과 졸업과 현장실습 이수가 응시 요건입니다(법 제4조·시행규칙 제7조).",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙"
+   },
+   {
+    "id": "curated:practice",
+    "kind": "experience",
+    "name": "현장실습 320시간 이상",
+    "detail": "교내가 아닌 의료기관 등 현장에서 이수해야 합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 320,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-0",
+    "kind": "exam",
+    "name": "임상검사이론Ⅰ",
+    "detail": "공중보건학, 해부생리학, 조직병리학, 임상생리학",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 250,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-1",
+    "kind": "exam",
+    "name": "임상검사이론Ⅱ",
+    "detail": "임상화학, 혈액학, 임상미생물학",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 250,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-law",
+    "kind": "exam",
+    "name": "의료관계법규",
+    "detail": "의료법, 의료기사법, 감염병예방법, 지역보건법, 혈액관리법과 하위 법령",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 60,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-prac",
+    "kind": "exam",
+    "name": "실기시험",
+    "detail": "임상병리사 업무에 관한 실기. 만점의 60% 이상",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:lic",
+    "kind": "cert",
+    "name": "임상병리사 면허",
+    "detail": "필기는 각 과목 40% 이상·전 과목 60% 이상, 실기는 60% 이상. 졸업증명서·성적증명서·진단서 등을 내 면허증을 받습니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "officialUrl": "https://www.kuksiwon.or.kr"
+   },
+   {
+    "id": "curated:hire",
+    "kind": "step",
+    "name": "채용 절차",
+    "detail": "서류·면접 뒤 현장 교육. 기관마다 달라 팀이 정리한 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값"
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(임상병리사)",
+    "text": "대학병원, 종합병원, 종합검진센터, 한방병원 등의 임상병리과, 해부(조직)병리과, 핵의학과, 특수검사실, 건강관리과, 응급검사실, 전자현미경실, 특수건강진단기관 등 의료기관에 취업할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(임상병리사)",
+    "text": "지역의 소규모 병원 또는 의원, 임상병리 전문기관, 의학연구소, 의료재단, 종합병원 등이 최소한으로 요구하는 학력 조건은 전문대학 졸업 이상이며 임상병리사 자격이 필요합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(임상병리사)",
+    "text": "임상병리학과를 졸업하고 한국보건의료인국가시험원에서 매년 1회 시행하는 임상병리사 국가시험에 합격한 후 보건복지부장관으로부터 면허를 발급받아야 합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(임상병리사)",
+    "text": "사설 교육기관 또는 온라인강의를 통해 임상병리사 자격증 취득을 위한 이론에 대한 교육을 받을 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(임상병리사)",
+    "text": "전문대학이나 대학교에서 임상병리학을 전공하는 것이 유리합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(임상병리사)",
+    "text": "임상병리사가 되기 위해서는 4년제 대학교 혹은 전문대학교의 임상병리학과를 졸업하고 임상병리사 국가면허 시험에 합격해야 한다. 2017년 기준으로 임상병리학과는 전국 4년제 대학교에 26개가 있고 3년제 대학교가 27개 있다. 임상병리학과에서는 임상병리학개론, 해부학, 생리학, 생화학, 혈액학, 임상병리실습 등에 대해 배운다.\n한국보건의료인국가시험원에서 2016년 12월에 시행한 면허시험에 2,788명이 응시하여 2,070명(74.2%)가 합격하였다.\n임상병리사 면허 취득 후 소정의 교육과정 및 시험을 거치게되면 대한임상병리사협회에서 실시하는 분야(혈액, 수혈, 미생물, 임상화학, 면역·혈청, 조직세포, 핵의학, 공중보건, 생리학, 임상 등)의 전문임상병리사 자격을 취득할 수 있다."
+   }
+  ],
+  "majors": [
+   "임상병리학과",
+   "임상병리과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

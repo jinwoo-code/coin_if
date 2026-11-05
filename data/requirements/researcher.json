@@ -1,0 +1,449 @@
+{
+ "worldId": "researcher",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "researcher",
+  "certPolicy": "ai-filter",
+  "filter": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  },
+  "notes": [
+   "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+  ],
+  "items": [
+   {
+    "id": "curated:major",
+    "kind": "experience",
+    "name": "전공 성적과 기초 과목",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 300,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:lab",
+    "kind": "experience",
+    "name": "학부 연구 경험",
+    "detail": "연구실 인턴",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 240,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:advisor",
+    "kind": "experience",
+    "name": "지도교수 상담과 연구실 조사",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 20,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:paper",
+    "kind": "experience",
+    "name": "논문 읽기·연구 계획서",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 120,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:lang",
+    "kind": "experience",
+    "name": "공인 영어 성적",
+    "detail": "학교마다 다릅니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(자연과학연구원)",
+    "text": "정규직 연구원의 경우 공개 채용을 통해 정부출연연구소에 취업할 수 있으며, 계약직 연구원의 경우 해당 연구소 홈페이지 및 외부 구인사이트 등을 통해 수시 모집을 통해 취업할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(자연과학연구원)",
+    "text": "국책연구소의 경우 수시로 박사후연구원(Post-Doc)를 모집하기도 하며, 보통 서류 전형 및 연구실적 심사 등으로 선발합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(자연과학연구원)",
+    "text": "자연과학 분야와 관련된 학과에 진학하여 석사학위 이상의 학력을 가질 것이 요구됩니다."
+   }
+  ],
+  "majors": [
+   "화학과",
+   "천문학과",
+   "지리학과",
+   "통계학과",
+   "수학과",
+   "지질학과",
+   "물리학과",
+   "대기과학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ },
+ "byFamily": {
+  "자연": {
+   "worldId": "researcher",
+   "certPolicy": "ai-filter",
+   "filter": {
+    "mode": "none",
+    "dropped": [],
+    "invented": 0
+   },
+   "notes": [
+    "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+   ],
+   "items": [
+    {
+     "id": "curated:major",
+     "kind": "experience",
+     "name": "전공 성적과 기초 과목",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:lab",
+     "kind": "experience",
+     "name": "학부 연구 경험",
+     "detail": "연구실 인턴",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 240,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:advisor",
+     "kind": "experience",
+     "name": "지도교수 상담과 연구실 조사",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 20,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:paper",
+     "kind": "experience",
+     "name": "논문 읽기·연구 계획서",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 120,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:lang",
+     "kind": "experience",
+     "name": "공인 영어 성적",
+     "detail": "학교마다 다릅니다.",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 150,
+      "grade": "assumed"
+     }
+    }
+   ],
+   "prep": [
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연과학연구원)",
+     "text": "정규직 연구원의 경우 공개 채용을 통해 정부출연연구소에 취업할 수 있으며, 계약직 연구원의 경우 해당 연구소 홈페이지 및 외부 구인사이트 등을 통해 수시 모집을 통해 취업할 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연과학연구원)",
+     "text": "국책연구소의 경우 수시로 박사후연구원(Post-Doc)를 모집하기도 하며, 보통 서류 전형 및 연구실적 심사 등으로 선발합니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연과학연구원)",
+     "text": "자연과학 분야와 관련된 학과에 진학하여 석사학위 이상의 학력을 가질 것이 요구됩니다."
+    }
+   ],
+   "majors": [
+    "화학과",
+    "천문학과",
+    "지리학과",
+    "통계학과",
+    "수학과",
+    "지질학과",
+    "물리학과",
+    "대기과학과"
+   ],
+   "baseDate": "2026-11-05",
+   "stale": false
+  },
+  "사회": {
+   "worldId": "researcher",
+   "certPolicy": "ai-filter",
+   "filter": {
+    "mode": "ai",
+    "dropped": [],
+    "invented": 0
+   },
+   "notes": [
+    "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+   ],
+   "items": [
+    {
+     "id": "cert:사회조사분석사",
+     "kind": "cert",
+     "name": "사회조사분석사2급",
+     "grade": "official",
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(사회학연구원)",
+     "officialUrl": "https://www.q-net.or.kr",
+     "hours": {
+      "value": 100,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:major",
+     "kind": "experience",
+     "name": "전공 성적과 기초 과목",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:lab",
+     "kind": "experience",
+     "name": "학부 연구 경험",
+     "detail": "연구실 인턴",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 240,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:advisor",
+     "kind": "experience",
+     "name": "지도교수 상담과 연구실 조사",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 20,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:paper",
+     "kind": "experience",
+     "name": "논문 읽기·연구 계획서",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 120,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:lang",
+     "kind": "experience",
+     "name": "공인 영어 성적",
+     "detail": "학교마다 다릅니다.",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 150,
+      "grade": "assumed"
+     }
+    }
+   ],
+   "prep": [
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(사회학연구원)",
+     "text": "사회학 관련 학과에 진학하여 석사학위 이상의 학력을 소지해야 합니다. 대학원 석사과정에 진학하면 해당 학문 분야에 대한 개념과 이론 등을 배우고 연구 수행을 위해 필요한 각종 연구 방법 등을 배울 수 있습니다. 석박사 학위과정에 진학하면 자신만의 세부적인 전공 분야를 선택하게 되는데 보통 향후 이와 관련된 분야에서 연구를 수행하게 됩니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(사회학연구원)",
+     "text": "국가정책연구소, 대학교, 사회학 관련 연구소, 경영연구소, 조사 및 통계 전문기업 등에 취업할 수 있으며 연구원으로 일하기 위해서는 최소 대학원 석사 이상 졸업의 학력이 필요합니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(사회학연구원)",
+     "text": "관련 자격증으로는 한국산업인력공단에서 시행하는 사회조사분석사 2급 및 1급이 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(사회학연구원)",
+     "text": "특별히 요구되는 별도의 직업훈련과정은 없지만 사설 교육기관에 개설된 SPSS, 빅데이터 분석, R, 통계분석, 파이썬, 엑셀 등을 활용한 통계와 관련된 교육 및 훈련을 받을 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(사회학연구원)",
+     "text": "대학교를 졸업하고, 대학원에 진학하여 사회학 관련 분야의 석사 또는 박사 학위를 취득하는 것이 유리합니다."
+    }
+   ],
+   "majors": [
+    "사회학과",
+    "통계학과"
+   ],
+   "baseDate": "2026-11-05",
+   "stale": false
+  },
+  "인문": {
+   "worldId": "researcher",
+   "certPolicy": "ai-filter",
+   "filter": {
+    "mode": "none",
+    "dropped": [],
+    "invented": 0
+   },
+   "notes": [
+    "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+   ],
+   "items": [
+    {
+     "id": "curated:major",
+     "kind": "experience",
+     "name": "전공 성적과 기초 과목",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 300,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:lab",
+     "kind": "experience",
+     "name": "학부 연구 경험",
+     "detail": "연구실 인턴",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 240,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:advisor",
+     "kind": "experience",
+     "name": "지도교수 상담과 연구실 조사",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 20,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:paper",
+     "kind": "experience",
+     "name": "논문 읽기·연구 계획서",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 120,
+      "grade": "assumed"
+     }
+    },
+    {
+     "id": "curated:lang",
+     "kind": "experience",
+     "name": "공인 영어 성적",
+     "detail": "학교마다 다릅니다.",
+     "grade": "assumed",
+     "source": "assumed",
+     "ref": "팀이 정한 가정값",
+     "hours": {
+      "value": 150,
+      "grade": "assumed"
+     }
+    }
+   ],
+   "prep": [
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연과학연구원)",
+     "text": "정규직 연구원의 경우 공개 채용을 통해 정부출연연구소에 취업할 수 있으며, 계약직 연구원의 경우 해당 연구소 홈페이지 및 외부 구인사이트 등을 통해 수시 모집을 통해 취업할 수 있습니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연과학연구원)",
+     "text": "국책연구소의 경우 수시로 박사후연구원(Post-Doc)를 모집하기도 하며, 보통 서류 전형 및 연구실적 심사 등으로 선발합니다."
+    },
+    {
+     "source": "careernet",
+     "ref": "커리어넷 직업정보(자연과학연구원)",
+     "text": "자연과학 분야와 관련된 학과에 진학하여 석사학위 이상의 학력을 가질 것이 요구됩니다."
+    },
+    {
+     "source": "work24-job",
+     "ref": "고용24 직업정보(인문과학 연구원)",
+     "text": "철학연구원으로 활동하기 위해서는 철학 관련한 석사 이상의 학위가 필요하다. 정부출연연구소나 규모가 크고 연구 활동이 많은 연구소에서는 대부분 석사나 박사학위 소지자를 채용한다. 인문과학연구원은 인접 학문과 관계를 맺으며 폭넓은 연구를 해야 하기 때문에 자신의 전공뿐 아니라 인접 학문의 관련 지식을 쌓는 것이 중요하다. 연구원이라는 직업은 끊임없이 연구하고 자기의 전공 분야에 대해 깊이 공부해야 하기 때문에 단기간의 교육과 훈련으로 될 수 있는 직업이 아니다. 항상 꾸준한 자기계발과 관련 지식을 배우려고 하는 자세가 필요하다."
+    }
+   ],
+   "majors": [
+    "화학과",
+    "천문학과",
+    "지리학과",
+    "통계학과",
+    "수학과",
+    "지질학과",
+    "물리학과",
+    "대기과학과",
+    "철학·윤리학과"
+   ],
+   "baseDate": "2026-11-05",
+   "stale": false
+  }
+ }
+}

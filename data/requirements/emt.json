@@ -1,0 +1,161 @@
+{
+ "worldId": "emt",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "emt",
+  "certPolicy": "curated-only",
+  "filter": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "curated:edu-1",
+    "kind": "experience",
+    "name": "1급: 응급구조학 전공 졸업",
+    "detail": "지정 대학·전문대학 졸업. 또는 2급으로 3년 이상 종사",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "응급의료에 관한 법률 제36조 (2026-11-05 확인)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률"
+   },
+   {
+    "id": "curated:edu-2",
+    "kind": "experience",
+    "name": "2급: 지정 양성기관 과정 수료",
+    "detail": "대통령령으로 정한 양성과정을 마친 사람",
+    "grade": "curated",
+    "source": "curated",
+    "required": false,
+    "ref": "응급의료에 관한 법률 제36조 (2026-11-05 확인)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률"
+   },
+   {
+    "id": "curated:exam-1",
+    "kind": "exam",
+    "name": "1급 필기",
+    "detail": "기초의학, 전문응급처치학총론·각론, 응급의료관련법령, 응급환자관리",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "응급의료에 관한 법률 시행규칙 제26조, 별표 11 (시행 2026. 8. 14.)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률시행규칙",
+    "hours": {
+     "value": 500,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-2",
+    "kind": "exam",
+    "name": "2급 필기",
+    "detail": "기본응급처치학총론·각론, 응급의료관련법령, 응급의료장비, 기본응급환자관리",
+    "grade": "curated",
+    "source": "curated",
+    "required": false,
+    "ref": "응급의료에 관한 법률 시행규칙 제26조, 별표 11 (시행 2026. 8. 14.)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률시행규칙",
+    "hours": {
+     "value": 250,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-prac",
+    "kind": "exam",
+    "name": "실기시험",
+    "detail": "업무에 필요한 기능. 방법은 보건복지부장관이 정합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "응급의료에 관한 법률 시행규칙 제26조, 별표 11 (시행 2026. 8. 14.)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률시행규칙",
+    "hours": {
+     "value": 100,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:lic-1",
+    "kind": "cert",
+    "name": "1급 응급구조사",
+    "detail": "시험 합격 뒤 보건복지부장관의 자격인정",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "응급의료에 관한 법률 제36조 (2026-11-05 확인)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률",
+    "officialUrl": "https://www.kuksiwon.or.kr"
+   },
+   {
+    "id": "curated:lic-2",
+    "kind": "cert",
+    "name": "2급 응급구조사",
+    "detail": "시험 합격 뒤 보건복지부장관의 자격인정",
+    "grade": "curated",
+    "source": "curated",
+    "required": false,
+    "ref": "응급의료에 관한 법률 제36조 (2026-11-05 확인)",
+    "refUrl": "https://www.law.go.kr/법령/응급의료에관한법률",
+    "officialUrl": "https://www.kuksiwon.or.kr"
+   },
+   {
+    "id": "curated:practice",
+    "kind": "experience",
+    "name": "병원·구급 현장 실습",
+    "detail": "실습 시간은 공식 문서로 확인하지 못한 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 400,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:hire",
+    "kind": "step",
+    "name": "채용 절차",
+    "detail": "소방·병원·민간 이송 등 기관마다 달라 팀이 정리한 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값"
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(응급구조사)",
+    "text": "응급구조사 자격 취득 후 병원, 응급전문이송업체, 소방공무원, 항공구조대, 레저스포츠센터 등으로 취직할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(응급구조사)",
+    "text": "국가자격증으로 응급구조사(1급, 2급)가 있습니다. 응급구조사 1급 취득을 위해서는 전문대학 이상에서 관련 학과를 졸업하고 시험에 합격해야 하며, 2급 자격은 응급구조사 양성기관에서 개설하는 과정을 이수해야 합니다. 응급구조사 자격을 취득한 후 다음 해부터 매년 4시간의 보수교육을 받아야 합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(응급구조사)",
+    "text": "보건복지부장관이 지정하는 기관에서 응급구조사 양성을 위한 교육을 제공합니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(응급구조사)",
+    "text": "전문대학 및 대학교에서 응급구조, 응급구조학을 전공하면 유리합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(응급구조사)",
+    "text": "응급구조사가 되기 위해서는 전문대학이나 대학에서 응급구조학을 전공하거나 응급구조사 양성기관에서 개설하는 과정을 이수해야 한다. 대학의 응급구조학과를 졸업하면 응급구조사 1급 시험을 볼 수 있는 자격이 주어지며, 소방학교 및 국군군의학교, 대학의 평생교육원에서 응급구조 양성과정을 마치면 응급구조사 2급 시험을 볼 수 있는 자격이 주어진다. 응급구조사 자격을 취득한 후 익년도부터 매년 4시간 이상의 보수교육을 받아야  한다."
+   }
+  ],
+  "majors": [
+   "응급구조학과",
+   "응급구조과",
+   "간호학과",
+   "소방방재학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

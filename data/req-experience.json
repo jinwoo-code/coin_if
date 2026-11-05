@@ -1,0 +1,41 @@
+{
+  "_설명": "진로 유형별로 필요한 경험. 팀이 정한 가정값. 현직자 인터뷰로 고친다. hours도 가정값.",
+  "open": [
+    { "id": "intern", "name": "인턴·현장실습", "hours": 320 },
+    { "id": "project", "name": "직무 관련 프로젝트 2~3개", "hours": 240 },
+    { "id": "career-note", "name": "경험·경력 기술서", "hours": 20 }
+  ],
+  "public": [
+    { "id": "ncs-note", "name": "NCS 기반 경험·경력 기술서", "hours": 30 },
+    { "id": "intern", "name": "공공기관 체험형 인턴", "hours": 320 },
+    { "id": "ncs-test", "name": "NCS 필기 모의고사 기록", "hours": 200 }
+  ],
+  "exam": [
+    { "id": "mock", "name": "모의고사 점수 기록", "hours": 100 },
+    { "id": "weak-plan", "name": "약점 과목 계획", "hours": 10 },
+    { "id": "first-round", "name": "시험 과목 1회독", "hours": 400 }
+  ],
+  "license": [
+    { "id": "practice", "name": "임상·현장 실습", "hours": 400 },
+    { "id": "case-note", "name": "실습 사례 보고서·평가 기록", "hours": 40 },
+    { "id": "license-exam", "name": "면허 국가시험 준비", "hours": 300 }
+  ],
+  "portfolio": [
+    { "id": "works", "name": "작업물 5~8개와 과정 설명", "hours": 400 },
+    { "id": "client", "name": "실제 의뢰·공모전 경험", "hours": 120 }
+  ],
+  "trade": [
+    { "id": "practical", "name": "실기 작품", "hours": 200 },
+    { "id": "field", "name": "현장 실습 기록", "hours": 240 }
+  ],
+  "grad": [
+    { "id": "research", "name": "학부 연구 경험", "hours": 240 },
+    { "id": "advisor", "name": "지도교수 상담과 연구실 조사", "hours": 20 },
+    { "id": "paper", "name": "논문 읽기·연구 계획서", "hours": 120 }
+  ],
+  "startup": [
+    { "id": "customer", "name": "고객 인터뷰", "hours": 40 },
+    { "id": "mvp", "name": "첫 시제품(MVP)", "hours": 240 },
+    { "id": "first-sale", "name": "첫 매출 또는 지원사업 신청", "hours": 80 }
+  ]
+}

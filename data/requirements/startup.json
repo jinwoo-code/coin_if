@@ -1,0 +1,82 @@
+{
+ "worldId": "startup",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "startup",
+  "certPolicy": "ai-filter",
+  "filter": {
+   "mode": "none",
+   "dropped": [],
+   "invented": 0
+  },
+  "notes": [
+   "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+  ],
+  "items": [
+   {
+    "id": "curated:customer",
+    "kind": "experience",
+    "name": "고객 인터뷰",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 40,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:mvp",
+    "kind": "experience",
+    "name": "첫 시제품(MVP)",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 240,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:sale",
+    "kind": "experience",
+    "name": "첫 매출 또는 지원사업 신청",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:biz",
+    "kind": "step",
+    "name": "사업자 등록과 세금 기초",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 20,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:runway",
+    "kind": "experience",
+    "name": "버틸 자금 계획",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값",
+    "hours": {
+     "value": 10,
+     "grade": "assumed"
+    }
+   }
+  ],
+  "prep": [],
+  "majors": [],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

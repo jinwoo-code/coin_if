@@ -102,3 +102,29 @@ export async function submitValues(input: ValuesSubmit): Promise<{ seq: number; 
     return null;
   }
 }
+
+// 직업정보 상세(프리미엄 리포트 '필요한 것'): 준비 방법, 관련 학과, 자격. 하루 캐시. 키가 없거나 실패하면 null.
+const READY = ["recruit", "certificate", "training", "curriculum"] as const;
+export async function careernetJob(seq: string) {
+  if (!KEY) return null;
+  try {
+    const res = await fetch(`https://www.career.go.kr/cnet/front/openapi/job.json?apiKey=${KEY}&seq=${encodeURIComponent(seq)}`, { next: { revalidate: 3600 * 24 } } as RequestInit);
+    if (!res.ok) throw new Error(String(res.status));
+    const d = (await res.json()) as {
+      baseInfo?: { job_nm?: string };
+      certiList?: { certi?: string }[];
+      departList?: { depart_name?: string }[];
+      jobReadyList?: Partial<Record<(typeof READY)[number], Record<string, string>[]>>;
+    };
+    return {
+      name: d.baseInfo?.job_nm ?? seq,
+      certs: (d.certiList ?? []).map((c) => c.certi ?? "").filter(Boolean),
+      departs: (d.departList ?? []).map((x) => x.depart_name ?? "").filter(Boolean),
+      prep: READY.flatMap((kind) => (d.jobReadyList?.[kind] ?? []).map((r) => ({ kind, text: String(r[kind] ?? Object.values(r)[0] ?? "") })).filter((p) => p.text)),
+    };
+  } catch (err) {
+    console.error("[커리어넷 직업 실패]", seq, err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+

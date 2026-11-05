@@ -1,0 +1,59 @@
+{
+ "worldId": "startup",
+ "sources": {},
+ "certCandidates": [],
+ "items": [
+  {
+   "id": "customer",
+   "kind": "experience",
+   "name": "고객 인터뷰",
+   "grade": "assumed",
+   "hours": {
+    "value": 40,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "mvp",
+   "kind": "experience",
+   "name": "첫 시제품(MVP)",
+   "grade": "assumed",
+   "hours": {
+    "value": 240,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "sale",
+   "kind": "experience",
+   "name": "첫 매출 또는 지원사업 신청",
+   "grade": "assumed",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "biz",
+   "kind": "step",
+   "name": "사업자 등록과 세금 기초",
+   "grade": "assumed",
+   "hours": {
+    "value": 20,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "runway",
+   "kind": "experience",
+   "name": "버틸 자금 계획",
+   "grade": "assumed",
+   "hours": {
+    "value": 10,
+    "grade": "assumed"
+   }
+  }
+ ],
+ "checkedAt": "2026-11-05",
+ "sourceNote": "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+}

@@ -1,0 +1,48 @@
+{
+ "worldId": "tutor",
+ "sources": {},
+ "certCandidates": [],
+ "items": [
+  {
+   "id": "edu",
+   "kind": "experience",
+   "name": "학력 요건 확인",
+   "detail": "전문학사 이상이 흔합니다. 학원법 기준은 직접 확인하지 않았습니다.",
+   "grade": "assumed"
+  },
+  {
+   "id": "subject",
+   "kind": "experience",
+   "name": "담당 과목 실력 증명",
+   "detail": "성적이나 자격",
+   "grade": "assumed",
+   "hours": {
+    "value": 200,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "demo",
+   "kind": "experience",
+   "name": "시범 강의 준비",
+   "detail": "학원 채용에서 흔합니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 60,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exp",
+   "kind": "experience",
+   "name": "과외·보조 강사 경험",
+   "grade": "assumed",
+   "hours": {
+    "value": 200,
+    "grade": "assumed"
+   }
+  }
+ ],
+ "checkedAt": "2026-11-05",
+ "sourceNote": "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+}

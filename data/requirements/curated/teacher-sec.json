@@ -1,0 +1,121 @@
+{
+ "worldId": "teacher-sec",
+ "sources": {
+  "qual": {
+   "name": "초·중등교육법 제21조, 별표 2",
+   "url": "https://www.law.go.kr/법령/초ㆍ중등교육법",
+   "version": "시행 2026. 10. 29."
+  },
+  "rule": {
+   "name": "교육공무원 임용후보자 선정경쟁시험규칙 제6~9조",
+   "url": "https://www.law.go.kr/법령/교육공무원임용후보자선정경쟁시험규칙",
+   "version": "시행 2025. 3. 1."
+  },
+  "goe": {
+   "name": "경기도교육청 2027학년도 중등 시행계획 보도자료",
+   "url": "https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=2375830",
+   "version": "2026. 9. 30. 경기 기준. 과목·배점은 시험실시기관이 정합니다"
+  }
+ },
+ "certCandidates": [
+  "cert-teacher",
+  "cert-history"
+ ],
+ "items": [
+  {
+   "id": "cert-teacher",
+   "kind": "cert",
+   "name": "중등학교 정교사(2급) 자격증",
+   "detail": "사범대 졸업, 대학 교육과 졸업, 교직과정 이수, 교육대학원 석사 등. 표시 과목이 응시 교과와 맞아야 합니다.",
+   "grade": "curated",
+   "ref": "qual",
+   "required": true
+  },
+  {
+   "id": "cert-history",
+   "kind": "cert",
+   "name": "한국사능력검정",
+   "detail": "1차 한국사 과목을 대체합니다. 인정 등급은 규칙에 없어 해마다 공고를 확인해야 합니다.",
+   "grade": "curated",
+   "ref": "rule",
+   "required": true,
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-edu",
+   "kind": "exam",
+   "name": "교육학",
+   "detail": "1차 시험. 배점은 공고에서 확인",
+   "grade": "curated",
+   "ref": "goe",
+   "hours": {
+    "value": 300,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-major",
+   "kind": "exam",
+   "name": "전공",
+   "detail": "1차 시험. 교과내용학과 교과교육학",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 1500,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-interview",
+   "kind": "exam",
+   "name": "교직적성 심층면접",
+   "detail": "2차 시험",
+   "grade": "curated",
+   "ref": "rule",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-teaching",
+   "kind": "exam",
+   "name": "수업실연",
+   "detail": "2차 시험. 보건·사서·전문상담·영양 교과는 제외",
+   "grade": "curated",
+   "ref": "goe",
+   "hours": {
+    "value": 120,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-practical",
+   "kind": "exam",
+   "name": "실기평가",
+   "detail": "2차 시험. 체육·음악·미술만 해당",
+   "grade": "curated",
+   "ref": "goe",
+   "required": false,
+   "hours": {
+    "value": 300,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "practice",
+   "kind": "experience",
+   "name": "교육실습",
+   "detail": "실습 기간은 공식 문서로 확인하지 못한 가정값입니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 160,
+    "grade": "assumed"
+   }
+  }
+ ],
+ "checkedAt": "2026-11-05"
+}

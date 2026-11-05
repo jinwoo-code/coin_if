@@ -1,0 +1,146 @@
+{
+ "worldId": "radiologist",
+ "builtAt": "2026-11-05",
+ "default": {
+  "worldId": "radiologist",
+  "certPolicy": "curated-only",
+  "filter": {
+   "mode": "curated",
+   "dropped": [],
+   "invented": 0
+  },
+  "items": [
+   {
+    "id": "curated:edu",
+    "kind": "experience",
+    "name": "방사선사 관련 학과 졸업",
+    "detail": "해당 학과 졸업과 현장실습 이수가 응시 요건입니다(법 제4조·시행규칙 제7조).",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙"
+   },
+   {
+    "id": "curated:practice",
+    "kind": "experience",
+    "name": "현장실습 320시간 이상",
+    "detail": "교내가 아닌 의료기관 등 현장에서 이수해야 합니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 320,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-0",
+    "kind": "exam",
+    "name": "방사선이론",
+    "detail": "방사선물리·계측·생물·관리, 전기전자, 장치, 의료영상정보, 해부, 생리, 공중보건",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 250,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-1",
+    "kind": "exam",
+    "name": "방사선응용",
+    "detail": "방사선영상, 투시조영, 심혈관·중재술, 초음파, CT, MRI, 핵의학, 방사선 치료",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 250,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-law",
+    "kind": "exam",
+    "name": "의료관계법규",
+    "detail": "의료법, 의료기사법, 지역보건법과 하위 법령",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 60,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:exam-prac",
+    "kind": "exam",
+    "name": "실기시험",
+    "detail": "방사선사 업무에 관한 실기. 만점의 60% 이상",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "hours": {
+     "value": 80,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "curated:lic",
+    "kind": "cert",
+    "name": "방사선사 면허",
+    "detail": "필기는 각 과목 40% 이상·전 과목 60% 이상, 실기는 60% 이상. 졸업증명서·성적증명서·진단서 등을 내 면허증을 받습니다.",
+    "grade": "curated",
+    "source": "curated",
+    "required": true,
+    "ref": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3 (시행 2024. 11. 28.)",
+    "refUrl": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+    "officialUrl": "https://www.kuksiwon.or.kr"
+   },
+   {
+    "id": "curated:hire",
+    "kind": "step",
+    "name": "채용 절차",
+    "detail": "서류·면접 뒤 현장 교육. 기관마다 달라 팀이 정리한 가정값입니다.",
+    "grade": "assumed",
+    "source": "assumed",
+    "ref": "팀이 정한 가정값"
+   }
+  ],
+  "prep": [
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(방사선사)",
+    "text": "종합병원, 대학병원, 치과병의원, 개인의원 등에 취업할 수 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(방사선사)",
+    "text": "국가자격증으로는 한국보건의료인국가시험원에서 시행하는 방사선사, 한국원자력안전기술원에서 시행하는 방사선동위원소 취급자 일반 및 감독 면허, 한국산업인력공단에서 시행하는 방사선비파괴검사기사 자격증이 있습니다."
+   },
+   {
+    "source": "careernet",
+    "ref": "커리어넷 직업정보(방사선사)",
+    "text": "전문대학 및 대학교에서 방사선학 관련 학과를 졸업해야 합니다. 방사선학 관련 학과에서는 기초의학, 방사선이론, 공학과 관련된 내용을 배우고, 장비 및 기술을 개발하기 위한 이론 및 실습을 합니다."
+   },
+   {
+    "source": "work24-job",
+    "ref": "고용24 직업정보(방사선사)",
+    "text": "방사선사가 되기 위해서는 4년제 대학교 혹은 전문대학교의 방사선학과를 졸업하고 방사선사 국가면허 시험에 합격하여야 한다. 2017년 기준으로 전문대학과 4년제 대학교의 방사선학과는 총 45개교이다. 방사선학과에서는 해부학, 방사선물리학, 방사선학개론, CT영상학 및 실험, 방사선 계측 및 실험, MR 영상학 및 실험, 방사선기기학 및 실험, 방사선 현장실습 등에 대해 배운다.\n한국보건의료인 국가시험원의 통계에 의하면 2016년 12월에 시행된 방사선사 국가면허시험에 2,622명에 응시하여 2,033명(77.5%)이 합격하였다."
+   }
+  ],
+  "majors": [
+   "방사선과",
+   "방사선학과"
+  ],
+  "baseDate": "2026-11-05",
+  "stale": false
+ }
+}

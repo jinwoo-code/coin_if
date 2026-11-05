@@ -1,0 +1,103 @@
+{
+ "worldId": "clinical-lab",
+ "sources": {
+  "law": {
+   "name": "의료기사 등에 관한 법률 시행규칙 제7~9·12조, 별표 1·1의3",
+   "url": "https://www.law.go.kr/법령/의료기사등에관한법률시행규칙",
+   "version": "시행 2024. 11. 28."
+  }
+ },
+ "certCandidates": [
+  "lic"
+ ],
+ "items": [
+  {
+   "id": "edu",
+   "kind": "experience",
+   "name": "임상병리사 관련 학과 졸업",
+   "detail": "해당 학과 졸업과 현장실습 이수가 응시 요건입니다(법 제4조·시행규칙 제7조).",
+   "grade": "curated",
+   "ref": "law",
+   "required": true
+  },
+  {
+   "id": "practice",
+   "kind": "experience",
+   "name": "현장실습 320시간 이상",
+   "detail": "교내가 아닌 의료기관 등 현장에서 이수해야 합니다.",
+   "grade": "curated",
+   "ref": "law",
+   "required": true,
+   "hours": {
+    "value": 320,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-0",
+   "kind": "exam",
+   "name": "임상검사이론Ⅰ",
+   "detail": "공중보건학, 해부생리학, 조직병리학, 임상생리학",
+   "grade": "curated",
+   "ref": "law",
+   "hours": {
+    "value": 250,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-1",
+   "kind": "exam",
+   "name": "임상검사이론Ⅱ",
+   "detail": "임상화학, 혈액학, 임상미생물학",
+   "grade": "curated",
+   "ref": "law",
+   "hours": {
+    "value": 250,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-law",
+   "kind": "exam",
+   "name": "의료관계법규",
+   "detail": "의료법, 의료기사법, 감염병예방법, 지역보건법, 혈액관리법과 하위 법령",
+   "grade": "curated",
+   "ref": "law",
+   "hours": {
+    "value": 60,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "exam-prac",
+   "kind": "exam",
+   "name": "실기시험",
+   "detail": "임상병리사 업무에 관한 실기. 만점의 60% 이상",
+   "grade": "curated",
+   "ref": "law",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "lic",
+   "kind": "cert",
+   "name": "임상병리사 면허",
+   "detail": "필기는 각 과목 40% 이상·전 과목 60% 이상, 실기는 60% 이상. 졸업증명서·성적증명서·진단서 등을 내 면허증을 받습니다.",
+   "grade": "curated",
+   "ref": "law",
+   "required": true,
+   "officialUrl": "https://www.kuksiwon.or.kr"
+  },
+  {
+   "id": "hire",
+   "kind": "step",
+   "name": "채용 절차",
+   "detail": "서류·면접 뒤 현장 교육. 기관마다 달라 팀이 정리한 가정값입니다.",
+   "grade": "assumed"
+  }
+ ],
+ "checkedAt": "2026-11-05"
+}

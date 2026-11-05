@@ -1,0 +1,59 @@
+{
+ "worldId": "journalist",
+ "sources": {},
+ "certCandidates": [],
+ "items": [
+  {
+   "id": "edu",
+   "kind": "experience",
+   "name": "언론사 공채 필기 대비",
+   "detail": "논술·작문·상식이 흔합니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 400,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "clips",
+   "kind": "experience",
+   "name": "기사 작성 포트폴리오",
+   "detail": "학보사·인턴 기사 등",
+   "grade": "assumed",
+   "hours": {
+    "value": 200,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "intern",
+   "kind": "experience",
+   "name": "언론사 인턴",
+   "grade": "assumed",
+   "hours": {
+    "value": 320,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "test",
+   "kind": "experience",
+   "name": "한국어 능력 시험 성적",
+   "detail": "일부 언론사가 요구합니다.",
+   "grade": "assumed",
+   "hours": {
+    "value": 80,
+    "grade": "assumed"
+   }
+  },
+  {
+   "id": "hire",
+   "kind": "step",
+   "name": "채용 절차",
+   "detail": "서류·필기·실무 평가·면접. 회사마다 다릅니다.",
+   "grade": "assumed"
+  }
+ ],
+ "checkedAt": "2026-11-05",
+ "sourceNote": "공식 문서로 정리한 것이 아니라 흔한 요건을 팀이 적은 가정값입니다."
+}

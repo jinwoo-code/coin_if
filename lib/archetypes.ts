@@ -23,7 +23,7 @@ export interface Job {
   people?: { boss: string; peer: string; other: string; otherRole: string }; // 등장인물
   hazard?: number; // 상시 채용: 한 달에 붙을 기본 확률(가정)
   tiers?: Tier[];
-  exam?: { months: number[]; competition?: number; chance?: number; warmup: number; label: string; salary: number; salaryNote: string; firstPost: string };
+  exam?: { months: number[]; competition?: number; chance?: number; warmup: number; label: string; salary: number; salaryNote: string; salarySource?: string; firstPost: string };
   license?: { month: number; chance: number; name: string };
   facts?: Fact[];
   tags?: HateTag[]; // 이 일에서 자주 생기는 '싫은 것'
@@ -369,7 +369,7 @@ function examEvents(j: Job, ppl: NonNullable<Job["people"]>): EventCard[] {
       `첫 근무지가 정해졌다. ${ppl.boss}이 첫날 일을 하나씩 알려 줬다.`,
       [C("업무 매뉴얼부터 다 읽는다", "push", { effect: { skill: 3 } }), C("선배가 하는 걸 보며 따라 한다", "safe", { effect: { relation: 3 } })],
       { satisfaction: 10 },
-      { chance: 0.3, requires: ["passed"], needsNoJob: true, hires: true, tiers: tier, branchLabel: "첫 근무", evidence: { label: x.salaryNote, source: "가정(봉급표 확인 필요)" } },
+      { chance: 0.3, requires: ["passed"], needsNoJob: true, hires: true, tiers: tier, branchLabel: "첫 근무", evidence: { label: x.salaryNote, source: x.salarySource ?? "가정(봉급표 확인 필요)" } },
     ),
     E(
       "hard-case",
