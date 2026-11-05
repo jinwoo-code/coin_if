@@ -8,7 +8,7 @@ import { LineBadge, Screen } from "@/components/ui";
 import { nextMonthYm, planStations } from "@/lib/calendar";
 import { waGwa } from "@/lib/josa";
 import { answerOf, READINESS } from "@/lib/readiness";
-import { retrainMonths } from "@/lib/retrain";
+import { retrainMonths, tuitionNote } from "@/lib/retrain";
 import { CostNote } from "@/components/account";
 import { PILOT_SJT, pilotAnswered } from "@/lib/pilot";
 import { keyTier } from "@/lib/live-client";
@@ -250,7 +250,7 @@ export default function ChoosePage() {
             .filter((w) => retrainMonths({ major: profile.major, readiness }, w))
             .map((w) => (
               <p key={w.id} className="text-sm">
-                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월(가정값)을 학과 다니는 데 써요. 등록금은 안 넣었어요.
+                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월(가정값)을 학과 다니는 데 써요. {tuitionNote(w.id)}.
               </p>
             ))}
         </section>

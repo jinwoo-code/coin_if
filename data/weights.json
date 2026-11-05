@@ -630,7 +630,7 @@
       "teacher-sec": 30
     },
     "kind": "table",
-    "direction": "면허·교원 자격은 해당 학과·과정을 마쳐야 받는다(법령). 기간은 편입·재입학·교육대학원을 가정한 값이고 학교마다 다르다. 등록금은 안 넣었다.",
+    "direction": "면허·교원 자격은 해당 학과·과정을 마쳐야 받는다(법령). 기간은 편입·재입학·교육대학원을 가정한 값이고 학교마다 다르다. 등록금은 data/tuition.json.",
     "magnitude": "assumed"
   },
   "report.plan.spare": {

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { monthLabel } from "@/lib/calendar";
 import type { PriorityRow } from "@/lib/gap";
+import { retrainMonths, tuitionNote } from "@/lib/retrain";
 import { buildPlan, itemsToCut, overText, rangeLabel, type PlanEdits, type PlanRow } from "@/lib/schedule";
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
@@ -114,7 +115,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
             <p className="text-cap text-muted">
               {rangeLabel(startYm, r)}
               {r.hours ? ` · 약 ${r.hours}시간(${r.hoursOfficial ? "NCS 훈련 기준" : "가정값"})` : ""}
-              {r.lane === "school" ? " · 기간은 가정값이고 등록금은 안 넣었어요" : ""}
+              {r.lane === "school" ? ` · 기간은 가정값${retrainMonths(profile, world) ? ` · ${tuitionNote(world.id)}` : ""}` : ""}
               {r.overflow ? " · 계획 기간을 넘겨요" : ""}
             </p>
             <Bar r={r} months={plan.months} />

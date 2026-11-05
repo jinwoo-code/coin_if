@@ -7,7 +7,7 @@ import { eulReul, iGa } from "./josa";
 import { attachBase, baseShare, bucketOf, populationGap, type ForkCtx } from "./base";
 import norms from "@/data/norms.json";
 import { judgeFailed, judgeFor, type JudgeEntry } from "./judge";
-import { retrainMonths } from "./retrain";
+import { retrainMonths, retrainTuition, TUITION_SOURCE } from "./retrain";
 import { blendPersistence, blendValueFit, storyReason } from "./story";
 import { examChance, W, WA } from "./weights";
 import type { Choice, EventCard, LifeState, MonthLog, Path, PickInfo, Profile, ValueKey, WorldTemplate } from "./types";
@@ -110,7 +110,7 @@ const BROKE: EventCard = {
 };
 
 // 진로마다 같은 공통 사건(기준 비율은 data/base-shares.json의 "_global")
-// 전공이 달라 학과부터 다니는 구간(lib/retrain.ts). 기간은 가정값이고 등록금은 안 넣었다.
+// 전공이 달라 학과부터 다니는 구간(lib/retrain.ts). 기간은 가정값, 등록금은 2026 공시 평균(어느 칸인지는 가정값).
 const RETRAIN_START: EventCard = {
   id: "retrain-start",
   title: "학과를 다시 다니기 시작했다",
@@ -119,7 +119,7 @@ const RETRAIN_START: EventCard = {
   text: "이 길은 해당 학과를 마쳐야 자격이 나온다. 편입·재입학으로 다시 학교에 들어갔다.",
   choices: [{ text: "학과 과정부터 차근차근 밟는다", tone: "push" }],
   effect: { stress: 6 },
-  evidence: { label: "학과를 다니는 기간은 가정값(편입·재입학 기준, 등록금 제외)", source: "가정값" },
+  evidence: { label: "학과를 다니는 기간은 가정값(편입·재입학 기준). 등록금은 공시 평균이고 진로별 칸은 가정값, 장학금 제외", source: `${TUITION_SOURCE.name}(${TUITION_SOURCE.date})`, url: TUITION_SOURCE.url },
 };
 const RETRAIN_END: EventCard = {
   id: "retrain-end",
@@ -698,6 +698,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     else {
       const work = p.life.partTimeHours + (sim.used.has("more-work") ? 20 : 0);
       flow = p.life.support + work * 4.345 * MIN_WAGE - p.life.livingCost - (sim.used.has("quit") ? 0 : world.prepCost);
+      if (inRetrain) flow -= (retrainTuition(world.id)?.annual ?? 0) / 12;
     }
     delta = addDelta(delta, { money: Math.round(flow) });
     if (sim.employedSince !== null && world.hoursPerWeek > 45) delta = addDelta(delta, { stress: 1 });
