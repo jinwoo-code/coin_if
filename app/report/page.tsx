@@ -4,7 +4,7 @@ import { CalendarPlus, Check, Copy, Lock, Printer } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Ci, LineBadge, LiveNotice, RangeRow, Screen, Typing, won } from "@/components/ui";
+import { Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -14,6 +14,7 @@ import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
 import type { Lever, Multiverse, PremiumItem, Profile, Report, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
+import { LiveLives } from "@/components/live-lives";
 import { MyData } from "@/components/my-data";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
@@ -432,10 +433,12 @@ export default function ReportPage() {
                 {times(Object.values(mvs)[0]?.stats.runs ?? 0)}번 살아본 결과
               </h2>
               <p className="mt-1 text-sm text-muted">같은 길을 내 조건과 성향으로 {times(Object.values(mvs)[0]?.stats.runs ?? 0)}번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
-              {Object.values(mvs)[0]?.live ? <LiveNotice /> : null}
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
               </div>
+              {report.worlds.map((w) => (
+                <LiveLives key={w.worldId} world={getWorld(w.worldId)} />
+              ))}
             </section>
 
             <div className="grid gap-3 sm:grid-cols-2">

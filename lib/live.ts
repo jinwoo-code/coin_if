@@ -93,10 +93,12 @@ export function liveSummary(p: Profile, world: WorldTemplate, lives: { run: numb
   };
 }
 
-// 끝난 실시간 판단을 세계선 지도·대화·리포트로 잇는다. 장면은 그 삶을 그대로 쓴다(/api/line은 규칙으로 다시 살아서 다른 인생이 된다).
+// 끝난 실시간 판단을 세계선 지도·대화·리포트의 별도 칸으로 잇는다. 1,000번 통계와 섞지 않는다. 장면은 그 삶을 그대로 쓴다(/api/line은 규칙으로 다시 살아서 다른 인생이 된다).
 export function liveMultiverse(p: Profile, world: WorldTemplate, months: number, startYm: string, lives: { run: number; path: Path }[]) {
   const paths = lives.map((l) => l.path);
-  const mv: Multiverse = { ...multiverseOf(p, world, months, startYm, paths, 2), live: true };
+  const base = multiverseOf(p, world, months, startYm, paths, 2);
+  // 1,000번 세계선과 겹치지 않게 갈래 id에 live:를 붙인다(대화 저장 키에도 쓰인다)
+  const mv: Multiverse = { ...base, live: true, lines: base.lines.map((l) => ({ ...l, id: `live:${l.id}` })) };
   const scenes: Record<string, SimEvent[]> = {};
   for (const line of mv.lines) {
     const path = paths.find((x) => x.seed === line.repSeed);

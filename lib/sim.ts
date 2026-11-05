@@ -73,29 +73,50 @@ export function memoriesOf(scenes: SimEvent[]) {
   return scenes.filter((s) => s.eventId !== "quiet").map((s) => `${s.label}: ${s.title}${s.choice ? `. ${s.choice}` : ""} (${s.status})`);
 }
 
-// 등장인물별 호출(NPC_AGENTS=1일 때만): 큰 갈림길 장면에서 인물마다 따로 AI를 불러 그 사람 입장의 한마디를 받는다. 값은 문장뿐이고 엔진 숫자에 안 들어간다.
-// 호출 수 = 큰 갈림길 장면(진로마다 최대 NPC_SCENES) × 인물(최대 NPC_PEOPLE). 원가가 늘어서 기본은 끈다.
-export const npcAgentsOn = () => process.env.NPC_AGENTS === "1";
-const NPC_SCENES = 3;
+// 등장인물별 호출(기본 켬, NPC_AGENTS=0이면 끔): 큰 갈림길 장면에서 그 처지에 있을 수 있는 인물을 따로 불러 그 사람 입장의 한마디를 받는다. 값은 문장뿐이고 엔진 숫자에 안 들어간다.
+// 호출 수 = 큰 갈림길 장면(한 삶에서 진로마다 최대 NPC_SCENES) × 인물(최대 NPC_PEOPLE). 진로 하나에 최대 6번.
+export const npcAgentsOn = () => process.env.NPC_AGENTS !== "0";
+export const NPC_SCENES = 3;
 const NPC_PEOPLE = 2;
 
-export function npcTargets(world: WorldTemplate, scenes: SimEvent[]) {
-  return scenes
-    .filter((s) => s.worldId === world.id && s.branch === "choice" && s.choice)
-    .slice(0, NPC_SCENES)
-    .flatMap((scene) => world.npcs.slice(0, NPC_PEOPLE).map((npc) => ({ scene, npc })));
+// 그 장면의 처지에 있을 수 있는 인물인가. 직장 사람은 일하는 동안만, 스터디원은 시험 준비하는 동안만, 창업 멘토·공동창업자는 창업 중에만.
+export function npcFits(world: WorldTemplate, npc: WorldTemplate["npcs"][number], scene: SimEvent) {
+  // 장면 칸이 1년이면 칸 끝의 처지와 사건 때 처지가 다르다. 사건이 일어난 달의 처지로 본다.
+  const status = scene.eventStatus ?? scene.status;
+  if (/고객|클라이언트|파트너/.test(npc.role)) return false; // 일로 만나는 바깥 사람은 내 진로 고민을 모른다
+  const working = /개월차$/.test(status);
+  if (npc.role === "수험 동료" || /스터디/.test(npc.name)) return !working && /수험|시험 준비/.test(status);
+  if (world.archetype === "startup" && /멘토|공동창업/.test(npc.name)) return working || /창업 준비/.test(status);
+  return working;
 }
 
-export async function addReactions(profile: Profile, worlds: WorldTemplate[], scenes: SimEvent[], feature = "simulate"): Promise<SimEvent[]> {
-  const jobs = worlds.flatMap((w) => npcTargets(w, scenes).map((t) => ({ ...t, world: w })));
+// 처지에 맞는 인물이 없는 장면은 건너뛴다(호출도 안 한다). used = 이 삶에서 진로마다 이미 인물을 부른 장면 수.
+export function npcTargets(world: WorldTemplate, scenes: SimEvent[], used = 0) {
+  return scenes
+    .filter((s) => s.worldId === world.id && s.branch === "choice" && s.choice && world.npcs.some((n) => npcFits(world, n, s)))
+    .slice(0, Math.max(0, NPC_SCENES - used))
+    .flatMap((scene) =>
+      world.npcs
+        .filter((n) => npcFits(world, n, scene))
+        .slice(0, NPC_PEOPLE)
+        .map((npc) => ({ scene, npc })),
+    );
+}
+
+export async function addReactions(profile: Profile, worlds: WorldTemplate[], scenes: SimEvent[], feature = "simulate", used: Record<string, number> = {}): Promise<SimEvent[]> {
+  const jobs = worlds.flatMap((w) => {
+    const targets = npcTargets(w, scenes, used[w.id] ?? 0);
+    used[w.id] = (used[w.id] ?? 0) + new Set(targets.map((t) => t.scene)).size;
+    return targets.map((t) => ({ ...t, world: w }));
+  });
   if (!jobs.length) return scenes;
   const got = await Promise.all(
     jobs.map(async ({ scene, npc, world }) => {
       const r = await generateJSON<{ line?: unknown } | null>({
         tag: `${feature} npc`,
         model: "fast",
-        system: `너는 진로 이야기 속 인물 '${npc.name}'(${npc.role})이다. 성격: ${npc.persona}. 주인공의 선택을 듣고 네 입장에서 한마디만 한다. 사건이나 선택을 바꾸지 않고, 숫자를 쓰지 않는다. 40자 안팎의 한국어 말투로 쓴다.`,
-        prompt: `주인공: ${profile.name}, ${world.name} 진로, 지금 처지: ${scene.status}\n일어난 일: ${scene.title}. ${scene.narration}\n주인공의 선택: ${scene.choice}\nJSON으로만 답해라: {"line": "한마디"}`,
+        system: `너는 진로 이야기 속 인물 '${npc.name}'(${npc.role})이다. 성격: ${npc.persona}. 주인공의 선택을 듣고 네 입장에서 한마디만 한다. 주인공의 지금 처지에서 나올 수 있는 말만 하고, 처지에 없는 직장·시험·일을 지어내지 않는다. 사건이나 선택을 바꾸지 않고, 숫자를 쓰지 않는다. 40자 안팎의 한국어 말투로 쓴다.`,
+        prompt: `주인공: ${profile.name}, ${world.name} 진로, 지금 처지: ${scene.eventStatus ?? scene.status}\n일어난 일: ${scene.title}. ${scene.narration}\n주인공의 선택: ${scene.choice}\nJSON으로만 답해라: {"line": "한마디"}`,
         fallback: () => null,
       });
       const line = typeof r?.line === "string" ? r.line.trim() : "";

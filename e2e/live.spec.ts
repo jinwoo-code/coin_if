@@ -50,29 +50,35 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   expect(calls).toBe(before);
   expect((await page.locator("main").innerText()).replace(/\s/g, "").includes(text.split("어떤 갈래로")[0].replace(/\s/g, "").slice(-30))).toBeTruthy();
 
-  // 플래그가 꺼져 있으면(기본) 이어 가는 버튼이 없다. 켠 뒤 확인: NEXT_PUBLIC_FEATURE_LIVE_LINK=1 npx playwright test e2e/live.spec.ts
-  if (process.env.NEXT_PUBLIC_FEATURE_LIVE_LINK !== "1") {
-    await expect(page.getByRole("button", { name: /이 결과로 세계선 지도/ })).toHaveCount(0);
-    return;
-  }
+  // 세계선 지도·리포트에서 1,000번 통계와 따로 'AI가 직접 살아 본 30개의 삶' 칸으로 잇는다(그 삶을 규칙으로 다시 살지 않는다)
+  await page.getByRole("button", { name: /세계선 지도·대화·리포트에서 이어 보기/ }).click();
+  await expect(page).toHaveURL(/\/multiverse/, { timeout: 60_000 });
+  await expect(page.getByText(/1,000번 중/).first()).toBeVisible(); // 나무는 1,000번
+  const card = page.getByRole("region", { name: /AI가 직접 살아 본 30개의 삶/ });
+  await expect(card).toContainText("30번 중");
+  await expect(card).toContainText("표본 오차 범위");
+  await expect(card.getByText(/\(\d+~\d+%\)/).first()).toBeVisible();
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v9:multiverses") ?? "{}"));
+  expect(saved.developer.stats.runs).toBe(1000);
+  expect(saved.developer.live).toBeUndefined();
 
-  // 이 결과로 세계선 지도·대화·리포트로 이어 가기(장면은 그 삶 그대로, 다시 살기 요청 없음)
-  const replays: string[] = [];
-  page.on("request", (r) => {
-    if (/\/api\/(line|explore|simulate)/.test(r.url())) replays.push(r.url());
+  // 그 삶의 나와 대화
+  let talkBody: { lineId?: string; scenes?: { worldId: string }[] } = {};
+  await page.route("**/api/talk", async (route) => {
+    talkBody = route.request().postDataJSON();
+    await route.fulfill({ json: { reply: "그 삶에서는 그렇게 됐어.", memory: null } });
   });
-  await page.getByRole("button", { name: /이 결과로 세계선 지도/ }).click();
-  await expect(page).toHaveURL(/\/multiverse/);
-  await expect(page.getByText("실시간 판단 30번 결과예요").first()).toBeVisible();
-  await expect(page.getByText(/30번 살아본 결과/).first()).toBeVisible();
-  await page.getByRole("button", { name: "이 세계 살아보기" }).first().click();
-  await expect(page.getByText("여기서 다르게 골랐다면")).toHaveCount(0);
-  await expect(page.getByText("나라면 이렇게 안 해")).toHaveCount(0);
-  expect(replays).toEqual([]);
-  await page.goto("/talk?world=developer");
+  await card.getByRole("button", { name: "이 삶의 나와 대화" }).first().click();
   await expect(page).toHaveURL(/\/talk/);
-  await expect(page.getByRole("textbox")).toBeVisible();
+  await expect(page.getByText("AI가 직접 살아 본 삶")).toBeVisible();
+  await page.getByRole("textbox").fill("어땠어?");
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("그 삶에서는 그렇게 됐어.")).toBeVisible();
+  expect(talkBody.lineId).toMatch(/^live:/);
+  expect(talkBody.scenes?.length).toBeGreaterThan(0);
+
+  // 리포트에도 별도 칸. 대화 상대를 30개의 삶에서 골라도 리포트는 1,000번 장면을 쓴다.
   await page.goto("/report");
-  await expect(page.getByText(/30번 살아본 결과/).first()).toBeVisible({ timeout: 60_000 });
-  await expect(page.getByText("실시간 판단 30번 결과예요").first()).toBeVisible();
+  await expect(page.getByRole("region", { name: /AI가 직접 살아 본 30개의 삶/ }).first()).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/1,000번 살아본 결과/).first()).toBeVisible();
 });

@@ -30,7 +30,7 @@ function CounselShare() {
   return (
     <div className="mt-4 border-t border-hair pt-4">
       <p className="text-sm font-semibold">상담 선생님에게 내 결과 보여 주기</p>
-      <p className="mt-1 text-cap text-muted">켜면 이 학교 상담 선생님이 내 이름, 전공, 고민, 가치관, 진로별 결과 요약, 바꿀 수 있는 것을 볼 수 있어요. 대화와 이야기 글은 안 보여요. 언제든 끌 수 있어요.</p>
+      <p className="mt-1 text-cap text-muted">켜면 이 학교 상담 선생님이 내 이름, 전공, 고민, 가치관, 체크인 횟수, 진로별 결과 요약, 바꿀 수 있는 것을 볼 수 있어요. 대화와 이야기 글은 안 보여요. 언제든 끌 수 있어요.</p>
       <button type="button" role="switch" aria-checked={Boolean(on)} className={`mt-2 w-full ${on ? "btn-secondary" : "btn-primary"}`} onClick={() => set(!on)}>
         {on ? "끄기" : "보여 주기 켜기"}
       </button>

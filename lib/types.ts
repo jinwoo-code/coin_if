@@ -356,13 +356,14 @@ export interface SimEvent {
   delta: Partial<LifeState>;
   state: LifeState;
   status: string;
+  eventStatus?: string; // 사건이 일어난 달의 처지(status는 장면 칸 끝의 처지)
   salary: number;
   evidence?: StatEvidence;
   freq: number; // 1,000번 중 이 사건이 일어난 횟수
   routine: boolean;
   branch?: "luck" | "choice";
   minor: string[]; // 같은 역의 작은 일들
-  reactions?: { name: string; role: string; line: string }[]; // 등장인물이 따로 말한 한마디(NPC_AGENTS=1일 때, 문장뿐)
+  reactions?: { name: string; role: string; line: string }[]; // 등장인물이 따로 말한 한마디(문장뿐, NPC_AGENTS=0이면 없음)
 }
 
 export interface FactorNote {
@@ -400,7 +401,7 @@ export interface Multiverse {
   stats: WorldStats;
   tree: LineNode;
   lines: Line[];
-  live?: boolean; // 실시간 판단 모드 결과(30번). 계정에 안 올리고, 세계선 다시 살기·갈림길 바꾸기를 안 쓴다
+  live?: boolean; // 실시간 판단 30개의 삶(store.getLiveResults). 1,000번 결과와 따로 저장하고 계정에 안 올린다
 }
 
 export interface Selection {

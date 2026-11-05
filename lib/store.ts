@@ -21,10 +21,17 @@ const KEYS = {
   active: `cr:${VERSION}:active`,
   report: `cr:${VERSION}:report`,
   live: `cr:${VERSION}:live`, // 실시간 판단 모드 진행(이 기기에만)
+  liveResults: `cr:${VERSION}:liveResults`, // 끝난 실시간 판단 30개의 삶(1,000번 결과와 따로, 이 기기에만)
   premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
   localOnly: `cr:${VERSION}:localOnly`,
   pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
 } as const;
+
+export interface LiveResults {
+  mvs: Record<string, Multiverse>;
+  scenes: Record<string, Record<string, SimEvent[]>>; // 진로 > 삶 갈래 > 장면(그 삶 그대로)
+  active: Record<string, string | null>; // 대화 상대로 고른 갈래
+}
 
 // 저장할 때마다 부르는 함수(계정 동기화). 하나만 둔다.
 let onWrite: (() => void) | null = null;
@@ -104,6 +111,13 @@ export const store = {
   setActive: (worldId: string, lineId: string) => write(KEYS.active, { ...(read<Record<string, string>>(KEYS.active) ?? {}), [worldId]: lineId }),
   getLive: () => read<LiveRun>(KEYS.live),
   // 답이 올 때마다 저장한다. 계정에는 안 올려서 onWrite를 부르지 않는다.
+  getLiveResults: () => read<LiveResults>(KEYS.liveResults),
+  setLiveResults: (r: LiveResults | null) => write(KEYS.liveResults, r),
+  // 대화 상대를 30개의 삶에서 고른다. null이면 1,000번 쪽 세계선으로 돌아간다.
+  setLiveActive: (worldId: string, lineId: string | null) => {
+    const r = read<LiveResults>(KEYS.liveResults);
+    if (r) write(KEYS.liveResults, { ...r, active: { ...r.active, [worldId]: lineId } });
+  },
   setLive: (r: LiveRun) => {
     try {
       window.localStorage.setItem(KEYS.live, JSON.stringify(r));
@@ -129,6 +143,7 @@ export const store = {
     write(KEYS.active, null);
     write(KEYS.report, null);
     write(KEYS.premium, null);
+    write(KEYS.liveResults, null);
   },
   reset: () => {
     try {

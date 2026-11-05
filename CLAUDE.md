@@ -23,17 +23,20 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-base.ts     # 모든 갈�
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-judge.ts    # AI 판단 단위 테스트(가짜 응답: 재요청, 부정 표현, 실패 표시, 화면 문구)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/compare-modes.ts --selftest 60   # 모드 비교 자체 확인(가짜 AI). 실제: data/pilot/profiles.json --cache 파일(무료 키면 거부, --no-ai는 규칙까지만)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/diagnose-judge.ts # 대표 인물 5명 × 큰 갈림길 8곳 AI·규칙 움직임 → docs/선택-AI-규칙-진단.md(호출 40번, 개발 서버 필요, 무료 키면 DIAG_PACE_MS=7000 DIAG_CACHE=파일)
-npx playwright test    # 화면 흐름 테스트 5개(e2e/): 빠르게+체크인, 표준 끝까지, 인생 이야기 한 장, 실시간 판단 멈춤·이어서 하기, 기능 플래그. 이야기 API는 가짜로 바꿔 AI를 안 부름
+npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/check-npc.ts   # 등장인물 처지 검사(53개 진로 × 10년, AI 안 부름). --real developer,civil-servant면 실제 대사도(호출 씀)
+npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/check-refund.ts   # 실시간 토큰 돌려주기를 실제 DB에서(시연용 가상 학생, 테스트 행은 지움)
+npx tsx@4.19.2 --tsconfig tsconfig.json scripts/phone-timing.ts   # 빌드 뒤: 모바일 에뮬레이션 + CPU 4배 감속으로 무거운 계산 시간 재기(실제 폰 아님)
+npx playwright test    # 화면 흐름 테스트(e2e/): 전체 흐름(시연 인물 + 검사 깊이 3개), 빠르게+체크인, 표준, 인생 이야기, 실시간, AI 판단 실패 표시, 고치기 버튼 여백, 모든 화면 넘침, 플래그. 키를 비워 AI를 안 부름(E2E_REAL_AI=1이면 부름, E2E_BAD_KEY=1이면 틀린 키로 실제 실패)
 BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에서
 ```
 
 파일럿 링크: `/interview?pilot=1`(이 기기에 초대 표시 → 검사 결과·진로 고르기에 '파일럿 상황 질문' → `/pilot`).
 
-선택 환경 변수: `NPC_AGENTS=1`(등장인물별 호출), `CRON_SECRET`·`RESEND_API_KEY`·`CHECKIN_MAIL_FROM`(체크인 메일).
+선택 환경 변수: `NPC_AGENTS=0`(등장인물별 호출 끄기, 기본 켬), `CRON_SECRET`·`RESEND_API_KEY`·`CHECKIN_MAIL_FROM`(체크인 메일).
 
-기능 플래그(`lib/flags.ts`, 값이 1이면 켜짐, 빌드에 들어감): `NEXT_PUBLIC_FEATURE_CHECKIN_MAIL`, `NEXT_PUBLIC_FEATURE_COUNSELOR`(둘 다 0006 적용 뒤, 메일은 `vercel.json` crons도 넣기), `NEXT_PUBLIC_FEATURE_LIVE_LINK`(유료 키로 30번 확인 뒤), `NEXT_PUBLIC_FEATURE_LIVE_REFUND`(실제 DB 확인 뒤). 발표 전까지 전부 끈다. 끄면 화면에 안 보이고 API는 404.
+기능 플래그(`lib/flags.ts`, 값이 1이면 켜짐, 빌드에 들어감): `NEXT_PUBLIC_FEATURE_CHECKIN_MAIL`, `NEXT_PUBLIC_FEATURE_COUNSELOR`. 둘 다 개발 환경(`.env.local`)에서만 켜고 배포에는 넣지 않는다(켜려면 0006 적용, 메일은 `vercel.json` crons도). 끄면 화면에 안 보이고 API는 404. 실시간 결과 잇기·토큰 돌려주기는 플래그 없이 켜져 있다.
 
-`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 AI 판단을 무료 키에 맞춰 천천히, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름). 절대 커밋하지 말 것.
+`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 모든 AI 호출을 3.5 Flash-Lite로 하나씩 4.5초 간격, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름). 절대 커밋하지 말 것.
 
 스택: Next.js 14 App Router, React 18, TypeScript, Tailwind 3, `@google/genai`(Gemini 3.5 Flash-Lite / 3.6 Flash, 한도면 다른 모델로 돌려 씀), Pretendard 자체 호스팅, lucide-react, fast-xml-parser, unpdf. 브라우저 localStorage(`lib/store.ts`, 저장 버전 `v9`, v4~v8은 처음 읽을 때 옮김) + 로그인하면 Supabase.
 
@@ -88,7 +91,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
 | `app/counselor`, `app/api/counselor`, `app/api/org/share` | 상담사 화면: 학생이 켠 경우만(`counselor_students`, 0006). 관리자 집계(k=5)와 따로 |
 | `app/api/cron/checkin`, `components/checkin-mail.tsx` | 체크인 메일: 본인이 켠 사람만, 차례마다 한 통, 하루 한 번(`vercel.json`) |
 | `scripts/compare-modes.ts` | 모드 비교: 기준선·규칙·AI 상황 칸·AI 전체 상황을 정답률·브라이어로 |
-| `lib/llm-pace.ts` | 무료 키 개발용(`GEMINI_TIER=free`): 하나씩 대기열, 호출 사이 4.5초, 429 재시도. AI 판단만 쓴다(`generateJSON`의 `pace`) |
+| `lib/llm-pace.ts` | 무료 키 개발용(`GEMINI_TIER=free`): 하나씩 대기열, 호출 사이 4.5초, 429면 재시도 시간만큼 기다려 최대 3번. 서술·대화·리포트까지 모든 호출 |
 | `lib/judge.ts`, `lib/judge-client.ts`, `app/api/judge` | AI 분신 판단(기본 모드): 큰 갈림길(branch choice)만, 갈림길 하나에 한 번 호출로 상황 칸 전부의 보기별 확률 + 보기별 이유. `profile.judges`에 '프로필 해시\|진로\|갈림길\|칸' 키로 저장(해시가 바뀌면 안 쓰고 다음에 지움). `/simulate`가 시작 전에 8개씩 미리 받음. 키 없음·실패는 저장 안 함 → 엔진이 규칙 기울기 |
 | `app/api/*` | simulate(SSE), judge, line, explore, live(고용24 실시간), programs, major, resume(PDF), github, profile, talk(위기 단어 감지), report, status, story/extract·story/followup(원문 저장·로그 없음) |
 
@@ -126,7 +129,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
   - 인생 이야기 6장 질문과 꼬리 질문 규칙은 팀이 정한 것(검증된 인터뷰 도구 아님). 꼬리 질문은 AI라 엉뚱할 수 있다(넘어가기로 피함). 장이 끝나면 앞 장 값을 새 값이 덮어쓴다(같은 칸이면 나중 장이 이김).
   - 끝낸 장을 다시 하면 글만 지운다. 이미 합친 값은 다시 확인할 때까지 남고, 그 장에서 안 나온 칸은 예전 값이 그대로다.
   - 글로 답하는 질문(경험 등)을 건너뛰면 깊이를 올릴 때 다시 묻는다.
-- 실시간 판단 모드: 30번을 실제 키로 끝까지 돌려 본 적 없다(무료 키 한도, 호출 12번까지만 봄. 끝까지는 가짜 AI로 확인). 기본 모드보다 낫다는 근거 없음(7단계 전). 표본이 작아 세계선 나무 대신 앞 갈림길 둘로 묶어 보여 준다. 대학 한 달 3회는 실제 DB로 확인 안 함. AI 실패로 규칙 계산으로 끝내면 AI가 판단 못 한 몫을 돌려주는데, 실제 DB로 확인 안 함(재요청까지 호출로 세서 조금 적게 돌려줄 수 있다). 세계선 지도·대화·리포트로 이어지지만 세계선 다시 살기·갈림길 바꾸기·선택 고치기는 숨긴다. 바꿀 수 있는 것은 기본 모드 계산이다. 결과는 계정에 안 올려 대학 집계에 안 들어간다.
+- 실시간 판단 모드: 30번을 실제 키로 끝까지 돌려 본 적 없다(무료 키 한도, 호출 12번까지만 봄. 끝까지는 가짜 AI로 확인). 기본 모드보다 낫다는 근거 없음(7단계 전). 표본이 작아 세계선 나무 대신 앞 갈림길 둘로 묶어 보여 준다. 대학 한 달 3회는 실제 DB로 확인 안 함. AI 실패로 규칙 계산으로 끝내면 AI가 판단 못 한 몫을 돌려주는데, 실제 DB로 확인 안 함(재요청까지 호출로 세서 조금 적게 돌려줄 수 있다). 세계선 지도·대화·리포트로 이어지지만 세계선 다시 살기·갈림길 바꾸기·선택 고치기는 숨긴다. 세계선 지도·리포트에서는 1,000번 통계와 섞지 않고 'AI가 직접 살아 본 30개의 삶' 칸으로 따로 보여 준다(`components/live-lives.tsx`, 오차 범위 포함). 결과는 계정에 안 올려 대학 집계에 안 들어간다.
 - 실제 Gemini 키(무료 등급)로 흐름 확인함. 무료 등급은 모델마다 하루 20회라 발표 전 한도 확인. **`.env.local` 키는 2026-11-04에도 Google 응답 기준 무료 등급이다.** 한도에 걸리면 조용히 규칙 계산·목업으로 넘어간다.
 - 선택(AI 분신·기준 비율):
   - 기준 비율은 보기 1,900개 중 통계 1개, 현직자 0개, 나머지 전부 가정값(평균 인물을 엔진으로 잰 값)이다. 유일한 통계(32.3%)도 대상이 달라 누구에게나 '통계(다른 집단 기준)'로 나온다(앱이 성별·나이를 안 묻는다).
@@ -328,3 +331,16 @@ BASE_URL=https://coinif.vercel.app npx playwright test   # 배포 사이트에�
   - 경쟁률: 국가직 21.43(응시 81,476 ÷ 선발 3,802, 공식 첨부는 못 보고 수험 사이트에 옮긴 표로 확인), 지방직 6.05(접수, 전국 응시자 못 찾음), 경찰 9.36(접수), 소방 9.14(응시, 공채·경채 합계라 공채만의 값 아님. 공채 접수는 14대 1), 초등 2.235(접수, 경북·부산, k 없음), 중등 5.67(접수, 경북만. 대전 8.7대 1은 원문 확인 전이라 뺌), 세무사 23.15(제63회 1차 응시 16,856 ÷ 제62회 최종 합격 728, 회차가 달라 근사. 제63회 최종 722명은 기사 제목에서만 봐서 안 씀).
   - 평범한 지원자 3년 안: 공무원 68%, 경찰 62%, 중등 61%, 소방 45%, 세무사 13%, 초등 77%. **초등만 k를 뺐다**(1 ÷ 2.235 = 0.447, 팀장 결정). k를 곱하면 한 번 0.85·3년 안 98%가 돼서다. 그래서 '같은 k'의 예외가 하나 있다.
   - 한계: k 하나를 9급에서 잰 것이라 다른 시험에서 같다는 근거가 없다. 응시·접수 기준이 섞였다(국가직만 응시 기준으로 k를 쟀다. 전부 접수 기준이면 k는 2.0 안팎). 9급 3년 안이 64%에서 68%(예시 인물은 64→57%)로 움직였다. 기준 비율은 다시 안 쟀다(check-base 통과).
+- 2026-11-05 리포트 개편 전 정리(팀장 지시):
+  - 등장인물별 호출을 기본으로 켰다. 인물마다 그때 처지(`SimEvent.eventStatus`)에 있을 수 있는지 거른다: 고객·클라이언트·파트너는 안 부름, 직장 인물은 'n개월차'일 때만, 스터디·수험 동료는 일 안 하고 준비 중일 때만. 처음엔 장면 끝 상태로 봐서 '1년 가까이 취업이 안 됐다'에 팀장이 답했다 → 사건이 난 달 상태로. 구조 검사 53개 진로 × 10년 위반 0개. 실제 대사 확인은 시연 인물 진로 2개·4줄뿐(2번은 AI 호출 실패).
+  - 무료 키 설정은 이제 모든 호출에 적용된다. 하루 약 20회라 시뮬레이션 1번(판단 + 서술 + 등장인물)이면 거의 다 쓰고, 넘으면 목업으로 간다. 간격 때문에 10년·진로 2개는 몇 분 걸릴 수 있다. e2e는 그래서 키를 비우고 돈다.
+  - 실시간 결과는 `store.liveResults`에 따로 둔다(1,000번 결과를 안 덮어씀, 계정에 안 올림). 1,000번 결과가 없으면 Worker로 계산하고 잇는다.
+  - 토큰 돌려주기는 `lib/live-refund.ts`로 빼서 실제 DB로 확인(`check-refund.ts`): 97번 중 AI 48번 → 4토큰 중 2개 반환, 원장 행, 잔액, 두 번 안 돌려줌, 안 낸 실행은 안 돌려줌. 로그인 경로와 토스 실제 승인으로는 안 해 봄(충전은 원장 행으로 대신).
+  - 0006은 실제 DB에 아직 안 들어갔다(표 404). 메모리 Postgres(PGlite)로 0001~0006 적용 뒤 16개 확인: 켠 학생만 보임, 남의·타 대학 공유 불가, 관리자·학생·타 대학 상담사 거부, 끄면 0명, 원문 없음, 메일 기록 중복 불가. 상담사에게 보이는 항목에 체크인 횟수가 있어 동의 문구에 넣었다.
+  - 'AI 판단 실패' 표시: 500·네트워크 끊김(가짜)과 틀린 키(실제 서버, `E2E_BAD_KEY=1`)로 화면에 나오는 걸 봤다.
+  - 휴대폰 시간(모바일 에뮬레이션 + CPU 4배, 실제 폰 아님, 빌드본): 세계선 계산은 서버라 폰이 안 한다. 바꿀 수 있는 것 3년 3.1초·10년 9.0초(화면 스레드로 잰 값, 실제로는 Worker라 화면은 안 멈춤), 실시간 30번 × 2개 3년 2.7초·10년 4.6초(AI 가짜, 화면 최대 0.2초 멈춤), 잇기 1.8·3.8초(Worker, 감속이 안 걸렸을 수 있음). 화면이 3초 넘게 멈추는 곳은 없어서 더 옮기지 않았다.
+  - 커리어넷 직업 상세(`/cnet/front/openapi/job.json?seq=`, 지금 키로 됨): `jobReadyList`에 recruit·certificate·training·curriculum(준비 방법), `departList` 관련 학과, `certiList` 자격, `eduChart` 학력 분포(2021 워크넷). 13개 이름 검색해 보니 이름이 다르면 엉뚱한 직업이 먼저 나온다(공무원 → 외교관, 세무사 → 관세사, 소프트웨어 개발자 → 블록체인 전문가), 대학원은 없음 → 고용24처럼 진로별 번호를 정해야 한다. 대안 고용24 `212D03`(dtlGb=3): technKnow·edubg·schDpt·relMajorList·relCertList.
+  - 고용24 채용정보 목록(`210L01`)·상세(`210D01`) 둘 다 지금 키로 "개인회원은 사용할 수 없는 OPEN-API입니다." 신입 공고 자격·우대 집계는 기업·기관 회원 키가 나오기 전까지 못 한다(그 키면 되는지는 받아 봐야 안다).
+  - 시험형 3년 안(평범한 지원자 1,000번): 초등 77, 공무원 68, 경찰 62, 중등 61, 소방 45, 세무사 13%. 9급은 경찰·중등과 비슷해 안 튄다. 세계선 지도 근거 자료에 초등만 k를 뺀 이유를 적었다.
+  - 전체 흐름 e2e가 찾은 버그: 검사 결과 화면의 '인생 이야기 6장 시작하기'·'파일럿 상황 질문'을 누르면 프로필이 저장 전이라 검사 처음으로 돌아갔다 → 링크를 누를 때 저장. 첫 화면 '5분 인터뷰'는 빠르게 약 10분과 달라 고쳤다(10분도 문항 수로 센 값). 44px 안 되던 버튼(계열·진로 탭, 고른 진로, 갈림길 바꾸기)도 고쳤다.
+  - 등장인물 원가(진로 2개 약 2원)는 사업계획 52원에 안 넣고 줄을 따로 뒀다. 넣으면 54원·738만 원·손익분기 6.3곳, 7곳부터 흑자는 같다.

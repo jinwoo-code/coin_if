@@ -117,7 +117,7 @@ async function realAsker(): Promise<Asker> {
       return null;
     }
     const { ids, system, prompt } = promptOf(p, q, mode);
-    const got = await askJudge(() => generateJSON<unknown>({ tag: "compare", model: "fast", system, prompt, fallback: () => null, pace: true }), ids, ["now"]);
+    const got = await askJudge(() => generateJSON<unknown>({ tag: "compare", model: "fast", system, prompt, fallback: () => null }), ids, ["now"]);
     calls += got.calls;
     const probs = got.probs.now;
     if (!probs) return null;

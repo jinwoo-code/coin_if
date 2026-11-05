@@ -83,6 +83,7 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
       delta,
       state: last.state,
       status: last.status,
+      eventStatus: main.status,
       salary: last.salary,
       evidence: e.evidence,
       freq: stats.events[e.id]?.count ?? 0,
