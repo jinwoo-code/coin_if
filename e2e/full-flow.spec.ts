@@ -62,8 +62,8 @@ test("시연 인물 끝까지", async ({ page }) => {
   // 실시간 30번을 같은 인물로 → 세계선 지도·리포트에 별도 칸
   await mockLiveJudge(page);
   await page.evaluate(() => {
-    const s = JSON.parse(localStorage.getItem("cr:v9:selection")!);
-    localStorage.setItem("cr:v9:selection", JSON.stringify({ ...s, mode: "live" }));
+    const s = JSON.parse(localStorage.getItem("cr:v10:selection")!);
+    localStorage.setItem("cr:v10:selection", JSON.stringify({ ...s, mode: "live" }));
   });
   await page.goto("/live");
   await expect(page.getByRole("status")).toContainText("다 살아봤어요", { timeout: 120_000 });

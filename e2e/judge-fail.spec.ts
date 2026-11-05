@@ -35,8 +35,8 @@ for (const width of [320, 390]) {
     await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
     await expect(page).toHaveURL(/\/simulate/);
     await page.evaluate(() => {
-      const s = JSON.parse(localStorage.getItem("cr:v9:selection")!);
-      localStorage.setItem("cr:v9:selection", JSON.stringify({ ...s, worldIds: ["developer", "civil-servant", "marketer"] }));
+      const s = JSON.parse(localStorage.getItem("cr:v10:selection")!);
+      localStorage.setItem("cr:v10:selection", JSON.stringify({ ...s, worldIds: ["developer", "civil-servant", "marketer"] }));
     });
     await page.reload();
     const btn = page.getByRole("button", { name: "나라면 이렇게 안 해" }).first();

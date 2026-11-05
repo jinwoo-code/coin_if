@@ -1,5 +1,5 @@
 "use client";
-// 1. 상담·진단: AI 인터뷰 + 스펙·생활 조건 + 성격 검사(BFI-10) + 상황 질문으로 '나'를 만든다.
+// 1. 상담·진단: AI 인터뷰 + 스펙·생활 조건 + 성격 검사(Mini-IPIP) + 상황 질문으로 '나'를 만든다.
 import { ArrowUp, Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import { MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui"
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
 import { Ai, Me } from "@/components/chat";
 import { canDeepen, depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey } from "@/lib/assessment";
-import { BFI_ITEMS, scoreBfi } from "@/lib/bfi";
+import { IPIP_REST_IDS, MINI_IDS, miniDone, scoreMini } from "@/lib/mini-ipip";
 import { completeness, DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS } from "@/lib/profile";
 import { store } from "@/lib/store";
 import { twinScore } from "@/lib/twin";
@@ -264,7 +264,6 @@ export default function InterviewPage() {
   });
   const [draft, setDraft] = useState("");
   const [values, setValues] = useState<ValueKey[]>([]);
-  const [bfi, setBfi] = useState<Record<number, number>>({});
   const [sjt, setSjt] = useState<Record<string, number>>({});
   const [ipip, setIpip] = useState<Record<string, number>>({});
   const [riasec, setRiasec] = useState<Record<string, number>>({});
@@ -311,7 +310,6 @@ export default function InterviewPage() {
       constraints: p.constraints,
     });
     setValues(p.values);
-    setBfi(p.answers.bfi10 ?? {});
     setSjt({ ...p.answers.sjt, ...p.holdoutPicks });
     setIpip(p.answers.ipip ?? {});
     setRiasec(p.answers.riasec ?? {});
@@ -359,8 +357,9 @@ export default function InterviewPage() {
     try {
       const ipipDone = IPIP50.every((i) => ipip[i.id] !== undefined);
       const riasecDone = RIASEC24.every((i) => riasec[i.id] !== undefined);
-      const bfiCount = Object.keys(bfi).length;
-      const bigFive: BigFive = ipipDone ? (scoreScale(IPIP50, ipip, ["O", "C", "E", "A", "N"]) as BigFive) : base && (base.depth.bfiItems >= 50 || !bfiCount) ? base.bigFive : scoreBfi(bfi);
+      const miniAll = miniDone(ipip);
+      // 50문항을 다 답했으면 그 점수, 아니면 20문항. 예전 50문항 프로필은 답이 없을 수 있어 점수를 그대로 둔다.
+      const bigFive: BigFive = ipipDone ? (scoreScale(IPIP50, ipip, ["O", "C", "E", "A", "N"]) as BigFive) : base && (base.depth.bigFiveItems >= 50 || !miniAll) ? base.bigFive : scoreMini(ipip);
       const trainPicks = Object.fromEntries(Object.entries(sjt).filter(([id]) => !holdout.ids.includes(id)));
       // 파일럿 답(p1~p20)은 /pilot에서 따로 받으니 그대로 둔다
       const holdoutPicks = { ...Object.fromEntries(Object.entries(base?.holdoutPicks ?? {}).filter(([id]) => isPilotId(id))), ...Object.fromEntries(Object.entries(sjt).filter(([id]) => holdout.ids.includes(id))) };
@@ -383,12 +382,13 @@ export default function InterviewPage() {
         readiness,
         depthMode: base && depthOrder(base.depthMode) > depthOrder(mode) ? base.depthMode : mode,
         since: base?.since ?? new Date().toISOString(),
-        answers: { bfi10: bfi, sjt: trainPicks, ipip, riasec },
+        answers: { sjt: trainPicks, ipip, riasec },
+        legacyBigFive: base?.legacyBigFive && !miniAll && !ipipDone ? true : undefined,
         holdout,
         holdoutPicks,
         story: latestStory,
         depth: {
-          bfiItems: Math.max(base?.depth.bfiItems ?? 0, ipipDone ? 50 : bfiCount),
+          bigFiveItems: Math.max(base?.depth.bigFiveItems ?? 0, ipipDone ? 50 : miniAll ? 20 : 0),
           behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(trainPicks).length),
           interestItems: Math.max(base?.depth.interestItems ?? 0, riasecDone ? 24 : 0),
           spec: true,
@@ -521,10 +521,10 @@ export default function InterviewPage() {
           <Me>확인했어요</Me>
         </div>
       );
-    if (s.kind === "sjt" || s.kind === "bfi" || s.kind === "scale")
+    if (s.kind === "sjt" || s.kind === "mini" || s.kind === "scale")
       return (
         <div key={i} className="contents">
-          <Ai>{s.kind === "sjt" ? "상황 질문" : s.kind === "bfi" ? "성격 질문" : s.test === "ipip" ? `성격 50문항 (${s.part}/${s.parts})` : `흥미 검사 (${s.part}/${s.parts})`}</Ai>
+          <Ai>{s.kind === "sjt" ? "상황 질문" : s.kind === "mini" ? "성격 질문" : s.test === "ipip" ? `성격 나머지 30문항 (${s.part}/${s.parts})` : `흥미 검사 (${s.part}/${s.parts})`}</Ai>
           <Me>{s.ids.length}개 답했어요</Me>
         </div>
       );
@@ -535,8 +535,8 @@ export default function InterviewPage() {
   const formStep = step.kind === "spec" || step.kind === "life" || step.kind === "wants";
   // 문항 묶음 화면: 다 답해야 다음으로
   const batchLeft =
-    step.kind === "bfi"
-      ? step.ids.filter((id) => bfi[id] === undefined).length
+    step.kind === "mini"
+      ? step.ids.filter((id) => ipip[id] === undefined).length
       : step.kind === "sjt"
         ? step.ids.filter((id) => sjt[id] === undefined).length
         : step.kind === "scale"
@@ -936,16 +936,15 @@ export default function InterviewPage() {
             </>
           ) : null}
 
-          {!thinking && !loading && step.kind === "bfi" ? (
+          {!thinking && !loading && step.kind === "mini" ? (
             <>
-              <Ai>{step.ids[0] === BFI_ITEMS[0].id ? "짧은 성격 질문이에요. 생각나는 대로 골라 주세요." : "성격 질문 다섯 개만 더 할게요."}</Ai>
+              <Ai>{step.first ? "짧은 성격 질문이에요. 생각나는 대로 골라 주세요." : "성격 질문 열 개만 더 할게요."}</Ai>
               <section aria-label="성격 질문" className="card ml-[42px] animate-rise p-5">
                 <ScaleEnds />
                 <ol className="mt-2">
-                  {step.ids.map((id) => {
-                    const item = BFI_ITEMS.find((i) => i.id === id)!;
-                    return <ScaleRow key={id} id={`bfi${id}`} n={id} text={item.text} value={bfi[id]} onPick={(v) => setBfi((cur) => ({ ...cur, [id]: v }))} />;
-                  })}
+                  {step.ids.map((id) => (
+                    <ScaleRow key={id} id={id} n={MINI_IDS.indexOf(id) + 1} text={ITEM_TEXT[id]} value={ipip[id]} onPick={(v) => setIpip((cur) => ({ ...cur, [id]: v }))} />
+                  ))}
                 </ol>
               </section>
             </>
@@ -956,19 +955,19 @@ export default function InterviewPage() {
               <Ai>
                 {step.test === "ipip"
                   ? step.part === 1
-                    ? "성격 50문항이에요. 10문항 검사보다 훨씬 안정적이에요. IPIP 공개 문항을 저희가 우리말로 옮겼어요."
+                    ? "성격 나머지 30문항이에요. 앞에서 답한 20문항과 합쳐 50문항으로 계산해서 더 안정적이에요. IPIP 공개 문항을 저희가 우리말로 옮겼어요."
                     : `성격 문항 ${step.part}/${step.parts}이에요.`
                   : step.part === 1
                     ? "이번엔 직업 흥미 24문항이에요. 저희가 만든 간이 검사라 표준화 검사는 아니에요."
                     : `흥미 문항 ${step.part}/${step.parts}이에요.`}
               </Ai>
-              <section aria-label={step.test === "ipip" ? "성격 50문항" : "흥미 검사"} className="card ml-[42px] animate-rise p-5">
+              <section aria-label={step.test === "ipip" ? "성격 나머지 30문항" : "흥미 검사"} className="card ml-[42px] animate-rise p-5">
                 <ScaleEnds />
                 <ol className="mt-2">
                   {step.ids.map((id) => {
                     const ans = step.test === "ipip" ? ipip : riasec;
                     const set = step.test === "ipip" ? setIpip : setRiasec;
-                    return <ScaleRow key={id} id={id} n={Number(id.slice(1))} text={ITEM_TEXT[id]} value={ans[id]} onPick={(v) => set((cur) => ({ ...cur, [id]: v }))} />;
+                    return <ScaleRow key={id} id={id} n={step.test === "ipip" ? IPIP_REST_IDS.indexOf(id) + 21 : Number(id.slice(1))} text={ITEM_TEXT[id]} value={ans[id]} onPick={(v) => set((cur) => ({ ...cur, [id]: v }))} />;
                   })}
                 </ol>
               </section>

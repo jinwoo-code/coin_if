@@ -34,7 +34,7 @@ function stats<K extends string>(rows: Record<K, number>[], keys: K[]) {
 }
 
 // 답한 사람만(문항을 안 풀면 기본값 3이라 평균을 3으로 끌어당긴다)
-const b5 = people.filter((p) => p.depth?.bfiItems > 0).map((p) => p.bigFive);
+const b5 = people.filter((p) => p.depth?.bigFiveItems > 0).map((p) => p.bigFive);
 const bh = people.filter((p) => p.depth?.behaviorItems > 0).map((p) => p.behavior);
 const norms = JSON.parse(readFileSync("data/norms.json", "utf8"));
 const b5New = b5.length ? stats(b5 as unknown as Record<"E" | "A" | "C" | "N" | "O", number>[], ["E", "A", "C", "N", "O"]) : null;
@@ -53,7 +53,7 @@ if (!APPLY) {
     norms.bigFive = {
       source: `파일럿 동의자 ${b5.length}명 평균(${date}, 자기 선택 표본)`,
       previous: norms.bigFive.source,
-      caveat: "자기 선택한 소수 표본이다. 대표 표본이 아니다. 앱의 성격 점수는 BFI-10 또는 IPIP 50이 섞여 있다.",
+      caveat: "자기 선택한 소수 표본이다. 대표 표본이 아니다. 앱의 성격 점수는 Mini-IPIP 또는 IPIP 50이 섞여 있다. 예전 10문항 프로필은 뺐다.",
       n: b5.length,
       ...b5New,
     };

@@ -1,9 +1,9 @@
 // 검사 깊이별 단계 목록(설계 근거: docs/검사-설계-근거.md '검사 깊이').
 // 빠르게 = 동의 + 꼭 필요한 것만(화면 15개 이하), 상황 질문은 학습용 6 + 채점용 3.
-// 표준 = 빠르게 + 경험·제약 + IPIP 50 + 흥미 24 + 상황 질문 나머지 9(채점용 3 포함, 18개 전부) + 진로 구성 인터뷰 5문항.
+// 표준 = 빠르게(Mini-IPIP 20) + 경험·제약 + IPIP 50의 나머지 30 + 흥미 24 + 상황 질문 나머지 9(채점용 3 포함, 18개 전부) + 진로 구성 인터뷰 5문항.
 // 한 화면에 문항 여러 개를 묶어 화면 수를 줄인다. 이미 답한 단계는 빼서 깊이를 올려도 다시 묻지 않는다.
-import { BFI_ITEMS } from "./bfi";
-import { IPIP50, pickHoldout, QUICK_HOLDOUT, RIASEC24, SJT } from "./tests";
+import { IPIP_REST_IDS, MINI_IDS } from "./mini-ipip";
+import { pickHoldout, QUICK_HOLDOUT, RIASEC24, SJT } from "./tests";
 import type { DepthMode, Profile } from "./types";
 
 export type TextKey = "dilemma" | "experiences" | "constraints";
@@ -17,15 +17,15 @@ export type Step =
   | { kind: "spec" }
   | { kind: "life" }
   | { kind: "wants" }
-  | { kind: "bfi"; ids: number[] } // BFI-10 묶음
+  | { kind: "mini"; ids: string[]; first: boolean } // Mini-IPIP 묶음(10문항씩 2화면)
   | { kind: "sjt"; ids: string[] } // 상황 질문 묶음
   | { kind: "cci" } // 진로 구성 인터뷰 5문항(한 화면)
   | { kind: "story" } // 이야기에서 뽑은 값 확인("맞나요?")
   | { kind: "scale"; test: "ipip" | "riasec"; ids: string[]; part: number; parts: number }; // IPIP·흥미 묶음
 
 export const DEPTHS: { mode: DepthMode; title: string; time: string; desc: string; ready: boolean }[] = [
-  { mode: "quick", title: "빠르게", time: "약 10분", desc: "꼭 필요한 것만 물어요. 결과가 덜 정확할 수 있어요.", ready: true },
-  { mode: "standard", title: "표준", time: "30~40분", desc: "성격 50문항, 흥미 검사, 경험 이야기까지 해요.", ready: true },
+  { mode: "quick", title: "빠르게", time: "약 11분", desc: "꼭 필요한 것만 물어요. 결과가 덜 정확할 수 있어요.", ready: true },
+  { mode: "standard", title: "표준", time: "30~40분", desc: "성격 50문항(20문항은 앞에서 답함), 흥미 검사, 경험 이야기까지 해요.", ready: true },
   { mode: "deep", title: "정밀", time: "장마다 15~20분", desc: "표준 + 인생 이야기 6장. 멈췄다가 이어서 할 수 있어요.", ready: true },
   { mode: "ongoing", title: "계속 닮아 가기", time: "몇 주~몇 달", desc: "표준 + 시뮬레이션 속 선택 고치기와 한 달 체크인으로 맞춰 가요.", ready: true },
 ];
@@ -60,9 +60,9 @@ export function stepsFor(mode: DepthMode, holdout: string[]): Step[] {
     DILEMMA,
     { kind: "spec" },
     { kind: "values" },
-    { kind: "bfi", ids: BFI_ITEMS.slice(0, 5).map((i) => i.id) },
+    { kind: "mini", ids: MINI_IDS.slice(0, 10), first: true },
     { kind: "life" },
-    { kind: "bfi", ids: BFI_ITEMS.slice(5).map((i) => i.id) },
+    { kind: "mini", ids: MINI_IDS.slice(10), first: false },
     ...sjtPages([...train, ...quickHoldout]),
     { kind: "wants" },
   ];
@@ -72,7 +72,7 @@ export function stepsFor(mode: DepthMode, holdout: string[]): Step[] {
     EXPERIENCES,
     ...scalePages(
       "ipip",
-      IPIP50.map((i) => i.id),
+      IPIP_REST_IDS, // Mini-IPIP 20문항은 앞에서 답했다. 나머지 30문항만.
       10,
     ),
     ...scalePages(
@@ -112,14 +112,14 @@ export function isAnswered(step: Step, p: Profile): boolean {
       return p.storyRaw.cci !== undefined; // 다 건너뛰어도(빈 답) 지나온 단계
     case "story":
       return p.story !== null || (p.storyRaw.cci !== undefined && !Object.values(p.storyRaw.cci).some((a) => a.trim())); // 확인했거나, 이야기를 다 건너뛴 경우
-    case "bfi":
-      return p.depth.bfiItems >= 10 || step.ids.every((id) => p.answers.bfi10?.[id] !== undefined);
+    case "mini":
+      return p.depth.bigFiveItems >= 20 || step.ids.every((id) => p.answers.ipip?.[id] !== undefined);
     case "sjt": {
       const old = p.depth.behaviorItems >= 6 && !p.answers.sjt; // v4: 원답 없이 s1~s6을 답한 프로필
       return step.ids.every((id) => p.answers.sjt?.[id] !== undefined || p.holdoutPicks[id] !== undefined || (old && SJT.find((q) => q.id === id)?.role === "train"));
     }
     case "scale": {
-      const done = step.test === "ipip" ? p.depth.bfiItems >= 50 : p.depth.interestItems >= 24;
+      const done = step.test === "ipip" ? p.depth.bigFiveItems >= 50 : p.depth.interestItems >= 24;
       const ans = step.test === "ipip" ? p.answers.ipip : p.answers.riasec;
       return done || step.ids.every((id) => ans?.[id] !== undefined);
     }
@@ -145,7 +145,7 @@ export function countSteps(mode: DepthMode) {
     wants: () => 2,
     cci: () => 5,
     story: () => 1,
-    bfi: (s) => (s.kind === "bfi" ? s.ids.length : 0),
+    mini: (s) => (s.kind === "mini" ? s.ids.length : 0),
     sjt: (s) => (s.kind === "sjt" ? s.ids.length : 0),
     scale: (s) => (s.kind === "scale" ? s.ids.length : 0),
   };

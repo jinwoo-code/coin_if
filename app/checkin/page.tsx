@@ -9,7 +9,7 @@ import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
 import { CheckinMail } from "@/components/checkin-mail";
 import { FLAGS } from "@/lib/flags";
 import { Screen } from "@/components/ui";
-import { BFI_ITEMS } from "@/lib/bfi";
+import { MINI_ITEMS } from "@/lib/mini-ipip";
 import { bigFiveDiff, daysToCheckin, selfAgreement, TONE_WORD, withCorrection, withNewBigFive } from "@/lib/ongoing";
 import { store } from "@/lib/store";
 import { SJT } from "@/lib/tests";
@@ -30,8 +30,8 @@ export default function CheckinPage() {
   const [picks, setPicks] = useState<Record<string, number>>({});
   const [real, setReal] = useState<Tone | "none" | null>(null);
   const [done, setDone] = useState<Checkin | null>(null);
-  const [askBfi, setAskBfi] = useState(false);
-  const [bfi, setBfi] = useState<Record<number, number>>({});
+  const [askMini, setAskMini] = useState(false);
+  const [mini, setMini] = useState<Record<string, number>>({});
   const [applied, setApplied] = useState(false);
 
   useEffect(() => {
@@ -44,12 +44,12 @@ export default function CheckinPage() {
   const items = SJT.filter((q) => profile.holdoutPicks[q.id] !== undefined);
   const days = daysToCheckin(profile);
   const due = days === null || days <= 0;
-  const bfiLeft = askBfi ? BFI_ITEMS.filter((i) => bfi[i.id] === undefined).length : 0;
-  const ready = items.every((q) => picks[q.id] !== undefined) && real !== null && !bfiLeft;
+  const miniLeft = askMini ? MINI_ITEMS.filter((i) => mini[i.id] === undefined).length : 0;
+  const ready = items.every((q) => picks[q.id] !== undefined) && real !== null && !miniLeft;
 
   function save() {
     if (!profile || !ready || real === null) return;
-    const c: Checkin = { at: new Date().toISOString(), picks, real, demo: !due, ...(askBfi ? { bfi10: bfi } : {}) };
+    const c: Checkin = { at: new Date().toISOString(), picks, real, demo: !due, ...(askMini ? { mini } : {}) };
     let next: Profile = { ...profile, checkins: [...profile.checkins, c] };
     if (real !== "none") next = withCorrection(next, { source: "checkin", eventId: `checkin:${c.at.slice(0, 10)}`, title: "한 달 체크인: 실제로 한 선택", from: null, to: real });
     store.setProfile(next);
@@ -68,7 +68,7 @@ export default function CheckinPage() {
   if (done) {
     const self = selfAgreement(profile, done);
     const twin = twinScore(profile);
-    const diff = done.bfi10 ? bigFiveDiff(profile, done.bfi10) : null;
+    const diff = done.mini ? bigFiveDiff(profile, done.mini) : null;
     return (
       <Screen
         title="한 달 체크인"
@@ -102,7 +102,7 @@ export default function CheckinPage() {
         </section>
         {diff ? (
           <section className="card mt-4 p-5" aria-label="성격 다시 재기">
-            <p className="label">성격 10문항, 지난번과 비교</p>
+            <p className="label">성격 20문항, 지난번과 비교</p>
             <ul className="num mt-3 flex flex-col gap-1.5 text-sm">
               {diff.map((d) => (
                 <li key={d.key} className="flex justify-between gap-2">
@@ -123,7 +123,7 @@ export default function CheckinPage() {
                 type="button"
                 className="btn-ghost mt-3 w-full"
                 onClick={() => {
-                  const next = withNewBigFive(profile, done.bfi10!);
+                  const next = withNewBigFive(profile, done.mini!);
                   store.setProfile(next);
                   setProfile(next);
                   setApplied(true);
@@ -182,7 +182,7 @@ export default function CheckinPage() {
       back="/choose"
       footer={
         <button className="btn-primary w-full" disabled={!ready} onClick={save}>
-          {ready ? "저장" : `${items.filter((q) => picks[q.id] === undefined).length + (real === null ? 1 : 0) + bfiLeft}문항 남았어요`}
+          {ready ? "저장" : `${items.filter((q) => picks[q.id] === undefined).length + (real === null ? 1 : 0) + miniLeft}문항 남았어요`}
         </button>
       }
     >
@@ -213,22 +213,22 @@ export default function CheckinPage() {
           </div>
         </li>
       </ol>
-      {askBfi ? (
-        <section className="mt-6" aria-label="성격 10문항">
-          <h2 className="text-base font-bold">성격 10문항</h2>
+      {askMini ? (
+        <section className="mt-6" aria-label="성격 20문항">
+          <h2 className="text-base font-bold">성격 20문항</h2>
           <ScaleEnds />
           <ol>
-            {BFI_ITEMS.map((item, i) => (
-              <ScaleRow key={item.id} id={`ci-bfi-${item.id}`} n={i + 1} text={item.text} value={bfi[item.id]} onPick={(v) => setBfi((cur) => ({ ...cur, [item.id]: v }))} />
+            {MINI_ITEMS.map((item, i) => (
+              <ScaleRow key={item.id} id={`ci-${item.id}`} n={i + 1} text={item.text} value={mini[item.id]} onPick={(v) => setMini((cur) => ({ ...cur, [item.id]: v }))} />
             ))}
           </ol>
-          <button type="button" className="btn-ghost mt-2 w-full" onClick={() => setAskBfi(false)}>
+          <button type="button" className="btn-ghost mt-2 w-full" onClick={() => setAskMini(false)}>
             성격 문항은 빼기
           </button>
         </section>
       ) : (
-        <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setAskBfi(true)}>
-          성격 10문항도 다시 답하기(선택, 약 1분)
+        <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setAskMini(true)}>
+          성격 20문항도 다시 답하기(선택, 약 2분)
         </button>
       )}
     </Screen>

@@ -22,13 +22,13 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   });
   await page.goto("/");
   await page.evaluate(() => {
-    localStorage.setItem("cr:v9:profile", JSON.stringify({ name: "테스트", major: "경영학과" }));
-    localStorage.setItem("cr:v9:selection", JSON.stringify({ worldIds: ["developer", "marketer"], months: 36, startYm: "2026-12", mode: "live" }));
+    localStorage.setItem("cr:v10:profile", JSON.stringify({ name: "테스트", major: "경영학과" }));
+    localStorage.setItem("cr:v10:selection", JSON.stringify({ worldIds: ["developer", "marketer"], months: 36, startYm: "2026-12", mode: "live" }));
   });
   await page.goto("/live");
   await expect(page.getByText(/AI가 답을 못 줬어요/)).toBeVisible({ timeout: 60_000 });
   await expect(page.getByRole("status")).toContainText("번째 삶까지 살고 멈췄어요");
-  const stored = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("cr:v9:live") ?? "{}").entries ?? {}).length);
+  const stored = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("cr:v10:live") ?? "{}").entries ?? {}).length);
   expect(stored).toBe(10);
 
   // 새로고침해도 이어서, 끝까지
@@ -58,7 +58,7 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   await expect(card).toContainText("30번 중");
   await expect(card).toContainText("표본 오차 범위");
   await expect(card.getByText(/\(\d+~\d+%\)/).first()).toBeVisible();
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v9:multiverses") ?? "{}"));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:multiverses") ?? "{}"));
   expect(saved.developer.stats.runs).toBe(1000);
   expect(saved.developer.live).toBeUndefined();
 

@@ -7,7 +7,6 @@ import type { StorySignals } from "./story";
 export type DepthMode = "quick" | "standard" | "deep" | "ongoing";
 
 export interface Answers {
-  bfi10?: Record<number, number>; // BFI-10 문항 번호 → 1~5
   sjt?: Record<string, number>; // 상황 질문 id → 고른 보기 번호(학습용만, 채점용은 holdoutPicks)
   ipip?: Record<string, number>; // IPIP 50 문항 id → 1~5
   riasec?: Record<string, number>; // 흥미 24 문항 id → 1~5
@@ -121,7 +120,8 @@ export interface Profile {
   // AI 분신 판단 캐시(lib/judge.ts). 큰 갈림길 × 상황 칸마다 보기별 확률·이유. 키에 프로필 해시가 있어 프로필이 바뀌면 안 쓰인다.
   judges?: Record<string, { probs: number[]; reasons: string[]; shift?: string; src: "ai" | "mock" | "fallback" }>;
   // 어떤 검사를 했는지(입력한 정보 표시용)
-  depth: { bfiItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
+  legacyBigFive?: boolean; // 예전 검사(10문항)로 잰 성격 값. Mini-IPIP를 답할 때까지 그대로 쓰고 다시 답하라고 안내한다
+  depth: { bigFiveItems: number; behaviorItems: number; interestItems: number; resume: boolean; github: boolean; spec: boolean; life: boolean };
 }
 
 // ---------- 시뮬레이션 상태 ----------
@@ -472,5 +472,5 @@ export interface Checkin {
   picks: Record<string, number>;
   real: Tone | "none"; // 지난 한 달 실제로 어떻게 했는지
   demo: boolean; // 한 달을 안 기다리고 시연용으로 한 것
-  bfi10?: Record<number, number>; // 성격 10문항을 다시 답했으면 그 답(선택)
+  mini?: Record<string, number>; // 성격 20문항(Mini-IPIP)을 다시 답했으면 그 답(선택)
 }

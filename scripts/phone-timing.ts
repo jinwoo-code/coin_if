@@ -51,8 +51,8 @@ const secs = (ms: number) => `${(ms / 1000).toFixed(1)}초`;
       await page.waitForURL(/simulate/);
       const started = Date.now();
       await page.evaluate((m) => {
-        const s = JSON.parse(localStorage.getItem("cr:v9:selection")!);
-        localStorage.setItem("cr:v9:selection", JSON.stringify({ ...s, months: m }));
+        const s = JSON.parse(localStorage.getItem("cr:v10:selection")!);
+        localStorage.setItem("cr:v10:selection", JSON.stringify({ ...s, months: m }));
       }, months);
       await page.reload();
       await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: 300_000 });
@@ -90,8 +90,8 @@ const secs = (ms: number) => `${(ms / 1000).toFixed(1)}초`;
       });
       await page.goto("/");
       await page.evaluate((m) => {
-        localStorage.setItem("cr:v9:profile", JSON.stringify({ name: "테스트", major: "경영학과" }));
-        localStorage.setItem("cr:v9:selection", JSON.stringify({ worldIds: ["developer", "marketer"], months: m, startYm: "2026-12", mode: "live" }));
+        localStorage.setItem("cr:v10:profile", JSON.stringify({ name: "테스트", major: "경영학과" }));
+        localStorage.setItem("cr:v10:selection", JSON.stringify({ worldIds: ["developer", "marketer"], months: m, startYm: "2026-12", mode: "live" }));
       }, months);
       let t = Date.now();
       await page.goto("/live");

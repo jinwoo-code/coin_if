@@ -30,7 +30,21 @@ export const DEFAULT_LIFE: Life = {
 export const DEFAULT_WANTS: Wants = { salary: 3500, hates: [] };
 export const DEFAULT_BEHAVIOR: Behavior = { persistence: 3, risk: 3, coping: 3, social: 3 };
 
+// 저장 v9까지의 예전 10문항 검사: 그 답은 지우고 점수는 Mini-IPIP를 답할 때까지 둔다(결과가 갑자기 안 바뀌게). 50문항을 한 사람은 그대로.
+type OldProfile = { depth?: { bfiItems?: number; bigFiveItems?: number }; answers?: Record<string, unknown>; checkins?: Record<string, unknown>[]; legacyBigFive?: boolean };
+function fromOldTest(p: OldProfile) {
+  const { bfiItems, ...depth } = p.depth ?? {};
+  const { bfi10: _a, ...answers } = p.answers ?? {};
+  return {
+    depth: { ...depth, bigFiveItems: depth.bigFiveItems ?? ((bfiItems ?? 0) >= 50 ? 50 : 0) },
+    answers,
+    legacyBigFive: p.legacyBigFive || ((bfiItems ?? 0) > 0 && (bfiItems ?? 0) < 50) ? true : undefined,
+    checkins: p.checkins?.map(({ bfi10: _c, ...c }) => c),
+  };
+}
+
 export function normalizeProfile(p: Partial<Profile> & Pick<Profile, "name">): Profile {
+  const old = fromOldTest(p as unknown as OldProfile);
   return {
     major: "",
     dilemma: "",
@@ -47,18 +61,19 @@ export function normalizeProfile(p: Partial<Profile> & Pick<Profile, "name">): P
     story: null,
     since: null,
     corrections: [],
-    checkins: [],
     pilot: null,
     ...p,
+    legacyBigFive: old.legacyBigFive,
+    checkins: (old.checkins ?? []) as unknown as Profile["checkins"],
     storyRaw: { ...p.storyRaw },
-    answers: { ...p.answers },
+    answers: old.answers as Profile["answers"],
     readiness: { ...p.readiness },
     spec: { ...DEFAULT_SPEC, ...p.spec },
     life: { ...DEFAULT_LIFE, ...p.life },
     wants: { ...DEFAULT_WANTS, ...p.wants },
     behavior: { ...DEFAULT_BEHAVIOR, ...p.behavior },
     judges: p.judges ?? {},
-    depth: { bfiItems: 0, behaviorItems: 0, interestItems: 0, resume: false, github: false, spec: false, life: false, ...p.depth },
+    depth: { behaviorItems: 0, interestItems: 0, resume: false, github: false, spec: false, life: false, ...(old.depth as Partial<Profile["depth"]>), bigFiveItems: old.depth.bigFiveItems },
   };
 }
 
@@ -69,9 +84,9 @@ export function completeness(p: Profile): { items: { label: string; done: boolea
     { label: "가치관", done: p.values.length >= 4 },
     { label: "스펙", done: p.depth.spec || p.depth.resume },
     { label: "생활 조건", done: p.depth.life },
-    { label: "성격 10문항", done: p.depth.bfiItems >= 10 },
+    { label: "성격 20문항", done: p.depth.bigFiveItems >= 20 },
     { label: "상황 질문 6개", done: p.depth.behaviorItems >= 6 },
-    { label: "성격 50문항", done: p.depth.bfiItems >= 50 },
+    { label: "성격 50문항", done: p.depth.bigFiveItems >= 50 },
     { label: "흥미 검사", done: p.depth.interestItems >= 24 },
     { label: "상황 질문 18개", done: p.depth.behaviorItems >= 12 },
     { label: "경험 이야기", done: p.experiences.trim().length > 0 },

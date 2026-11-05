@@ -1,3 +1,5 @@
+import { normalizeProfile } from "../lib/profile";
+import { IPIP_REST_IDS, MINI_IDS, MINI_ITEMS } from "../lib/mini-ipip";
 // AI 분신 판단 단위 테스트: 가짜 응답으로 재요청 경로, 부정 표현 필터, 실패 표시, 화면 문구를 확인한다(AI를 안 부름).
 //   npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-judge.ts
 import assert from "node:assert/strict";
@@ -303,10 +305,10 @@ test("가족이 바라는 직업: 이 진로면 더 해 봄, 다른 진로면 �
   assert.equal(withFamilyPull(DEMO_PROFILE, dev), DEMO_PROFILE);
   assert.ok(choiceProbs(withFamilyPull(p, dev), CALM, [...tones]).every((x) => x > 0));
 });
-test("체크인 성격: 10문항끼리 비교하고, 누를 때만 차이를 더한다", () => {
-  const old = { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 3, 7: 3, 8: 3, 9: 3, 10: 3 };
-  const p = { ...DEMO_PROFILE, bigFive: { O: 4, C: 2, E: 3, A: 3, N: 5 }, answers: { ...DEMO_PROFILE.answers, bfi10: old } };
-  const next = { ...old, 8: 5, 3: 1, 9: 5, 4: 1 }; // 성실성 +2, 신경성 +2
+test("체크인 성격: Mini-IPIP끼리 비교하고, 누를 때만 차이를 더한다", () => {
+  const old = Object.fromEntries(MINI_IDS.map((id) => [id, 3]));
+  const p = { ...DEMO_PROFILE, bigFive: { O: 4, C: 2, E: 3, A: 3, N: 5 }, answers: { ...DEMO_PROFILE.answers, ipip: old } };
+  const next = { ...old, b23: 5, b33: 5, b28: 1, b18: 1, b39: 5, b29: 5, b9: 1, b19: 1 }; // 성실성 +2, 신경성 +2
   const diff = bigFiveDiff(p, next);
   assert.equal(diff.find((d) => d.key === "C")!.after, 5);
   assert.equal(diff.find((d) => d.key === "C")!.before, 3);
@@ -314,7 +316,28 @@ test("체크인 성격: 10문항끼리 비교하고, 누를 때만 차이를 더
   assert.equal(q.bigFive.C, 4); // 2 + 2
   assert.equal(q.bigFive.N, 5); // 5 + 2, 위로 막힘
   assert.equal(q.bigFive.O, 4);
-  assert.deepEqual(q.answers.bfi10, next);
+  assert.deepEqual(q.answers.ipip, next);
+});
+test("Mini-IPIP: IPIP 50의 부분집합, 요인마다 4문항, 뒤집기는 원 논문대로", () => {
+  assert.equal(new Set(MINI_IDS).size, 20);
+  assert.equal(IPIP_REST_IDS.length, 30);
+  for (const k of ["O", "C", "E", "A", "N"]) assert.equal(MINI_ITEMS.filter((i) => i.key === k).length, 4);
+  const reversed = MINI_ITEMS.filter((i) => i.reverse).map((i) => i.id).toSorted();
+  assert.deepEqual(reversed, ["b6", "b22", "b28", "b9", "b20", "b10", "b16", "b32", "b18", "b19", "b30"].toSorted());
+});
+test("저장 v9 프로필: 10문항 답은 지우고 점수는 두되 다시 묻는다, 50문항은 그대로", () => {
+  const big = { O: 4, C: 2, E: 3, A: 3, N: 5 };
+  const old = normalizeProfile({ name: "옛", bigFive: big, answers: { bfi10: { 1: 3 } }, depth: { bfiItems: 10 }, checkins: [{ bfi10: { 1: 3 } }] } as never);
+  assert.deepEqual(old.bigFive, big);
+  assert.equal(old.legacyBigFive, true);
+  assert.equal(old.depth.bigFiveItems, 0);
+  assert.equal("bfi10" in old.answers, false);
+  assert.equal("bfi10" in old.checkins[0], false);
+  const full = normalizeProfile({ name: "옛", answers: {}, depth: { bfiItems: 50 } } as never);
+  assert.equal(full.depth.bigFiveItems, 50);
+  assert.equal(full.legacyBigFive, undefined);
+  // 다시 정규화해도 그대로
+  assert.equal(normalizeProfile(old).legacyBigFive, true);
 });
 test("체크인 메일: 켠 사람만, 때가 됐을 때, 차례마다 이름이 달라진다", () => {
   const now = Date.parse("2026-11-04T00:00:00Z");

@@ -16,8 +16,9 @@ import type { Multiverse, PremiumItem, Profile, Report, Selection, SimEvent } fr
 // v7(2026-11-03 파일럿): profile에 pilot 추가, holdoutPicks에 파일럿 답(p1~p20).
 // v8(2026-11-03 선택 개편): profile에 judges(AI 분신 판단 캐시) 추가.
 // v9(2026-11-04 실시간 판단 모드): selection에 mode, 진행 저장 live 추가.
-const VERSION = "v9";
-const PREVS = ["v8", "v7", "v6", "v5", "v4"]; // 최근 판부터 찾는다
+// v10(2026-11-05 Mini-IPIP): 성격 검사 교체. answers.bfi10을 지우고 depth.bigFiveItems로, 10문항 점수는 legacyBigFive 표시(lib/profile.ts). 다시 답하면 표시가 사라진다.
+const VERSION = "v10";
+const PREVS = ["v9", "v8", "v7", "v6", "v5", "v4"]; // 최근 판부터 찾는다
 const KEYS = {
   profile: `cr:${VERSION}:profile`,
   selection: `cr:${VERSION}:selection`,

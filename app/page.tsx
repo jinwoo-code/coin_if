@@ -59,7 +59,7 @@ function HeroMap() {
 }
 
 const STEPS = [
-  { title: "나를 알려 주기", body: "AI와 인터뷰하고 성격 질문 10개에 답해요. 빠르게 하면 약 10분이에요" },
+  { title: "나를 알려 주기", body: "AI와 인터뷰하고 성격 질문 20개에 답해요. 빠르게 하면 약 11분이에요" },
   { title: "여러 길을 동시에 살아보기", body: "실제 직업 통계로 정한 사건이 분기마다 일어나요" },
   { title: "그때의 나와 이야기하기", body: "끝에 선 나에게 묻고, 이번 주에 할 일을 받아 가요" },
 ];
@@ -112,7 +112,7 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/interview" className="btn-primary sm:px-7">
-              약 10분 인터뷰로 시작하기
+              약 11분 인터뷰로 시작하기
             </Link>
             <button onClick={() => startDemo("developer")} className="btn-ghost sm:px-7">
               예시 인물로 바로 보기

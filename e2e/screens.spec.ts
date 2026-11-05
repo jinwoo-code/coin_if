@@ -15,7 +15,7 @@ test("모든 화면 넘침 검사", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
   await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: 110_000 });
-  await page.evaluate(() => localStorage.setItem("cr:v9:pilotInvite", "true"));
+  await page.evaluate(() => localStorage.setItem("cr:v10:pilotInvite", "true"));
 
   const report: object[] = [];
   for (const width of [390, 1280]) {

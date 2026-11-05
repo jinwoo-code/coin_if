@@ -176,6 +176,15 @@ export default function ChoosePage() {
             <ChevronRight aria-hidden="true" size={16} />
           </Link>
         ) : null}
+        {profile.legacyBigFive ? (
+          <Link href="/interview?more=1" data-testid="legacy-big-five" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
+            <span>
+              <strong className="font-semibold">성격 검사가 바뀌었어요</strong>
+              <span className="text-muted"> · 새 20문항에 답해 주세요(약 2분). 그때까지는 예전 점수로 계산해요</span>
+            </span>
+            <ChevronRight aria-hidden="true" size={16} />
+          </Link>
+        ) : null}
         {canDeepen(profile) ? (
           <Link href="/interview?more=1" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
             <span>

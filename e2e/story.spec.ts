@@ -9,7 +9,7 @@ test("인생 이야기 한 장", async ({ page }) => {
   const others = watchOtherPosts(page);
   // 검사를 마친 사람처럼 프로필만 넣어 둔다
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("cr:v9:profile", JSON.stringify({ name: "테스트", major: "경영학과" })));
+  await page.evaluate(() => localStorage.setItem("cr:v10:profile", JSON.stringify({ name: "테스트", major: "경영학과" })));
   await page.goto("/story");
   await expect(page.getByText("0/6장 끝냄")).toBeVisible();
   await page.getByRole("link", { name: /큰 결정과 후회/ }).click();

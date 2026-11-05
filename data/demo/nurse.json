@@ -13,7 +13,7 @@
   "life": { "savings": 300, "support": 40, "livingCost": 90, "military": "해당없음", "enlistIn": null, "region": "경기·인천", "studyHours": 3, "partTimeHours": 8 },
   "wants": { "salary": 3800, "hates": ["야근"] },
   "behavior": { "persistence": 4, "risk": 2.5, "coping": 3, "social": 3.5 },
-  "depth": { "bfiItems": 10, "behaviorItems": 6, "interestItems": 0, "resume": false, "github": false, "spec": true, "life": true },
+  "depth": { "bigFiveItems": 20, "behaviorItems": 6, "interestItems": 0, "resume": false, "github": false, "spec": true, "life": true },
   "worldIds": ["nurse", "civil-servant"],
   "months": 36
 }
