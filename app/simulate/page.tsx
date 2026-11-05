@@ -4,7 +4,7 @@ import { BarChart3, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { freqWord, LineBadge, MockNotice, RouteProgress, Screen, StateMeters, STATE_META, won } from "@/components/ui";
+import { freqWord, LineBadge, MockNotice, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { store } from "@/lib/store";
 import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
@@ -134,6 +134,7 @@ export default function SimulatePage() {
   const [animateTimeline, setAnimateTimeline] = useState(false);
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [error, setError] = useState("");
+  const [selectedWorldId, setSelectedWorldId] = useState("");
   const startedRef = useRef(false);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -238,8 +239,8 @@ export default function SimulatePage() {
   }
 
   const current = rows.at(-1);
-  const lanes = worlds.length || 2;
-  const gridClass = lanes === 3 ? "grid-cols-[repeat(3,minmax(150px,1fr))] sm:grid-cols-[64px_repeat(3,minmax(0,1fr))]" : "grid-cols-[repeat(2,minmax(0,1fr))] sm:grid-cols-[64px_repeat(2,minmax(0,1fr))]";
+  const selectedWorld = worlds.find((w) => w.id === selectedWorldId) ?? worlds[0];
+  const visibleWorlds = selectedWorld ? [selectedWorld] : [];
   const latest = (wid: string) => rows.flatMap((r) => r.events).filter((e) => e.worldId === wid).at(-1);
 
   return (
@@ -259,7 +260,7 @@ export default function SimulatePage() {
             <span className="hidden sm:inline">다시 살아보기</span>
           </button>
           {done ? (
-            <Link href={`/multiverse?world=${worlds[0]?.id ?? ""}`} className="btn-primary flex-1">
+            <Link href={`/multiverse?world=${selectedWorld?.id ?? ""}`} className="btn-primary flex-1">
               <GitBranch aria-hidden="true" size={18} /> 다른 세계선 보기
             </Link>
           ) : (
@@ -293,29 +294,52 @@ export default function SimulatePage() {
         </div>
       ) : null}
 
-      {/* 진로별 지금 처지 */}
-      <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: `repeat(${lanes}, minmax(0, 1fr))` }}>
-        {worlds.map((w) => {
+      {worlds.length > 0 ? (
+        <section className="mt-5" aria-labelledby="world-picker">
+          <h2 id="world-picker" className="text-base font-bold">살펴볼 진로를 선택하세요</h2>
+          <div role="group" aria-labelledby="world-picker" className="mt-3 flex flex-wrap gap-2">
+            {worlds.map((w) => (
+              <button
+                key={w.id}
+                type="button"
+                aria-pressed={selectedWorld?.id === w.id}
+                aria-controls="selected-world-content"
+                onClick={() => setSelectedWorldId(w.id)}
+                className="flex min-h-12 min-w-0 max-w-full items-center gap-2 rounded-2xl border-2 px-4 py-3 text-left text-sm font-bold sm:text-base"
+                style={{ borderColor: selectedWorld?.id === w.id ? w.color : "#E3E6EB", background: selectedWorld?.id === w.id ? `${w.color}12` : "#FFFFFF" }}
+              >
+                <LineBadge world={w} size={24} />
+                <span className="min-w-0">{w.name}</span>
+                {selectedWorld?.id === w.id ? <span className="sr-only">선택됨</span> : null}
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} 본선 결과` : "본선 결과"} className="min-w-0">
+      {/* 선택한 진로의 상태와 타임라인만 전체 너비로 보여 준다. */}
+      <div className="mt-3">
+        {visibleWorlds.map((w) => {
           const ev = latest(w.id);
           return (
             <section key={w.id} aria-label={`${w.name} 지금 상태`} className="card p-3.5 sm:p-4">
               <div className="mb-1 flex items-center gap-2">
                 <LineBadge world={w} size={22} />
-                <h2 className="truncate text-sm font-bold sm:text-base">
-                  <span className="sm:hidden">{w.short}</span>
-                  <span className="hidden sm:inline">{w.name}</span>
-                </h2>
+                <h2 className="min-w-0 text-lg font-bold">{w.name}</h2>
               </div>
-              <p className="mb-2.5 truncate text-cap text-muted">{ev ? `${ev.status}${ev.salary ? ` · 연봉 ${won(ev.salary)}` : ""}` : "출발 전"}</p>
+              <p className="mb-4 text-sm text-muted">{ev ? `${ev.status}${ev.salary ? ` · 연봉 ${won(ev.salary)}` : ""}` : "출발 전"}</p>
               {ev ? (
-                <>
-                  <div className="sm:hidden">
-                    <StateMeters state={ev.state} color={w.color} keys={["satisfaction", "stress", "money"]} />
-                  </div>
-                  <div className="hidden sm:block">
-                    <StateMeters state={ev.state} color={w.color} keys={["satisfaction", "stress", "skill", "money"]} />
-                  </div>
-                </>
+                <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {STATE_META.filter((m) => ["satisfaction", "stress", "skill", "money"].includes(m.key)).map((m) => (
+                    <div key={m.key} className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
+                      <dt className="text-sm font-medium text-muted">{m.label}</dt>
+                      <dd className="num mt-1 break-words text-xl font-extrabold">
+                        {m.key === "money" ? won(ev.state.money) : <>{ev.state[m.key]}<span className="ml-1 text-sm font-normal text-muted">/ 100</span></>}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
               ) : null}
             </section>
           );
@@ -329,17 +353,17 @@ export default function SimulatePage() {
       ) : null}
 
       {/* 노선도 타임라인 */}
-      <div className="-mx-5 mt-6 overflow-x-auto px-5 sm:mx-0 sm:px-0">
-        <ol className={`grid min-w-full gap-x-2 sm:gap-x-3 ${gridClass}`}>
+      <div className="mt-6 min-w-0">
+        <ol className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-x-3 sm:grid-cols-[80px_minmax(0,1fr)]">
           {rows.map((row, ri) => {
             const isCurrent = !done && ri === rows.length - 1;
             return (
               <li key={row.station} className="contents">
                 <span className={`num hidden whitespace-pre-line pt-2 text-cap leading-snug sm:block ${isCurrent ? "font-bold text-ink" : "text-muted"}`}>{row.label.replace(" ", "\n")}</span>
-                {worlds.map((w) => {
+                {visibleWorlds.map((w) => {
                   const ev = row.events.find((e) => e.worldId === w.id);
                   return (
-                    <div key={w.id} className="relative pb-4 pl-6 sm:pl-7">
+                    <div key={w.id} className="relative min-w-0 pb-4 pl-6 sm:pl-7">
                       <span aria-hidden="true" className={`absolute bottom-0 left-[9px] top-0 w-1 origin-top rounded-full ${animateTimeline && isCurrent ? "animate-draw" : ""}`} style={{ background: w.color }} />
                       <span
                         aria-hidden="true"
@@ -357,11 +381,11 @@ export default function SimulatePage() {
           {done ? (
             <li className="contents">
               <span className="hidden pt-2 text-cap font-bold sm:block">종착역</span>
-              {worlds.map((w) => {
+              {visibleWorlds.map((w) => {
                 const mv = mvs[w.id];
                 const main = mv?.lines.find((l) => l.isMain);
                 return (
-                  <div key={w.id} className="relative pl-7">
+                  <div key={w.id} className="relative min-w-0 pl-7">
                     <span aria-hidden="true" className="absolute left-[9px] top-0 h-3 w-1 rounded-full" style={{ background: w.color }} />
                     <span aria-hidden="true" className="absolute left-[-3px] top-2 flex h-7 w-7 items-center justify-center rounded-full" style={{ background: w.color }}>
                       <span className="h-2.5 w-2.5 rounded-full bg-white" />
@@ -387,6 +411,7 @@ export default function SimulatePage() {
         </ol>
       </div>
       <div ref={endRef} />
+      </div>
 
       {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">100번 살아보고 첫 번째 역으로 출발하는 중…</p> : null}
       {error ? (
