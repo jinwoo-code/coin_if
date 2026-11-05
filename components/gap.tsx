@@ -12,6 +12,7 @@ import type { RequirementItem, Requirements } from "@/lib/requirements";
 import type { Profile, WorldTemplate } from "@/lib/types";
 
 const SHOW = 8;
+const PREVIEW_ROWS = 3;
 const STATUS = { have: "있음", partial: "부분적", none: "없음" } as const;
 const KIND = { skill: "능력", cert: "자격", experience: "경험", exam: "시험 과목", step: "절차" } as const;
 const GRADE = { official: "공식", curated: "공식 문서 정리", interview: "현직자", assumed: "가정값" } as const;
@@ -101,7 +102,7 @@ function Row({ r, rank }: { r: PriorityRow; rank: number }) {
   );
 }
 
-export function GapSection({ profile, world, months, startYm }: { profile: Profile; world: WorldTemplate; months: number; startYm: string }) {
+export function GapSection({ profile, world, months, startYm, preview = null }: { profile: Profile; world: WorldTemplate; months: number; startYm: string; preview?: { goal: string } | null }) {
   const [req, setReq] = useState<Requirements | null>(null);
   const [deltas, setDeltas] = useState<Record<string, number> | null>(null);
   const [failed, setFailed] = useState(false);
@@ -150,12 +151,27 @@ export function GapSection({ profile, world, months, startYm }: { profile: Profi
       <p className="mt-1 text-sm">
         필요한 것 {gaps.length}개 중 있음 {have.length} · 부분적 {gaps.filter((g) => g.status === "partial").length} · 없음 {gaps.filter((g) => g.status === "none").length}
       </p>
-      {req.notes?.map((n) => (
+      {preview ? (
+        <>
+          <p className="mt-2 text-sm font-medium" data-testid="preview-goal">
+            목표: {preview.goal}
+          </p>
+          <h4 className="mt-4 text-sm font-bold">먼저 할 것(미리 보기 {PREVIEW_ROWS}개)</h4>
+          <ol className="mt-2 flex flex-col gap-2">
+            {rows.slice(0, PREVIEW_ROWS).map((r, i) => (
+              <Row key={r.item.id} r={r} rank={i + 1} />
+            ))}
+          </ol>
+        </>
+      ) : null}
+      {preview ? null : req.notes?.map((n) => (
         <p key={n} className="mt-2 rounded-lg bg-ground p-2 text-cap">
           {n}
         </p>
       ))}
 
+      {preview ? null : (
+        <>
       {req.skillGroups?.length ? (
         <div className="mt-3 rounded-lg border border-hair p-3" data-testid={`skills-${world.id}`}>
           <p className="text-sm font-medium">이 능력은 어느 정도예요?</p>
@@ -261,6 +277,8 @@ export function GapSection({ profile, world, months, startYm }: { profile: Profi
         시뮬레이션 수치는 그 항목을 갖췄다고 가정하고 200번 다시 돌린 차이예요(시뮬레이션 가정 기준). 시간과 순서를 정하는 가중치는 가정값이에요. 기준일 {req.baseDate}. 이 목록은 준비 계획이고 합격·취업을 보장하지 않아요. 시험 일정은 공식
         사이트에서 확인해 주세요.
       </p>
+        </>
+      )}
     </div>
   );
 }

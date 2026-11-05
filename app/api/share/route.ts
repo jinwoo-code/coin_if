@@ -3,15 +3,10 @@ import { NextResponse } from "next/server";
 import { isDemoPerson } from "@/lib/demo";
 import { createShare, revokeShare } from "@/lib/share-store";
 import { cleanShared } from "@/lib/shared-report";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { currentUser } from "@/lib/supabase/server";
+import { hasPremium } from "@/lib/tokens";
 
 export const dynamic = "force-dynamic";
-
-async function hasPremium(userId: string) {
-  const res = await supabaseAdmin()?.from("token_ledger").select("id").eq("user_id", userId).eq("reason", "premium_report").limit(1);
-  return Boolean(res?.data?.length);
-}
 
 export async function POST(req: Request) {
   const body = await req.text();

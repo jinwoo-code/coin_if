@@ -38,6 +38,12 @@ export async function spend(feature: Feature, key: string | null, opts: { requir
   return { ok: true, charged: !r.unlimited && !r.already, unlimited: Boolean(r.unlimited), already: Boolean(r.already), balance: r.balance, orgId: r.org_id ?? null, userId: user.id, ref };
 }
 
+// 프리미엄 리포트를 연 적이 있는지(대학 계약은 0토큰 행으로 남는다).
+export async function hasPremium(userId: string) {
+  const res = await supabaseAdmin()?.from("token_ledger").select("id").eq("user_id", userId).eq("reason", "premium_report").limit(1);
+  return Boolean(res?.data?.length);
+}
+
 // 서버 쪽 실패로 결과를 못 줬을 때 돌려준다(반대 금액 행을 더한다. 원장은 고치지 않는다).
 export async function refund(userId: string, feature: Feature, ref: string, amount: number = COSTS[feature]) {
   await supabaseAdmin()

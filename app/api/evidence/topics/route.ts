@@ -4,11 +4,14 @@ import forms from "@/data/evidence-forms.json";
 import { hasCrisis } from "@/lib/crisis";
 import { cleanTopics, isExperienceForm, isProjectForm, ruleTopics, type Topic, type TopicRules } from "@/lib/evidence";
 import { ALL_WORLD_IDS, type MajorFamily } from "@/lib/job-codes";
+import { isDemoPerson } from "@/lib/demo";
 import { generateJSON } from "@/lib/llm";
+import { currentUser } from "@/lib/supabase/server";
+import { hasPremium } from "@/lib/tokens";
 import { requirementsFor } from "@/lib/requirements-server";
 import { getWorld } from "@/lib/worlds";
 
-type Body = { world?: string; family?: string; cards?: string[]; person?: { major?: string; interests?: string[]; experiences?: string; values?: string[]; coreValues?: string[] } };
+type Body = { world?: string; family?: string; cards?: string[]; person?: { name?: string; major?: string; interests?: string[]; experiences?: string; values?: string[]; coreValues?: string[] } };
 const short = (s: unknown, n: number) => (typeof s === "string" ? s.trim().slice(0, n) : "");
 const shortList = (x: unknown) => (Array.isArray(x) ? x.filter((v) => typeof v === "string").slice(0, 8).map((v) => short(v, 20)) : []);
 
@@ -27,6 +30,12 @@ export async function POST(req: Request) {
   if (!cards.length) return NextResponse.json({ error: "고를 증거물이 없어요" }, { status: 400 });
 
   const major = short(body?.person?.major, 40);
+  // 프리미엄 기능이다. 시연 인물이 아니면 프리미엄을 연 사람만(AI를 부르기 전에 막는다).
+  if (!isDemoPerson({ name: short(body?.person?.name, 40), major })) {
+    const user = await currentUser();
+    if (!user) return NextResponse.json({ error: "로그인이 필요해요" }, { status: 401 });
+    if (!(await hasPremium(user.id))) return NextResponse.json({ error: "프리미엄 리포트를 연 뒤에 쓸 수 있어요" }, { status: 402 });
+  }
   const experiences = short(body?.person?.experiences, 600);
   // 전공이 이 진로와 안 맞으면 규칙 예시에 전공을 넣지 않는다(컴퓨터 전공의 실습 보고서 같은 문장이 나와서).
   const majorFits = world.majors.some((k) => major.replace(/\s/g, "").includes(k));

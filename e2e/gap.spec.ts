@@ -311,3 +311,57 @@ test("상담사 공유: 미리 보기 → PDF 화면 → 링크 열기(AI 표시
   await expect(other.getByText("볼 수 없는 링크예요")).toBeVisible();
   await viewer.close();
 });
+
+test("무료는 미리 보기까지, 프리미엄을 열면 격차~실행 전체", async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
+  // 시연 인물이 아닌 사람으로
+  await page.evaluate(() => {
+    const k = Object.keys(localStorage).find((x) => x.endsWith(":profile"))!;
+    localStorage.setItem(k, JSON.stringify({ ...JSON.parse(localStorage.getItem(k)!), name: "파일럿학생" }));
+  });
+  await page.goto("/report");
+  await expect(page.getByTestId("free-todos")).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByRole("heading", { name: /WOOP|이번 주 실행 계획/ })).toBeVisible();
+  const preview = page.getByTestId("premium-preview");
+  await expect(preview.getByTestId("preview-goal")).toContainText(/목표: .+%/);
+  await expect(preview.getByText("미리 보기 3개")).toBeVisible();
+  await expect(page.getByTestId("plan-developer")).toHaveCount(0);
+  await expect(page.getByTestId("evidence-developer")).toHaveCount(0);
+  await expect(page.getByTestId("week-plan")).toHaveCount(0);
+  await page.getByRole("button", { name: "상담사에게 공유" }).click();
+  await expect(page.getByTestId("share-panel")).toHaveCount(0);
+  await page.waitForTimeout(800);
+  await preview.scrollIntoViewIfNeeded();
+  await preview.screenshot({ path: "test-results/free-preview-390.png" });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await page.screenshot({ path: "test-results/free-1280.png" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  // 서버도 막는다: 로그인 안 한 사람의 주제 호출·공유 링크
+  const topics = await page.request.post("/api/evidence/topics", { data: { world: "developer", cards: ["career-note"], person: { name: "파일럿학생", major: "컴퓨터" } } });
+  expect(topics.status()).toBe(401);
+  const link = await page.request.post("/api/share", { data: { report: { person: { name: "파일럿학생", major: "컴퓨터" }, worlds: [{ id: "x" }] } } });
+  expect(link.status()).toBe(401);
+  // 로그인 안 했으면 로그인으로
+  const open = page.getByRole("button", { name: /프리미엄 리포트 열기/ });
+  await expect(open).toContainText("토큰 5개");
+  await page.route("**/api/report/premium", (r) => r.fulfill({ status: 200, json: { items: [], charged: true, unlimited: false, balance: 0 } }));
+  await open.click();
+  await expect(page.getByTestId("plan-developer")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("week-plan")).toBeVisible();
+  await expect(page.getByTestId("premium-preview")).toHaveCount(0);
+  // 넓은 비교 표가 화면을 밀면 안 된다
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  await page.screenshot({ path: "test-results/premium-open-390.png" });
+  await page.getByRole("button", { name: "상담사에게 공유" }).click();
+  await expect(page.getByTestId("share-panel")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  await page.screenshot({ path: "test-results/premium-open-1280.png" });
+});

@@ -1,6 +1,6 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
-import { CalendarPlus, Lock, Share2 } from "lucide-react";
+import { CalendarPlus, Check, Lock, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { GapSection } from "@/components/gap";
 import { computeLevers } from "@/lib/levers-client";
+import { isDemoPerson } from "@/lib/demo";
 import { hasSupabase } from "@/lib/supabase/config";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
@@ -180,31 +181,33 @@ function requestReport(key: string, body: unknown): Promise<Report> {
 }
 
 // 프리미엄 리포트: 숫자는 전부 엔진 값(세계선 전체 비교), 할 일 문장만 AI.
-function Premium({ items, mvs, ids, busy, onOpen }: { items: PremiumItem[] | null; mvs: Record<string, Multiverse>; ids: string[]; busy: boolean; onOpen: () => void }) {
+function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[] | null; mvs: Record<string, Multiverse>; ids: string[]; busy: boolean; onOpen: () => void; demo: boolean }) {
   // 학교 무제한이면 토큰이 줄지 않으니 버튼에 토큰 수 대신 그렇게 쓴다.
   const [unlimited, setUnlimited] = useState(false);
   useEffect(() => {
-    if (items || !hasSupabase()) return;
+    if (items || demo || !hasSupabase()) return;
     fetch("/api/tokens", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setUnlimited(Boolean(d.unlimited)))
       .catch(() => setUnlimited(false));
-  }, [items]);
+  }, [items, demo]);
   if (!items)
     return (
       <section className="card p-5 sm:p-6 print:hidden" aria-labelledby="premium">
         <h2 id="premium" className="flex items-center gap-2 text-xl font-bold">
           <Lock aria-hidden="true" size={18} /> 프리미엄 리포트
         </h2>
+        {demo ? <p className="mt-2 text-sm font-medium">예시 인물이라 로그인 없이 전체를 보여 드려요.</p> : null}
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-          <li>갈라진 세계선 전부를 나란히 비교한 표</li>
-          <li>바꿀 수 있는 것 전체(조건을 바꿔 다시 살아본 결과)</li>
-          <li>자주 막히는 길로 가고 있을 때 할 일</li>
-          <li>상담사에게 PDF·읽기 전용 링크로 공유하기</li>
+          <li>필요한 것과 내 격차 전체, 우선순위와 근거</li>
+          <li>월별 일정, 증거물과 주제 제안</li>
+          <li>계획 넣고 다시 살아 보기</li>
+          <li>이번 주 할 일 직접 정하기, 상담사에게 공유(PDF·링크)</li>
+          <li>세계선 전체 비교 표, 바꿀 수 있는 것 전체, 막히는 길에서 할 일</li>
         </ul>
-        {hasSupabase() ? (
+        {hasSupabase() || demo ? (
           <button className="btn-primary mt-5 w-full" onClick={onOpen} disabled={busy}>
-            {busy ? "만드는 중…" : `프리미엄 리포트 열기 · ${unlimited ? "학교 무제한" : "토큰 5개"}`}
+            {busy ? "만드는 중…" : `프리미엄 리포트 열기 · ${demo ? "예시 인물 무료" : unlimited ? "대학 계약에 포함" : "토큰 5개"}`}
           </button>
         ) : (
           <p className="mt-4 text-cap text-muted">로그인 기능이 연결되면 열 수 있어요.</p>
@@ -284,6 +287,31 @@ const WOOP_STEPS: { key: keyof Report["woop"]; label: string }[] = [
   { key: "plan", label: "만약 그러면 계획" },
 ];
 
+// 무료: 할 일 3개(체크만). 언제·어디서를 정하는 칸은 프리미엄.
+function FreeTodos({ todos }: { todos: string[] }) {
+  const [done, setDone] = useState<Record<number, boolean>>({});
+  return (
+    <section className="card p-5 sm:p-6" aria-labelledby="todo" data-testid="free-todos">
+      <h2 id="todo" className="text-xl font-bold">
+        이번 주 할 일
+      </h2>
+      <ul className="mt-3 flex flex-col">
+        {todos.slice(0, 3).map((t, i) => (
+          <li key={t}>
+            <label className="flex min-h-[52px] cursor-pointer items-center gap-3 border-b border-hair text-base last:border-0">
+              <input type="checkbox" className="peer sr-only" checked={Boolean(done[i])} onChange={(e) => setDone((d) => ({ ...d, [i]: e.target.checked }))} />
+              <span aria-hidden="true" className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-hair text-transparent peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2">
+                <Check size={15} strokeWidth={3} />
+              </span>
+              <span className={done[i] ? "text-muted line-through" : ""}>{t}</span>
+            </label>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export default function ReportPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -356,6 +384,9 @@ export default function ReportPage() {
   }
 
   if (!profile) return null;
+  // 프리미엄을 열었거나 시연 인물이면 격차~실행 전체를 보여 준다. 계산은 브라우저 것이라 화면에서 나누는 것이고, AI 호출과 공유 링크는 서버에서 막는다.
+  const demo = isDemoPerson(profile);
+  const unlocked = demo || premium !== null;
   const best = report ? Math.max(...report.worlds.map((w) => w.fit)) : 0;
 
   return (
@@ -368,7 +399,7 @@ export default function ReportPage() {
           <button className="btn-ghost flex-1 sm:flex-none" onClick={downloadCheckin} disabled={!report}>
             <CalendarPlus aria-hidden="true" size={18} /> 한 달 뒤 체크인
           </button>
-          <button className="btn-primary flex-1 sm:flex-none" onClick={() => setShareOpen(true)} disabled={!report}>
+          <button className="btn-primary flex-1 sm:flex-none" onClick={() => (unlocked ? setShareOpen(true) : document.getElementById("premium")?.scrollIntoView({ behavior: "smooth", block: "center" }))} disabled={!report}>
             <Share2 aria-hidden="true" size={18} /> <span className="whitespace-nowrap">상담사에게 공유</span>
           </button>
         </div>
@@ -380,7 +411,7 @@ export default function ReportPage() {
           <p>살아본 길들을 비교하는 중…</p>
         </div>
       ) : (
-        <div className="grid gap-5 pt-2 lg:grid-cols-[1.2fr_1fr] lg:gap-6">
+        <div className="grid grid-cols-1 gap-5 pt-2 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-6 [&>*]:min-w-0">
           <div className="flex flex-col gap-5">
             <section className="card p-5 sm:p-6" aria-labelledby="fit">
               <h2 id="fit" className="text-xl font-bold">
@@ -444,15 +475,32 @@ export default function ReportPage() {
               })}
             </div>
 
-            {profile && selection ? (
+            {selection && unlocked ? (
               <section className="card flex flex-col gap-6 p-5 sm:p-6" aria-label="필요한 것과 내 격차">
                 {report.worlds.map((w) => (
                   <GapSection key={w.worldId} profile={profile} world={getWorld(w.worldId)} months={selection.months} startYm={selection.startYm} />
                 ))}
               </section>
             ) : null}
+            {selection && !unlocked && report.worlds[0] ? (
+              <section className="card p-5 sm:p-6" aria-label="프리미엄 미리 보기" data-testid="premium-preview">
+                <p className="label">프리미엄 미리 보기</p>
+                <div className="mt-2">
+                  <GapSection
+                    profile={profile}
+                    world={getWorld(report.worlds[0].worldId)}
+                    months={selection.months}
+                    startYm={selection.startYm}
+                    preview={{ goal: `${durationLabel(selection.months)} 안에 ${mvs[report.worlds[0].worldId]?.stats.gate?.label ?? ""} ${mvs[report.worlds[0].worldId]?.stats.gate?.share ?? 0}%` }}
+                  />
+                </div>
+                <p className="mt-3 flex items-center gap-1.5 text-cap text-muted">
+                  <Lock aria-hidden="true" size={13} /> 나머지 격차와 일정·증거물·다시 살아 보기·공유는 프리미엄에서 볼 수 있어요.
+                </p>
+              </section>
+            ) : null}
 
-            <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} />
+            <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} demo={demo} />
           </div>
 
           <div className="flex flex-col gap-5">
@@ -479,7 +527,7 @@ export default function ReportPage() {
               </ol>
             </section>
 
-            <WeekPlan report={report} />
+            {unlocked ? <WeekPlan report={report} /> : <FreeTodos todos={report.todos} />}
             <Programs region={profile.life.region} />
           </div>
         </div>
@@ -489,7 +537,7 @@ export default function ReportPage() {
           {notice}
         </p>
       ) : null}
-      {report && selection ? <SharePanel open={shareOpen} onClose={() => setShareOpen(false)} profile={profile} selection={selection} report={report} mvs={mvs} /> : null}
+      {report && selection && unlocked ? <SharePanel open={shareOpen} onClose={() => setShareOpen(false)} profile={profile} selection={selection} report={report} mvs={mvs} /> : null}
       <div className="print:hidden">
         <MyData />
       </div>

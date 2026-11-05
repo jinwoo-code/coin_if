@@ -2,6 +2,7 @@
 // 숫자(세계선 비교 표, 바꿀 수 있는 것 전체)는 브라우저가 엔진으로 계산해 보여 주고,
 // 여기서는 '그 길로 갈 것 같을 때 할 일' 문장만 AI가 쓴다. 상황은 엔진이 낸 세계선 중에서만 고른다.
 import { NextResponse } from "next/server";
+import { isDemoPerson } from "@/lib/demo";
 import { generateJSON } from "@/lib/llm";
 import { paywall, spend } from "@/lib/tokens";
 import type { Multiverse, PremiumItem, Profile, SimEvent } from "@/lib/types";
@@ -17,7 +18,8 @@ export async function POST(req: Request) {
     runKeys: string[];
   };
   const ids = Object.keys(multiverses);
-  const paid = await spend("premium_report", [...runKeys].sort().join("|"), { requireLogin: true });
+  // 시연 인물은 로그인 없이 볼 수 있다(발표 백업). 그 밖에는 5토큰, 대학 계약이면 포함.
+  const paid = isDemoPerson(profile) ? ({ ok: true, charged: false, unlimited: false, balance: 0 } as const) : await spend("premium_report", [...runKeys].sort().join("|"), { requireLogin: true });
   if (!paid.ok) return paywall(paid);
 
   // 진로마다 만족하며 끝난 비율이 가장 낮은 세계선 2개 = 막히는 길(엔진 값). 너무 드문 길(살아본 횟수의 3% 미만)과

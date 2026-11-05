@@ -182,7 +182,7 @@ function PortfolioSection({ req, profile, world, gaps }: { req: Requirements; pr
           world: world.id,
           family: majorFamily(profile.major),
           cards: plan.cards.filter((c) => !c.noTopic).map((c) => c.id),
-          person: { major: profile.major, interests: topInterests(profile.interests), experiences: profile.experiences, values: profile.values, coreValues: profile.story?.coreValues?.map((c) => c.value) ?? [] },
+          person: { name: profile.name, major: profile.major, interests: topInterests(profile.interests), experiences: profile.experiences, values: profile.values, coreValues: profile.story?.coreValues?.map((c) => c.value) ?? [] },
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
