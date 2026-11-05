@@ -1,10 +1,13 @@
 "use client";
 // 리포트 월별 일정. 계산은 lib/schedule.ts(AI 없음), 고친 값은 이 기기에만.
 import { useMemo, useState } from "react";
-import { monthLabel } from "@/lib/calendar";
+import { CI_NOTE, Ci } from "@/components/ui";
+import { durationLabel, monthLabel } from "@/lib/calendar";
 import type { PriorityRow } from "@/lib/gap";
+import { computePlanRerun } from "@/lib/levers-client";
+import { planHorizon, planInput, type PlanRerun } from "@/lib/plan-sim";
 import { retrainMonths, tuitionNote } from "@/lib/retrain";
-import { buildPlan, itemsToCut, overText, rangeLabel, type PlanEdits, type PlanRow } from "@/lib/schedule";
+import { buildPlan, itemsToCut, overText, rangeLabel, type Plan, type PlanEdits, type PlanRow } from "@/lib/schedule";
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { W } from "@/lib/weights";
@@ -64,6 +67,71 @@ function Bar({ r, months }: { r: PlanRow; months: number }) {
   return (
     <div className="mt-1.5 h-1.5 w-full rounded-full bg-ground" aria-hidden="true">
       <div className="h-full rounded-full bg-ink" style={{ marginLeft: `${left}%`, width: `${Math.min(width, 100 - left)}%`, opacity: r.lane === "practice" ? 0.55 : 1 }} />
+    </div>
+  );
+}
+
+// 계획대로 했다고 보고 다시 살아 보기. 무거워서 Worker에서, 누를 때만. 결과는 이 기기에만.
+function PlanRerunBox({ plan, rows, profile, world, startYm }: { plan: Plan; rows: PriorityRow[]; profile: Profile; world: WorldTemplate; startYm: string }) {
+  const months = planHorizon(plan);
+  const input = useMemo(() => planInput(plan, rows, world), [plan, rows, world]);
+  const sig = JSON.stringify([input, months, startYm, profile.readiness, profile.spec, profile.life]);
+  const [saved, setSaved] = useState(() => store.getPlanReruns()[world.id] ?? null);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const run = () => {
+    setBusy(true);
+    setFailed(false);
+    computePlanRerun(profile, world.id, months, startYm, input)
+      .then((result) => {
+        if (!result) return setFailed(true);
+        const next = { sig, result };
+        setSaved(next);
+        store.setPlanReruns({ ...store.getPlanReruns(), [world.id]: next });
+      })
+      .catch(() => setFailed(true))
+      .finally(() => setBusy(false));
+  };
+  const r: PlanRerun | null = saved?.result ?? null;
+  const stale = saved !== null && saved.sig !== sig;
+  const nothing = r !== null && r.applied.length === 0 && r.weekly === null;
+
+  return (
+    <div className="mt-4 rounded-lg bg-ground p-3" data-testid={`plan-rerun-${world.id}`}>
+      <p className="text-sm font-bold">이 계획대로 다시 살아 보기</p>
+      <p className="mt-1 text-cap text-muted">항목을 끝낸 달부터 그 조건을 갖췄다고 보고 1,000번 다시 살아요. 같은 시드로 지금 조건과 비교해요.</p>
+      <button type="button" disabled={busy} className="mt-2 min-h-11 rounded-full border border-hair bg-surface px-4 text-sm font-medium disabled:opacity-60" onClick={run}>
+        {busy ? "1,000번 다시 사는 중이에요…" : r ? "지금 계획으로 다시 계산하기" : "다시 살아 보기"}
+      </button>
+      {failed ? <p className="mt-2 text-cap font-medium" role="alert">계산하지 못했어요. 다시 눌러 주세요.</p> : null}
+      {r ? (
+        <div className="mt-3" aria-live="polite">
+          {stale ? <p className="mb-2 text-cap font-medium">계획이 바뀌었어요. 아래는 바꾸기 전 계획의 결과예요.</p> : null}
+          <p className="text-sm">
+            이 계획대로 하면 {durationLabel(r.months)} 안에 {r.label}
+          </p>
+          <p className="mt-1 text-lg font-bold">
+            <span className="num">{r.before}%</span> <Ci pct={r.before} n={r.n} /> → <span className="num">{r.after}%</span> <Ci pct={r.after} n={r.n} />
+          </p>
+          {nothing && r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 계획의 항목은 시뮬레이션이 보는 조건을 바꾸지 않아요. 숫자가 같아도 소용없는 항목이라는 뜻은 아니에요.{world.archetype === "exam" ? " 시험형은 주당 공부 시간을 고치면 달라져요." : ""}</p> : null}
+          {nothing && !r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 기간 안에 끝나는 항목이 없어요. 계획 기간을 늘리면 달라질 수 있어요.</p> : null}
+          {!nothing && r.before === r.after ? <p className="mt-1 text-cap font-medium">이 기간 안에는 숫자가 달라지지 않았어요. 계획 기간을 늘리면 달라질 수 있어요.</p> : null}
+          {r.weekly || r.applied.length ? (
+            <ul className="mt-2 flex flex-col gap-1 text-cap">
+              {r.weekly ? <li>처음부터: 주당 공부 {r.weekly.from}시간 → {r.weekly.to}시간</li> : null}
+              {r.applied.map((a) => (
+                <li key={a.label}>
+                  {monthLabel(startYm, a.month)}부터: {a.title} <span className="text-muted">({a.label})</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {r.notInSim.length ? <p className="mt-2 text-cap text-muted">시뮬레이션에 안 들어가는 줄: {r.notInSim.join(", ")}</p> : null}
+          {r.late.length ? <p className="mt-1 text-cap text-muted">기간 안에 안 끝나서 뺀 줄: {r.late.join(", ")}</p> : null}
+          {r.undated.length ? <p className="mt-1 text-cap text-muted">시점을 정하지 않아 뺀 항목: {r.undated.join(", ")}</p> : null}
+          <p className="mt-2 text-cap text-muted">계획을 제때 다 해낸다고 본 값이고, 항목 하나는 조건 한 단계로 쳐요. 자격증·준비도 배수는 대부분 가정값이에요. 합격·취업을 보장하지 않아요. {CI_NOTE}</p>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -179,6 +247,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
         </button>
       ) : null}
       <p className="mt-2 text-cap text-muted">시험 위치는 대략적인 자리예요. 실제 일정은 공식 사이트에서 확인하고 직접 고쳐 주세요.</p>
+      <PlanRerunBox plan={plan} rows={rows} profile={profile} world={world} startYm={startYm} />
     </div>
   );
 }

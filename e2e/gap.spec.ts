@@ -29,6 +29,20 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   await plan.getByRole("button", { name: /기간을 \d+개월로 늘리기/ }).click();
   await expect(plan.getByText(/주 \d+시간이 필요한데/)).toHaveCount(0);
   await plan.getByRole("button", { name: "처음 일정으로" }).click();
+  // 계획 넣고 다시 살아 보기: Worker 계산, 전후 숫자, 가정값 표시, 계획을 고치면 다시 계산 안내
+  const rerun = page.getByTestId("plan-rerun-developer");
+  await rerun.getByRole("button", { name: "다시 살아 보기" }).click();
+  await expect(rerun.getByText(/이 계획대로 하면 .+ 안에/)).toBeVisible({ timeout: 60_000 });
+  await expect(rerun.getByText(/\d+%.*→.*\d+%/)).toBeVisible();
+  await expect(rerun.getByText(/배수는 대부분 가정값/)).toBeVisible();
+  await rerun.scrollIntoViewIfNeeded();
+  await rerun.screenshot({ path: "test-results/plan-rerun-390.png" });
+  await plan.getByRole("spinbutton", { name: /주당 공부 시간/ }).fill("40");
+  await expect(rerun.getByText("계획이 바뀌었어요", { exact: false })).toBeVisible();
+  await plan.getByRole("button", { name: "처음 일정으로" }).click();
+  const cs = page.getByTestId("plan-rerun-civil-servant");
+  await cs.getByRole("button", { name: "다시 살아 보기" }).click();
+  await expect(cs.getByText(/시험형은 주당 공부 시간을 고치면 달라져요/)).toBeVisible({ timeout: 60_000 });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
   await plan.scrollIntoViewIfNeeded();
@@ -36,6 +50,8 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   await page.setViewportSize({ width: 1280, height: 900 });
   await plan.scrollIntoViewIfNeeded();
   await page.screenshot({ path: "test-results/gap-1280.png" });
+  await rerun.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "test-results/plan-rerun-1280.png" });
 });
 
 test("전공이 다른 진로를 고르면 학과부터라고 알려 준다", async ({ page }) => {

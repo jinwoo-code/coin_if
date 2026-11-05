@@ -1,5 +1,6 @@
 // 브라우저에서 무거운 계산을 Web Worker로 한다(진로마다 Worker 하나, 끝나면 닫음 → 진로 여러 개를 나란히).
 // Worker를 못 쓰는 환경이면 화면 스레드에서 계산한다.
+import { planRerun, type PlanInput, type PlanRerun } from "./plan-sim";
 import type { GapItem } from "./gap";
 import { gapDeltas } from "./gap-sim";
 import { buildMultiverse, levers } from "./multiverse";
@@ -59,6 +60,30 @@ export function computeGapDeltas(profile: Profile, worldId: string, months: numb
       reject(new Error(e.message));
     };
     worker.postMessage({ id: 0, kind: "gap", profile, worldId, months, startYm, gaps });
+  });
+}
+
+export function computePlanRerun(profile: Profile, worldId: string, months: number, startYm: string, plan: PlanInput): Promise<PlanRerun | null> {
+  const fallback = () => planRerun(profile, getWorld(worldId), months, startYm, plan);
+  let w: Worker | null = null;
+  try {
+    w = typeof Worker === "undefined" ? null : new Worker(new URL("./workers/levers.worker.ts", import.meta.url));
+  } catch {
+    w = null;
+  }
+  if (!w) return Promise.resolve(fallback());
+  const worker = w;
+  return new Promise((resolve, reject) => {
+    worker.onmessage = (e: MessageEvent<{ rerun?: PlanRerun | null; error?: string }>) => {
+      worker.terminate();
+      if (e.data.error) reject(new Error(e.data.error));
+      else resolve(e.data.rerun ?? null);
+    };
+    worker.onerror = (e) => {
+      worker.terminate();
+      reject(new Error(e.message));
+    };
+    worker.postMessage({ id: 0, kind: "plan", profile, worldId, months, startYm, plan });
   });
 }
 

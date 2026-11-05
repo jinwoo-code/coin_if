@@ -3,6 +3,7 @@
 "use client";
 import type { SkillAnswers } from "./gap";
 import type { EvidenceSaved } from "./evidence";
+import type { PlanRerun } from "./plan-sim";
 import type { PlanEdits } from "./schedule";
 import { normalizeProfile } from "./profile";
 import type { LiveEntries } from "./live";
@@ -28,6 +29,7 @@ const KEYS = {
   gapAnswers: `cr:${VERSION}:gapAnswers`, // 능력 묶음 답(이 기기에만)
   planEdits: `cr:${VERSION}:planEdits`, // 월별 일정 수정(이 기기에만)
   evidence: `cr:${VERSION}:evidence`, // 증거물 주제·체크·모의고사 기록(이 기기에만)
+  planReruns: `cr:${VERSION}:planReruns`, // 계획 넣고 다시 살아 본 결과(이 기기에만)
   premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
   localOnly: `cr:${VERSION}:localOnly`,
   pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
@@ -105,6 +107,8 @@ export const store = {
   setGapAnswers: (a: Record<string, SkillAnswers>) => write(KEYS.gapAnswers, a),
   getPlanEdits: () => read<Record<string, PlanEdits>>(KEYS.planEdits) ?? {},
   setPlanEdits: (a: Record<string, PlanEdits>) => write(KEYS.planEdits, a),
+  getPlanReruns: () => read<Record<string, { sig: string; result: PlanRerun }>>(KEYS.planReruns) ?? {},
+  setPlanReruns: (a: Record<string, { sig: string; result: PlanRerun }>) => write(KEYS.planReruns, a),
   getEvidence: () => read<Record<string, EvidenceSaved>>(KEYS.evidence) ?? {},
   setEvidence: (a: Record<string, EvidenceSaved>) => write(KEYS.evidence, a),
   getSelection: () => read<Selection>(KEYS.selection),

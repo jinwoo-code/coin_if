@@ -1,7 +1,7 @@
 // 멀티버스: 같은 사람이 같은 진로를 1,000번 살아 보고, 갈림길마다 갈라진 세계선 나무를 만든다.
 // AI가 먼저 가는 길(본선)은 갈림길마다 가장 많이 간 쪽을 따라간 세계선이다.
 // 브라우저에서도 돌아간다(갈림길을 바꿔 보는 건 즉시 계산).
-import { simulatePath, type Force } from "./engine";
+import { simulatePath, type Force, type PlanStage } from "./engine";
 import { factorNotes, hasCert } from "./factors";
 import type { EventCard, FactorKey, Lever, LifeState, Line, LineNode, Multiverse, Path, Profile, WorldStats, WorldTemplate } from "./types";
 import { durationLabel } from "./calendar";
@@ -31,8 +31,8 @@ export function seedFor(p: Profile, worldId: string, i: number) {
   return `${p.name}|${p.dilemma}|${worldId}|${i}`;
 }
 
-export function runAll(p: Profile, world: WorldTemplate, months: number, startYm: string, force?: Force, n = RUNS): Path[] {
-  return Array.from({ length: n }, (_, i) => simulatePath(p, world, months, startYm, seedFor(p, world.id, i) + (force ? `|${force.eventId}` : ""), force));
+export function runAll(p: Profile, world: WorldTemplate, months: number, startYm: string, force?: Force, n = RUNS, stages?: PlanStage[]): Path[] {
+  return Array.from({ length: n }, (_, i) => simulatePath(p, world, months, startYm, seedFor(p, world.id, i) + (force ? `|${force.eventId}` : ""), force, undefined, undefined, stages));
 }
 
 // ---------- 갈림길 이름 ----------

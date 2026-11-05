@@ -2,15 +2,20 @@
 import { gapDeltas } from "../gap-sim";
 import type { GapItem } from "../gap";
 import { buildMultiverse, levers } from "../multiverse";
+import { planRerun, type PlanInput } from "../plan-sim";
 import type { Profile } from "../types";
 import { getWorld } from "../worlds";
 
-self.onmessage = (e: MessageEvent<{ id: number; kind?: "levers" | "multiverse" | "gap"; profile: Profile; worldId: string; months: number; startYm: string; gaps?: GapItem[] }>) => {
-  const { id, kind, profile, worldId, months, startYm, gaps } = e.data;
+self.onmessage = (e: MessageEvent<{ id: number; kind?: "levers" | "multiverse" | "gap" | "plan"; plan?: PlanInput; profile: Profile; worldId: string; months: number; startYm: string; gaps?: GapItem[] }>) => {
+  const { id, kind, profile, worldId, months, startYm, gaps, plan } = e.data;
   try {
     const world = getWorld(worldId);
     if (kind === "gap") {
       self.postMessage({ id, deltas: gapDeltas(profile, world, months, startYm, gaps ?? []) });
+      return;
+    }
+    if (kind === "plan" && plan) {
+      self.postMessage({ id, rerun: planRerun(profile, world, months, startYm, plan) });
       return;
     }
     const { mv, paths } = buildMultiverse(profile, world, months, startYm);

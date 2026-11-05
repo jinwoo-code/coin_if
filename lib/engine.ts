@@ -559,7 +559,13 @@ export function signatureKey(e: EventCard, choiceIndex: number, tierId?: string)
 }
 
 // trace: 갈림길마다 decide 직전 상황을 넘겨 받는다(scripts/measure-base.ts가 기준 비율을 잴 때)
-export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force, trace?: (e: EventCard, c: ForkCtx) => void, live?: LiveHook): Path {
+// 계획 넣고 다시 살아 보기(lib/plan-sim.ts): 이 달부터 합격·취업 확률을 이 프로필로 계산한다. 난수 순서는 그대로다.
+export interface PlanStage {
+  month: number;
+  profile: Profile;
+}
+
+export function simulatePath(p: Profile, world: WorldTemplate, months: number, startYm: string, seed: string, force?: Force, trace?: (e: EventCard, c: ForkCtx) => void, live?: LiveHook, stages?: PlanStage[]): Path {
   const rand = seededRandom(seed);
   const pulled = withFamilyPull(p, world);
   const habit: Record<Tone, number> = { push: 0, change: 0, safe: 0 };
@@ -596,6 +602,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     const cal = ymAt(startYm, month).month;
     const inService = enlist !== null && month >= enlist && month < enlist + SERVICE_MONTHS;
     const inRetrain = month < retrainEnd && !inService;
+    const ready = stages?.findLast((s) => s.month <= month)?.profile ?? p;
 
     // 사건 고르기
     let event: EventCard | null = null;
@@ -612,7 +619,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     else if (!inService && sim.employedSince === null && !sim.used.has("broke") && (sim.state.money < 0 || (runway !== null && month >= sim.gradIn + runway))) event = BROKE_B;
     else if (retrain && month === 0) event = RETRAIN_START;
     else if (retrain && month === retrainEnd) event = RETRAIN_END;
-    else if (!inService && !inRetrain) event = pickEvent(world, p, sim, month, cal, rand, force);
+    else if (!inService && !inRetrain) event = pickEvent(world, ready, sim, month, cal, rand, force);
 
     let delta: Partial<LifeState> = {};
     let choiceIndex = 0;
@@ -678,9 +685,9 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       // 일 시작
       let tierId: string | undefined;
       if (event.hires) {
-        const ready = factorMult(p, world, event.factors);
+        const hireReady = factorMult(ready, world, event.factors);
         const tiers = event.tiers ?? [{ id: "job", group: "job", label: "회사", salary: 3000, weight: 1 }];
-        const t = weightedPick(tiers, (x) => x.weight * (x === tiers[0] ? ready ** 1.5 : 1), rand);
+        const t = weightedPick(tiers, (x) => x.weight * (x === tiers[0] ? hireReady ** 1.5 : 1), rand);
         tierId = t.group;
         tierLabel = t.label;
         sim.tierId = t.id;

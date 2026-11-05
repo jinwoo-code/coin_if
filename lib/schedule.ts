@@ -46,7 +46,7 @@ export interface Plan {
 const WEEKS_PER_MONTH = 4.345;
 const isPractice = (r: PriorityRow) => r.item.kind === "experience";
 // 학과 과정 안에서 하는 것: 해당 학과가 필요한 진로의 학과·실습
-const isSchool = (r: PriorityRow, w: WorldTemplate) => needsSchool(w) && r.item.kind === "experience" && /학과|졸업|실습/.test(r.item.name);
+export const isSchool = (r: PriorityRow, w: WorldTemplate) => needsSchool(w) && r.item.kind === "experience" && /학과|졸업|실습/.test(r.item.name);
 const needsSchool = (w: WorldTemplate) => w.archetype === "license" || w.id === "teacher-elem" || w.id === "teacher-sec";
 
 // 지금 조건의 주당 공부 시간(근로 시간을 뺀 값. lib/factors examPower와 같은 식)
