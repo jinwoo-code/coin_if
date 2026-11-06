@@ -1,6 +1,6 @@
 // 필요한 것 목록과 내 프로필 비교(격차), 우선순위. 판정은 전부 코드 규칙이고 AI를 안 쓴다.
 // 프로필에 능력단위별 답은 없어서 능력은 준비도 답으로 추정한다. 물어본 적 없는 것은 asked: false로 화면에 그대로 말한다.
-import { certClass, eligibilityOf, gradeOf, type EligibilityResult } from "./cert-eligibility";
+import { certClass, eligibilityOf, gradeOf, gradeRank, type EligibilityResult } from "./cert-eligibility";
 import { hasCert } from "./factors";
 import { iGa } from "./josa";
 import { answerOf, READINESS } from "./readiness";
@@ -231,8 +231,9 @@ function rawTweak(i: RequirementItem, w: WorldTemplate): Tweak | null {
 
 // 항목 종류와 흥미 유형의 짝(가정값). 검사를 안 했으면 성격으로.
 function fitOf(i: RequirementItem, p: Profile): number {
-  const project = /프로젝트|작품|포트폴리오/.test(i.name);
-  const people = /인턴|실습|현장/.test(i.name);
+  // 자격 이름의 '프로젝트'(정보기술프로젝트관리사)는 작품 만들기가 아니다.
+  const project = i.kind !== "cert" && /프로젝트|작품|포트폴리오/.test(i.name);
+  const people = i.kind !== "cert" && /인턴|실습|현장/.test(i.name);
   const riasec: (keyof NonNullable<Profile["interests"]>)[] = project ? ["A", "R"] : people ? ["S", "E"] : i.kind === "skill" ? ["I", "R"] : ["C"];
   const big = project || i.kind === "skill" ? p.bigFive.O : people ? p.bigFive.E : p.bigFive.C;
   const vals = [(big - 1) / 4];
@@ -317,12 +318,17 @@ export function prioritize(gaps: GapItem[], w: WorldTemplate, p: Profile, deltas
   // 대졸(예정)이면 응시할 수 있는 윗 등급이 있는 진로에서 기능사를 맨 뒤로(가정값). 고졸이거나 기능사가 그 진로의 입구면 그대로.
   const higherOpen = gaps.some((g) => g.item.kind === "cert" && !g.item.required && g.status !== "have" && (gradeOf(g.item.name) === "기사" || gradeOf(g.item.name) === "산업기사"));
   const lowGrade = (r: PriorityRow) => r.item.kind === "cert" && !r.item.required && higherOpen && p.spec.school !== "고졸" && gradeOf(r.item.name) === "기능사";
-  // 업체 자격은 그 앞. 그 밖 자격은 자리를 그대로 두고 자격끼리 국가기술·NCS 관련 순으로 바꾼다.
-  const tierOf = (r: PriorityRow) => (lowGrade(r) ? 4 : r.item.kind === "cert" && !r.item.required && certClass(r.item.name, r.item.ncsRelated) === 4 ? 3 : tier(r.item));
+  // 업체 자격은 그 앞. 그 밖 자격은 자리를 그대로 두고 자격끼리 국가기술·NCS 관련 순, 같으면 기사·산업기사 순으로 바꾼다.
+  // 같은 이름의 기사를 볼 수 있으면 산업기사는 따로 안 따도 되니 뒤로.
+  const stem = (n: string) => n.trim().replace(/(산업기사|기사)$/, "");
+  const engineerStems = new Set(gaps.filter((g) => g.item.kind === "cert" && g.status !== "have" && gradeOf(g.item.name) === "기사").map((g) => stem(g.item.name)));
+  const redundant = (r: PriorityRow) => gradeOf(r.item.name) === "산업기사" && engineerStems.has(stem(r.item.name));
+  // 팀이 뒤로 미룬 자격(rankLow)과 위 산업기사는 업체 자격 바로 앞.
+  const tierOf = (r: PriorityRow) => (lowGrade(r) ? 4 : r.item.kind !== "cert" || r.item.required ? tier(r.item) : certClass(r.item.name, r.item.ncsRelated) === 4 ? 3 : r.item.rankLow || redundant(r) ? 2.5 : tier(r.item));
   const sorted = rows.toSorted((a, b) => tierOf(a) - tierOf(b) || b.score - a.score || a.item.id.localeCompare(b.item.id));
   for (const t of [1, 2]) {
     const slots = sorted.flatMap((r, i) => (r.item.kind === "cert" && tierOf(r) === t ? [i] : []));
-    const certs = slots.map((i) => sorted[i]).toSorted((a, b) => certClass(a.item.name, a.item.ncsRelated) - certClass(b.item.name, b.item.ncsRelated) || b.score - a.score || a.item.id.localeCompare(b.item.id));
+    const certs = slots.map((i) => sorted[i]).toSorted((a, b) => certClass(a.item.name, a.item.ncsRelated) - certClass(b.item.name, b.item.ncsRelated) || gradeRank(a.item.name) - gradeRank(b.item.name) || b.score - a.score || a.item.id.localeCompare(b.item.id));
     slots.forEach((s, k) => (sorted[s] = certs[k]));
   }
   return sorted;

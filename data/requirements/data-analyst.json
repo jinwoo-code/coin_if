@@ -6,7 +6,20 @@
   "certPolicy": "ai-filter",
   "filter": {
    "mode": "ai",
-   "dropped": [],
+   "dropped": [
+    {
+     "name": "데이터분석",
+     "why": "팀 검토: 자격 이름이 아니에요"
+    },
+    {
+     "name": "데이터분석준전문가",
+     "why": "팀 검토: 데이터 분석 준전문가(ADsP)와 같은 자격이에요"
+    },
+    {
+     "name": "데이터분석전문가",
+     "why": "팀 검토: 데이터 분석 전문가(ADP)와 같은 자격이에요"
+    }
+   ],
    "invented": 0
   },
   "items": [
@@ -1055,48 +1068,6 @@
     ]
    },
    {
-    "id": "cert:데이터분석",
-    "kind": "cert",
-    "name": "데이터분석",
-    "grade": "official",
-    "source": "careernet",
-    "ref": "커리어넷 직업정보(빅 데이터 전문가)",
-    "officialUrl": "https://www.dataq.or.kr",
-    "hours": {
-     "value": 150,
-     "grade": "assumed"
-    }
-   },
-   {
-    "id": "cert:데이터분석준전문가",
-    "kind": "cert",
-    "name": "데이터분석준전문가",
-    "grade": "official",
-    "source": "careernet",
-    "ref": "커리어넷 직업정보(빅 데이터 전문가) · 고용24 직업정보(데이터분석가(빅데이터분석가))",
-    "officialUrl": "https://www.dataq.or.kr",
-    "hours": {
-     "value": 150,
-     "grade": "assumed"
-    },
-    "alsoIn": [
-     "work24-job"
-    ]
-   },
-   {
-    "id": "cert:데이터분석전문가",
-    "kind": "cert",
-    "name": "데이터분석전문가",
-    "grade": "official",
-    "source": "work24-job",
-    "ref": "고용24 직업정보(데이터분석가(빅데이터분석가))",
-    "officialUrl": "https://www.dataq.or.kr",
-    "hours": {
-     "value": 150,
-     "grade": "assumed"
-    }
-   },
-   {
     "id": "exp:public:ncs-note",
     "kind": "experience",
     "name": "NCS 기반 경험·경력 기술서",
@@ -1129,6 +1100,19 @@
     "ref": "팀이 정한 가정값",
     "hours": {
      "value": 200,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:데이터아키텍처준전문가dasp",
+    "kind": "cert",
+    "name": "데이터아키텍처 준전문가(DAsP)",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+    "officialUrl": "https://www.dataq.or.kr/www/sub/a_02.do",
+    "hours": {
+     "value": 150,
      "grade": "assumed"
     }
    }

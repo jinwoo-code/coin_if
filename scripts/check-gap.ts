@@ -2,11 +2,12 @@
 import assert from "node:assert/strict";
 import { certClass, eligibilityOf, gradeOf, isNotCert, isVendorCert } from "@/lib/cert-eligibility";
 import { DEMO_PROFILE } from "@/lib/demo";
+import { gapDeltas } from "@/lib/gap-sim";
 import { gapItems, higherCert, judgeItem, laterCerts, laterSkills, monthsOf, postingText, prioritize, REQUIRED_TEXT, scoreOf, tweakOf } from "@/lib/gap";
 import { retrainMonths } from "@/lib/retrain";
 import { buildPlan, itemsToCut, overText, weeklyOf } from "@/lib/schedule";
 import { simulatePath } from "@/lib/engine";
-import { applySkillGroups, chunkSkills } from "@/lib/requirements";
+import { applyCertAlternatives, applySkillGroups, chunkSkills } from "@/lib/requirements";
 import type { RequirementItem, Requirements, RequirementsFile } from "@/lib/requirements";
 import { readFileSync } from "node:fs";
 import certExclude from "@/data/cert-exclude.json";
@@ -258,7 +259,7 @@ t("응시자격: 시행령 별표 4의2 기준", () => {
   assert.equal(eligibilityOf("조리기능장", cs("4년제", "조리"), dev).status, "blocked");
   assert.equal(eligibilityOf("정보처리기사", cs("4년제", "컴퓨터공학"), dev).status, "ok");
   assert.equal(eligibilityOf("정보처리기사", cs("전문대", "컴퓨터공학"), dev).status, "blocked");
-  assert.equal(eligibilityOf("정보처리기사", cs("4년제", "국어국문"), dev).status, "blocked");
+  assert.equal(eligibilityOf("정보처리기사", prof({ school: "4년제" }, { major: "경영학과" }), dev).status, "check");
   assert.equal(eligibilityOf("정보처리기사", cs("4년제", ""), dev).status, "check");
   assert.equal(eligibilityOf("정보처리산업기사", cs("전문대", "컴퓨터공학"), dev).status, "ok");
   assert.equal(eligibilityOf("정보처리산업기사", cs("고졸", "컴퓨터공학"), dev).status, "blocked");
@@ -294,6 +295,41 @@ t("격차: 기술사는 신입 목록에서 빠지고 따로 보인다, 이미 �
   assert.equal(laterCerts(req, prof(), dev).length, 1);
   assert.equal(gapItems(req, prof({ certs: ["컴퓨터시스템응용기술사"] }), dev)[0].status, "have");
   assert.equal(laterCerts(req, prof({ certs: ["컴퓨터시스템응용기술사"] }), dev).length, 0);
+});
+t("전문가급: 경력 없으면 신입 목록에서 빠지고, 공식 안내의 다른 길이 있으면 응시 가능", () => {
+  const blocked = (name: string, spec = {}) => eligibilityOf(name, prof(spec), dev).status === "blocked";
+  for (const n of ["데이터아키텍처전문가", "데이터아키텍처 전문가(DAP)", "정보기술프로젝트관리전문가", "소프트웨어 보안약점 진단원", "데이터 분석 전문가(ADP)", "데이터분석전문가"]) assert.ok(blocked(n), n);
+  assert.ok(!blocked("데이터아키텍처전문가", { certs: ["SQL 개발자(SQLD)"] }));
+  assert.ok(!blocked("데이터 분석 전문가(ADP)", { certs: ["ADsP"] }));
+  assert.ok(blocked("SQL 전문가(SQLP)", { school: "전문대" }));
+  assert.ok(!blocked("SQL 전문가(SQLP)", { school: "4년제" }));
+  for (const n of ["데이터아키텍처 준전문가(DAsP)", "SQL 개발자(SQLD)", "데이터 분석 준전문가(ADsP)", "정보기술프로젝트관리사"]) assert.equal(eligibilityOf(n, prof(), dev).status, "open", n);
+});
+t("준전문가 후보: 전문가급이 있으면 출처와 함께 넣고 이미 있으면 안 겹친다", () => {
+  const base: Requirements = { worldId: "x", certPolicy: "ai-filter", items: [item({ id: "a", name: "데이터아키텍처전문가" }), item({ id: "b", name: "SQL 개발자(SQLD)" })], prep: [], majors: [], baseDate: "", stale: false };
+  const names = applyCertAlternatives(base).items.map((i) => i.name);
+  assert.deepEqual(names, ["데이터아키텍처전문가", "SQL 개발자(SQLD)", "데이터아키텍처 준전문가(DAsP)"]);
+  const added = applyCertAlternatives(base).items[2];
+  assert.equal(added.grade, "curated");
+  assert.ok(added.officialUrl?.includes("dataq.or.kr") && added.ref);
+  assert.equal(applyCertAlternatives({ ...base, items: [item({ id: "c", name: "정보처리기사" })] }).items.length, 1);
+});
+t("신입 개발자 저장 목록: 전문가급은 빠지고 기사가 먼저, 전자계산기조직응용기사는 뒤로", () => {
+  const f = JSON.parse(readFileSync("data/requirements/developer.json", "utf8")) as RequirementsFile;
+  const p = prof({ school: "4년제" }, { major: "컴퓨터공학과" });
+  const gaps = gapItems(f.default, p, dev);
+  const rows = prioritize(gaps, dev, p, gapDeltas(p, dev, 36, "2026-12", gaps)).filter((r) => r.item.kind === "cert").map((r) => r.item.name);
+  assert.deepEqual(rows.slice(0, 2), ["정보처리기사", "정보보안기사"]);
+  assert.ok(rows.indexOf("SQL 개발자(SQLD)") < rows.indexOf("정보처리산업기사")); // 같은 이름 기사를 볼 수 있으면 산업기사는 뒤로
+  assert.ok(rows.includes("전자계산기조직응용기사"));
+  for (const n of ["SQL 개발자(SQLD)", "데이터아키텍처 준전문가(DAsP)", "리눅스마스터"]) assert.ok(rows.indexOf(n) < rows.indexOf("전자계산기조직응용기사"), n);
+  for (const n of ["데이터아키텍처전문가", "정보기술프로젝트관리전문가", "소프트웨어 보안약점 진단원"]) assert.ok(!rows.includes(n), n);
+  assert.ok(rows.indexOf("정보처리기능사") > rows.indexOf("전자계산기조직응용기사"));
+});
+t("전공이 달라도 정보처리기사는 막지 않고 확인을 부탁한다(2차 자료)", () => {
+  assert.equal(eligibilityOf("정보처리기사", prof({ school: "4년제" }, { major: "경영학과" }), dev).status, "check");
+  assert.equal(eligibilityOf("정보처리기사", prof({ school: "전문대" }, { major: "경영학과" }), dev).status, "blocked");
+  assert.equal(eligibilityOf("정보보안기사", prof({ school: "4년제" }, { major: "경영학과" }), dev).status, "blocked");
 });
 t("신입 뒤에 익힐 능력은 격차에서 빠진다", () => {
   const req: Requirements = { worldId: "developer", certPolicy: "ai-filter", items: [item({ id: "s1", kind: "skill", name: "화면 구현", entry: true, positionLevel: 3 }), item({ id: "s2", kind: "skill", name: "요구사항 확인", entry: false, positionLevel: 7 })], prep: [], majors: [], baseDate: "", stale: false };

@@ -2,6 +2,7 @@
 // 여기는 합치기만 한다(네트워크 없음). 자격증·능력 이름은 공식 데이터 또는 공식 문서로 직접 정리한 값(curated)에서만, 시간·출처 없는 경험은 가정값으로 표시한다.
 import experience from "@/data/req-experience.json";
 import hoursData from "@/data/req-hours.json";
+import { EXPERIENCE_RULES } from "./cert-eligibility";
 
 export type ReqKind = "skill" | "cert" | "experience" | "exam" | "step";
 export type ReqSource = "ncs" | "careernet" | "work24-job" | "work24-wanted" | "interview" | "curated" | "assumed";
@@ -31,6 +32,7 @@ export interface RequirementItem {
   positionLevel?: number; // 이 단위를 맡는 가장 낮은 NCS 직책 수준. 신입 순서
   entry?: boolean; // false면 신입 뒤에 익힐 능력(수준 기준은 가정값)
   ncsRelated?: boolean; // NCS 관련자격종목에 있는 자격
+  rankLow?: string; // 빼지는 않지만 신입 계획에서 뒤로 미루는 이유(data/cert-low.json, 팀 판단)
 }
 
 // 공고 집계가 없을 때 화면 문구. postingShare가 들어오면 안 쓴다.
@@ -101,6 +103,25 @@ export function applyCertExclude(r: Requirements, exclude: Record<string, string
   const names = new Set(hits.map((i) => i.name));
   const f = r.filter ?? { mode: "none" as const, dropped: [], invented: 0 };
   return { ...r, items: r.items.filter((i) => !(i.kind === "cert" && names.has(i.name))), filter: { ...f, dropped: [...f.dropped, ...hits.map((i) => ({ name: i.name, why: `팀 검토: ${exclude[i.name]}` }))] } };
+}
+
+// 경력이 필요한 전문가급이 후보에 있으면, 같은 분야에서 지금 볼 수 있는 자격을 공식 안내 출처와 함께 넣는다.
+export function applyCertAlternatives(r: Requirements): Requirements {
+  const squeeze = (s: string) => s.replace(/\s/g, "");
+  const items = [...r.items];
+  for (const c of r.items.filter((i) => i.kind === "cert" && !i.required)) {
+    const rule = EXPERIENCE_RULES.find((x) => new RegExp(x.pattern).test(squeeze(c.name)));
+    for (const a of rule?.alternatives ?? []) {
+      if (items.some((i) => i.kind === "cert" && new RegExp(a.sameAs).test(squeeze(i.name)))) continue;
+      items.push({ id: `cert:${certKey(a.name)}`, kind: "cert", name: a.name, grade: "curated", source: "curated", ref: a.ref, officialUrl: a.url, hours: hoursOf("cert", a.name) });
+    }
+  }
+  return { ...r, items };
+}
+
+export function applyCertLow(r: Requirements, low: Record<string, string> | undefined): Requirements {
+  if (!low) return r;
+  return { ...r, items: r.items.map((i) => (i.kind === "cert" && !i.required && low[i.name] ? { ...i, rankLow: low[i.name] } : i)) };
 }
 
 export interface Requirements {

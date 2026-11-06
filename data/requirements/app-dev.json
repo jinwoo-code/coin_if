@@ -2417,6 +2417,45 @@
      "value": 20,
      "grade": "assumed"
     }
+   },
+   {
+    "id": "cert:데이터아키텍처준전문가dasp",
+    "kind": "cert",
+    "name": "데이터아키텍처 준전문가(DAsP)",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+    "officialUrl": "https://www.dataq.or.kr/www/sub/a_02.do",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:sql개발자sqld",
+    "kind": "cert",
+    "name": "SQL 개발자(SQLD)",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+    "officialUrl": "https://www.dataq.or.kr/www/sub/a_04.do",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    }
+   },
+   {
+    "id": "cert:정보기술프로젝트관리사",
+    "kind": "cert",
+    "name": "정보기술프로젝트관리사",
+    "grade": "curated",
+    "source": "curated",
+    "ref": "정보기술 프로젝트관리사 시험안내(자격 제한 없음, 2026-11-06 확인)",
+    "officialUrl": "https://pmo.or.kr/public/index.php?url=menu/PmsInfo",
+    "hours": {
+     "value": 150,
+     "grade": "assumed"
+    }
    }
   ],
   "prep": [

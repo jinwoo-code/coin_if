@@ -34,6 +34,102 @@
    "pattern": "^(사회조사분석사|전자상거래관리사|직업상담사)1급",
    "text": "해당 2급 취득 뒤 실무 2년 또는 실무 3년이 필요",
    "ref": "국가기술자격법 시행규칙 별표 11의4(2차 자료로 확인)"
+  },
+  {
+   "pattern": "^데이터아키텍처전문가",
+   "text": "학력별 실무 경력(학사 3년 등), 기사 뒤 실무 1년, 또는 DAsP·SQLD·SQLP 취득이 필요해요(한국데이터산업진흥원 안내)",
+   "ref": "한국데이터산업진흥원 데이터자격시험 DAP",
+   "url": "https://www.dataq.or.kr/www/sub/a_01.do",
+   "checkedAt": "2026-11-06",
+   "unlessCerts": [
+    "데이터아키텍처준전문가",
+    "DAsP",
+    "SQL개발자",
+    "SQLD",
+    "SQL전문가",
+    "SQLP"
+   ],
+   "alternatives": [
+    {
+     "name": "데이터아키텍처 준전문가(DAsP)",
+     "sameAs": "데이터아키텍처준전문가|DAsP",
+     "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+     "url": "https://www.dataq.or.kr/www/sub/a_02.do"
+    },
+    {
+     "name": "SQL 개발자(SQLD)",
+     "sameAs": "SQL개발자|SQLD",
+     "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+     "url": "https://www.dataq.or.kr/www/sub/a_04.do"
+    }
+   ]
+  },
+  {
+   "pattern": "^SQL전문가",
+   "text": "학사 이상이 아니면 경력(전문학사 2년, 고졸 4년) 또는 SQLD·DAsP 취득이 필요해요(한국데이터산업진흥원 안내)",
+   "ref": "한국데이터산업진흥원 데이터자격시험 SQLP",
+   "url": "https://www.dataq.or.kr/www/sub/a_03.do",
+   "checkedAt": "2026-11-06",
+   "unlessCerts": [
+    "SQL개발자",
+    "SQLD",
+    "데이터아키텍처",
+    "DAsP",
+    "DAP"
+   ],
+   "unlessSchools": [
+    "4년제",
+    "대학원"
+   ],
+   "alternatives": [
+    {
+     "name": "SQL 개발자(SQLD)",
+     "sameAs": "SQL개발자|SQLD",
+     "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+     "url": "https://www.dataq.or.kr/www/sub/a_04.do"
+    }
+   ]
+  },
+  {
+   "pattern": "^데이터분석전문가",
+   "text": "학력별 실무 경력(학사 3년 등) 또는 ADsP 취득이 필요해요(한국데이터산업진흥원 안내)",
+   "ref": "한국데이터산업진흥원 데이터자격시험 ADP",
+   "url": "https://www.dataq.or.kr/www/sub/a_05.do",
+   "checkedAt": "2026-11-06",
+   "unlessCerts": [
+    "데이터분석준전문가",
+    "ADsP"
+   ],
+   "alternatives": [
+    {
+     "name": "데이터 분석 준전문가(ADsP)",
+     "sameAs": "데이터분석준전문가|ADsP",
+     "ref": "한국데이터산업진흥원 데이터자격시험 안내(응시자격 제한 없음, 2026-11-06 확인)",
+     "url": "https://www.dataq.or.kr/www/sub/a_06.do"
+    }
+   ]
+  },
+  {
+   "pattern": "^정보기술프로젝트관리전문가",
+   "text": "기술사, 기사 뒤 경력 4년, 학사 뒤 경력 6년 등 경력이 필요해요(프로젝트관리지도사 검정원 안내, 박사는 경력 없이 가능)",
+   "ref": "정보기술 프로젝트관리전문가 시험안내(pmo.or.kr)",
+   "url": "https://pmo.or.kr/public/index.php?url=menu/PmpInfo",
+   "checkedAt": "2026-11-06",
+   "alternatives": [
+    {
+     "name": "정보기술프로젝트관리사",
+     "sameAs": "정보기술프로젝트관리사|IT-PMS",
+     "ref": "정보기술 프로젝트관리사 시험안내(자격 제한 없음, 2026-11-06 확인)",
+     "url": "https://pmo.or.kr/public/index.php?url=menu/PmsInfo"
+    }
+   ]
+  },
+  {
+   "pattern": "^소프트웨어보안약점진단원",
+   "text": "양성과정 대상이 SW 개발 보안 경력 6년 이상 또는 보안약점 진단 경력 3년 이상이에요(KISA 안내)",
+   "ref": "한국인터넷진흥원 SW 개발보안 교육 안내",
+   "url": "https://www.kisa.or.kr/1051202",
+   "checkedAt": "2026-11-06"
   }
  ],
  "vendor": {
@@ -67,5 +163,12 @@
    "_L\\d$",
    "L\\d$"
   ]
+ },
+ "anyMajorNames": {
+  "_설명": "대학 졸업(예정)이면 전공과 상관없이 응시할 수 있다고 2차 자료가 일관되게 적는 종목. Q-Net 원문을 못 봐서 '응시 불가' 대신 '확인 필요'로만 둔다.",
+  "patterns": [
+   "^정보처리기사$"
+  ],
+  "ref": "학원·블로그 2차 자료(Q-Net 관련 학과 표 미확인, 2026-11-06)"
  }
 }
