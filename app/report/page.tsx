@@ -1,6 +1,6 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
-import { CalendarPlus, Check, Lock, Share2 } from "lucide-react";
+import { CalendarPlus, Check, Lock, Share2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -566,6 +566,15 @@ export default function ReportPage() {
             </section>
 
             {unlocked ? <WeekPlan report={report} /> : <FreeTodos todos={report.todos} />}
+            {!demo && profile.pilot?.survey?.pre && !profile.pilot.withdrawnAt && !profile.pilot.survey.post ? (
+              <Link href="/pilot/survey?when=post" className="card flex min-h-[56px] items-center justify-between gap-3 border-[#0B6B4B] p-5" data-testid="pilot-post-link">
+                <span>
+                  <span className="block text-base font-bold">파일럿 마무리 설문</span>
+                  <span className="block text-cap text-muted">처음과 같은 질문 3개와 짧은 답 하나예요.</span>
+                </span>
+                <ArrowRight aria-hidden="true" size={18} />
+              </Link>
+            ) : null}
             <Programs region={profile.life.region} />
           </div>
         </div>

@@ -6,7 +6,24 @@
   "certPolicy": "ai-filter",
   "filter": {
    "mode": "ai",
-   "dropped": [],
+   "dropped": [
+    {
+     "name": "웹디자인기능사",
+     "why": "팀 검토: 웹 디자인 직무 자격이라 백엔드 개발과 거리가 멀어요"
+    },
+    {
+     "name": "전자계산기기사",
+     "why": "팀 검토: 컴퓨터 하드웨어 직무 자격이에요"
+    },
+    {
+     "name": "전자계산기기능사",
+     "why": "팀 검토: 컴퓨터 하드웨어 직무 자격이에요"
+    },
+    {
+     "name": "전자계산기제어산업기사",
+     "why": "팀 검토: 컴퓨터 하드웨어 직무 자격이에요"
+    }
+   ],
    "invented": 0
   },
   "items": [
@@ -2338,37 +2355,6 @@
     "ncsRelated": true
    },
    {
-    "id": "cert:웹디자인기능사",
-    "kind": "cert",
-    "name": "웹디자인기능사",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(응용SW엔지니어링)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 120,
-     "grade": "assumed"
-    },
-    "ncsRelated": true
-   },
-   {
-    "id": "cert:전자계산기기사",
-    "kind": "cert",
-    "name": "전자계산기기사",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(응용SW엔지니어링) · 커리어넷 직업정보(시스템소프트웨어개발자)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 300,
-     "grade": "assumed"
-    },
-    "alsoIn": [
-     "careernet"
-    ],
-    "ncsRelated": true
-   },
-   {
     "id": "cert:전자계산기조직응용기사",
     "kind": "cert",
     "name": "전자계산기조직응용기사",
@@ -2384,32 +2370,6 @@
      "work24-job"
     ],
     "ncsRelated": true
-   },
-   {
-    "id": "cert:전자계산기기능사",
-    "kind": "cert",
-    "name": "전자계산기기능사",
-    "grade": "official",
-    "source": "careernet",
-    "ref": "커리어넷 직업정보(시스템소프트웨어개발자)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 120,
-     "grade": "assumed"
-    }
-   },
-   {
-    "id": "cert:전자계산기제어산업기사",
-    "kind": "cert",
-    "name": "전자계산기제어산업기사",
-    "grade": "official",
-    "source": "careernet",
-    "ref": "커리어넷 직업정보(시스템소프트웨어개발자)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 200,
-     "grade": "assumed"
-    }
    },
    {
     "id": "cert:마이크로소프트인증전문가자격증mcp",

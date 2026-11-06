@@ -7,7 +7,9 @@ import { retrainMonths } from "@/lib/retrain";
 import { buildPlan, itemsToCut, overText, weeklyOf } from "@/lib/schedule";
 import { simulatePath } from "@/lib/engine";
 import { applySkillGroups, chunkSkills } from "@/lib/requirements";
-import type { RequirementItem, Requirements } from "@/lib/requirements";
+import type { RequirementItem, Requirements, RequirementsFile } from "@/lib/requirements";
+import { readFileSync } from "node:fs";
+import certExclude from "@/data/cert-exclude.json";
 import type { Profile } from "@/lib/types";
 import { W } from "@/lib/weights";
 import { getWorld } from "@/lib/worlds";
@@ -274,7 +276,9 @@ t("일정: 선택 자격은 상위 3개만, 나머지는 나중에, 올리면 �
   const names = ["정보처리기사", "정보처리산업기사", "정보처리기능사", "리눅스마스터", "MCSE", "SCJP"];
   const req: Requirements = { worldId: "developer", certPolicy: "ai-filter", items: names.map((name) => item({ id: name, name, hours: { value: 100, grade: "assumed" } })), prep: [], majors: [], baseDate: "", stale: false };
   const rows = prioritize(gapItems(req, p, dev), dev, p, {});
-  assert.deepEqual(rows.slice(-2).map((r) => r.item.name).sort(), ["MCSE", "SCJP"]);
+  // 4년제면 기능사가 맨 뒤, 그 앞이 업체 자격
+  assert.equal(rows.at(-1)!.item.name, "정보처리기능사");
+  assert.deepEqual(rows.slice(-3, -1).map((r) => r.item.name).sort(), ["MCSE", "SCJP"]);
   assert.equal(rows[0].item.kind, "cert");
   const plan = buildPlan(rows, p, dev, 36, { weekly: 20 });
   assert.equal(plan.rows.length, 3);
@@ -295,5 +299,30 @@ t("신입 뒤에 익힐 능력은 격차에서 빠진다", () => {
   const req: Requirements = { worldId: "developer", certPolicy: "ai-filter", items: [item({ id: "s1", kind: "skill", name: "화면 구현", entry: true, positionLevel: 3 }), item({ id: "s2", kind: "skill", name: "요구사항 확인", entry: false, positionLevel: 7 })], prep: [], majors: [], baseDate: "", stale: false };
   assert.deepEqual(gapItems(req, prof(), dev).map((g) => g.item.id), ["s1"]);
   assert.deepEqual(laterSkills(req, dev).map((i) => i.id), ["s2"]);
+});
+t("대졸(예정)이면 응시할 수 있는 윗 등급이 있을 때 기능사는 맨 뒤, 고졸이거나 윗 등급이 없으면 그대로", () => {
+  const list = (...names: string[]): Requirements => ({ worldId: "developer", certPolicy: "official", notes: [], items: names.map((name) => item({ id: name, name, kind: "cert" })) }) as unknown as Requirements;
+  const order = (r: Requirements, p: Profile) => prioritize(gapItems(r, p, dev), dev, p, {}).filter((x) => x.item.kind === "cert").map((x) => x.item.name);
+  const r = list("컴퓨터그래픽스운용기능사", "OCP", "정보보안산업기사");
+  const college = { ...prof(), major: "컴퓨터공학", spec: { ...prof().spec, school: "전문대" as const, certs: [] } };
+  assert.equal(order(r, college).at(-1), "컴퓨터그래픽스운용기능사");
+  assert.equal(order(r, college)[0], "정보보안산업기사");
+  // 고졸은 산업기사가 막혀 있고, 기능사가 업체 자격보다 앞이다
+  assert.equal(order(r, { ...college, spec: { ...college.spec, school: "고졸" } })[0], "컴퓨터그래픽스운용기능사");
+  // 윗 등급이 없는 진로(기능사가 입구)는 업체 자격보다 뒤로 안 민다
+  assert.equal(order(list("컴퓨터그래픽스운용기능사", "OCP"), college)[0], "컴퓨터그래픽스운용기능사");
+});
+t("저장된 목록: 팀이 뺀 자격은 없고 걸러진 기록에 남는다, 개발자 상위 5개에 기능사 없음", () => {
+  for (const [id, names] of Object.entries(certExclude)) {
+    if (id.startsWith("_")) continue;
+    const f = JSON.parse(readFileSync(`data/requirements/${id}.json`, "utf8")) as RequirementsFile;
+    for (const name of Object.keys(names)) {
+      assert.ok(!f.default.items.some((i) => i.kind === "cert" && i.name === name), `${id}에 ${name}이 남음`);
+      assert.ok(f.default.filter?.dropped.some((d) => d.name === name && d.why.startsWith("팀 검토")), `${id} 기록에 ${name} 없음`);
+    }
+  }
+  const f = JSON.parse(readFileSync("data/requirements/developer.json", "utf8")) as RequirementsFile;
+  const top = prioritize(gapItems(f.default, DEMO_PROFILE, dev), dev, DEMO_PROFILE, {}).slice(0, 5).map((x) => x.title);
+  assert.ok(!top.some((x) => x.endsWith("기능사")), top.join(", "));
 });
 console.log(`${n}개 통과`);

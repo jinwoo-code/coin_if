@@ -93,6 +93,16 @@ export interface FilteredCert {
   name: string;
   why: string;
 }
+// 팀이 관련 없다고 본 자격을 뺀다(data/cert-exclude.json). 뺀 것은 filter.dropped에 남겨 다시 빌드해도 AI를 안 부른다.
+export function applyCertExclude(r: Requirements, exclude: Record<string, string> | undefined): Requirements {
+  if (!exclude) return r;
+  const hits = r.items.filter((i) => i.kind === "cert" && !i.required && exclude[i.name]);
+  if (!hits.length) return r;
+  const names = new Set(hits.map((i) => i.name));
+  const f = r.filter ?? { mode: "none" as const, dropped: [], invented: 0 };
+  return { ...r, items: r.items.filter((i) => !(i.kind === "cert" && names.has(i.name))), filter: { ...f, dropped: [...f.dropped, ...hits.map((i) => ({ name: i.name, why: `팀 검토: ${exclude[i.name]}` }))] } };
+}
+
 export interface Requirements {
   worldId: string;
   certPolicy: CertPolicy;

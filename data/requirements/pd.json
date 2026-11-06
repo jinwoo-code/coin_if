@@ -10,6 +10,10 @@
     {
      "name": "무선설비산업기사",
      "why": "영상 편집과 무관한 무선 설비 기술임"
+    },
+    {
+     "name": "정보처리산업기사",
+     "why": "팀 검토: 소프트웨어 개발 직무 자격이에요"
     }
    ],
    "invented": 0
@@ -2445,20 +2449,6 @@
     "id": "cert:정보통신산업기사",
     "kind": "cert",
     "name": "정보통신산업기사",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(방송콘텐츠제작)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 200,
-     "grade": "assumed"
-    },
-    "ncsRelated": true
-   },
-   {
-    "id": "cert:정보처리산업기사",
-    "kind": "cert",
-    "name": "정보처리산업기사",
     "grade": "official",
     "source": "ncs",
     "ref": "NCS 관련자격종목(방송콘텐츠제작)",

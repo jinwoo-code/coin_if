@@ -2,13 +2,14 @@
 // 앱 동의서(lib/consent.ts)와 따로 파일럿 동의를 받는다. 답은 holdoutPicks에 "p1"~"p20"으로 넣고 성향 점수에는 안 쓴다.
 // 모은 답은 scripts/fit-weights.ts가 쓴다(파일럿 동의가 있고 빠지기를 안 한 사람만).
 import type { Tone } from "./tests";
-import type { Profile } from "./types";
+import type { PilotSurveyAnswer, Profile } from "./types";
 
 // 파일럿 동의 문구의 판. 문구나 쓰는 곳이 바뀌면 올리고 다시 동의를 받는다.
-export const PILOT_VERSION = "2026-11-04-pilot-draft";
+export const PILOT_VERSION = "2026-11-06-pilot-draft";
 
 export const PILOT_CONSENT: { title: string; body: string }[] = [
   { title: "답을 가중치 보정과 분신 비교에 써요", body: "이 상황 질문 답과 검사에서 입력한 성향·가치관·확인한 이야기 값으로, 시뮬레이션이 선택을 정하는 무게를 다시 재요. 같은 값을 AI에 보내 분신이 내 답을 얼마나 맞히는지도 비교해요. 이야기 원문은 쓰지 않아요." },
+  { title: "사용 전·후 설문도 저장해요", body: "시작 전과 리포트를 본 뒤에 같은 질문(진로 결정 확신도, 고려 중인 진로, 이번 주 할 일)을 묻고, 판단이 바뀌었는지 짧게 적어 달라고 해요. 서비스가 도움이 됐는지 확인하는 데만 쓰고, 이름이나 연락처를 적지 말아 주세요." },
   { title: "개인을 알아볼 수 없게 묶어서만 분석해요", body: "여러 사람의 답을 합쳐 무게 하나를 추정할 뿐, 한 사람의 답을 따로 보거나 공개하지 않아요. 결과에는 인원 수와 구간만 남아요." },
   { title: "언제든 빼 달라고 할 수 있어요", body: "이 화면의 '파일럿에서 빠지기'를 누르면 답이 지워지고 다음 분석부터 빠져요. 이미 끝난 분석은 다음에 다시 돌릴 때 빠져요." },
 ];
@@ -228,6 +229,91 @@ export function withdrawPilot(p: Profile): Profile {
   return {
     ...p,
     holdoutPicks: Object.fromEntries(Object.entries(p.holdoutPicks).filter(([id]) => !isPilotId(id))),
-    pilot: p.pilot ? { ...p.pilot, withdrawnAt: new Date().toISOString() } : null,
+    pilot: p.pilot ? { version: p.pilot.version, consentAt: p.pilot.consentAt, withdrawnAt: new Date().toISOString() } : null, // 설문 답도 지운다
+  };
+}
+
+// ---------- 사용 전·후 설문 ----------
+export const CONFIDENCE_LABELS = ["전혀 확신이 없어요", "별로 없어요", "보통이에요", "꽤 있어요", "매우 있어요"];
+export const CHANGED_MAX = 500;
+export function parseCareers(text: string): string[] {
+  const seen = new Set<string>();
+  return text
+    .split(/[,，、·\n]/)
+    .map((x) => x.trim().slice(0, 40))
+    .filter((x) => {
+      const k = careerKey(x);
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 10);
+}
+const careerKey = (x: string) => x.replace(/\s/g, "").toLowerCase();
+const sameCareers = (a: string[], b: string[]) => {
+  const x = new Set(a.map(careerKey));
+  const y = new Set(b.map(careerKey));
+  return x.size === y.size && [...x].every((k) => y.has(k));
+};
+
+export interface SurveySummary {
+  consented: number; // 동의하고 안 빠진 사람
+  preOnly: number; // 사전만 답함
+  usedBefore: number; // 사전 설문 전에 앱을 써서 전후 비교에서 뺀 사람
+  paired: number; // 전후 비교에 쓴 사람
+  confidence: { pre: number; post: number; diff: number; lo: number; hi: number; up: number; same: number; down: number } | null;
+  careers: { pre: number; post: number; changed: number } | null;
+  action: { pre: number; post: number; gained: number; lost: number } | null; // pre·post는 '있음' 사람 수
+  changed: string[]; // 자유 답(사람과 이어지지 않게 글자 순으로)
+}
+
+const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+// 대응 t 구간. t 값은 근사(1.96 + 2.4 ÷ 자유도, 자유도 3 이상에서 약 0.03 안쪽).
+function pairedCi(diffs: number[]) {
+  const m = mean(diffs);
+  if (diffs.length < 2) return { lo: m, hi: m };
+  const sd = Math.sqrt(diffs.reduce((a, d) => a + (d - m) ** 2, 0) / (diffs.length - 1));
+  const half = (1.96 + 2.4 / (diffs.length - 1)) * (sd / Math.sqrt(diffs.length));
+  return { lo: m - half, hi: m + half };
+}
+
+const validAnswer = (a: PilotSurveyAnswer | undefined): a is PilotSurveyAnswer => !!a && a.confidence >= 1 && a.confidence <= 5;
+
+export function summarizeSurvey(people: Pick<Profile, "pilot">[]): SurveySummary {
+  const active = people.filter((p) => p.pilot?.consentAt && !p.pilot.withdrawnAt);
+  const paired = active.flatMap((p) => {
+    const { pre, post } = p.pilot?.survey ?? {};
+    return validAnswer(pre) && validAnswer(post) && !pre.usedBefore ? [{ pre, post }] : [];
+  });
+  const diffs = paired.map((x) => x.post.confidence - x.pre.confidence);
+  return {
+    consented: active.length,
+    preOnly: active.filter((p) => validAnswer(p.pilot?.survey?.pre) && !p.pilot?.survey?.post).length,
+    usedBefore: active.filter((p) => p.pilot?.survey?.pre?.usedBefore).length,
+    paired: paired.length,
+    confidence: paired.length
+      ? {
+          pre: mean(paired.map((x) => x.pre.confidence)),
+          post: mean(paired.map((x) => x.post.confidence)),
+          diff: mean(diffs),
+          ...pairedCi(diffs),
+          up: diffs.filter((d) => d > 0).length,
+          same: diffs.filter((d) => d === 0).length,
+          down: diffs.filter((d) => d < 0).length,
+        }
+      : null,
+    careers: paired.length ? { pre: mean(paired.map((x) => x.pre.careers.length)), post: mean(paired.map((x) => x.post.careers.length)), changed: paired.filter((x) => !sameCareers(x.pre.careers, x.post.careers)).length } : null,
+    action: paired.length
+      ? {
+          pre: paired.filter((x) => x.pre.hasAction).length,
+          post: paired.filter((x) => x.post.hasAction).length,
+          gained: paired.filter((x) => !x.pre.hasAction && x.post.hasAction).length,
+          lost: paired.filter((x) => x.pre.hasAction && !x.post.hasAction).length,
+        }
+      : null,
+    changed: active
+      .map((p) => p.pilot?.survey?.changed?.trim() ?? "")
+      .filter(Boolean)
+      .toSorted((a, b) => a.localeCompare(b, "ko")),
   };
 }

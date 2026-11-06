@@ -292,7 +292,14 @@ export default function InterviewPage() {
       return { seed, ids: pickHoldout(seed) };
     };
     const params = new URLSearchParams(window.location.search);
-    if (params.get("pilot") === "1") store.setPilotInvited(); // 파일럿 초대 링크로 들어옴
+    if (params.get("pilot") === "1") {
+      store.setPilotInvited(); // 파일럿 초대 링크로 들어옴
+      const known = store.getProfile()?.pilot;
+      if (!known?.survey?.pre && !known?.withdrawnAt && !store.getPilotPending()?.survey?.pre) {
+        router.replace("/pilot/survey?when=pre"); // 쓰기 전에 동의와 사전 설문부터
+        return;
+      }
+    }
     const p = params.get("more") === "1" ? store.getProfile() : null;
     if (!p) {
       const h = fresh();

@@ -5,7 +5,8 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import raw from "@/data/job-codes.json";
 import { ALL_WORLD_IDS, type MajorFamily } from "@/lib/job-codes";
-import { applyCertFilter, buildRequirements, type Requirements, type RequirementsFile } from "@/lib/requirements";
+import certExclude from "@/data/cert-exclude.json";
+import { applyCertExclude, applyCertFilter, buildRequirements, type Requirements, type RequirementsFile } from "@/lib/requirements";
 import { aiFilterCerts, curatedOf, groupSkills, ncsSourcesOf, resolveSources, type Snapshot } from "@/lib/requirements-build";
 import { getWorld } from "@/lib/worlds";
 
@@ -40,6 +41,7 @@ function reuse(fresh: Requirements, old: Requirements | undefined): Requirements
       let out: Requirements;
       if (r.certPolicy === "curated-only") out = r;
       else out = reuse(r, old) ?? (arg("--no-ai") ? applyCertFilter(r, null) : await aiFilterCerts(r, w.name));
+      out = applyCertExclude(out, (certExclude as unknown as Record<string, Record<string, string>>)[id]);
       // 능력 목록이 그대로면 지난 묶음을 쓴다(같은 목록 유지). AI 없이 나눈 묶음은 --no-ai가 아닐 때 다시 묶는다.
       const ids = (x: Requirements | undefined) =>
         x?.items

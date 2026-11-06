@@ -36,6 +36,7 @@ const KEYS = {
   shareLinks: `cr:${VERSION}:shareLinks`, // 내가 만든 공유 링크(취소 키 포함, 이 기기에만)
   premium: `cr:${VERSION}:premium`, // 프리미엄 리포트(산 뒤에 다시 열 때)
   localOnly: `cr:${VERSION}:localOnly`,
+  pilotPending: `cr:${VERSION}:pilotPending`, // 검사 전에 받은 파일럿 동의·사전 설문
   pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
 } as const;
 
@@ -113,7 +114,13 @@ export const store = {
     const p = read<Profile>(KEYS.profile);
     return p ? normalizeProfile(p) : null;
   },
-  setProfile: (p: Profile) => write(KEYS.profile, p),
+  // 파일럿 동의·사전 설문은 검사 전에 받으므로, 프로필이 처음 저장될 때(또는 검사를 새로 해도) 붙여 준다.
+  setProfile: (p: Profile) => {
+    const pending = read<NonNullable<Profile["pilot"]>>(KEYS.pilotPending);
+    write(KEYS.profile, !p.pilot && pending ? { ...p, pilot: pending } : p);
+  },
+  getPilotPending: () => read<NonNullable<Profile["pilot"]>>(KEYS.pilotPending),
+  setPilotPending: (v: NonNullable<Profile["pilot"]> | null) => write(KEYS.pilotPending, v),
   getGapAnswers: () => read<Record<string, SkillAnswers>>(KEYS.gapAnswers) ?? {},
   setGapAnswers: (a: Record<string, SkillAnswers>) => write(KEYS.gapAnswers, a),
   getPlanEdits: () => read<Record<string, PlanEdits>>(KEYS.planEdits) ?? {},

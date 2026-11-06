@@ -117,6 +117,7 @@ export default function PilotPage() {
       className="mt-6 min-h-[44px] text-sm font-semibold text-[#A3311A] underline underline-offset-2"
       onClick={() => {
         save(withdrawPilot(profile));
+        store.setPilotPending(null);
         setPicks({});
       }}
     >

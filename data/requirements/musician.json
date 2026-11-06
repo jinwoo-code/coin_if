@@ -10,6 +10,18 @@
     {
      "name": "전기기사",
      "why": "음악 작곡과 전혀 무관함"
+    },
+    {
+     "name": "사무자동화산업기사",
+     "why": "팀 검토: 사무 직무 자격이에요"
+    },
+    {
+     "name": "정보처리기사",
+     "why": "팀 검토: 소프트웨어 개발 직무 자격이에요"
+    },
+    {
+     "name": "(민간)실천예절지도사",
+     "why": "팀 검토: 예절 교육 자격이에요"
     }
    ],
    "invented": 0
@@ -3876,50 +3888,9 @@
     }
    },
    {
-    "id": "cert:사무자동화산업기사",
-    "kind": "cert",
-    "name": "사무자동화산업기사",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(음악콘텐츠제작)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 200,
-     "grade": "assumed"
-    },
-    "ncsRelated": true
-   },
-   {
     "id": "cert:멀티미디어콘텐츠제작전문가",
     "kind": "cert",
     "name": "멀티미디어콘텐츠제작전문가",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(음악콘텐츠제작)",
-    "hours": {
-     "value": 150,
-     "grade": "assumed"
-    },
-    "ncsRelated": true
-   },
-   {
-    "id": "cert:정보처리기사",
-    "kind": "cert",
-    "name": "정보처리기사",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(음악콘텐츠제작)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 300,
-     "grade": "assumed"
-    },
-    "ncsRelated": true
-   },
-   {
-    "id": "cert:민간실천예절지도사",
-    "kind": "cert",
-    "name": "(민간)실천예절지도사",
     "grade": "official",
     "source": "ncs",
     "ref": "NCS 관련자격종목(음악콘텐츠제작)",

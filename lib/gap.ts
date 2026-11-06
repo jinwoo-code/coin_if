@@ -1,6 +1,6 @@
 // 필요한 것 목록과 내 프로필 비교(격차), 우선순위. 판정은 전부 코드 규칙이고 AI를 안 쓴다.
 // 프로필에 능력단위별 답은 없어서 능력은 준비도 답으로 추정한다. 물어본 적 없는 것은 asked: false로 화면에 그대로 말한다.
-import { certClass, eligibilityOf, type EligibilityResult } from "./cert-eligibility";
+import { certClass, eligibilityOf, gradeOf, type EligibilityResult } from "./cert-eligibility";
 import { hasCert } from "./factors";
 import { iGa } from "./josa";
 import { answerOf, READINESS } from "./readiness";
@@ -314,8 +314,11 @@ export function prioritize(gaps: GapItem[], w: WorldTemplate, p: Profile, deltas
     const status: GapStatus = members.every((m) => m.status === "none") ? "none" : "partial";
     return { ...g, status, title, members, score, simDelta: delta, simLabel: t?.label ?? null, hoursLeft, hoursOfficial, months, evidence, eligibility };
   });
-  // 업체 자격은 맨 뒤로. 그 밖 자격은 자리를 그대로 두고 자격끼리 국가기술·NCS 관련 순으로 바꾼다.
-  const tierOf = (r: PriorityRow) => (r.item.kind === "cert" && !r.item.required && certClass(r.item.name, r.item.ncsRelated) === 4 ? 3 : tier(r.item));
+  // 대졸(예정)이면 응시할 수 있는 윗 등급이 있는 진로에서 기능사를 맨 뒤로(가정값). 고졸이거나 기능사가 그 진로의 입구면 그대로.
+  const higherOpen = gaps.some((g) => g.item.kind === "cert" && !g.item.required && g.status !== "have" && (gradeOf(g.item.name) === "기사" || gradeOf(g.item.name) === "산업기사"));
+  const lowGrade = (r: PriorityRow) => r.item.kind === "cert" && !r.item.required && higherOpen && p.spec.school !== "고졸" && gradeOf(r.item.name) === "기능사";
+  // 업체 자격은 그 앞. 그 밖 자격은 자리를 그대로 두고 자격끼리 국가기술·NCS 관련 순으로 바꾼다.
+  const tierOf = (r: PriorityRow) => (lowGrade(r) ? 4 : r.item.kind === "cert" && !r.item.required && certClass(r.item.name, r.item.ncsRelated) === 4 ? 3 : tier(r.item));
   const sorted = rows.toSorted((a, b) => tierOf(a) - tierOf(b) || b.score - a.score || a.item.id.localeCompare(b.item.id));
   for (const t of [1, 2]) {
     const slots = sorted.flatMap((r, i) => (r.item.kind === "cert" && tierOf(r) === t ? [i] : []));

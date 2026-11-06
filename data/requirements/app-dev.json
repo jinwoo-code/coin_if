@@ -22,6 +22,10 @@
     {
      "name": "전자계산기제어산업기사",
      "why": "제어 및 하드웨어 중심 자격증임"
+    },
+    {
+     "name": "웹디자인기능사",
+     "why": "팀 검토: 웹 디자인 직무 자격이라 앱 개발과 거리가 멀어요"
     }
    ],
    "invented": 0
@@ -2350,20 +2354,6 @@
     "ref": "NCS 관련자격종목(응용SW엔지니어링)",
     "hours": {
      "value": 150,
-     "grade": "assumed"
-    },
-    "ncsRelated": true
-   },
-   {
-    "id": "cert:웹디자인기능사",
-    "kind": "cert",
-    "name": "웹디자인기능사",
-    "grade": "official",
-    "source": "ncs",
-    "ref": "NCS 관련자격종목(응용SW엔지니어링)",
-    "officialUrl": "https://www.q-net.or.kr",
-    "hours": {
-     "value": 120,
      "grade": "assumed"
     },
     "ncsRelated": true

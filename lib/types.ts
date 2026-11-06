@@ -78,6 +78,20 @@ export interface Behavior {
 }
 
 // 인터뷰로 만든 '나'
+// 파일럿 사용 전·후 설문(lib/pilot.ts). 같은 질문을 두 번 묻는다.
+export interface PilotSurveyAnswer {
+  confidence: number; // 진로 결정 확신도 1~5
+  careers: string[]; // 고려 중인 진로
+  hasAction: boolean; // 이번 주에 할 일이 있는가
+  at: string;
+  usedBefore?: boolean; // 사전 설문 전에 이미 앱을 쓴 사람(전후 비교에서 뺀다)
+}
+export interface PilotSurvey {
+  pre?: PilotSurveyAnswer;
+  post?: PilotSurveyAnswer;
+  changed?: string; // "판단이 바뀌었나요? 무엇이요?" 자유 답
+}
+
 export interface Profile {
   name: string;
   major: string;
@@ -116,7 +130,7 @@ export interface Profile {
   checkins: Checkin[];
   checkinMail?: boolean; // 체크인 때가 되면 메일 받기(본인이 켠 경우만)
   // 파일럿(lib/pilot.ts): 파일럿 동의 판·때, 빠진 때. 파일럿 답은 holdoutPicks의 p1~p20.
-  pilot: { version: string; consentAt: string; withdrawnAt: string | null } | null;
+  pilot: { version: string; consentAt: string; withdrawnAt: string | null; survey?: PilotSurvey } | null;
   // AI 분신 판단 캐시(lib/judge.ts). 큰 갈림길 × 상황 칸마다 보기별 확률·이유. 키에 프로필 해시가 있어 프로필이 바뀌면 안 쓰인다.
   judges?: Record<string, { probs: number[]; reasons: string[]; shift?: string; src: "ai" | "mock" | "fallback" }>;
   // 어떤 검사를 했는지(입력한 정보 표시용)
