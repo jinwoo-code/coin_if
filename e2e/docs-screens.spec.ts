@@ -27,7 +27,7 @@ for (const width of [390, 1280]) {
       await shot(page, "20-파일럿-동의");
       await page.getByRole("button", { name: "동의하고 시작" }).click();
       await page.getByRole("radio", { name: "별로 없어요" }).click();
-      await page.getByLabel("지금 고려 중인 진로를 적어 주세요.", { exact: false }).fill("개발자, 공무원");
+      await page.locator("#survey-careers").fill("개발자, 공무원");
       await page.getByRole("radio", { name: "아니요, 없어요" }).click();
       await shot(page, "21-파일럿-시작-전-설문");
       await page.getByRole("button", { name: "다음" }).click();
@@ -83,7 +83,7 @@ for (const width of [390, 1280]) {
       await page.goto("/pilot/survey?when=post");
       await page.getByRole("radio", { name: "꽤 있어요" }).click();
       await page.getByRole("radio", { name: "네, 있어요" }).click();
-      await page.getByLabel("판단이 바뀌었나요?", { exact: false }).fill("공무원은 빼기로 했어요");
+      await page.locator("#survey-changed").fill("공무원은 빼기로 했어요");
       await shot(page, "26-파일럿-마무리-설문");
     });
 
@@ -145,7 +145,7 @@ for (const width of [390, 1280]) {
       const viewer = await page.context().browser()!.newContext({ viewport: { width, height: 800 }, deviceScaleFactor: 1 });
       const other = await viewer.newPage();
       await other.goto(url);
-      await expect(other.getByTestId("shared-report")).toBeVisible();
+      await expect(other.getByTestId("ai-notice")).toBeVisible();
       await other.screenshot({ path: `${dir}/13-공유-링크.png`, fullPage: true });
       await page.getByRole("button", { name: "링크 취소" }).click();
       await expect(panel.getByText("링크를 취소했어요")).toBeVisible();
