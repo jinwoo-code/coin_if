@@ -76,12 +76,12 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
   );
 }
 
-function EventCard({ ev, world, current, mv }: { ev: SimEvent; world: WorldTemplate; current: boolean; mv: Multiverse }) {
+function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: WorldTemplate; current: boolean; mv: Multiverse; animate: boolean }) {
   const quiet = ev.eventId === "quiet";
   const pct = Math.round((ev.freq / mv.stats.runs) * 100);
   return (
     <article
-      className={`animate-rise rounded-2xl border p-3 sm:p-3.5 ${quiet ? "bg-transparent" : "bg-surface"}`}
+      className={`${animate ? "animate-rise" : ""} rounded-2xl border p-3 sm:p-3.5 ${quiet ? "bg-transparent" : "bg-surface"}`}
       style={{ borderColor: current ? world.color : "#E3E6EB", boxShadow: current ? `0 0 0 1px ${world.color}` : undefined, borderStyle: quiet ? "dashed" : "solid" }}
     >
       <p className="num mb-1 text-cap font-semibold text-muted sm:hidden">{ev.label}</p>
@@ -142,6 +142,8 @@ export default function SimulatePage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [total, setTotal] = useState(0);
   const [done, setDone] = useState(false);
+  // 저장된 결과로 돌아오면 등장 효과 없이 타임라인 전체를 바로 보여 준다.
+  const [animateTimeline, setAnimateTimeline] = useState(false);
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [error, setError] = useState("");
   const [judging, setJudging] = useState<{ done: number; total: number } | null>(null);
@@ -160,11 +162,13 @@ export default function SimulatePage() {
     setSelection(sel);
     setWorlds(sel.worldIds.map(getWorld));
     const savedMv = store.getMultiverses();
-    const active = store.getActive();
     const lines = store.getLines();
-    const saved = savedMv && sel.worldIds.every((id) => savedMv[id] && active[id] && lines[id]?.[active[id]]);
+    // 세계선 지도에서 다른 세계선을 열면 active가 바뀐다. 이 화면은 늘 본선을 복원한다.
+    // 갈림길이 없는 본선의 id는 빈 문자열이라 참거짓으로 보면 저장된 결과를 버리고 다시 돈다.
+    const mainIds = Object.fromEntries(sel.worldIds.map((id) => [id, savedMv?.[id]?.lines.find((l) => l.isMain)?.id]));
+    const saved = savedMv && sel.worldIds.every((id) => mainIds[id] !== undefined && Boolean(lines[id]?.[mainIds[id]!]?.length));
     if (saved) {
-      const shown = Object.fromEntries(sel.worldIds.map((id) => [id, lines[id][active[id]]]));
+      const shown = Object.fromEntries(sel.worldIds.map((id) => [id, lines[id][mainIds[id]!]]));
       const labels = Array.from(
         new Set(
           Object.values(shown)
@@ -185,6 +189,7 @@ export default function SimulatePage() {
   }, [rows.length, done]);
 
   async function run(start: Profile, sel: Selection) {
+    setAnimateTimeline(true);
     setError("");
     setRows([]);
     setDone(false);
@@ -237,6 +242,7 @@ export default function SimulatePage() {
               store.setActive(wid, evs[0]?.lineId ?? "");
             }
             store.setReport(null);
+            setAnimateTimeline(false);
             setDone(true);
           }
           if (msg.type === "error") setError(msg.message);
@@ -371,13 +377,13 @@ export default function SimulatePage() {
                   const ev = row.events.find((e) => e.worldId === w.id);
                   return (
                     <div key={w.id} className="relative pb-4 pl-6 sm:pl-7">
-                      <span aria-hidden="true" className="absolute bottom-0 left-[9px] top-0 w-1 origin-top animate-draw rounded-full" style={{ background: w.color }} />
+                      <span aria-hidden="true" className={`absolute bottom-0 left-[9px] top-0 w-1 origin-top rounded-full ${animateTimeline && isCurrent ? "animate-draw" : ""}`} style={{ background: w.color }} />
                       <span
                         aria-hidden="true"
                         className="absolute left-0 top-2 h-[22px] w-[22px] rounded-full border-[4px]"
                         style={{ borderColor: w.color, background: isCurrent || ev?.branch ? w.color : "#fff", boxShadow: isCurrent ? `0 0 0 5px ${w.color}26` : undefined }}
                       />
-                      {ev && mvs[w.id] ? <EventCard ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} /> : null}
+                      {ev && mvs[w.id] ? <EventCard ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} /> : null}
                     </div>
                   );
                 })}
@@ -398,7 +404,7 @@ export default function SimulatePage() {
                       <span className="h-2.5 w-2.5 rounded-full bg-white" />
                     </span>
                     {mv && main ? (
-                      <section className="animate-rise rounded-2xl p-3.5 sm:p-4" style={{ background: `${w.color}12` }}>
+                      <section className="rounded-2xl p-3.5 sm:p-4" style={{ background: `${w.color}12` }}>
                         <h3 className="text-sm font-bold">
                           {times(mv.stats.runs)}번 중 이 세계로 온 건 {times(main.count)}번
                         </h3>

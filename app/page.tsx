@@ -2,9 +2,10 @@
 // 첫 화면: 하나의 '지금의 나'에서 여러 진로 노선이 갈라지는 그림이 핵심이다.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ArrowRight, BookmarkCheck } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/components/account";
-import { DEMOS, demoSelection } from "@/lib/demo";
+import { DEMOS, demoSelection, isDemoPerson } from "@/lib/demo";
 import { store } from "@/lib/store";
 
 const BRANCHES = [
@@ -67,12 +68,32 @@ const STEPS = [
 export default function Home() {
   const router = useRouter();
   const [hasProgress, setHasProgress] = useState(false);
+  const [resumeHref, setResumeHref] = useState("/choose");
+  const [demoKind, setDemoKind] = useState<keyof typeof DEMOS>("developer");
+  const demoDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    const check = () => setHasProgress(Boolean(store.getProfile()));
+    const check = () => {
+      setHasProgress(Boolean(store.getProfile()));
+      // 결과가 있는 곳까지만 보낸다. 결과 없이 /simulate로 보내면 묻지 않고 새로 돌아 토큰을 쓴다.
+      setResumeHref(store.getReport() ? "/report" : store.getSelection() && store.getMultiverses() ? "/simulate" : "/choose");
+    };
     check();
     window.addEventListener("cr:restored", check); // 로그인한 빈 기기에서 계정 기록을 내려받은 뒤
-    return () => window.removeEventListener("cr:restored", check);
+    window.addEventListener("storage", check);
+    return () => {
+      window.removeEventListener("cr:restored", check);
+      window.removeEventListener("storage", check);
+    };
   }, []);
+
+  // 예시 인물을 시작하면 이 기기 기록을 지운다. 내 기록이 있으면 먼저 묻는다(이미 예시 인물이면 잃을 게 없다).
+  function requestDemo(kind: keyof typeof DEMOS) {
+    const p = store.getProfile();
+    if (p && !isDemoPerson(p)) {
+      setDemoKind(kind);
+      demoDialog.current?.showModal();
+    } else startDemo(kind);
+  }
 
   function startDemo(kind: keyof typeof DEMOS) {
     store.reset();
@@ -100,6 +121,18 @@ export default function Home() {
         </span>
       </header>
 
+      {hasProgress ? (
+        <aside aria-label="저장된 리허설" className="mx-auto mb-4 flex w-[calc(100%-40px)] max-w-[1016px] flex-wrap items-center gap-4 rounded-2xl border border-hair bg-surface p-4 sm:px-6" data-testid="resume-banner">
+          <BookmarkCheck aria-hidden="true" className="hidden text-lineA sm:block" size={24} />
+          <div className="flex-1 basis-48">
+            <p className="text-sm font-bold">진행하던 리허설이 있어요</p>
+            <p className="mt-0.5 text-sm text-muted">저장된 진로와 결과를 이어서 살펴보세요.</p>
+          </div>
+          <Link href={resumeHref} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-lineA hover:bg-lineA/5">
+            이어서 하기 <ArrowRight aria-hidden="true" size={16} />
+          </Link>
+        </aside>
+      ) : null}
       <main id="main" className="mx-auto grid w-full max-w-[1080px] flex-1 items-center gap-10 px-5 pb-12 pt-4 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
         <section className="flex flex-col">
           <h1 className="text-3xl font-extrabold sm:text-4xl">
@@ -114,18 +147,13 @@ export default function Home() {
             <Link href="/interview" className="btn-primary sm:px-7">
               약 11분 인터뷰로 시작하기
             </Link>
-            <button onClick={() => startDemo("developer")} className="btn-ghost sm:px-7">
+            <button onClick={() => requestDemo("developer")} className="btn-ghost sm:px-7">
               예시 인물로 바로 보기
             </button>
           </div>
-          <button onClick={() => startDemo("nurse")} className="mt-2 min-h-11 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
+          <button onClick={() => requestDemo("nurse")} className="mt-2 min-h-11 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
             간호학과 3학년 예시로 보기
           </button>
-          {hasProgress ? (
-            <Link href="/choose" className="mt-4 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
-              하던 곳에서 이어서 하기
-            </Link>
-          ) : null}
         </section>
 
         <div className="card order-first p-4 sm:p-6 lg:order-none">
@@ -160,6 +188,22 @@ export default function Home() {
           </Link>
         </div>
       </section>
+      <dialog ref={demoDialog} aria-labelledby="demo-title" aria-describedby="demo-description" className="w-[calc(100%-40px)] max-w-md rounded-[24px] border border-hair bg-surface p-6 text-ink shadow-xl backdrop:bg-ink/40">
+        <h2 id="demo-title" className="text-xl font-bold">
+          예시 인물로 새로 시작할까요?
+        </h2>
+        <p id="demo-description" className="mt-3 text-sm text-muted">
+          예시 체험을 시작하면 이 브라우저에 저장된 프로필과 리허설 결과가 예시 인물의 기록으로 바뀌어요.
+        </p>
+        <div className="mt-6 flex flex-col gap-3">
+          <button autoFocus onClick={() => demoDialog.current?.close()} className="btn-ghost">
+            취소하고 기록 유지하기
+          </button>
+          <button onClick={() => startDemo(demoKind)} className="btn-primary">
+            예시 인물로 새로 시작하기
+          </button>
+        </div>
+      </dialog>
     </div>
   );
 }
