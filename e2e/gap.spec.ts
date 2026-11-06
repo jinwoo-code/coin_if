@@ -330,6 +330,7 @@ test("무료는 미리 보기까지, 프리미엄을 열면 격차~실행 전체
     localStorage.setItem(k, JSON.stringify({ ...JSON.parse(localStorage.getItem(k)!), name: "파일럿학생" }));
   });
   await page.goto("/report");
+  await expect(page.getByTestId("report-runs")).toHaveAttribute("open", "", { timeout: 60_000 }); // 무료 칸은 펼쳐 둔다
   await expect(page.getByTestId("free-todos")).toBeVisible({ timeout: 120_000 });
   await expect(page.getByRole("heading", { name: /WOOP|이번 주 실행 계획/ })).toBeVisible();
   const preview = page.getByTestId("premium-preview");

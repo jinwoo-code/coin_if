@@ -64,3 +64,32 @@ test("예시 인물 기록만 있으면 묻지 않는다", async ({ page }) => {
   await page.getByRole("button", { name: "예시 인물로 바로 보기" }).click();
   await expect(page).toHaveURL(/simulate/);
 });
+
+test("진로는 하나씩 보고, 마지막에 한눈에 비교한다", async ({ page }) => {
+  const stats = (gate: number, money: number) => ({ runs: 1000, gate: { label: "합격", share: gate, typicalMonth: 10 }, satisfiedShare: 60, stressedShare: 30, final: { money: { p10: 0, p50: money, p90: money } } });
+  const world = (id: string, gate: number, money: number) => ({ ...mv("m"), worldId: id, stats: stats(gate, money) });
+  const line = (id: string, title: string) => [{ ...scene("m", title), worldId: id }];
+  await page.goto("/privacy");
+  await page.evaluate(
+    ({ K, profile, selection, mvs, lines, active }) => {
+      for (const [k, v] of Object.entries({ profile, selection, multiverses: mvs, lines, active })) localStorage.setItem(`${K}${k}`, JSON.stringify(v));
+    },
+    {
+      K: K(""),
+      profile: DEMO_PROFILE,
+      selection: { ...demoSelection("developer"), worldIds: ["developer", "civil-servant"] },
+      mvs: { developer: world("developer", 86, 3625), "civil-servant": world("civil-servant", 41, 1333) },
+      lines: { developer: { m: line("developer", "개발자 장면") }, "civil-servant": { m: line("civil-servant", "공무원 장면") } },
+      active: { developer: "m", "civil-servant": "m" },
+    },
+  );
+  await page.goto("/simulate");
+  await expect(page.getByText("개발자 장면")).toBeVisible();
+  await expect(page.getByText("공무원 장면")).toHaveCount(0);
+  const compare = page.getByTestId("compare-all");
+  await expect(compare.getByRole("row", { name: /합격·취업 86% 41%/ })).toBeVisible();
+  await compare.getByRole("button", { name: /공무원/ }).click();
+  await expect(page.getByText("공무원 장면")).toBeVisible();
+  await expect(page.getByText("개발자 장면")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "9급 행정직 공무원" })).toHaveAttribute("aria-pressed", "true");
+});

@@ -4,7 +4,7 @@ import { BarChart3, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Ci, freqWord, LineBadge, MockNotice, Odds, RouteProgress, Screen, StateMeters, STATE_META, won } from "@/components/ui";
+import { Ci, freqWord, LineBadge, MockNotice, Odds, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { CorrectChoice } from "@/components/correct";
@@ -131,6 +131,60 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
   );
 }
 
+// 진로를 하나씩 본 뒤 한눈에 비교한다. 숫자는 전부 엔진 값이고, 진로가 하나면 안 그린다.
+function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Record<string, Multiverse>; onPick: (id: string) => void }) {
+  const list = worlds.filter((w) => mvs[w.id]);
+  if (list.length < 2) return null;
+  const rows: { label: string; value: (mv: Multiverse) => React.ReactNode }[] = [
+    { label: "합격·취업", value: (mv) => `${mv.stats.gate?.share ?? 0}%` },
+    { label: "만족하며 끝남", value: (mv) => `${mv.stats.satisfiedShare}%` },
+    { label: "스트레스 높게 끝남", value: (mv) => `${mv.stats.stressedShare}%` },
+    { label: "모은 돈(가운데)", value: (mv) => won(mv.stats.final.money.p50) },
+    { label: "가장 흔한 세계", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },
+    { label: "갈라진 세계선", value: (mv) => `${mv.lines.length}개` },
+  ];
+  return (
+    <section className="card mt-6 p-4 sm:p-6" aria-labelledby="compare-all" data-testid="compare-all">
+      <h2 id="compare-all" className="text-lg font-bold">
+        진로를 한눈에 비교해요
+      </h2>
+      <p className="mt-1 text-sm text-muted">진로마다 {times(mvs[list[0].id].stats.runs)}번 살아본 결과예요. 진로 이름을 누르면 그 타임라인으로 가요.</p>
+      <table className="num mt-4 w-full table-fixed text-left text-sm">
+        <thead>
+          <tr>
+            <th scope="col" className="w-[30%] pb-2 font-normal">
+              <span className="sr-only">항목</span>
+            </th>
+            {list.map((w) => (
+              <th key={w.id} scope="col" className="pb-2 pl-2 align-bottom font-bold">
+                <button type="button" onClick={() => onPick(w.id)} className="flex min-h-11 w-full flex-col items-start gap-1 text-left underline-offset-4 hover:underline sm:flex-row sm:items-center sm:gap-2">
+                  <LineBadge world={w} size={20} />
+                  <span className="min-w-0 break-keep">{w.short}</span>
+                </button>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.label} className="border-t border-hair">
+              <th scope="row" className="py-2.5 pr-1 text-cap font-medium text-muted">
+                {r.label}
+              </th>
+              {list.map((w) => (
+                <td key={w.id} className="break-words py-2.5 pl-2 font-semibold">
+                  {r.value(mvs[w.id])}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-3 text-cap text-muted">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 가정값이라 예측이 아니라 비교용이에요.</p>
+    </section>
+  );
+}
+
 function rowsOf(lines: Record<string, SimEvent[]>, labels: string[]): Row[] {
   return labels.map((label, station) => ({ station, label, events: Object.values(lines).flatMap((evs) => evs.filter((e) => e.station === station)) }));
 }
@@ -146,6 +200,7 @@ export default function SimulatePage() {
   const [animateTimeline, setAnimateTimeline] = useState(false);
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [error, setError] = useState("");
+  const [selectedWorldId, setSelectedWorldId] = useState("");
   const [judging, setJudging] = useState<{ done: number; total: number } | null>(null);
   const startedRef = useRef(false);
   const endRef = useRef<HTMLDivElement>(null);
@@ -262,8 +317,12 @@ export default function SimulatePage() {
   }
 
   const current = rows.at(-1);
-  const lanes = worlds.length || 2;
-  const gridClass = lanes === 3 ? "grid-cols-[repeat(3,minmax(150px,1fr))] sm:grid-cols-[64px_repeat(3,minmax(0,1fr))]" : "grid-cols-[repeat(2,minmax(0,1fr))] sm:grid-cols-[64px_repeat(2,minmax(0,1fr))]";
+  const selectedWorld = worlds.find((w) => w.id === selectedWorldId) ?? worlds[0];
+  const visibleWorlds = selectedWorld ? [selectedWorld] : [];
+  function pickWorld(id: string) {
+    setSelectedWorldId(id);
+    document.getElementById("world-picker")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   const latest = (wid: string) =>
     rows
       .flatMap((r) => r.events)
@@ -287,7 +346,7 @@ export default function SimulatePage() {
             <span className="hidden sm:inline">다시 살아보기</span>
           </button>
           {done ? (
-            <Link href={`/multiverse?world=${worlds[0]?.id ?? ""}`} className="btn-primary flex-1">
+            <Link href={`/multiverse?world=${selectedWorld?.id ?? ""}`} className="btn-primary flex-1">
               <GitBranch aria-hidden="true" size={18} /> 다른 세계선 보기
             </Link>
           ) : (
@@ -321,33 +380,65 @@ export default function SimulatePage() {
         </div>
       ) : null}
 
-      {/* 진로별 지금 처지 */}
-      <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: `repeat(${lanes}, minmax(0, 1fr))` }}>
-        {worlds.map((w) => {
-          const ev = latest(w.id);
-          return (
-            <section key={w.id} aria-label={`${w.name} 지금 상태`} className="card p-3.5 sm:p-4">
-              <div className="mb-1 flex items-center gap-2">
-                <LineBadge world={w} size={22} />
-                <h2 className="truncate text-sm font-bold sm:text-base">
-                  <span className="sm:hidden">{w.short}</span>
-                  <span className="hidden sm:inline">{w.name}</span>
-                </h2>
-              </div>
-              <p className="mb-2.5 truncate text-cap text-muted">{ev ? `${ev.status}${ev.salary ? ` · 연봉 ${won(ev.salary)}` : ""}` : "출발 전"}</p>
-              {ev ? (
-                <>
-                  <div className="sm:hidden">
-                    <StateMeters state={ev.state} color={w.color} keys={["satisfaction", "stress", "money"]} />
-                  </div>
-                  <div className="hidden sm:block">
-                    <StateMeters state={ev.state} color={w.color} keys={["satisfaction", "stress", "skill", "money"]} />
-                  </div>
-                </>
-              ) : null}
-            </section>
-          );
-        })}
+      {worlds.length > 1 ? (
+        <section className="mt-5" aria-labelledby="world-picker">
+          <h2 id="world-picker" className="scroll-mt-20 text-base font-bold">
+            살펴볼 진로를 선택하세요
+          </h2>
+          <div role="group" aria-labelledby="world-picker" className="mt-3 flex flex-wrap gap-2">
+            {worlds.map((w) => (
+              <button
+                key={w.id}
+                type="button"
+                aria-pressed={selectedWorld?.id === w.id}
+                aria-controls="selected-world-content"
+                onClick={() => setSelectedWorldId(w.id)}
+                className="flex min-h-12 min-w-0 max-w-full items-center gap-2 rounded-2xl border-2 px-4 py-3 text-left text-sm font-bold sm:text-base"
+                style={{ borderColor: selectedWorld?.id === w.id ? w.color : "#E3E6EB", background: selectedWorld?.id === w.id ? `${w.color}12` : "#FFFFFF" }}
+              >
+                <LineBadge world={w} size={24} />
+                <span className="min-w-0">{w.name}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} 본선 결과` : "본선 결과"} className="min-w-0">
+        {/* 고른 진로의 지금 처지 */}
+        <div className="mt-3">
+          {visibleWorlds.map((w) => {
+            const ev = latest(w.id);
+            return (
+              <section key={w.id} aria-label={`${w.name} 지금 상태`} className="card p-3.5 sm:p-4">
+                <div className="mb-1 flex items-center gap-2">
+                  <LineBadge world={w} size={22} />
+                  <h2 className="min-w-0 text-lg font-bold">{w.name}</h2>
+                </div>
+                <p className="mb-4 text-sm text-muted">{ev ? `${ev.status}${ev.salary ? ` · 연봉 ${won(ev.salary)}` : ""}` : "출발 전"}</p>
+                {ev ? (
+                  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {STATE_META.filter((m) => ["satisfaction", "stress", "skill", "money"].includes(m.key)).map((m) => (
+                      <div key={m.key} className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
+                        <dt className="text-sm font-medium text-muted">{m.label}</dt>
+                        <dd className="num mt-1 break-words text-xl font-extrabold">
+                          {m.key === "money" ? (
+                            won(ev.state.money)
+                          ) : (
+                            <>
+                              {ev.state[m.key]}
+                              <span className="ml-1 text-sm font-normal text-muted">/ 100</span>
+                            </>
+                          )}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </section>
+            );
+          })}
+        </div>
       </div>
 
       {judging ? (
@@ -366,17 +457,17 @@ export default function SimulatePage() {
       ) : null}
 
       {/* 노선도 타임라인 */}
-      <div className="-mx-5 mt-6 overflow-x-auto px-5 sm:mx-0 sm:px-0">
-        <ol className={`grid min-w-full gap-x-2 sm:gap-x-3 ${gridClass}`}>
+      <div className="mt-6 min-w-0">
+        <ol className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-x-3 sm:grid-cols-[80px_minmax(0,1fr)]">
           {rows.map((row, ri) => {
             const isCurrent = !done && ri === rows.length - 1;
             return (
               <li key={row.station} className="contents">
                 <span className={`num hidden whitespace-pre-line pt-2 text-cap leading-snug sm:block ${isCurrent ? "font-bold text-ink" : "text-muted"}`}>{row.label.replace(" ", "\n")}</span>
-                {worlds.map((w) => {
+                {visibleWorlds.map((w) => {
                   const ev = row.events.find((e) => e.worldId === w.id);
                   return (
-                    <div key={w.id} className="relative pb-4 pl-6 sm:pl-7">
+                    <div key={w.id} className="relative min-w-0 pb-4 pl-6 sm:pl-7">
                       <span aria-hidden="true" className={`absolute bottom-0 left-[9px] top-0 w-1 origin-top rounded-full ${animateTimeline && isCurrent ? "animate-draw" : ""}`} style={{ background: w.color }} />
                       <span
                         aria-hidden="true"
@@ -394,11 +485,11 @@ export default function SimulatePage() {
           {done ? (
             <li className="contents">
               <span className="hidden pt-2 text-cap font-bold sm:block">종착역</span>
-              {worlds.map((w) => {
+              {visibleWorlds.map((w) => {
                 const mv = mvs[w.id];
                 const main = mv?.lines.find((l) => l.isMain);
                 return (
-                  <div key={w.id} className="relative pl-7">
+                  <div key={w.id} className="relative min-w-0 pl-7">
                     <span aria-hidden="true" className="absolute left-[9px] top-0 h-3 w-1 rounded-full" style={{ background: w.color }} />
                     <span aria-hidden="true" className="absolute left-[-3px] top-2 flex h-7 w-7 items-center justify-center rounded-full" style={{ background: w.color }}>
                       <span className="h-2.5 w-2.5 rounded-full bg-white" />
@@ -413,8 +504,8 @@ export default function SimulatePage() {
                           {times(mv.stats.runs)}번 전체로 보면 {mv.stats.gate?.label} {mv.stats.gate?.share}% <Ci pct={mv.stats.gate?.share ?? 0} n={mv.stats.runs} />
                           {mv.stats.gate?.typicalMonth !== null && mv.stats.gate?.typicalMonth !== undefined ? `, 보통 ${durationLabel(mv.stats.gate.typicalMonth + 1)} 뒤` : ""}
                         </p>
-                        <Link href={`/multiverse?world=${w.id}`} className="btn-ghost mt-3 min-h-[44px] w-full text-sm">
-                          <GitBranch aria-hidden="true" size={16} /> 나머지 세계선 {mv.lines.length - 1}개 보기
+                        <Link href={`/multiverse?world=${w.id}`} className="btn-ghost mt-3 h-auto min-h-[44px] w-full min-w-0 gap-1.5 px-2 py-2.5 text-center text-sm">
+                          <GitBranch aria-hidden="true" size={16} className="shrink-0" /> 나머지 세계선 {mv.lines.length - 1}개 보기
                         </Link>
                       </section>
                     ) : null}
@@ -426,6 +517,7 @@ export default function SimulatePage() {
         </ol>
       </div>
       <div ref={endRef} />
+      {done ? <CompareAll worlds={worlds} mvs={mvs} onPick={pickWorld} /> : null}
 
       {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">1,000번 살아보고 첫 번째 역으로 출발하는 중…</p> : null}
       {error ? (
