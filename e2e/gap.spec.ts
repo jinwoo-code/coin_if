@@ -149,6 +149,7 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
   const card = dev.locator('[data-testid^="evidence-card-"]').first();
   await card.locator("button[aria-pressed]").first().click();
   await expect(card.getByRole("textbox", { name: "내 주제" })).toHaveValue(/.+/);
+  const chosen = await card.getByRole("textbox", { name: "내 주제" }).inputValue(); // 실제 AI면 문구가 매번 달라서 고른 값으로 비교
   await card.getByRole("checkbox").first().check();
   await expect(card.getByText(/완성 기준 1\//)).toBeVisible();
 
@@ -176,7 +177,7 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
 
   await page.reload();
   const again = page.getByTestId("evidence-developer").locator('[data-testid^="evidence-card-"]').first();
-  await expect(again.getByRole("textbox", { name: "내 주제" })).toHaveValue(/수업·알바·동아리/, { timeout: 120_000 });
+  await expect(again.getByRole("textbox", { name: "내 주제" })).toHaveValue(chosen, { timeout: 120_000 });
   await expect(again.getByText(/완성 기준 1\//)).toBeVisible();
   await expect(page.getByTestId("weak-civil-servant").getByText(/약점: 영어 평균 40점/)).toBeVisible();
 });
