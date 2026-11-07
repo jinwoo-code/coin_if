@@ -13,7 +13,7 @@ test("검사 결과는 나오자마자 저장, 고른 진로는 새로고침 뒤
   await expect(page).toHaveURL(/\/choose/);
 
   await page.getByRole("button", { name: /브랜드 마케터/ }).click();
-  await page.getByRole("button", { name: /무역·물류 담당자/ }).click();
+  await page.getByRole("button", { name: /9급 행정직 공무원/ }).click(); // 고민 글에 나온 진로도 추천에 있다
   await page.getByRole("radio", { name: "5년" }).or(page.getByRole("button", { name: "5년", exact: true })).first().click();
   await page.reload();
   await expect(page.getByRole("button", { name: /2개 진로를 5년 살아보기/ })).toBeVisible();
