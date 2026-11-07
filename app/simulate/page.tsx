@@ -401,6 +401,7 @@ export default function SimulatePage() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let ended = false; // '끝'(done)이나 '오류'(error) 신호를 받았는지
       for (;;) {
         const { value, done: finished } = await reader.read();
         if (finished) break;
@@ -428,10 +429,16 @@ export default function SimulatePage() {
             store.setReport(null);
             setAnimateTimeline(false);
             setDone(true);
+            ended = true;
           }
-          if (msg.type === "error") setError(msg.message);
+          if (msg.type === "error") {
+            setError(msg.message);
+            ended = true;
+          }
         }
       }
+      // 서버가 신호 없이 응답을 닫으면(함수 시간 제한 등) '살아보는 중'에 갇히지 않게 실패로 본다.
+      if (!ended) throw new Error("stream ended early");
     } catch {
       setError("서버와 연결이 끊겼어요. 다시 살아보기를 눌러 주세요.");
     }
