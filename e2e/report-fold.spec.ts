@@ -1,10 +1,10 @@
 // 리포트는 결론과 행동만 펼쳐 두고, 숫자·준비 계획·미리 보기·고용센터는 접어 둔다. 접어도 잠긴 건 아니다.
 import { expect, test } from "@playwright/test";
-import { SIM_WAIT } from "./helpers";
+import { SIM_WAIT, openDemo } from "./helpers";
 
 async function toReport(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+  await openDemo(page);
   await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
 }
 

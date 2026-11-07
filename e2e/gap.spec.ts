@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { REMOTE, autoOpenReport } from "./helpers";
+import { REMOTE, autoOpenReport, openDemo } from "./helpers";
 
 test.beforeEach(async ({ page }) => autoOpenReport(page));
 
@@ -8,7 +8,7 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
   await page.goto("/report");
@@ -63,7 +63,7 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
 test("전공이 다른 진로를 고르면 학과부터라고 알려 준다", async ({ page }) => {
   test.setTimeout(120_000);
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.goto("/choose");
   await page.getByRole("searchbox").or(page.getByPlaceholder(/검색|찾/)).first().fill("간호사");
@@ -76,7 +76,7 @@ test("개발자·간호사·9급 일정과 NCS 근거가 나온다", async ({ pa
   test.setTimeout(420_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.goto("/choose");
   const search = page.getByRole("searchbox").or(page.getByPlaceholder(/검색|찾/)).first();
@@ -120,7 +120,7 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
   test.setTimeout(420_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.goto("/choose");
   const search = page.getByRole("searchbox").or(page.getByPlaceholder(/검색|찾/)).first();
@@ -188,7 +188,7 @@ test("간호학과 3학년 예시 인물로 간호사 리포트 전 과정이 �
   test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: "간호학과 3학년 예시로 보기" }).click();
+  await openDemo(page, "nurse");
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
   await page.goto("/report");
@@ -239,7 +239,7 @@ test("예시 인물 김민준이 간호사를 고르면 0%에서 기간 늘리�
   test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.evaluate(() => {
     const k = Object.keys(localStorage).find((x) => x.endsWith(":selection"))!;
@@ -265,7 +265,7 @@ test("상담사 공유: 미리 보기 → PDF 화면 → 링크 열기(AI 표시
   test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: "간호학과 3학년 예시로 보기" }).click();
+  await openDemo(page, "nurse");
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
   // 이야기 원문·문항별 답을 일부러 넣어 둔다
@@ -323,7 +323,7 @@ test("무료는 미리 보기까지, 프리미엄을 열면 격차~실행 전체
   test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
   // 시연 인물이 아닌 사람으로
@@ -376,7 +376,7 @@ test("무료는 미리 보기까지, 프리미엄을 열면 격차~실행 전체
 test("리포트는 저장본을 그대로 열고, 내 정보가 바뀌면 다시 만들기가 나온다", async ({ page }) => {
   test.setTimeout(240_000);
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물/ }).first().click();
+  await openDemo(page);
   await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: 180_000 });
   let calls = 0;

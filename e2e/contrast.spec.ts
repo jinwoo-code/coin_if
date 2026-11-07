@@ -4,7 +4,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "@playwright/test";
-import { SIM_WAIT } from "./helpers";
+import { SIM_WAIT, openDemo } from "./helpers";
 
 const OUT = process.env.CONTRAST_OUT;
 const ROUTES = ["/", "/interview", "/choose", "/simulate", "/multiverse?world=developer", "/multiverse?world=civil-servant", "/report", "/me", "/checkin", "/talk?world=developer", "/story", "/tokens"];
@@ -15,7 +15,7 @@ test("글자 대비·크기 점검", async ({ page }) => {
   mkdirSync(OUT!, { recursive: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+  await openDemo(page);
   await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
 
   const rows: Record<string, unknown>[] = [];

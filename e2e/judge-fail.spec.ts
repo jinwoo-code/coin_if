@@ -1,6 +1,6 @@
 // AI 판단이 실패하면 화면에 'AI 판단 실패 → 규칙 계산'이 나온다. 응답 실패(500)와 네트워크 끊김은 가짜로, 틀린 키는 E2E_BAD_KEY=1로 실제 서버를 거쳐.
 import { expect, test } from "@playwright/test";
-import { openTimeline, SIM_WAIT } from "./helpers";
+import { openTimeline, SIM_WAIT, openDemo, REMOTE } from "./helpers";
 
 const cases = process.env.E2E_BAD_KEY ? (["틀린 키"] as const) : (["응답 실패", "네트워크 끊김"] as const);
 for (const how of cases) {
@@ -12,7 +12,7 @@ for (const how of cases) {
       return how === "응답 실패" ? route.fulfill({ status: 500, json: { error: "x" } }) : route.abort("failed");
     });
     await page.goto("/");
-    await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+    await openDemo(page);
     await expect(page).toHaveURL(/\/choose|\/simulate/, { timeout: 30_000 });
     if (page.url().includes("/choose")) await page.getByRole("button", { name: /살아보기|시작/ }).last().click();
     await expect(page).toHaveURL(/\/simulate/, { timeout: 30_000 });
@@ -33,9 +33,10 @@ for (const how of cases) {
 // 좁은 칸에서 '나라면 이렇게 안 해' 버튼이 카드 끝에 붙지 않는다(진로 3개를 나란히, 320·390px)
 for (const width of [320, 390]) {
   test(`고치기 버튼 여백 ${width}px`, async ({ page }) => {
+    test.setTimeout(REMOTE ? 600_000 : 240_000); // 진로 3개라 배포 사이트(무료 키, 하나씩 호출)는 2분을 넘긴다
     await page.setViewportSize({ width, height: 800 });
     await page.goto("/");
-    await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+    await openDemo(page);
     await expect(page).toHaveURL(/\/simulate/);
     await page.evaluate(() => {
       const s = JSON.parse(localStorage.getItem("cr:v10:selection")!);

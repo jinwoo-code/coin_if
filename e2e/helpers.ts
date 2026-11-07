@@ -26,6 +26,7 @@ export async function quickPart(page: Page, depth: "빠르게" | "표준" | "정
     .filter({ hasText: new RegExp(`^${depth}`) })
     .click();
   await page.getByRole("button", { name: "바로 취업할지 공무원을 준비할지" }).click();
+  await page.getByRole("button", { name: "다음: 자격증·경험" }).click(); // 스펙은 두 화면
   await page.getByRole("button", { name: "이 스펙으로 다음" }).click();
   for (const v of ["안정", "성장", "돈", "여유"]) await page.getByRole("button", { name: new RegExp(`^${v}`) }).click();
   await next(page);
@@ -80,4 +81,10 @@ export async function autoOpenReport(page: Page) {
     const open = () => document.querySelectorAll<HTMLDetailsElement>('details[data-testid="gap-world"]:not([open]), details[data-testid="premium-preview"]:not([open]), details[data-testid="report-runs"]:not([open])').forEach((d) => (d.open = true));
     new MutationObserver(open).observe(document, { childList: true, subtree: true });
   });
+}
+
+// 첫 화면 '예시로 둘러보기' → 인물 고르기(김민준 / 이서연)
+export async function openDemo(page: Page, kind: "developer" | "nurse" = "developer") {
+  await page.getByRole("button", { name: "예시로 둘러보기" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: kind === "nurse" ? /이서연/ : /김민준/ }).click();
 }

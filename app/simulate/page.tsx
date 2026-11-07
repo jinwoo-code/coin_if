@@ -4,6 +4,7 @@ import { BarChart3, ChevronDown, CornerDownRight, GitBranch, RotateCcw } from "l
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { textColor } from "@/lib/color";
 import { showsOutcome } from "@/components/outcome-split";
 import { Ci, freqWord, LineBadge, MockNotice, Odds, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
 import { times } from "@/lib/ci";
@@ -90,7 +91,7 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
       style={{ borderColor: current ? world.color : "#E3E6EB", boxShadow: current ? `0 0 0 1px ${world.color}` : undefined, borderStyle: quiet ? "dashed" : "solid" }}
     >
       <p className="num mb-1 text-cap font-semibold text-muted">{ev.label}</p>
-      <p className="mb-1.5 text-cap font-semibold" style={{ color: world.color }}>
+      <p className="mb-1.5 text-cap font-semibold" style={{ color: textColor(world.color) }}>
         {/* 장면의 큰 사건이 난 달의 처지. 역 끝 처지를 쓰면 '병원 2개월차'에 '자리를 못 잡았다'가 같이 보인다 */}
         {ev.eventStatus ?? ev.status}
       </p>

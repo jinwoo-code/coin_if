@@ -47,7 +47,8 @@ const secs = (ms: number) => `${(ms / 1000).toFixed(1)}초`;
     // 시연 인물 결과 만들기(서버 계산, 감속 안 걸림)
     async function prepare(page: Page, months: number) {
       await page.goto("/");
-      await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+      await page.getByRole("button", { name: "예시로 둘러보기" }).click();
+      await page.getByRole("dialog").getByRole("button", { name: /김민준/ }).click();
       await page.waitForURL(/simulate/);
       const started = Date.now();
       await page.evaluate((m) => {

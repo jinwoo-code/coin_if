@@ -3,7 +3,8 @@
 import { ArrowUp, Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import norms from "@/data/norms.json";
 import { MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui";
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
 import { Ai, Me } from "@/components/chat";
@@ -11,6 +12,8 @@ import { canDeepen, depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, typ
 import { IPIP_REST_IDS, MINI_IDS, miniDone, scoreMini } from "@/lib/mini-ipip";
 import { completeness, DEFAULT_LIFE, DEFAULT_SPEC, DEFAULT_WANTS } from "@/lib/profile";
 import { store } from "@/lib/store";
+import { T } from "@/lib/copy";
+import { W } from "@/lib/weights";
 import { twinScore } from "@/lib/twin";
 import { selfAgreement } from "@/lib/ongoing";
 import { chaptersDone } from "@/lib/chapters";
@@ -69,6 +72,46 @@ function Radar({ b }: { b: BigFive }) {
       })}
     </svg>
   );
+}
+
+// 성격 요인마다 비교 집단 평균과 견준 한 줄. 차이 기준은 선택 이유와 같은 reason.traitMargin(가정값).
+// 비교 집단은 미국 청년 표본(data/norms.json)이라 한국 또래 평균이 아니다 → 화면에 그대로 적는다.
+function TraitLines({ b }: { b: BigFive }) {
+  const mean = norms.bigFive.mean as Record<keyof BigFive, number>;
+  const margin = W("reason.traitMargin");
+  return (
+    <>
+      <ul className="mt-3 flex flex-col gap-1.5 text-sm">
+        {TRAITS.map((t) => {
+          const d = b[t.key] - mean[t.key];
+          const word = d > margin ? "또래보다 높은 편" : d < -margin ? "또래보다 낮은 편" : "또래와 비슷한 편";
+          return (
+            <li key={t.key} className="flex justify-between gap-3">
+              <span className="font-semibold">{t.label}</span>
+              <span className="num text-muted">
+                {word} ({b[t.key].toFixed(1)} / 평균 {mean[t.key].toFixed(1)})
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-3 text-cap text-muted">
+        &apos;또래&apos;는 미국 청년 15,471명 표본(Baldasaro 외 2013)의 평균이에요. 한국 또래 평균은 아직 못 구해서 이 값을 빌려 썼어요. &apos;높은 편·낮은 편&apos;을 가르는 차이 {margin}점은 {T.assumedFull}이에요.
+      </p>
+    </>
+  );
+}
+
+// 요약은 잘리지 않게 글 길이만큼 늘어난다
+function AutoText(props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { value: string }) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [props.value]);
+  return <textarea ref={ref} {...props} />;
 }
 
 // ---------- 결과 화면의 작은 부품 ----------
@@ -271,6 +314,8 @@ export default function InterviewPage() {
   const [ipip, setIpip] = useState<Record<string, number>>({});
   const [riasec, setRiasec] = useState<Record<string, number>>({});
   const [spec, setSpec] = useState<Spec>(DEFAULT_SPEC);
+  const [specPart, setSpecPart] = useState<1 | 2>(1); // 스펙은 두 화면: 학교·학점·어학 → 자격증·경험
+  const [specLater, setSpecLater] = useState(false); // '나중에 채우기'(기본값으로 계산하고, 더 정확하게 하기에서 다시 묻는다)
   const [life, setLife] = useState<Life>(DEFAULT_LIFE);
   const [wants, setWants] = useState<Wants>(DEFAULT_WANTS);
   const [imported, setImported] = useState({ resume: false, github: false });
@@ -401,7 +446,7 @@ export default function InterviewPage() {
           bigFiveItems: Math.max(base?.depth.bigFiveItems ?? 0, ipipDone ? 50 : miniAll ? 20 : 0),
           behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(trainPicks).length),
           interestItems: Math.max(base?.depth.interestItems ?? 0, riasecDone ? 24 : 0),
-          spec: true,
+          spec: !specLater || !!base?.depth.spec,
           life: true,
           ...imported,
         },
@@ -484,11 +529,15 @@ export default function InterviewPage() {
       return (
         <div key={i} className="contents">
           <Ai>지금 가진 스펙을 알려 주세요. 합격 확률 계산에 바로 쓰여요.</Ai>
-          <Me>
-            {spec.school} {spec.status}
-            {spec.gpa ? `, 학점 ${spec.gpa}` : ""}
-            {spec.certs.length ? `, ${spec.certs.join("·")}` : ""}, 프로젝트·작품 {spec.projects}개
-          </Me>
+          {specLater ? (
+            <Me>나중에 채울게요</Me>
+          ) : (
+            <Me>
+              {spec.school} {spec.status}
+              {spec.gpa ? `, 학점 ${spec.gpa}` : ""}
+              {spec.certs.length ? `, ${spec.certs.join("·")}` : ""}, 프로젝트·작품 {spec.projects}개
+            </Me>
+          )}
         </div>
       );
     if (s.kind === "life")
@@ -610,6 +659,33 @@ export default function InterviewPage() {
           <button className="btn-primary w-full" disabled={batchLeft > 0} onClick={() => advance()}>
             {batchLeft > 0 ? `${batchLeft}문항 남았어요` : "다음"}
           </button>
+        ) : step.kind === "spec" && !thinking && !loading ? (
+          <div className="flex gap-2">
+            <button
+              className="btn-ghost flex-none px-4"
+              onClick={() => {
+                setSpecLater(true);
+                advance();
+              }}
+            >
+              나중에 채우기
+            </button>
+            {specPart === 1 ? (
+              <button className="btn-primary flex-1" onClick={() => setSpecPart(2)}>
+                다음: 자격증·경험
+              </button>
+            ) : (
+              <button
+                className="btn-primary flex-1"
+                onClick={() => {
+                  setSpecLater(false);
+                  advance();
+                }}
+              >
+                이 스펙으로 다음
+              </button>
+            )}
+          </div>
         ) : formStep && !thinking && !loading ? (
           <button className="btn-primary w-full" onClick={() => advance()}>
             {step.kind === "spec" ? "이 스펙으로 다음" : step.kind === "life" ? "이 조건으로 다음" : "다음"}
@@ -632,11 +708,11 @@ export default function InterviewPage() {
             <label htmlFor="summary" className="sr-only">
               요약 고치기
             </label>
-            <textarea
+            <AutoText
               id="summary"
               name="summary"
               rows={3}
-              className="mt-1 w-full resize-none rounded-lg border-0 bg-transparent p-0 text-lg font-semibold leading-relaxed"
+              className="mt-1 w-full resize-none overflow-hidden rounded-lg border-0 bg-transparent p-0 text-lg font-semibold leading-relaxed"
               value={profile.summary}
               onChange={(e) => setProfile({ ...profile, summary: e.target.value })}
             />
@@ -677,6 +753,7 @@ export default function InterviewPage() {
             <section className="card p-5">
               <p className="label">성격</p>
               <Radar b={profile.bigFive} />
+              <TraitLines b={profile.bigFive} />
             </section>
           </div>
           <section className="card p-5">
@@ -810,11 +887,21 @@ export default function InterviewPage() {
 
           {!thinking && !loading && step.kind === "spec" ? (
             <>
-              <Ai>지금 가진 스펙을 알려 주세요. 합격·취업 확률을 계산할 때 바로 쓰여요. 이력서가 있으면 자동으로 채울 수 있어요.</Ai>
-              <section className="card ml-[42px] animate-rise p-4">
+              {specPart === 1 ? (
+                <Ai>지금 가진 스펙을 알려 주세요(1/2: 학교·학점·어학). 합격·취업 확률을 계산할 때 바로 쓰여요. 이력서가 있으면 자동으로 채울 수 있어요.</Ai>
+              ) : (
+                <Ai>자격증과 해 본 경험도 알려 주세요(2/2). 없으면 그대로 다음으로 가도 돼요.</Ai>
+              )}
+              <section key={specPart} className="card ml-[42px] animate-rise p-4">
+                {specPart === 2 ? (
+                  <button type="button" className="mb-3 min-h-11 text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink" onClick={() => setSpecPart(1)}>
+                    학교·학점 고치기
+                  </button>
+                ) : null}
                 <SpecForm
                   spec={spec}
                   major={major}
+                  part={specPart}
                   onChange={setSpec}
                   onImported={(src, extra) => {
                     setImported((m) => ({ ...m, [src]: true }));

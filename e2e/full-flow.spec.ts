@@ -3,7 +3,7 @@
 // AI는 안 부른다(설정에서 키를 비움, 이야기·대화·실시간 판단은 가짜). 로그인·실제 결제창 승인은 못 한다: 토큰은 /api/tokens 응답을 가짜로 줘서 화면만, 승인 API의 금액·중복 검사는 따로 실제로 확인했다(CLAUDE.md 2026-11-02).
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
-import { counter, EMPTY, mockStoryApis, next, pickAll, quickPart, REMOTE, SIM_WAIT, autoOpenReport } from "./helpers";
+import { counter, EMPTY, mockStoryApis, next, pickAll, quickPart, REMOTE, SIM_WAIT, autoOpenReport, openDemo } from "./helpers";
 
 test.beforeEach(async ({ page }) => autoOpenReport(page));
 
@@ -36,7 +36,7 @@ test("시연 인물 끝까지", async ({ page }) => {
   test.setTimeout(REMOTE ? 900_000 : 300_000);
   const errors = noErrors(page);
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+  await openDemo(page);
   await simulateToMap(page);
 
   // 세계선 열기 → 갈림길 바꿔 보기(1,000번 다시)

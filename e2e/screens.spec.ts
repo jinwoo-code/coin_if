@@ -3,7 +3,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
-import { REMOTE, SIM_WAIT } from "./helpers";
+import { REMOTE, SIM_WAIT, openDemo } from "./helpers";
 
 const DIR = process.env.SCREENS_DIR ?? "test-results/screens";
 const ROUTES = ["/", "/admin", "/checkin", "/choose", "/counselor", "/deepen", "/interview", "/live", "/login", "/me", "/multiverse?world=developer", "/org", "/pilot", "/privacy", "/report", "/simulate", "/story", "/story/decisions", "/talk?world=developer", "/tokens", "/tokens/fail", "/tokens/success?paymentKey=x&orderId=x&amount=1", "/welcome"];
@@ -14,7 +14,7 @@ test("모든 화면 넘침 검사", async ({ page }) => {
   await page.route("**/api/pay/confirm", (r) => r.fulfill({ status: 400, json: { error: "테스트" } }));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+  await openDemo(page);
   await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
   await page.evaluate(() => localStorage.setItem("cr:v10:pilotInvite", "true"));
 

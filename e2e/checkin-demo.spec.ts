@@ -1,15 +1,15 @@
 // 예시 인물 두 명이 시연용 체크인을 끝까지 돌고, 전후로 바뀐 것을 한 화면에서 본다. 큰 갈림길의 고치기 버튼이 접히지 않는 것도.
 import { expect, test } from "@playwright/test";
-import { SIM_WAIT } from "./helpers";
+import { SIM_WAIT, openDemo } from "./helpers";
 
 for (const [button, name, worlds] of [
-  [/예시 인물로 바로 보기/, "김민준", ["developer", "civil-servant"]],
-  [/간호학과/, "이서연", ["nurse", "civil-servant"]],
+  ["developer", "김민준", ["developer", "civil-servant"]],
+  ["nurse", "이서연", ["nurse", "civil-servant"]],
 ] as const) {
   test(`${name}: 고친 선택 → 시연용 체크인 → 전후 비교`, async ({ page }) => {
     test.setTimeout(600_000);
     await page.goto("/");
-    await page.getByRole("button", { name: button }).first().click();
+    await openDemo(page, button);
     await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
 
     // 큰 갈림길 고치기: 자세히를 펼치지 않아도 연도만 펼치면 보인다. 가장 흔한 길에 큰 갈림길이 없는 진로면 다음 진로에서 찾는다.

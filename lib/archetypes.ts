@@ -834,7 +834,7 @@ const PALETTE: [string, string][] = [
   ["#13A57B", "#14171F"],
   ["#7B4DDB", "#FFFFFF"],
   ["#D6336C", "#FFFFFF"],
-  ["#0E8A96", "#FFFFFF"],
+  ["#0C7F8B", "#FFFFFF"], // 청록: 흰 글자 4.75:1(예전 #0E8A96은 4.12라 한 단계 어둡게, 2026-11-07)
   ["#B7791F", "#14171F"],
   ["#4F6D7A", "#FFFFFF"],
   ["#15803D", "#FFFFFF"],

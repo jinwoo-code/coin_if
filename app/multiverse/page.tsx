@@ -4,6 +4,7 @@ import { ArrowLeftRight, BarChart3, Check, CornerDownRight, GitBranch, MessageCi
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
+import { textColor } from "@/lib/color";
 import { OutcomeSplit, showsOutcome } from "@/components/outcome-split";
 import { Ci, CI_NOTE, LineBadge, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
@@ -30,7 +31,7 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           {line.isMain ? (
-            <p className="mb-1 text-cap font-bold" style={{ color: world.color }}>
+            <p className="mb-1 text-cap font-bold" style={{ color: textColor(world.color) }}>
               AI가 먼저 간 길
             </p>
           ) : null}
@@ -188,7 +189,7 @@ function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
           </div>
         ))}
       </dl>
-      <p className="px-3.5 pb-3 text-cap text-muted" style={{ color: world.color }}>
+      <p className="px-3.5 pb-3 text-cap text-muted" style={{ color: textColor(world.color) }}>
         같은 사람, 같은 출발. 갈림길 몇 개가 이만큼 다른 3년을 만들었어요.
       </p>
     </section>
@@ -215,7 +216,7 @@ function LeverList({ items, world }: { items: Lever[] | null; world: WorldTempla
           {items.map((l, i) => (
             <li key={l.title} className="card p-4">
               <p className="flex items-start gap-2.5">
-                <span className="num flex h-6 w-6 flex-none items-center justify-center rounded-full text-cap font-bold text-white" style={{ background: world.color }}>
+                <span className="num flex h-6 w-6 flex-none items-center justify-center rounded-full text-cap font-bold" style={{ background: world.color, color: world.onColor }}>
                   {i + 1}
                 </span>
                 <span className="font-bold">{l.title}</span>
