@@ -43,7 +43,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
           </dt>
           <dd className="num mt-0.5 text-sm">
             <strong className="text-xl font-extrabold">{st.gate?.share ?? 0}%</strong> <Ci pct={st.gate?.share ?? 0} n={st.runs} />
-            {st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? <span className="text-muted">, 보통 {monthLabel(mv.startYm, st.gate.typicalMonth)}</span> : null}
+            {st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? <span className="text-muted">, {times(st.runs)}번 가운데 {monthLabel(mv.startYm, st.gate.typicalMonth)}</span> : null}
           </dd>
         </div>
         {showsOutcome(world, st) ? (
@@ -541,7 +541,7 @@ export default function ReportPage() {
                       <span className="font-semibold">{world.short}</span>{" "}
                       <span className="num">
                         {durationLabel(mv.months)} 안에 {gate?.label} <strong>{gate?.share ?? 0}%</strong> <Ci pct={gate?.share ?? 0} n={mv.stats.runs} />
-                        {gate?.typicalMonth !== null && gate?.typicalMonth !== undefined ? ` · 보통 ${monthLabel(mv.startYm, gate.typicalMonth)}` : ""}
+                        {gate?.typicalMonth !== null && gate?.typicalMonth !== undefined ? ` · 가운데 ${monthLabel(mv.startYm, gate.typicalMonth)}` : ""}
                       </span>
                       <Link href={`/multiverse?world=${w.worldId}`} className="mt-0.5 flex min-h-11 items-center gap-1 font-semibold underline underline-offset-4">
                         {T.lineMap}에서 자세히 보기 <ArrowRight aria-hidden="true" size={14} />

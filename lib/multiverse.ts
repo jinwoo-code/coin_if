@@ -345,7 +345,7 @@ function tweaksFor(world: WorldTemplate): Tweak[] {
 const COMMON_TWEAKS: Tweak[] = [{ title: "생활비를 6개월치 더 모아 두면", apply: (p) => withLife(p, { savings: p.life.savings + p.life.livingCost * 6 }) }];
 
 function monthsText(m: number | null) {
-  return m === null ? "기간 안에 못 함" : `보통 ${durationLabel(m + 1)} 뒤`;
+  return m === null ? "기간 안에 못 함" : `${LEVER_RUNS}번 가운데 ${durationLabel(m + 1)} 뒤`;
 }
 
 export function levers(p: Profile, world: WorldTemplate, months: number, startYm: string, base: Path[], n = LEVER_RUNS): Lever[] {

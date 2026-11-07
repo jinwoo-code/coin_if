@@ -605,7 +605,7 @@ export default function SimulatePage() {
                         <p className="mt-1 text-sm">{main.title}</p>
                         <p className="num mt-2 text-cap text-muted">
                           {times(mv.stats.runs)}번 전체로 보면 {mv.stats.gate?.label} {mv.stats.gate?.share}% <Ci pct={mv.stats.gate?.share ?? 0} n={mv.stats.runs} />
-                          {mv.stats.gate?.typicalMonth !== null && mv.stats.gate?.typicalMonth !== undefined ? `, 보통 ${durationLabel(mv.stats.gate.typicalMonth + 1)} 뒤` : ""}
+                          {mv.stats.gate?.typicalMonth !== null && mv.stats.gate?.typicalMonth !== undefined ? `, 가운데 ${monthLabel(mv.startYm, mv.stats.gate.typicalMonth)}` : ""}
                         </p>
                         <Link href={`/multiverse?world=${w.id}`} className="btn-ghost mt-3 h-auto min-h-[44px] w-full min-w-0 gap-1.5 px-2 py-2.5 text-center text-sm">
                           <GitBranch aria-hidden="true" size={16} className="shrink-0" /> 나머지 {T.line} {mv.lines.length - 1}개 보기

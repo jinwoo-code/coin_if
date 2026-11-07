@@ -84,7 +84,7 @@ function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: Li
             <span className={`text-[15px] ${onMain ? "font-bold" : "font-semibold"}`}>{node.cause === "start" ? `출발 · ${monthLabel(mv.startYm, 0)}` : node.label}</span>
             {node.cause !== "start" ? (
               <span className="num text-cap text-muted">
-                {times(mv.stats.runs)}번 중 {times(node.count)}번 · 보통 {monthLabel(mv.startYm, node.typicalMonth)}
+                {times(mv.stats.runs)}번 중 {times(node.count)}번 · 이 갈래 가운데 {monthLabel(mv.startYm, node.typicalMonth)}
               </span>
             ) : null}
           </p>
@@ -497,7 +497,7 @@ function MultiversePage() {
             <p className="num text-2xl font-extrabold">
               {st.gate?.share ?? 0}% <Ci pct={st.gate?.share ?? 0} n={st.runs} />
             </p>
-            <p className="num text-cap text-muted">{st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? `보통 ${monthLabel(mv.startYm, st.gate.typicalMonth)}` : "기간 안에 거의 못 함"}</p>
+            <p className="num text-cap text-muted">{st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? `${times(st.runs)}번 가운데 ${monthLabel(mv.startYm, st.gate.typicalMonth)}` : "기간 안에 거의 못 함"}</p>
           </div>
           {showsOutcome(world, st) ? (
             <div className="rounded-2xl bg-ground p-3">
