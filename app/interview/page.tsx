@@ -20,7 +20,7 @@ import { chaptersDone } from "@/lib/chapters";
 import { isPilotId, PILOT_SJT, pilotActive, pilotAnswered } from "@/lib/pilot";
 import { IPIP50, pickHoldout, RIASEC24, scoreScale, scoreSjt, SJT } from "@/lib/tests";
 import type { Behavior, BigFive, DepthMode, Interests, Life, Profile, Spec, ValueKey, Wants } from "@/lib/types";
-import { LifeForm, SpecForm, WantsForm } from "./form";
+import { LifeForm, SpecForm, WantsForm, type SpecTouched } from "./form";
 import { CciForm, cciQa, StoryConfirm } from "./story";
 import { scrubStory, type StorySignals } from "@/lib/story";
 
@@ -315,6 +315,8 @@ export default function InterviewPage() {
   const [riasec, setRiasec] = useState<Record<string, number>>({});
   const [spec, setSpec] = useState<Spec>(DEFAULT_SPEC);
   const [specPart, setSpecPart] = useState<1 | 2>(1); // 스펙은 두 화면: 학교·학점·어학 → 자격증·경험
+  // 학교·지금·졸업까지를 직접 골랐는지. 처음엔 아무것도 안 골라진 상태(기본값 '전문대·재학'이 고른 것처럼 보이지 않게).
+  const [specTouched, setSpecTouched] = useState<SpecTouched>({});
   const [specLater, setSpecLater] = useState(false); // '나중에 채우기'(기본값으로 계산하고, 더 정확하게 하기에서 다시 묻는다)
   const [life, setLife] = useState<Life>(DEFAULT_LIFE);
   const [wants, setWants] = useState<Wants>(DEFAULT_WANTS);
@@ -369,6 +371,7 @@ export default function InterviewPage() {
     setIpip(p.answers.ipip ?? {});
     setRiasec(p.answers.riasec ?? {});
     setSpec(p.spec);
+    if (p.depth.spec) setSpecTouched({ school: true, status: true, gradIn: true });
     setLife(p.life);
     setWants(p.wants);
     setReadiness(p.readiness);
@@ -446,7 +449,8 @@ export default function InterviewPage() {
           bigFiveItems: Math.max(base?.depth.bigFiveItems ?? 0, ipipDone ? 50 : miniAll ? 20 : 0),
           behaviorItems: Math.max(base?.depth.behaviorItems ?? 0, Object.keys(trainPicks).length),
           interestItems: Math.max(base?.depth.interestItems ?? 0, riasecDone ? 24 : 0),
-          spec: !specLater || !!base?.depth.spec,
+          // 학교를 안 고르고 넘어가면 '나중에 채우기'와 같이 본다(기본값으로 계산하고 더 정확하게 하기에서 다시 묻는다)
+          spec: (!specLater && !!specTouched.school) || !!base?.depth.spec,
           life: true,
           ...imported,
         },
@@ -533,7 +537,8 @@ export default function InterviewPage() {
             <Me>나중에 채울게요</Me>
           ) : (
             <Me>
-              {spec.school} {spec.status}
+              {specTouched.school ? spec.school : "학교는 나중에"}
+              {specTouched.status ? ` ${spec.status}` : ""}
               {spec.gpa ? `, 학점 ${spec.gpa}` : ""}
               {spec.certs.length ? `, ${spec.certs.join("·")}` : ""}, 프로젝트·작품 {spec.projects}개
             </Me>
@@ -903,6 +908,8 @@ export default function InterviewPage() {
                   major={major}
                   part={specPart}
                   onChange={setSpec}
+                  touched={specTouched}
+                  onTouch={setSpecTouched}
                   onImported={(src, extra) => {
                     setImported((m) => ({ ...m, [src]: true }));
                     if (extra?.experiences && !texts.experiences) setDraft(extra.experiences);

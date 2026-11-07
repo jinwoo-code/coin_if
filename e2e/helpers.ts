@@ -26,6 +26,8 @@ export async function quickPart(page: Page, depth: "빠르게" | "표준" | "정
     .filter({ hasText: new RegExp(`^${depth}`) })
     .click();
   await page.getByRole("button", { name: "바로 취업할지 공무원을 준비할지" }).click();
+  await expect(page.getByRole("radiogroup", { name: "학교" }).getByRole("radio", { checked: true })).toHaveCount(0); // 기본값이 골라져 보이지 않는다
+  await page.getByRole("radio", { name: "4년제" }).click();
   await page.getByRole("button", { name: "다음: 자격증·경험" }).click(); // 스펙은 두 화면
   await page.getByRole("button", { name: "이 스펙으로 다음" }).click();
   for (const v of ["안정", "성장", "돈", "여유"]) await page.getByRole("button", { name: new RegExp(`^${v}`) }).click();

@@ -5,9 +5,12 @@ import { useId, useRef, useState } from "react";
 import type { HateTag, Life, Spec, Wants } from "@/lib/types";
 import { WORLDS } from "@/lib/worlds";
 
+export type SpecTouched = { school?: boolean; status?: boolean; gradIn?: boolean };
+
 // ---------- 작은 입력 부품 ----------
 
-export function Seg<T extends string | number>({ label, value, options, onChange }: { label: string; value: T; options: { v: T; t: string }[]; onChange: (v: T) => void }) {
+// value가 null이면 아무것도 안 골라진 상태로 그린다(기본값을 고른 것처럼 보이지 않게).
+export function Seg<T extends string | number>({ label, value, options, onChange }: { label: string; value: T | null; options: { v: T; t: string }[]; onChange: (v: T) => void }) {
   const id = useId();
   return (
     <div className="flex flex-col gap-1.5">
@@ -136,11 +139,16 @@ export function SpecForm({
   part = 0,
   onChange,
   onImported,
+  touched,
+  onTouch,
 }: {
   spec: Spec;
   major: string;
   part?: 0 | 1 | 2; // 0이면 한 화면에 전부, 1은 학교·학점·어학, 2는 자격증·경험
   onChange: (s: Spec) => void;
+  // 학교·지금·졸업까지를 사용자가 직접 골랐는지. 안 골랐으면 계산은 기본값으로 하되 화면에는 골라진 것처럼 안 보인다.
+  touched?: SpecTouched;
+  onTouch?: (t: SpecTouched) => void;
   onImported: (src: "resume" | "github", extra?: { experiences?: string; coding?: number }) => void;
 }) {
   const [busy, setBusy] = useState<"" | "resume" | "github">("");
@@ -149,6 +157,8 @@ export function SpecForm({
   const [custom, setCustom] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const set = (p: Partial<Spec>) => onChange({ ...spec, ...p });
+  const shown: SpecTouched = touched ?? { school: true, status: true, gradIn: true };
+  const touch = (t: SpecTouched) => onTouch?.({ ...shown, ...t });
   const isIT = IT_WORDS.some((w) => major.includes(w));
   const suggestions = Array.from(new Set([...certSuggestions(major), ...spec.certs]));
 
@@ -164,6 +174,7 @@ export function SpecForm({
       const s = data.spec as Partial<Spec> & { experiences?: string };
       const clean = Object.fromEntries(Object.entries(s).filter(([k, v]) => v !== null && v !== undefined && k !== "experiences")) as Partial<Spec>;
       onChange({ ...spec, ...clean, certs: Array.from(new Set([...spec.certs, ...(clean.certs ?? [])])) });
+      touch({ school: shown.school || clean.school !== undefined, status: shown.status || clean.status !== undefined, gradIn: shown.gradIn || clean.gradIn !== undefined });
       onImported("resume", { experiences: s.experiences });
       setMsg("이력서에서 찾은 내용을 채웠어요. 틀린 건 고쳐 주세요.");
     } catch (e) {
@@ -234,17 +245,28 @@ export function SpecForm({
       ) : null}
       {first ? (
         <>
-      <Seg label="학교" value={spec.school} options={(["고졸", "전문대", "4년제", "대학원"] as const).map((v) => ({ v, t: v }))} onChange={(school) => set({ school })} />
+      <Seg
+        label="학교"
+        value={shown.school ? spec.school : null}
+        options={(["고졸", "전문대", "4년제", "대학원"] as const).map((v) => ({ v, t: v }))}
+        onChange={(school) => {
+          touch({ school: true });
+          set({ school });
+        }}
+      />
       <Seg
         label="지금"
-        value={spec.status}
+        value={shown.status ? spec.status : null}
         options={(["재학", "졸업예정", "졸업"] as const).map((v) => ({ v, t: v }))}
-        onChange={(status) => set({ status, gradIn: status === "졸업" ? 0 : status === "졸업예정" ? monthsToFeb() : Math.max(spec.gradIn, 12) })}
+        onChange={(status) => {
+          touch({ status: true, gradIn: status !== "재학" || shown.gradIn });
+          set({ status, gradIn: status === "졸업" ? 0 : status === "졸업예정" ? monthsToFeb() : Math.max(spec.gradIn, 12) });
+        }}
       />
-      {spec.status === "재학" ? (
+      {shown.status && spec.status === "재학" ? (
         <Seg
           label="졸업까지"
-          value={spec.gradIn}
+          value={shown.gradIn ? spec.gradIn : null}
           options={[
             { v: 6, t: "반년" },
             { v: 12, t: "1년" },
@@ -252,7 +274,10 @@ export function SpecForm({
             { v: 24, t: "2년" },
             { v: 36, t: "3년 이상" },
           ]}
-          onChange={(gradIn) => set({ gradIn })}
+          onChange={(gradIn) => {
+            touch({ gradIn: true });
+            set({ gradIn });
+          }}
         />
       ) : null}
       <div className="grid grid-cols-2 gap-3">
