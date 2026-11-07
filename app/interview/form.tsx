@@ -25,7 +25,7 @@ export function Seg<T extends string | number>({ label, value, options, onChange
             role="radio"
             aria-checked={value === o.v}
             onClick={() => onChange(o.v)}
-            className={`min-h-[40px] rounded-full border px-3.5 text-sm transition-colors ${value === o.v ? "border-ink bg-ink font-semibold text-white" : "border-hair bg-surface hover:border-ink"}`}
+            className={`min-h-11 rounded-full border px-3.5 text-sm transition-colors ${value === o.v ? "border-ink bg-ink font-semibold text-white" : "border-hair bg-surface hover:border-ink"}`}
           >
             {o.t}
           </button>

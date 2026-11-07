@@ -20,7 +20,7 @@ p { text-wrap: pretty; }
     @apply w-full rounded-2xl border border-hair bg-surface px-4 py-3.5 text-base text-ink transition-[border-color] duration-150 placeholder:text-[#6B7280] hover:border-[#C9CDD4] focus:border-ink;
   }
   .chip {
-    @apply inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-hair bg-surface px-4 text-sm font-medium text-ink transition-[border-color,background-color] duration-150 hover:border-ink disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center gap-1.5 rounded-full border border-hair bg-surface px-4 text-sm font-medium text-ink transition-[border-color,background-color] duration-150 hover:border-ink disabled:opacity-50;
   }
   .label { @apply text-cap font-medium text-muted; }
   .num { font-variant-numeric: tabular-nums; }

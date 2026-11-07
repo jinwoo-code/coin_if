@@ -32,7 +32,7 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
         <div className="min-w-0 flex-1">
           {line.isMain ? (
             <p className="mb-1 text-cap font-bold" style={{ color: textColor(world.color) }}>
-              AI가 먼저 간 길
+              {T.mainLine}
             </p>
           ) : null}
           <h4 className="text-[15px] font-bold leading-snug">{line.title}</h4>

@@ -28,7 +28,7 @@ export default function Login() {
 
   return (
     <Screen title="로그인" back="/">
-      <p className="mt-2 text-muted">로그인하면 살아본 결과가 계정에 남아서 다른 기기에서도 이어 볼 수 있어요. 로그인하지 않아도 모든 기능을 써 볼 수 있어요.</p>
+      <p className="mt-2 text-muted">로그인하면 살아본 결과가 계정에 남아서 다른 기기에서도 이어 볼 수 있어요. 로그인하지 않아도 검사·시뮬레이션·무료 리포트는 쓸 수 있어요. 프리미엄 리포트는 로그인이 필요해요.</p>
       {!hasSupabase() ? (
         <p className="card mt-6 p-5 text-sm text-muted">아직 로그인 기능이 연결되지 않았어요(서버에 Supabase 설정이 필요해요).</p>
       ) : (

@@ -81,7 +81,7 @@ export function TokenChip() {
   }, []);
   if (!t) return null;
   return (
-    <Link href="/tokens" className="chip min-h-[36px] px-3 text-cap font-semibold" aria-label={t.unlimited ? "대학 무제한 이용 중" : `토큰 ${t.balance}개`}>
+    <Link href="/tokens" className="chip min-h-11 px-3 text-cap font-semibold" aria-label={t.unlimited ? "대학 무제한 이용 중" : `토큰 ${t.balance}개`}>
       {t.unlimited ? "무제한" : <span className="num">토큰 {t.balance}</span>}
     </Link>
   );

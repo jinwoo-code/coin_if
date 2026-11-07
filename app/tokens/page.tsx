@@ -66,6 +66,7 @@ export default function Tokens() {
       </section>
 
       <h2 className="mt-8 text-lg font-bold">어디에 쓰나요</h2>
+      <p className="mt-1 text-sm text-muted">토큰은 로그인했을 때만 빠져요. 로그인하지 않으면 시뮬레이션·대화는 그냥 쓸 수 있고, 프리미엄 리포트만 로그인이 필요해요.</p>
       <ul className="card mt-3 divide-y divide-hair">
         {[
           ["simulate", ""],

@@ -230,9 +230,9 @@ function OutcomeCell({ st }: { st: WorldStats }) {
   const o = st.outcome!;
   return (
     <span className="flex flex-col text-cap leading-snug">
-      <span>합격 {o.gate.share}% · 만족 {o.gate.satisfied}%</span>
+      <span>합격 {o.gate.share}% (그중 만족 {o.gate.satisfied}%)</span>
       <span>준비 중 {o.preparing.share}%</span>
-      <span>다른 길 {o.switched.share}% · 만족 {o.switched.satisfied}%</span>
+      <span>다른 길 {o.switched.share}% (그중 만족 {o.switched.satisfied}%)</span>
     </span>
   );
 }
