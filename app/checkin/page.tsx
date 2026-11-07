@@ -9,6 +9,7 @@ import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
 import { CheckinChanges } from "@/components/checkin-changes";
 import { CheckinMail } from "@/components/checkin-mail";
 import { FLAGS } from "@/lib/flags";
+import { downloadCheckin } from "@/lib/checkin-ics";
 import { Screen } from "@/components/ui";
 import { MINI_ITEMS } from "@/lib/mini-ipip";
 import { daysToCheckin, selfAgreement, TONE_WORD, withCorrection } from "@/lib/ongoing";
@@ -29,6 +30,7 @@ export default function CheckinPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [demo, setDemo] = useState(false);
+  const [icsDone, setIcsDone] = useState(false);
   const [picks, setPicks] = useState<Record<string, number>>({});
   const [real, setReal] = useState<Tone | "none" | null>(null);
   const [done, setDone] = useState<Checkin | null>(null);
@@ -79,9 +81,16 @@ export default function CheckinPage() {
         title="한 달 체크인"
         back="/me"
         footer={
-          <Link href="/choose" className="btn-primary flex w-full items-center justify-center">
-            진로 고르기로
-          </Link>
+          <div className="flex gap-2">
+            {store.getReport() ? (
+              <Link href="/report" className="btn-ghost flex flex-1 items-center justify-center">
+                리포트로
+              </Link>
+            ) : null}
+            <Link href="/choose" className="btn-primary flex flex-1 items-center justify-center">
+              진로 고르기로
+            </Link>
+          </div>
         }
       >
         <p role="status" className="mt-3 flex items-center gap-2 rounded-2xl bg-[#E7F6EF] px-4 py-3 text-sm text-[#0B6B4B]">
@@ -142,6 +151,12 @@ export default function CheckinPage() {
             </p>
           ) : null}
           <p className="mt-2 text-sm text-muted">한 달쯤 지나서 상황 질문 몇 개를 다시 묻고, 그동안 실제로 어떻게 했는지 물어요. 분신이 나를 얼마나 닮았는지 재는 기준이 돼요.</p>
+          <button type="button" className="btn-ghost mt-4 w-full" onClick={() => (downloadCheckin(days ?? 30), setIcsDone(true))}>
+            체크인 날 달력에 넣기
+          </button>
+          <p className="mt-1 text-cap text-muted" aria-live="polite">
+            {icsDone ? "일정 파일(진로-체크인.ics)을 받았어요. 열면 달력에 들어가요." : "누르면 체크인 날 일정 파일을 받아요."}
+          </p>
           {demoPerson ? (
             <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setDemo(true)}>
               시연용: 지금 해 보기

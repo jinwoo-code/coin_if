@@ -19,9 +19,11 @@ function first(report: Report): WeekEntry[] {
 
 export function WeekPlan({ report }: { report: Report }) {
   const [items, setItems] = useState<WeekEntry[]>(() => first(report));
+  const [saved, setSaved] = useState(false);
   const save = (next: WeekEntry[]) => {
     setItems(next);
     store.setWeekPlan(next);
+    setSaved(true);
   };
   const patch = (id: string, p: Partial<WeekEntry>) => save(items.map((x) => (x.id === id ? { ...x, ...p, example: false } : x)));
   const add = (what: string) => save([...items, { id: newId(), when: "", where: "", what }]);
@@ -32,7 +34,14 @@ export function WeekPlan({ report }: { report: Report }) {
       <h2 id="todo" className="text-xl font-bold">
         이번 주 할 일
       </h2>
-      <p className="mt-1 text-cap text-muted">언제, 어디서, 무엇을 할지 정하면 실제로 할 가능성이 높아져요. 이 기기에만 저장돼요.</p>
+      <p className="mt-1 text-cap text-muted">언제, 어디서, 무엇을 할지 정하면 실제로 할 가능성이 높아져요. 고치면 바로 이 기기에 저장돼요.</p>
+      <p className="mt-1 min-h-5 text-cap font-medium text-muted" aria-live="polite">
+        {saved ? (
+          <>
+            <Check aria-hidden="true" size={13} className="mr-1 inline" />이 기기에 저장했어요
+          </>
+        ) : null}
+      </p>
       <ul className="mt-3 flex flex-col gap-3">
         {items.map((t, i) => (
           <li key={t.id} className="rounded-lg border border-hair p-3">

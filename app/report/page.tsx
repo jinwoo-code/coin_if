@@ -21,31 +21,8 @@ import { getWorld } from "@/lib/worlds";
 import { LiveLives } from "@/components/live-lives";
 import { SharePanel } from "@/components/share-panel";
 import { WeekPlan } from "@/components/week-plan";
+import { downloadCheckin } from "@/lib/checkin-ics";
 import { T } from "@/lib/copy";
-
-// 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
-function downloadCheckin() {
-  const d = new Date(Date.now() + 30 * 24 * 3600 * 1000);
-  const ymd = d.toISOString().slice(0, 10).replace(/-/g, "");
-  const ics = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//career-rehearsal//KO",
-    "BEGIN:VEVENT",
-    `UID:${Date.now()}@career-rehearsal`,
-    `DTSTART;VALUE=DATE:${ymd}`,
-    "SUMMARY:진로 리허설 체크인",
-    "DESCRIPTION:한 달 동안 해 본 일을 입력하고 다시 살아보세요.",
-    "END:VEVENT",
-    "END:VCALENDAR",
-  ].join("\r\n");
-  const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "진로-체크인.ics";
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 // 1,000번 살아본 결과: 관문(합격·취업), 세계선 상위 3개, 바꿀 수 있는 것
 // 일반 리포트는 '바꿀 수 있는 것'을 2개까지, 프리미엄은 전부 보여 준다.
@@ -328,6 +305,7 @@ function FreeTodos({ todos }: { todos: string[] }) {
           </li>
         ))}
       </ul>
+      <p className="mt-3 text-cap text-muted">여기 체크는 저장되지 않아요. 언제·어디서 할지 정해서 저장하는 건 프리미엄 리포트에서 할 수 있어요.</p>
     </section>
   );
 }
