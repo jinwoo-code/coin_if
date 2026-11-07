@@ -339,6 +339,7 @@ export default function ReportPage() {
   const [mvs, setMvs] = useState<Record<string, Multiverse>>({});
   const [leverMap, setLeverMap] = useState<Record<string, Lever[]>>({});
   const [report, setReport] = useState<Report | null>(null);
+  const [icsDone, setIcsDone] = useState(false);
   const [premium, setPremium] = useState<PremiumItem[] | null>(null);
   const [premiumBusy, setPremiumBusy] = useState(false);
   const [stale, setStale] = useState(false);
@@ -448,12 +449,15 @@ export default function ReportPage() {
       }
       footer={
         <div className="flex flex-wrap gap-2 sm:justify-end">
-          <button className="btn-ghost flex-1 px-3 text-sm sm:flex-none sm:px-6 sm:text-base" onClick={downloadCheckin} disabled={!report}>
-            <CalendarPlus aria-hidden="true" size={18} /> 한 달 뒤 체크인
+          <button className="btn-ghost flex-1 px-3 text-sm sm:flex-none sm:px-6 sm:text-base" onClick={() => (downloadCheckin(), setIcsDone(true))} disabled={!report}>
+            <CalendarPlus aria-hidden="true" size={18} /> <span className="whitespace-nowrap">체크인 날 달력에 넣기</span>
           </button>
           <button className="btn-primary flex-1 px-3 text-sm sm:flex-none sm:px-6 sm:text-base" onClick={() => (unlocked ? setShareOpen(true) : document.getElementById("premium")?.scrollIntoView({ behavior: "smooth", block: "center" }))} disabled={!report}>
             <Share2 aria-hidden="true" size={18} /> <span className="whitespace-nowrap">상담사에게 공유</span>
           </button>
+          <p className="w-full text-cap text-muted" aria-live="polite">
+            {icsDone ? "30일 뒤 일정 파일(진로-체크인.ics)을 받았어요. 열면 달력에 들어가요." : "누르면 30일 뒤 체크인 일정 파일을 받아요."}
+          </p>
         </div>
       }
     >
