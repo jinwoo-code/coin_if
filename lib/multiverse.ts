@@ -289,6 +289,14 @@ export function multiverseOf(p: Profile, world: WorldTemplate, months: number, s
       } satisfies Line;
     })
     .toSorted((a, b) => b.count - a.count);
+  // 이름이 같은 줄(1·2·3년차 '계속할지 고민' 뒤 '취업으로 전향' 등)은 마지막 갈림길의 시기를 붙여 구분한다(표시만).
+  const lastStep = (l: Line) => flatten(tree).find((x) => x.node.id === l.id)?.trail.filter((n) => n.cause !== "start").at(-1);
+  const dup = new Set(lines.map((l) => l.title).filter((t, i, all) => all.indexOf(t) !== i));
+  for (const l of lines) {
+    if (!dup.has(l.title)) continue;
+    const n = lastStep(l);
+    if (n) l.title = `${l.title} (${Math.floor(n.typicalMonth / 12) + 1}년차)`;
+  }
   // 본선(AI가 먼저 가는 길): 가장 많이 간 세계선. '여러 갈래' 묶음은 본선이 될 수 없다.
   const main = lines.find((l) => !l.title.includes("여러 갈래")) ?? lines[0];
   if (main) main.isMain = true;
