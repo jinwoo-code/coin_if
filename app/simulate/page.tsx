@@ -531,6 +531,7 @@ export default function SimulatePage() {
           <p className="num mt-2 text-cap text-muted">
             분신이 큰 갈림길에서 나라면 어떻게 할지 판단하는 중이에요 ({judging.done}/{judging.total})
           </p>
+          <p className="mt-1 text-cap text-muted">갈림길 하나에 몇 초씩 걸려요. 이 화면을 닫지 말고 기다려 주세요.</p>
         </div>
       ) : null}
 
@@ -621,7 +622,7 @@ export default function SimulatePage() {
       <div ref={endRef} />
       {done ? <CompareAll worlds={worlds} mvs={mvs} onPick={pickWorld} /> : null}
 
-      {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">1,000번 살아보고 첫 번째 역으로 출발하는 중…</p> : null}
+      {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">1,000번 살아보고 첫 번째 역으로 출발하는 중…<br />보통 1분 안팎 걸려요.</p> : null}
       {error ? (
         <p role="alert" className="mt-4 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
           {error}

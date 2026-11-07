@@ -43,7 +43,7 @@ const PERIODS = [
   { months: 120, label: "10년" },
 ];
 const MODES = [
-  { id: "basic" as const, label: "기본 모드", desc: "진로마다 1,000번 살아봐요. 몇 초면 돼요." },
+  { id: "basic" as const, label: "기본 모드", desc: "진로마다 1,000번 살아봐요. 진로 하나에 1분 안팎, AI가 붐비면 몇 분 걸릴 수 있어요." },
   { id: "live" as const, label: T.liveMode, desc: "큰 갈림길마다 AI가 직접 판단해요. 진로마다 30번, 몇 분 걸려요." },
 ];
 
