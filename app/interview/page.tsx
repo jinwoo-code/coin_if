@@ -462,7 +462,10 @@ export default function InterviewPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scrubStory({ ...draftProfile, storyRaw: {} })),
       });
-      setProfile({ ...(await res.json()), storyRaw, story: draftProfile.story ?? null });
+      const made: Profile = { ...(await res.json()), storyRaw, story: draftProfile.story ?? null };
+      setProfile(made);
+      // 결과가 나오는 순간 저장한다(예전엔 '이대로 진로 고르기'를 눌러야 저장돼서 그 전에 닫으면 검사가 통째로 사라졌다)
+      save(made);
     } finally {
       setLoading(false);
     }
@@ -476,13 +479,20 @@ export default function InterviewPage() {
     advance({ texts: updated });
   }
 
-  function save() {
-    if (!profile) return;
+  const savedRef = useRef(false);
+  function save(p: Profile | null = profile) {
+    if (!p) return;
     if (!base) store.setLocalOnly(false); // 새로 만든 내 인터뷰 결과는 로그인돼 있으면 계정에 올린다(깊이 올리기는 원래 설정 그대로)
-    store.setProfile(profile);
-    // 내가 바뀌었으니 예전 시뮬레이션 결과는 지운다.
-    store.clearResults();
+    store.setProfile(p);
+    // 내가 바뀌었으니 예전 시뮬레이션 결과는 지운다(한 번만: 결과 화면에서 요약을 고칠 때마다 지우지 않게).
+    if (!savedRef.current) store.clearResults();
+    savedRef.current = true;
   }
+
+  // 결과 화면에서 요약·말투를 고치면 그때마다 저장한다
+  useEffect(() => {
+    if (profile && savedRef.current) store.setProfile(profile);
+  }, [profile]);
 
   function confirm() {
     save();
@@ -725,7 +735,7 @@ export default function InterviewPage() {
           </section>
           <InputChecklist p={profile} onDeepen={deepen} />
           {mode === "deep" && chaptersDone(profile) < 6 ? (
-            <Link href="/story" onClick={save} className="card flex min-h-[56px] items-center justify-between gap-3 p-5 hover:border-ink">
+            <Link href="/story" onClick={() => save()} className="card flex min-h-[56px] items-center justify-between gap-3 p-5 hover:border-ink">
               <span>
                 <strong className="text-base font-bold">인생 이야기 6장 시작하기</strong>
                 <span className="mt-0.5 block text-cap text-muted">정밀 단계예요. 장마다 15~20분, 멈췄다가 이어서 할 수 있어요.</span>
@@ -734,7 +744,7 @@ export default function InterviewPage() {
             </Link>
           ) : null}
           {store.isPilotInvited() && !(pilotActive(profile) && pilotAnswered(profile) >= PILOT_SJT.length) && !profile.pilot?.withdrawnAt ? (
-            <Link href="/pilot" onClick={save} className="card flex min-h-[56px] items-center justify-between gap-3 border-[#0B6B4B] p-5 hover:border-ink">
+            <Link href="/pilot" onClick={() => save()} className="card flex min-h-[56px] items-center justify-between gap-3 border-[#0B6B4B] p-5 hover:border-ink">
               <span>
                 <strong className="text-base font-bold">파일럿 상황 질문 {PILOT_SJT.length}개 더 하기</strong>
                 <span className="mt-0.5 block text-cap text-muted">파일럿 참여자만 보여요. 따로 동의를 받고, 성향 점수에는 안 들어가요.</span>

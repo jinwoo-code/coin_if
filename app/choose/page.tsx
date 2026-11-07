@@ -17,6 +17,24 @@ import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WO
 import { Seg } from "../interview/form";
 import { T, plain } from "@/lib/copy";
 
+type Draft = { chosen: string[]; months: number; mode: "basic" | "live"; readiness: Record<string, number> };
+const DRAFT_KEY = "cr:choose-draft";
+function readDraft(): Draft | null {
+  try {
+    return JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "null");
+  } catch {
+    return null;
+  }
+}
+function writeDraft(d: Draft | null) {
+  try {
+    if (d) sessionStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    else sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // 저장이 막힌 브라우저면 그냥 넘어간다
+  }
+}
+
 const PERIODS = [
   { months: 6, label: "6개월" },
   { months: 12, label: "1년" },
@@ -93,6 +111,14 @@ export default function ChoosePage() {
     else {
       setProfile(p);
       setReadiness(p.readiness);
+      // 새로고침해도 고르던 진로·기간·모드·준비 상태가 남게(이 탭에만, 시작하면 지움)
+      const d = readDraft();
+      if (d) {
+        setChosen(d.chosen.filter((id) => WORLDS.some((w) => w.id === id)).slice(0, 3));
+        setMonths(d.months);
+        setMode(d.mode);
+        setReadiness({ ...p.readiness, ...d.readiness });
+      }
       if (p.major)
         fetch(`/api/major?q=${encodeURIComponent(p.major)}`)
           .then((r) => r.json())
@@ -100,6 +126,10 @@ export default function ChoosePage() {
           .catch(() => {});
     }
   }, [router]);
+
+  useEffect(() => {
+    if (profile) writeDraft({ chosen, months, mode, readiness });
+  }, [profile, chosen, months, mode, readiness]);
 
   const recs = useMemo(() => (profile ? recommend(profile, 6, stdMajors) : []), [profile, stdMajors]);
   const third = useMemo(() => (profile && chosen.length >= 2 ? suggestThirdPath(profile, chosen.slice(0, 2)) : null), [profile, chosen]);
@@ -122,6 +152,7 @@ export default function ChoosePage() {
     store.setProfile({ ...profile, readiness });
     store.setSelection({ worldIds: chosen, months, startYm, mode });
     store.clearResults();
+    writeDraft(null);
     router.push(mode === "live" ? "/live" : "/simulate");
   }
 
