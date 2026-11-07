@@ -228,7 +228,7 @@ function TwinMatch({ p }: { p: Profile }) {
       <p className="mt-2 text-sm">
         상황 질문 {t.n}개는 시뮬레이션에 쓰지 않고 따로 뒀어요. 분신에게 같은 질문을 줬더니 {t.n}개 중 {t.hits}개에서 나와 같은 걸 골랐어요. 아무거나 찍으면 {t.chanceHits}개쯤 맞혀요.
       </p>
-      {t.hits < t.chanceHits ? <p className="mt-1.5 text-sm">찍기보다 적게 맞혔어요. 문항이 적어 우연일 수 있어요. 시뮬레이션은 그대로 쓸 수 있고, 한 달 체크인으로 더 재요.</p> : null}
+      {t.hits < t.chanceHits ? <p className="mt-1.5 text-sm">찍기보다 적게 맞혔어요. 문항이 적어 우연일 수 있어요. 한 달 체크인으로 더 재요.</p> : null}
       <p className="mt-1.5 text-cap text-muted">{t.n < 6 ? "문항이 적어서 우연이 크게 섞여요. 표준으로 더 하면 채점 문항이 6개가 돼요." : "문항이 6개라 우연이 아직 꽤 섞여요."}</p>
       <details className="mt-1 text-cap text-muted">
         <summary className="flex min-h-11 cursor-pointer items-center font-semibold">자세히</summary>
