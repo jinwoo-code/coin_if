@@ -4,6 +4,7 @@ import { BarChart3, ChevronDown, CornerDownRight, GitBranch, RotateCcw } from "l
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { showsOutcome } from "@/components/outcome-split";
 import { Ci, freqWord, LineBadge, MockNotice, Odds, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -12,7 +13,7 @@ import { missingJudges } from "@/lib/judge";
 import { prefetchJudges } from "@/lib/judge-client";
 import { choiceLine } from "@/lib/scenes";
 import { store } from "@/lib/store";
-import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
+import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldStats, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 import { T, plain } from "@/lib/copy";
 
@@ -223,13 +224,25 @@ function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev
   );
 }
 
+// 시험형 칸: 합격(그중 만족) / 준비 중 / 다른 길(그중 만족)
+function OutcomeCell({ st }: { st: WorldStats }) {
+  const o = st.outcome!;
+  return (
+    <span className="flex flex-col text-cap leading-snug">
+      <span>합격 {o.gate.share}% · 만족 {o.gate.satisfied}%</span>
+      <span>준비 중 {o.preparing.share}%</span>
+      <span>다른 길 {o.switched.share}% · 만족 {o.switched.satisfied}%</span>
+    </span>
+  );
+}
+
 // 진로를 하나씩 본 뒤 한눈에 비교한다. 숫자는 전부 엔진 값이고, 진로가 하나면 안 그린다.
 function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Record<string, Multiverse>; onPick: (id: string) => void }) {
   const list = worlds.filter((w) => mvs[w.id]);
   if (list.length < 2) return null;
   const rows: { label: string; note?: string; value: (mv: Multiverse) => React.ReactNode }[] = [
     { label: "합격·취업", value: (mv) => `${mv.stats.gate?.share ?? 0}%` },
-    { label: "만족하며 끝남", value: (mv) => `${mv.stats.satisfiedShare}%` },
+    { label: "만족하며 끝남", note: list.some((w) => showsOutcome(w, mvs[w.id].stats)) ? "시험형은 끝 상태로 나눠요" : undefined, value: (mv) => (showsOutcome(list.find((w) => w.id === mv.worldId)!, mv.stats) ? <OutcomeCell st={mv.stats} /> : `${mv.stats.satisfiedShare}%`) },
     { label: "스트레스 높게 끝남", value: (mv) => `${mv.stats.stressedShare}%` },
     { label: "모은 돈", note: T.basisAll(times(mvs[list[0].id].stats.runs)), value: (mv) => won(mv.stats.final.money.p50) },
     { label: "가장 흔한 세계", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },

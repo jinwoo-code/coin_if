@@ -4,6 +4,7 @@ import { ArrowDown, ArrowRight, CalendarPlus, Check, ChevronDown, Lock, Share2 }
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { OutcomeSplit, showsOutcome } from "@/components/outcome-split";
 import { Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
@@ -68,12 +69,21 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
             {st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? <span className="text-muted">, 보통 {monthLabel(mv.startYm, st.gate.typicalMonth)}</span> : null}
           </dd>
         </div>
-        <div className="rounded-2xl bg-ground p-3">
-          <dt className="text-cap text-muted">만족하며 끝남</dt>
-          <dd className="num text-xl font-extrabold">
-            {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} className="block" />
-          </dd>
-        </div>
+        {showsOutcome(world, st) ? (
+          <div className="col-span-2 rounded-2xl bg-ground p-3">
+            <dt className="mb-2 text-cap font-bold">{durationLabel(mv.months)}이 끝날 때</dt>
+            <dd>
+              <OutcomeSplit st={st} />
+            </dd>
+          </div>
+        ) : (
+          <div className="rounded-2xl bg-ground p-3">
+            <dt className="text-cap text-muted">만족하며 끝남</dt>
+            <dd className="num text-xl font-extrabold">
+              {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} className="block" />
+            </dd>
+          </div>
+        )}
         <div className="rounded-2xl bg-ground p-3">
           <dt className="text-cap text-muted">스트레스 높게 끝남</dt>
           <dd className="num text-xl font-extrabold">

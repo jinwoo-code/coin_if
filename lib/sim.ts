@@ -1,7 +1,7 @@
 // 서버 전용: 세계선의 장면에 AI가 문장을 입힌다.
 // 숫자(사건, 선택, 상태값)는 전부 규칙 엔진이 정했고, AI는 문장만 쓴다. 그래서 이야기와 통계가 어긋나지 않는다.
 import { generateJSON } from "./llm";
-import { badWords, PHASE_WORD, phaseOf, stripRoleTags } from "./narrate-check";
+import { badWords, dropDuplicateSentences, PHASE_WORD, phaseOf, stripRoleTags } from "./narrate-check";
 import type { Profile, SimEvent, WorldTemplate } from "./types";
 
 function profileBrief(p: Profile): string {
@@ -45,7 +45,7 @@ export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes:
       prompt:
         `주인공 정보:\n${profileBrief(profile)}\n\n` +
         `아래 각 항목에 대해 JSON 배열로 답해라. 각 원소는 {"key","narration","choice"}.\n` +
-        `- narration: 1~2문장, 과거형. situation을 주인공의 경험·제약·처지(phase)가 묻어나게 다시 쓴다. people이 있으면 그중 한 명의 반응을 그 호칭 그대로 넣고(괄호나 관계 표시는 붙이지 않는다), people이 비어 있으면 다른 인물을 지어내지 않는다.\n` +
+        `- narration: 1~2문장, 과거형. situation을 주인공의 경험·제약·처지(phase)가 묻어나게 다시 쓴다. situation 문장을 그대로 뒤에 다시 붙이지 말고, 같은 내용을 두 번 쓰지 않는다. people이 있으면 그중 한 명의 반응을 그 호칭 그대로 넣고(괄호나 관계 표시는 붙이지 않는다), people이 비어 있으면 다른 인물을 지어내지 않는다.\n` +
         `- avoid가 있으면 그 말을 쓰지 않는다(처지와 안 맞는 말).\n` +
         `- choice: decided(주인공이 실제로 한 선택)를 주인공 입장의 과거형 한 문장으로. 내용은 바꾸지 않는다.\n\n` +
         JSON.stringify(
@@ -77,7 +77,7 @@ export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes:
     for (const b of beats as Beat[]) {
       const s = chunk.find((x) => keyOf(x) === b?.key);
       if (!s || typeof b.narration !== "string") continue;
-      const narration = stripRoleTags(b.narration, worldOf(s));
+      const narration = dropDuplicateSentences(stripRoleTags(b.narration, worldOf(s)));
       const hits = badWords(narration, s, worldOf(s), fitsOf(s));
       if (hits.length) bad[b.key] = hits;
       else out.set(b.key, { ...b, narration });

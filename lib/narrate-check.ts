@@ -42,3 +42,40 @@ export function stripRoleTags(text: string, world: WorldTemplate) {
   if (!roles.length) return text;
   return text.replace(new RegExp(`\\s?\\((?:${roles.join("|")})\\)`, "g"), "");
 }
+
+// 장면 안 같은 문장 되풀이 지우기. AI가 다시 쓴 문장 뒤에 사건 원문을 한 번 더 붙일 때가 있다
+// ('…2주 단위 개발이 이어졌다고 말했다. 큰 사고 없이 2주 단위 개발이 이어졌다.').
+// 앞 문장과 글자 두 개씩 묶음이 60% 넘게 겹치는 뒤 문장을 뺀다(기준 0.6은 가정값, 낱말 비교라 다른 표현은 못 잡음).
+export function sentencesOf(text: string) {
+  return (text.match(/[^.!?。]+[.!?。]?/g) ?? []).map((x) => x.trim()).filter(Boolean);
+}
+const bigrams = (s: string) => {
+  const t = s.replace(/[\s.,!?'"“”‘’·…]/g, "");
+  const out = new Set<string>();
+  for (let i = 0; i < t.length - 1; i++) out.add(t.slice(i, i + 2));
+  return out;
+};
+export function overlap(a: string, b: string) {
+  const x = bigrams(a);
+  const y = bigrams(b);
+  if (!x.size || !y.size) return 0;
+  let n = 0;
+  for (const g of x) if (y.has(g)) n++;
+  return n / Math.min(x.size, y.size);
+}
+export const DUP_OVERLAP = 0.6;
+export function duplicateSentences(text: string) {
+  const ss = sentencesOf(text);
+  const dup: number[] = [];
+  ss.forEach((s, i) => {
+    if (ss.slice(0, i).some((t, j) => !dup.includes(j) && overlap(s, t) >= DUP_OVERLAP)) dup.push(i);
+  });
+  return dup;
+}
+export function dropDuplicateSentences(text: string) {
+  const dup = duplicateSentences(text);
+  if (!dup.length) return text;
+  return sentencesOf(text)
+    .filter((_, i) => !dup.includes(i))
+    .join(" ");
+}

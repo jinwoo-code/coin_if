@@ -18,7 +18,7 @@ test("결론·행동은 펼치고 나머지는 접는다, 눌러서 다 볼 수 
   const runs = page.getByTestId("report-runs");
   await expect(runs).not.toHaveAttribute("open", "");
   await expect(runs.getByText("가장 많이 간 세계선").first()).toBeHidden();
-  await runs.locator("summary").click();
+  await runs.locator("summary").first().click(); // 안에 시험형 '어떻게 셌나요?' 접기도 있다
   await expect(runs.getByText("가장 많이 간 세계선").first()).toBeVisible();
   await expect(runs.getByRole("img", { name: /잠김/ })).toHaveCount(0);
   const gap = page.getByTestId("gap-world").first();

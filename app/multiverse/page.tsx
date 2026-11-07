@@ -4,6 +4,7 @@ import { ArrowLeftRight, BarChart3, Check, CornerDownRight, GitBranch, MessageCi
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
+import { OutcomeSplit, showsOutcome } from "@/components/outcome-split";
 import { Ci, CI_NOTE, LineBadge, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
@@ -496,15 +497,30 @@ function MultiversePage() {
             </p>
             <p className="num text-cap text-muted">{st.gate?.typicalMonth !== null && st.gate?.typicalMonth !== undefined ? `보통 ${monthLabel(mv.startYm, st.gate.typicalMonth)}` : "기간 안에 거의 못 함"}</p>
           </div>
-          <div className="rounded-2xl bg-ground p-3">
-            <p className="text-cap text-muted">만족하며 끝남</p>
-            <p className="num text-2xl font-extrabold">
-              {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} />
-            </p>
-            <p className="num text-cap text-muted">
-              스트레스 높게 끝남 {st.stressedShare}% <Ci pct={st.stressedShare} n={st.runs} />
-            </p>
-          </div>
+          {showsOutcome(world, st) ? (
+            <div className="rounded-2xl bg-ground p-3">
+              <p className="text-cap text-muted">스트레스 높게 끝남</p>
+              <p className="num text-2xl font-extrabold">
+                {st.stressedShare}% <Ci pct={st.stressedShare} n={st.runs} />
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-ground p-3">
+              <p className="text-cap text-muted">만족하며 끝남</p>
+              <p className="num text-2xl font-extrabold">
+                {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} />
+              </p>
+              <p className="num text-cap text-muted">
+                스트레스 높게 끝남 {st.stressedShare}% <Ci pct={st.stressedShare} n={st.runs} />
+              </p>
+            </div>
+          )}
+          {showsOutcome(world, st) ? (
+            <div className="col-span-2 rounded-2xl bg-ground p-3">
+              <p className="mb-2 text-cap font-bold">{durationLabel(selection.months)}이 끝날 때</p>
+              <OutcomeSplit st={st} />
+            </div>
+          ) : null}
         </div>
         {(st.gate?.share ?? 0) < 10 ? <p className="mt-3 rounded-xl bg-[#FFF4E5] px-3 py-2 text-cap text-[#7A4300]">{whyLow(profile, world, selection.months)}</p> : null}
         <div className="mt-4 grid gap-2.5">
