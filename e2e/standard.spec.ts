@@ -33,10 +33,12 @@ test("표준 모드로 끝까지", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "입력한 정보" })).toBeVisible({ timeout: 60_000 });
   await expect(page.getByText(/^6개 중 [0-6]개$/).first()).toBeVisible();
+  await page.locator("details").filter({ hasText: "브라이어 점수" }).locator("summary").click();
   await expect(page.getByText("이야기에서 확인한 값을 빼면")).toBeVisible();
 
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await expect(page).toHaveURL(/\/choose/);
+  await page.getByRole("link", { name: "내 정보" }).click();
   await expect(page.getByRole("link", { name: /인생 이야기/ })).toBeVisible(); // 표준을 마치면 정밀로 이어 갈 수 있다
 
   const p = await savedProfile(page);

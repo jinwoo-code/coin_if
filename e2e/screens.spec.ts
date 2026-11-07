@@ -6,7 +6,7 @@ import { expect, test } from "@playwright/test";
 import { REMOTE, SIM_WAIT } from "./helpers";
 
 const DIR = process.env.SCREENS_DIR ?? "test-results/screens";
-const ROUTES = ["/", "/admin", "/checkin", "/choose", "/counselor", "/deepen", "/interview", "/live", "/login", "/multiverse?world=developer", "/org", "/pilot", "/privacy", "/report", "/simulate", "/story", "/story/decisions", "/talk?world=developer", "/tokens", "/tokens/fail", "/tokens/success?paymentKey=x&orderId=x&amount=1", "/welcome"];
+const ROUTES = ["/", "/admin", "/checkin", "/choose", "/counselor", "/deepen", "/interview", "/live", "/login", "/me", "/multiverse?world=developer", "/org", "/pilot", "/privacy", "/report", "/simulate", "/story", "/story/decisions", "/talk?world=developer", "/tokens", "/tokens/fail", "/tokens/success?paymentKey=x&orderId=x&amount=1", "/welcome"];
 
 test("모든 화면 넘침 검사", async ({ page }) => {
   test.setTimeout(REMOTE ? 900_000 : 590_000);

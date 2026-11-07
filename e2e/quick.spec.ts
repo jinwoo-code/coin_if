@@ -1,4 +1,4 @@
-// 빠르게 모드로 처음부터 진로 고르기까지(모바일 390px 근처), 그리고 시연용 한 달 체크인.
+// 빠르게 모드로 처음부터 진로 고르기까지(모바일 390px 근처), 그리고 한 달 체크인.
 import { expect, test } from "@playwright/test";
 import { counter, pickAll } from "./helpers";
 
@@ -53,11 +53,15 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   expect(Object.keys(saved.holdoutPicks)).toHaveLength(3);
   expect(saved.holdout.ids).toHaveLength(6);
   expect(Object.keys(saved.holdoutPicks).every((id: string) => saved.holdout.ids.includes(id))).toBe(true);
+  // 한 달이 지난 사람: 내 정보에서 체크인. 채점용 3개 + 실제 선택 1개를 고르면 본인 일치율과 분신 점수가 나온다
+  await page.evaluate(() => {
+    const p = JSON.parse(localStorage.getItem("cr:v10:profile")!);
+    localStorage.setItem("cr:v10:profile", JSON.stringify({ ...p, since: new Date(Date.now() - 31 * 864e5).toISOString() }));
+  });
+  await page.goto("/choose");
+  await page.getByRole("link", { name: "내 정보" }).click();
   await expect(page.getByRole("link", { name: /더 정확하게 하기/ })).toBeVisible();
-
-  // 한 달 체크인(시연용): 채점용 3개 + 실제 선택 1개를 고르면 본인 일치율과 분신 점수가 나온다
   await page.getByRole("link", { name: /한 달 체크인/ }).click();
-  await page.getByRole("button", { name: "시연용: 지금 해 보기" }).click();
   await pickAll(page, 0);
   await page.getByRole("button", { name: /성격 20문항도 다시 답하기/ }).click();
   await expect(page.getByRole("button", { name: /20문항 남았어요/ })).toBeDisabled();
@@ -73,6 +77,6 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:profile") ?? "null").bigFive)).not.toEqual(big);
   const after = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:profile") ?? "null"));
   expect(after.checkins).toHaveLength(1);
-  expect(after.checkins[0].demo).toBe(true);
+  expect(after.checkins[0].demo).toBeFalsy();
   expect(after.corrections).toEqual([expect.objectContaining({ source: "checkin", to: "push" })]);
 });
