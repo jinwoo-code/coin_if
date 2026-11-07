@@ -35,7 +35,7 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   await rerun.getByRole("button", { name: "다시 살아 보기" }).click();
   await expect(rerun.getByText(/이 계획대로 하면 .+ 안에/)).toBeVisible({ timeout: 60_000 });
   await expect(rerun.getByText(/\d+%.*→.*\d+%/)).toBeVisible();
-  await expect(rerun.getByText(/배수는 대부분 가정값/)).toBeVisible();
+  await expect(rerun.getByText(/배수는 대부분 우리가 정한 값/)).toBeVisible();
   await rerun.scrollIntoViewIfNeeded();
   await rerun.screenshot({ path: "test-results/plan-rerun-390.png" });
   await plan.getByRole("spinbutton", { name: /주당 공부 시간/ }).fill("40");
@@ -155,7 +155,7 @@ test("증거물과 모의고사 기록이 저장된다", async ({ page }) => {
 
   const nurse = page.getByTestId("evidence-nurse");
   await expect(nurse.getByText("실습 사례 보고서").first()).toBeVisible();
-  await expect(nurse.getByText(/가정값\(팀이 정함\)/).first()).toBeVisible();
+  await expect(nurse.getByText("우리가 정한 값").first()).toBeVisible();
   await expect(nurse.getByText("활력징후 측정")).toBeVisible();
   await expect(nurse.getByText("공식 항목")).toBeVisible();
 

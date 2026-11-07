@@ -21,6 +21,7 @@ import { LiveLives } from "@/components/live-lives";
 import { MyData } from "@/components/my-data";
 import { SharePanel } from "@/components/share-panel";
 import { WeekPlan } from "@/components/week-plan";
+import { T } from "@/lib/copy";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
 function downloadCheckin() {
@@ -81,7 +82,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
           </dd>
         </div>
       </dl>
-      <p className="label mt-4">가장 많이 간 세계선</p>
+      <p className="label mt-4">가장 많이 간 {T.line}</p>
       <ul className="mt-2 flex flex-col gap-2">
         {mv.lines.slice(0, 3).map((l) => (
           <li key={l.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1">
@@ -127,7 +128,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
         </ol>
       )}
       <Link href={`/multiverse?world=${world.id}`} className="btn-ghost mt-4 min-h-[44px] w-full text-sm">
-        세계선 지도 보기
+        {T.lineMap} 보기
       </Link>
     </section>
   );
@@ -209,7 +210,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
           <li>월별 일정, 증거물과 주제 제안</li>
           <li>계획 넣고 다시 살아 보기</li>
           <li>이번 주 할 일 직접 정하기, 상담사에게 공유(PDF·링크)</li>
-          <li>세계선 전체 비교 표, 바꿀 수 있는 것 전체, 막히는 길에서 할 일</li>
+          <li>{T.line} 전체 비교 표, 바꿀 수 있는 것 전체, 막히는 길에서 할 일</li>
         </ul>
         {hasSupabase() || demo ? (
           <button className="btn-primary mt-5 w-full" onClick={onOpen} disabled={busy}>
@@ -234,13 +235,13 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
         return (
           <div key={id} className="mt-5 break-inside-avoid">
             <h3 className="flex items-center gap-2 text-base font-bold">
-              <LineBadge world={world} size={22} /> {world.name}: 세계선 전체
+              <LineBadge world={world} size={22} /> {world.name}: {T.line} 전체
             </h3>
             <div className="-mx-1 mt-2 overflow-x-auto px-1">
               <table className="num w-full min-w-[480px] text-left text-sm">
                 <thead className="text-cap text-muted">
                   <tr>
-                    <th className="py-1.5 pr-2 font-medium">세계선</th>
+                    <th className="py-1.5 pr-2 font-medium">{T.line}</th>
                     <th className="py-1.5 pr-2 text-right font-medium">{times(mv.stats.runs)}번 중</th>
                     <th className="py-1.5 pr-2 text-right font-medium">만족</th>
                     <th className="py-1.5 pr-2 text-right font-medium">스트레스 높음</th>
@@ -264,7 +265,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
         );
       })}
       <h3 className="mt-6 text-base font-bold">자주 막히는 길로 가고 있다면</h3>
-      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 세계선이에요. 할 일은 AI가 내 조건에 맞춰 쓴 제안이에요.</p>
+      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 {T.line}이에요. 할 일은 AI가 내 조건에 맞춰 쓴 제안이에요.</p>
       <ul className="mt-3 flex flex-col gap-3">
         {items.map((it) => (
           <li key={`${it.worldId}/${it.lineId}`} className="break-inside-avoid rounded-2xl bg-ground p-4">
@@ -467,7 +468,7 @@ export default function ReportPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-lineA">이번 비교에서 점수가 가장 높은 길</p>
                   <h3 className="mt-2 text-xl font-extrabold sm:text-2xl">{leaders.length === 1 ? `${getWorld(leaders[0].worldId).name} 경로가 내 가치관에 가장 가까워요` : `${leaders.map((w) => getWorld(w.worldId).name).join(" · ")} 경로가 공동 최고 점수예요`}</h3>
-                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 가정값이라 작은 점수 차이는 큰 뜻이 없어요.</p>
+                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 {T.assumedFull}라 작은 점수 차이는 큰 뜻이 없어요.</p>
                   <p className="mt-1 text-sm text-muted">가치관, 성격, {runs}번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요.</p>
                 </div>
                 <div className="flex shrink-0 items-baseline gap-3 border-t border-lineA/20 pt-4 sm:block sm:min-w-32 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0 sm:text-center">
@@ -479,7 +480,7 @@ export default function ReportPage() {
                 </div>
               </div>
             ) : (
-              <p className="card mt-6 p-5 text-muted">비교할 진로가 없어요. 세계선 지도에서 진로를 선택해 주세요.</p>
+              <p className="card mt-6 p-5 text-muted">비교할 진로가 없어요. {T.lineMap}에서 진로를 선택해 주세요.</p>
             )}
           </section>
 

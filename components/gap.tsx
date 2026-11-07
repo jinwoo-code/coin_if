@@ -10,12 +10,13 @@ import { store } from "@/lib/store";
 import { majorFamily } from "@/lib/job-codes";
 import type { RequirementItem, Requirements } from "@/lib/requirements";
 import type { Profile, WorldTemplate } from "@/lib/types";
+import { T, plain } from "@/lib/copy";
 
 const SHOW = 8;
 const PREVIEW_ROWS = 3;
 const STATUS = { have: "있음", partial: "부분적", none: "없음" } as const;
 const KIND = { skill: "능력", cert: "자격", experience: "경험", exam: "시험 과목", step: "절차" } as const;
-const GRADE = { official: "공식", curated: "공식 문서 정리", interview: "현직자", assumed: "가정값" } as const;
+const GRADE = { official: "공식", curated: "공식 문서 정리", interview: "현직자", assumed: T.assumed } as const;
 
 function Source({ g }: { g: GapItem }) {
   const i = g.item;
@@ -23,7 +24,7 @@ function Source({ g }: { g: GapItem }) {
     <p className="mt-1 text-cap text-muted">
       {KIND[i.kind]} · {GRADE[i.grade]}
       {i.ncsRelated ? " · NCS 관련 자격" : ""}
-      {i.ref ? ` · ${i.ref}` : ""}
+      {i.ref ? ` · ${plain(i.ref)}` : ""}
       {i.refUrl ? (
         <>
           {" · "}
@@ -92,8 +93,8 @@ function Row({ r, rank }: { r: PriorityRow; rank: number }) {
         <span className="ml-1.5 text-cap font-normal text-muted">{STATUS[r.status]}</span>
       </p>
       {r.members.length > 1 ? <p className="mt-1 text-cap">{r.members.map((m) => m.item.name).join(", ")}</p> : r.item.detail ? <p className="mt-1 text-cap">{r.item.detail}</p> : null}
-      <p className="mt-1 text-sm">{r.evidence.join(" · ")}</p>
-      <p className="mt-1 text-cap text-muted">{r.basis}</p>
+      <p className="mt-1 text-sm">{plain(r.evidence.join(" · "))}</p>
+      <p className="mt-1 text-cap text-muted">{plain(r.basis)}</p>
       {r.members.map((m) => (
         <NcsDetail key={m.item.id} i={m.item} />
       ))}
@@ -204,7 +205,7 @@ export function GapSection({ profile, world, months, startYm, preview = null }: 
         <ul className="mt-1 list-disc pl-5 text-sm">
           {have.map((g) => (
             <li key={g.item.id}>
-              {g.item.name} <span className="text-cap text-muted">({g.basis})</span>
+              {g.item.name} <span className="text-cap text-muted">({plain(g.basis)})</span>
             </li>
           ))}
         </ul>
@@ -240,7 +241,7 @@ export function GapSection({ profile, world, months, startYm, preview = null }: 
       {later.length ? (
         <details className="mt-3 text-sm" data-testid={`later-${world.id}`}>
           <summary className="flex min-h-11 cursor-pointer items-center font-medium">신입 뒤에 익힐 능력 {later.length}개</summary>
-          <p className="text-cap text-muted">NCS 직책 수준이 높은 능력이라 일정에 넣지 않았어요. 신입으로 보는 수준은 가정값이에요.</p>
+          <p className="text-cap text-muted">NCS 직책 수준이 높은 능력이라 일정에 넣지 않았어요. 신입으로 보는 수준은 {T.assumedFull}이에요.</p>
           <ul className="mt-1 list-disc pl-5 text-cap">
             {later.map((i) => (
               <li key={i.id}>
@@ -257,7 +258,7 @@ export function GapSection({ profile, world, months, startYm, preview = null }: 
           <ul className="mt-1 list-disc pl-5 text-cap">
             {blocked.map((b) => (
               <li key={b.item.id}>
-                {b.item.name}: {b.why}
+                {b.item.name}: {plain(b.why)}
               </li>
             ))}
           </ul>
@@ -274,7 +275,7 @@ export function GapSection({ profile, world, months, startYm, preview = null }: 
       <EvidenceSection req={req} profile={profile} world={world} gaps={gaps} />
 
       <p className="mt-3 text-cap text-muted">
-        시뮬레이션 수치는 그 항목을 갖췄다고 가정하고 200번 다시 돌린 차이예요(시뮬레이션 가정 기준). 시간과 순서를 정하는 가중치는 가정값이에요. 기준일 {req.baseDate}. 이 목록은 준비 계획이고 합격·취업을 보장하지 않아요. 시험 일정은 공식
+        시뮬레이션 수치는 그 항목을 갖췄다고 가정하고 200번 다시 돌린 차이예요(시뮬레이션 가정 기준). 시간과 순서를 정하는 가중치는 {T.assumedFull}이에요. 기준일 {req.baseDate}. 이 목록은 준비 계획이고 합격·취업을 보장하지 않아요. 시험 일정은 공식
         사이트에서 확인해 주세요.
       </p>
         </>

@@ -1,5 +1,5 @@
 "use client";
-// 'AI가 직접 살아 본 30개의 삶': 실시간 판단 결과를 1,000번 통계와 섞지 않고 따로 보여 준다. 세계선 지도·리포트에 붙는다.
+// 'AI가 직접 살아 본 30개의 삶': 실시간 판단 결과를 1,000번 통계와 섞지 않고 따로 보여 준다. {T.lineMap}·리포트에 붙는다.
 import { Bot, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { durationLabel } from "@/lib/calendar";
 import { LIVE_RUNS } from "@/lib/live";
 import { store, type LiveResults } from "@/lib/store";
 import type { WorldTemplate } from "@/lib/types";
+import { T } from "@/lib/copy";
 
 export function LiveLives({ world }: { world: WorldTemplate }) {
   const router = useRouter();
@@ -43,7 +44,7 @@ export function LiveLives({ world }: { world: WorldTemplate }) {
           </li>
         ))}
       </ul>
-      <p className="mt-1 text-cap text-muted">괄호는 표본 오차 범위예요. {n}번이라 범위가 넓어요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.</p>
+      <p className="mt-1 text-cap text-muted">괄호는 오차 범위예요. {n}번이라 범위가 넓어요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.</p>
       <ul className="mt-3 flex flex-col gap-2">
         {mv.lines.map((l) => (
           <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-hair px-3 py-2">

@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { LineBadge, MockNotice, Screen, Sheet, Typing } from "@/components/ui";
-import { euro, iGa } from "@/lib/josa";
+import { eulReul, euro, iGa } from "@/lib/josa";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
 import { scrubStory } from "@/lib/story";
 import type { ChatMessage, Line, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
+import { T } from "@/lib/copy";
 
 const QUICK = ["후회해?", "제일 힘들었던 건?", "다시 돌아가면 뭐 할 거야?", "돈은 좀 모았어?"];
 
@@ -127,7 +128,7 @@ function TalkPage() {
       }
       const data = await res.json();
       if (res.status === 429) {
-        setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: `${data.error}. 다른 세계선을 골라서 이어 가 줘.` }] }));
+        setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: `${data.error}. 다른 ${eulReul(T.line)} 골라서 이어 가 줘.` }] }));
         return;
       }
       setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: data.reply, memory: data.memory ?? undefined }] }));
@@ -211,7 +212,7 @@ function TalkPage() {
           <GitBranch aria-hidden="true" size={16} className="mt-0.5 flex-none" style={{ color: world.color }} />
           <span>
             <strong>{lines[active]!.id.startsWith("live:") ? "AI가 직접 살아 본 삶" : lines[active]!.isMain ? "AI가 먼저 간 세계" : "내가 고른 세계"}</strong>: {lines[active]!.title} ({lines[active]!.count.toLocaleString("ko-KR")}번)
-            <span className="block text-cap text-muted">다른 세계선의 나와 이야기하려면 눌러서 세계선을 고르세요</span>
+            <span className="block text-cap text-muted">다른 {T.line}의 나와 이야기하려면 눌러서 {eulReul(T.line)} 고르세요</span>
           </span>
         </Link>
       ) : null}

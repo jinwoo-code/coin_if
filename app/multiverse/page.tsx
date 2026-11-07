@@ -19,6 +19,7 @@ import { fittedCount, weightGroups } from "@/lib/weights";
 import type { Lever, Line, LineNode, Multiverse, Profile, Selection, SimEvent, WorldStats, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 import { eulReul, iGa, quoted } from "@/lib/josa";
+import { multWord, plain, T } from "@/lib/copy";
 
 // ---------- 세계선 카드 ----------
 
@@ -141,7 +142,7 @@ function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; o
       {ev.choice && ev.odds ? <Odds odds={ev.odds} /> : null}
       {ev.evidence ? (
         <p className="mt-1.5 flex gap-1.5 text-cap text-muted">
-          <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" /> {ev.evidence.label} ({ev.evidence.source})
+          <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" /> {plain(ev.evidence.label)} ({plain(ev.evidence.source)})
         </p>
       ) : null}
       <CorrectChoice ev={ev} world={world} />
@@ -445,7 +446,7 @@ function MultiversePage() {
 
   return (
     <Screen
-      title="세계선 지도"
+      title={T.lineMap}
       back="/simulate"
       footer={
         <div className="flex gap-2">
@@ -459,6 +460,7 @@ function MultiversePage() {
       }
     >
       <MockNotice />
+      <p className="mt-1 text-cap text-muted">{T.line}: {T.lineHint}</p>
       {/* 진로 탭 */}
       <div role="tablist" aria-label="진로" className="mt-2 flex gap-2 overflow-x-auto pb-1">
         {selection.worldIds.map((id) => {
@@ -520,16 +522,24 @@ function MultiversePage() {
                 <li key={f.key} className="text-sm">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="font-semibold">{f.label}</span>
-                    <span className={`num font-bold ${f.mult > 1 ? "text-[#0B6B4B]" : f.mult < 1 ? "text-[#A3311A]" : ""}`}>×{f.mult}</span>
+                    <span className={`font-semibold ${f.mult > 1.03 ? "text-[#0B6B4B]" : f.mult < 0.97 ? "text-[#A3311A]" : ""}`}>{multWord(f.mult)}</span>
                   </span>
-                  <span className="block text-cap text-muted">{f.why}</span>
+                  <span className="block text-cap text-muted">{plain(f.why)}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-cap text-muted">
+            <details className="mt-2 text-cap text-muted">
+              <summary className="flex min-h-11 cursor-pointer items-center font-semibold">자세히</summary>
+              <ul className="num mb-1 flex flex-col gap-0.5">
+                {st.factors.map((f) => (
+                  <li key={f.key}>
+                    {f.label} ×{f.mult}
+                  </li>
+                ))}
+              </ul>
               평범한 지원자를 ×1로 둔 배수예요.{" "}
-              {fittedCount(weightGroups(world.readiness)[2].keys) ? "일부는 파일럿 데이터로 보정한 값이고 나머지는 가정값이에요(근거 자료에 표시)." : "배수 자체는 아직 가정값이라, 실제 채용 통계로 보정하는 중이에요."}
-            </p>
+              {fittedCount(weightGroups(world.readiness)[2].keys) ? `일부는 파일럿 데이터로 보정한 값이고 나머지는 ${T.assumedFull}이에요(근거 자료에 표시).` : `배수 자체는 아직 ${T.assumedFull}이라, 실제 채용 통계로 보정하는 중이에요.`}
+            </details>
           </div>
         ) : null}
       </section>
@@ -545,14 +555,15 @@ function MultiversePage() {
           <span className="text-cap font-semibold text-muted">펼치기</span>
         </summary>
         <p className="num mt-3 text-sm font-semibold">
-          기준선: 통계 {baseSummary(world).stat} · 현직자 {baseSummary(world).interview} · 가정값 {baseSummary(world).assumed}
+          기준선: 통계 {baseSummary(world).stat} · 현직자 {baseSummary(world).interview} · {T.assumed} {baseSummary(world).assumed}
         </p>
+        <p className="text-cap text-muted">{T.ciDetail}</p>
         <p className="text-cap text-muted">갈림길 보기 {baseSummary(world).total}개의 '보통은 몇 %' 값이 어디서 왔는지예요.</p>
         <ul className="mt-3 flex flex-col gap-3">
           {world.facts.map((f) => (
             <li key={f.label} className="text-sm">
-              <p className="text-muted">{f.label}</p>
-              <p className="font-semibold">{f.value}</p>
+              <p className="text-muted">{plain(f.label)}</p>
+              <p className="font-semibold">{plain(f.value)}</p>
               <p className="text-cap text-muted">
                 {f.url ? (
                   <a href={f.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
@@ -573,7 +584,7 @@ function MultiversePage() {
       {/* 세계선 나무 */}
       <section aria-labelledby="tree" className="mt-8">
         <h2 id="tree" className="flex items-center gap-2 text-xl font-bold">
-          <GitBranch aria-hidden="true" size={20} style={{ color: world.color }} /> 갈라진 세계선 {mv.lines.length}개
+          <GitBranch aria-hidden="true" size={20} style={{ color: world.color }} /> 갈라진 {T.line} {mv.lines.length}개
         </h2>
         <p className="mt-1 text-sm text-muted">갈림길마다 {times(mv.stats.runs)}번 중 몇 번이 어느 쪽으로 갔는지예요. 두 세계를 골라 비교해 보세요.</p>
         {pickedLines.length === 2 ? <Compare a={pickedLines[0]} b={pickedLines[1]} world={world} /> : null}

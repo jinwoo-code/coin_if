@@ -1,10 +1,10 @@
 // 전체 화면을 390px·1280px로 찍어 docs/screens/{폭}/에 둔다(UI·UX 점검용). 평소 테스트에서는 건너뛴다.
 // 실행: DOCS_SCREENS=1 BASE_URL=https://coinif.vercel.app npx playwright test e2e/docs-screens.spec.ts
-import { mkdirSync } from "node:fs";
+import { appendFileSync, mkdirSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { counter, next, pickAll, REMOTE, savedProfile, SIM_WAIT } from "./helpers";
 
-const ROOT = "docs/screens";
+const ROOT = process.env.SCREENS_OUT ?? "docs/screens";
 // 전체 페이지를 찍으면 하단 고정 버튼이 본문 중간을 가리므로 사진에서만 흐름 안에 둔다.
 const unstick = (page: Page) => page.addStyleTag({ content: ".fixed.bottom-0,.sticky.bottom-0{position:static!important}" });
 
@@ -17,6 +17,10 @@ for (const width of [390, 1280]) {
       mkdirSync(dir, { recursive: true });
       if (full) await unstick(page);
       await page.waitForTimeout(400);
+      if (process.env.TERMS_LOG) {
+        const text = await page.evaluate(() => document.body.textContent ?? "");
+        for (const m of text.matchAll(/.{0,25}(가정값|본선|신뢰구간|실시간 판단|시연용).{0,15}/g)) appendFileSync(process.env.TERMS_LOG, `${width} ${name}: ${m[0]}\n`);
+      }
       await page.screenshot({ path: `${dir}/${name}.png`, fullPage: full });
     };
 

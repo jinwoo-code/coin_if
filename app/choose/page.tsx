@@ -20,6 +20,7 @@ import { canDeepen } from "@/lib/assessment";
 import { daysToCheckin } from "@/lib/ongoing";
 import { chaptersDone } from "@/lib/chapters";
 import { MyData } from "@/components/my-data";
+import { T, plain } from "@/lib/copy";
 
 const PERIODS = [
   { months: 6, label: "6개월" },
@@ -30,7 +31,7 @@ const PERIODS = [
 ];
 const MODES = [
   { id: "basic" as const, label: "기본 모드", desc: "진로마다 1,000번 살아봐요. 몇 초면 돼요." },
-  { id: "live" as const, label: "실시간 판단 모드", desc: "큰 갈림길마다 AI가 직접 판단해요. 진로마다 30번, 몇 분 걸려요." },
+  { id: "live" as const, label: T.liveMode, desc: "큰 갈림길마다 AI가 직접 판단해요. 진로마다 30번, 몇 분 걸려요." },
 ];
 
 const KIND: Record<WorldTemplate["archetype"], string> = {
@@ -259,7 +260,7 @@ export default function ChoosePage() {
             .filter((w) => retrainMonths({ major: profile.major, readiness }, w))
             .map((w) => (
               <p key={w.id} className="text-sm">
-                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월(가정값)을 학과 다니는 데 써요. {tuitionNote(w.id)}.
+                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월({T.assumed})을 학과 다니는 데 써요. {plain(tuitionNote(w.id))}.
               </p>
             ))}
         </section>

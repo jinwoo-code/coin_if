@@ -14,6 +14,7 @@ import { store, type LiveResults, type LiveRun } from "@/lib/store";
 import { scrubStory } from "@/lib/story";
 import type { Path, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
+import { T } from "@/lib/copy";
 
 const monthsText = (m: number | null) => (m === null ? "" : m < 12 ? `보통 ${m}개월 뒤` : `보통 ${Math.floor(m / 12)}년${m % 12 ? ` ${m % 12}개월` : ""} 뒤`);
 
@@ -73,7 +74,7 @@ function WorldResult({ profile, sel, world, lives }: { profile: Profile; sel: Se
           <Ci pct={pct(s.stressedOut)} n={s.n} />
         </li>
       </ul>
-      <p className="mt-2 text-cap text-muted">괄호는 표본 오차 범위예요. {LIVE_RUNS}번이라 범위가 넓어요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.</p>
+      <p className="mt-2 text-cap text-muted">괄호는 오차 범위예요. {LIVE_RUNS}번이라 범위가 넓어요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.</p>
       <h3 className="mt-4 text-sm font-bold">어떤 갈래로 갔나요</h3>
       <ul className="mt-2 space-y-3">
         {s.groups.map((g) => (
@@ -230,7 +231,7 @@ export default function LivePage() {
 
   if (!profile || !sel || !run || !lives)
     return (
-      <Screen title="실시간 판단 모드" back="/choose">
+      <Screen title={T.liveMode} back="/choose">
         {null}
       </Screen>
     );
@@ -239,13 +240,13 @@ export default function LivePage() {
 
   return (
     <Screen
-      title="실시간 판단 모드"
+      title={T.liveMode}
       back="/choose"
       footer={
         <div className="flex flex-col gap-2">
           {finished ? (
             <button className="btn-primary w-full" onClick={continueWith} disabled={linking}>
-              {linking ? "1,000번 결과와 같이 준비하는 중…" : "세계선 지도·대화·리포트에서 이어 보기"}
+              {linking ? "1,000번 결과와 같이 준비하는 중…" : `${T.lineMap}·대화·리포트에서 이어 보기`}
             </button>
           ) : null}
           <button className="btn-secondary w-full" onClick={basicMode}>
@@ -274,7 +275,7 @@ export default function LivePage() {
         </p>
         {tier === "free" && !finished ? <p className="mt-2 text-cap text-muted">무료 키라 오래 걸리고 한도에 걸릴 수 있어요.</p> : null}
         {message ? <p className="mt-2 text-sm">{message}</p> : null}
-        {finished ? <p className="mt-2 text-cap text-muted">세계선 지도·리포트에는 1,000번 통계와 따로 'AI가 직접 살아 본 30개의 삶' 칸으로 나와요.</p> : null}
+        {finished ? <p className="mt-2 text-cap text-muted">{T.lineMap}·리포트에는 1,000번 통계와 따로 'AI가 직접 살아 본 30개의 삶' 칸으로 나와요.</p> : null}
         {state === "failed" && !finished ? (
           <div className="mt-3">
             <p className="text-sm">AI가 답을 못 줬어요. 한도에 걸렸을 수 있어요. 나중에 이어서 할 수 있어요.</p>

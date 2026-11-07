@@ -14,6 +14,7 @@ import { choiceLine } from "@/lib/scenes";
 import { store } from "@/lib/store";
 import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
+import { T, plain } from "@/lib/copy";
 
 interface Row {
   station: number;
@@ -123,7 +124,7 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
         <p className="mt-2.5 flex gap-1.5 border-t border-hair pt-2.5 text-cap text-muted">
           <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" />
           <span>
-            근거: {ev.evidence.label} ({ev.evidence.source})
+            근거: {plain(ev.evidence.label)} ({plain(ev.evidence.source)})
           </span>
         </p>
       ) : null}
@@ -141,7 +142,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
     { label: "스트레스 높게 끝남", value: (mv) => `${mv.stats.stressedShare}%` },
     { label: "모은 돈(가운데)", value: (mv) => won(mv.stats.final.money.p50) },
     { label: "가장 흔한 세계", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },
-    { label: "갈라진 세계선", value: (mv) => `${mv.lines.length}개` },
+    { label: `갈라진 ${T.line}`, value: (mv) => `${mv.lines.length}개` },
   ];
   return (
     <section className="card mt-6 p-4 sm:p-6" aria-labelledby="compare-all" data-testid="compare-all">
@@ -180,7 +181,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
           ))}
         </tbody>
       </table>
-      <p className="mt-3 text-cap text-muted">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 가정값이라 예측이 아니라 비교용이에요.</p>
+      <p className="mt-3 text-cap text-muted">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 {T.assumedFull}라 예측이 아니라 비교용이에요.</p>
     </section>
   );
 }
@@ -332,7 +333,7 @@ export default function SimulatePage() {
   return (
     <Screen
       wide
-      title={done ? "본선을 다 살아봤어요" : "살아보는 중"}
+      title={done ? `${T.mainLine}을 다 살아봤어요` : "살아보는 중"}
       back="/choose"
       right={
         <span aria-live="polite" className="num pr-2 text-sm font-bold">
@@ -347,7 +348,7 @@ export default function SimulatePage() {
           </button>
           {done ? (
             <Link href={`/multiverse?world=${selectedWorld?.id ?? ""}`} className="btn-primary flex-1">
-              <GitBranch aria-hidden="true" size={18} /> 다른 세계선 보기
+              <GitBranch aria-hidden="true" size={18} /> 다른 {T.line} 보기
             </Link>
           ) : (
             <button className="btn-primary flex-1" disabled>
@@ -371,7 +372,7 @@ export default function SimulatePage() {
                 <li key={w.id} className="flex gap-1.5">
                   <LineBadge world={w} size={18} />
                   <span>
-                    {w.short}: 세계선 {mv.lines.length}개로 갈라졌고, 지금 보는 건 가장 흔한 세계예요({times(main?.count ?? 0)}번).
+                    {w.short}: {T.line} {mv.lines.length}개로 갈라졌고, 지금 보는 건 {T.mainLine}이에요({times(main?.count ?? 0)}번).
                   </span>
                 </li>
               ) : null;
@@ -404,7 +405,7 @@ export default function SimulatePage() {
         </section>
       ) : null}
 
-      <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} 본선 결과` : "본선 결과"} className="min-w-0">
+      <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} ${T.mainLine} 결과` : `${T.mainLine} 결과`} className="min-w-0">
         {/* 고른 진로의 지금 처지 */}
         <div className="mt-3">
           {visibleWorlds.map((w) => {
@@ -505,7 +506,7 @@ export default function SimulatePage() {
                           {mv.stats.gate?.typicalMonth !== null && mv.stats.gate?.typicalMonth !== undefined ? `, 보통 ${durationLabel(mv.stats.gate.typicalMonth + 1)} 뒤` : ""}
                         </p>
                         <Link href={`/multiverse?world=${w.id}`} className="btn-ghost mt-3 h-auto min-h-[44px] w-full min-w-0 gap-1.5 px-2 py-2.5 text-center text-sm">
-                          <GitBranch aria-hidden="true" size={16} className="shrink-0" /> 나머지 세계선 {mv.lines.length - 1}개 보기
+                          <GitBranch aria-hidden="true" size={16} className="shrink-0" /> 나머지 {T.line} {mv.lines.length - 1}개 보기
                         </Link>
                       </section>
                     ) : null}
@@ -525,7 +526,7 @@ export default function SimulatePage() {
           {error}
         </p>
       ) : null}
-      <p className="mt-8 text-cap text-muted">사건이 일어날 확률과 내 선택은 내 조건·가치관·성격과 공개 통계를 바탕으로 정해져요. 확률 배수 중 일부는 아직 가정값이에요.</p>
+      <p className="mt-8 text-cap text-muted">사건이 일어날 확률과 내 선택은 내 조건·가치관·성격과 공개 통계를 바탕으로 정해져요. 확률 배수 중 일부는 아직 {T.assumedFull}이에요.</p>
     </Screen>
   );
 }

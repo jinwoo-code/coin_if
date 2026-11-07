@@ -1,5 +1,6 @@
 // 공유본 화면(링크·PDF 같이 씀). 서버 컴포넌트로도 그린다. 값은 lib/shared-report.ts에 있는 칸뿐이다.
 import { AI_NOTICE, type SharedReport } from "@/lib/shared-report";
+import { T } from "@/lib/copy";
 
 const yearsOf = (m: number) => (m % 12 ? `${m}개월` : `${m / 12}년`);
 
@@ -23,7 +24,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
           <p className="mt-2 text-sm">
             가치관 부합도 <strong>{w.fit}점</strong> · {yearsOf(w.months)} 안에 {w.gateLabel} <strong>{w.gateShare}%</strong> · 만족하며 끝남 {w.satisfied}% · 스트레스 높게 끝남 {w.stressed}%
           </p>
-          <p className="text-cap text-muted">{w.runs.toLocaleString()}번 살아 본 결과예요. 확률의 바탕이 된 배수는 대부분 가정값이에요.</p>
+          <p className="text-cap text-muted">{w.runs.toLocaleString()}번 살아 본 결과예요. 확률의 바탕이 된 배수는 대부분 {T.assumedFull}이에요.</p>
           {w.good || w.hard ? (
             <p className="mt-2 text-sm">
               좋았던 점: {w.good}
@@ -47,7 +48,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
 
           <h3 className="mt-4 text-base font-bold">월별 일정</h3>
           <p className="text-cap text-muted">
-            주당 {w.plan.weekly}시간, {w.plan.months}개월 기준. 시간은 NCS 훈련 기준 또는 가정값이에요. {w.plan.note}
+            주당 {w.plan.weekly}시간, {w.plan.months}개월 기준. 시간은 NCS 훈련 기준 또는 {T.assumedFull}이에요. {w.plan.note}
           </p>
           <ul className="mt-1 text-sm">
             {w.plan.rows.map((r) => (
@@ -63,7 +64,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
               <ul className="mt-1 text-sm">
                 {w.evidence.map((e) => (
                   <li key={e.title} className="mt-0.5">
-                    {e.title} <span className="text-cap text-muted">{e.amount}(가정값)</span>
+                    {e.title} <span className="text-cap text-muted">{e.amount}({T.assumed})</span>
                     {e.topic ? <span className="block text-cap">주제: {e.topic}</span> : null}
                   </li>
                 ))}
