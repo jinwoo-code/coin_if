@@ -5,6 +5,7 @@ import { openTimeline, SIM_WAIT, openDemo, REMOTE } from "./helpers";
 const cases = process.env.E2E_BAD_KEY ? (["틀린 키"] as const) : (["응답 실패", "네트워크 끊김"] as const);
 for (const how of cases) {
   test(`AI 판단 ${how} 표시`, async ({ page }) => {
+    test.setTimeout(REMOTE ? 600_000 : 240_000);
     let calls = 0;
     await page.route("**/api/judge", (route) => {
       calls++;
@@ -19,9 +20,9 @@ for (const how of cases) {
 
     const failed = page.getByText("AI 판단 실패 → 규칙 계산").first();
     await expect.poll(() => calls, { timeout: 60_000 }).toBeGreaterThan(0);
-    // 큰 갈림길 장면이 나올 때까지 기다렸다가 펼친다
-    await expect(page.locator("details").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first()).toBeAttached({ timeout: 110_000 });
+    // 시뮬레이션이 끝날 때까지 기다린 뒤(무료 키 배포본은 몇 분 걸림) 큰 갈림길 장면을 찾는다
     await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await expect(page.locator("details").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first()).toBeAttached({ timeout: 30_000 });
     await openTimeline(page);
     await page.locator("details:not([data-testid])").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first().locator("summary").click();
     await expect(failed).toBeVisible();
