@@ -77,7 +77,7 @@ function PathCard({ world, on, fit, related, onToggle }: { world: WorldTemplate;
           <span className="h-1 w-16 overflow-hidden rounded-full bg-hair" aria-hidden="true">
             <span className="block h-full rounded-full" style={{ width: `${fit}%`, background: world.color }} />
           </span>
-          <span className="num">나와 {fit}% 맞음(예상)</span>
+          <span className="num whitespace-nowrap">예상 {fit}% 맞음</span>
           {world.curated ? <span className="rounded bg-ground px-1.5 py-0.5 font-semibold text-ink">상세판</span> : null}
         </span>
       </span>
