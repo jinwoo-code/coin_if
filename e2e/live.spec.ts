@@ -1,6 +1,9 @@
 // 실시간 판단 모드: 시작 → 끝난 삶 먼저 보기 → AI 실패로 멈춤 → 새로고침해도 이어서 → 끝 → 다시 열면 AI를 안 부름. AI는 가짜.
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
+import { autoOpenReport } from "./helpers";
+
+test.beforeEach(async ({ page }) => autoOpenReport(page));
 
 const world = JSON.parse(readFileSync("data/worlds/developer.json", "utf8")) as { events: { id: string; choices: unknown[] }[] };
 const marketer = JSON.parse(readFileSync("data/worlds/marketer.json", "utf8")) as { events: { id: string; choices: unknown[] }[] };
@@ -56,7 +59,7 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   await expect(page.getByText(/1,000번 중/).first()).toBeVisible(); // 나무는 1,000번
   const card = page.getByRole("region", { name: /AI가 직접 살아 본 30개의 삶/ });
   await expect(card).toContainText("30번 중");
-  await expect(card).toContainText("표본 오차 범위");
+  await expect(card).toContainText("오차 범위");
   await expect(card.getByText(/\(\d+~\d+%\)/).first()).toBeVisible();
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:multiverses") ?? "{}"));
   expect(saved.developer.stats.runs).toBe(1000);

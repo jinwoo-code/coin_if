@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { REMOTE } from "./helpers";
+import { REMOTE, autoOpenReport } from "./helpers";
+
+test.beforeEach(async ({ page }) => autoOpenReport(page));
 
 // 시연 인물로 리포트까지 가서 격차 칸과 모바일 넘침을 본다. AI 안 부름.
 test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) => {
@@ -330,7 +332,6 @@ test("무료는 미리 보기까지, 프리미엄을 열면 격차~실행 전체
     localStorage.setItem(k, JSON.stringify({ ...JSON.parse(localStorage.getItem(k)!), name: "파일럿학생" }));
   });
   await page.goto("/report");
-  await expect(page.getByTestId("report-runs")).toHaveAttribute("open", "", { timeout: 60_000 }); // 무료 칸은 펼쳐 둔다
   await expect(page.getByTestId("free-todos")).toBeVisible({ timeout: 120_000 });
   await expect(page.getByRole("heading", { name: /WOOP|이번 주 실행 계획/ })).toBeVisible();
   const preview = page.getByTestId("premium-preview");

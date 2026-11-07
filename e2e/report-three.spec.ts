@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { REMOTE, SIM_WAIT } from "./helpers";
+import { REMOTE, SIM_WAIT, autoOpenReport } from "./helpers";
+
+test.beforeEach(async ({ page }) => autoOpenReport(page));
 
 // 끝맺음 흐름: 시연 인물 → 프리미엄 생성 → 계획 수정 → 다시 살아 보기 → 공유.
 // 공유 링크를 실제로 여는 건 0007이 있어야 해서 배포 사이트에서는 E2E_SHARE_DB=1일 때만 한다.

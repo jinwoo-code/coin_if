@@ -68,3 +68,16 @@ export const EMPTY = { decisionStyle: null, persistence: null, familyExpectation
 export async function openTimeline(page: Page) {
   await page.evaluate(() => document.querySelectorAll<HTMLDetailsElement>('details[data-testid="year"], details[data-testid="event-detail"]').forEach((d) => (d.open = true)));
 }
+
+// 리포트의 진로별 준비 계획·미리 보기·숫자 칸은 접혀 있다.
+export async function openReport(page: Page) {
+  await page.evaluate(() => document.querySelectorAll<HTMLDetailsElement>('details[data-testid="gap-world"], details[data-testid="premium-preview"], details[data-testid="report-runs"]').forEach((d) => (d.open = true)));
+}
+
+// 접힌 준비 계획을 볼 때: 리포트가 그려지면 스스로 펼친다(새로고침 뒤에도). 접힌 상태 자체는 report-fold.spec.ts에서 본다.
+export async function autoOpenReport(page: Page) {
+  await page.addInitScript(() => {
+    const open = () => document.querySelectorAll<HTMLDetailsElement>('details[data-testid="gap-world"]:not([open]), details[data-testid="premium-preview"]:not([open]), details[data-testid="report-runs"]:not([open])').forEach((d) => (d.open = true));
+    new MutationObserver(open).observe(document, { childList: true, subtree: true });
+  });
+}
