@@ -90,7 +90,8 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
     >
       <p className="num mb-1 text-cap font-semibold text-muted">{ev.label}</p>
       <p className="mb-1.5 text-cap font-semibold" style={{ color: world.color }}>
-        {ev.status}
+        {/* 장면의 큰 사건이 난 달의 처지. 역 끝 처지를 쓰면 '병원 2개월차'에 '자리를 못 잡았다'가 같이 보인다 */}
+        {ev.eventStatus ?? ev.status}
       </p>
       <h3 className={`text-[15px] font-bold leading-snug ${quiet ? "text-muted" : ""}`}>{ev.title}</h3>
       <p className="mt-1.5 text-sm text-muted">{ev.narration}</p>
@@ -157,10 +158,22 @@ function bigEvents(events: SimEvent[]) {
     .map((x) => x.e);
 }
 
-// 맨 위 요약: 시기는 1,000번 통계, 나머지는 지금 보는 가장 흔한 길 값이다(캡션에 적는다).
-function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEvent | undefined; mv: Multiverse | undefined; done: boolean }) {
+// 맨 위 요약: 전부 지금 보는 가장 흔한 길의 값이다(시기 포함). 1,000번 값은 아래 '한눈에 비교' 표에 모은다.
+// 예전에 저장한 장면(jobSince 없음)만 시기를 1,000번 값으로 보여 주고 그렇게 적는다.
+function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev: SimEvent | undefined; mv: Multiverse | undefined; done: boolean; scenes: SimEvent[] }) {
   const gate = mv?.stats.gate;
-  const when = gate?.typicalMonth !== null && gate?.typicalMonth !== undefined && mv ? monthLabel(mv.startYm, gate.typicalMonth) : "기간 안에 드물어요";
+  const legacy = scenes.some((s) => /개월차$/.test(s.status) && s.jobSince === undefined);
+  const hired = scenes.map((s) => s.jobSince).filter((m): m is number => typeof m === "number");
+  const first = hired.length ? Math.min(...hired) : null;
+  const when = legacy
+    ? gate?.typicalMonth !== null && gate?.typicalMonth !== undefined && mv
+      ? monthLabel(mv.startYm, gate.typicalMonth)
+      : "기간 안에 드물어요"
+    : first !== null && mv
+      ? monthLabel(mv.startYm, first)
+      : done
+        ? "기간 안에 못 했어요"
+        : "아직이에요";
   return (
     <section aria-label={`${world.name} 요약`} className="card p-3.5 sm:p-4" data-testid="sim-summary">
       <div className="mb-1 flex items-center gap-2">
@@ -179,7 +192,7 @@ function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEve
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
               <dt className="text-sm font-medium text-muted">{gate?.label ?? "합격·취업"} 시기</dt>
               <dd className="num mt-1 break-keep text-lg font-extrabold">{when}</dd>
-              <dd className="num mt-0.5 text-cap text-muted">{T.basisAll(times(mv?.stats.runs ?? 1000))}</dd>
+              {legacy ? <dd className="num mt-0.5 text-cap text-muted">{T.basisAll(times(mv?.stats.runs ?? 1000))}</dd> : null}
             </div>
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
               <dt className="text-sm font-medium text-muted">끝날 때 만족도</dt>
@@ -202,12 +215,7 @@ function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEve
             <p className="num">
               스트레스 {ev.state.stress} / 100 · 역량 {ev.state.skill} / 100
             </p>
-            {mv && gate ? (
-              <p className="num mt-1">
-                {times(mv.stats.runs)}번 전체로 보면 {gate.label} {gate.share}% <Ci pct={gate.share} n={mv.stats.runs} />
-              </p>
-            ) : null}
-            <p className="mt-1">시기는 {times(mv?.stats.runs ?? 1000)}번 중 보통 값이고, 나머지는 지금 보는 {T.mainLine}의 값이에요. 그래서 아래 비교 표의 가운데 값과 다를 수 있어요.</p>
+            <p className="mt-1">위 숫자는 모두 지금 보는 {T.mainLine} 한 번의 값이에요. {times(mv?.stats.runs ?? 1000)}번 전체 값은 아래 &apos;진로를 한눈에 비교해요&apos; 표에 있어요.</p>
           </details>
         </>
       ) : null}
@@ -494,7 +502,7 @@ export default function SimulatePage() {
       ) : null}
 
       <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} ${T.mainLine} 결과` : `${T.mainLine} 결과`} className="min-w-0">
-        <div className="mt-3">{selectedWorld ? <SummaryCard world={selectedWorld} ev={latest(selectedWorld.id)} mv={mvs[selectedWorld.id]} done={done} /> : null}</div>
+        <div className="mt-3">{selectedWorld ? <SummaryCard world={selectedWorld} ev={latest(selectedWorld.id)} mv={mvs[selectedWorld.id]} done={done} scenes={rows.flatMap((r) => r.events).filter((e) => e.worldId === selectedWorld.id)} /> : null}</div>
       </div>
 
       {judging ? (

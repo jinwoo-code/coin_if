@@ -206,6 +206,7 @@ export interface EventCard {
   branch?: "luck" | "choice"; // 갈림길: 운으로 갈리는지, 내 선택으로 갈리는지
   branchLabel?: string; // 세계선 나무에 쓰는 짧은 이름
   minMonth?: number; // 시작 후 이 달부터 발생 가능
+  minHunt?: number; // 구직을 시작한 뒤(졸업·requires가 켜진 달·퇴사 중 늦은 때) 이만큼 지나야 발생('1년 가까이 자리를 못 잡았다' 등)
   maxMonth?: number;
   calendar?: number[]; // 실제 달력에서 이 달에만 일어남(예: 국가직 9급 발표 5월)
   requires?: string[]; // 이 사건/상태가 모두 먼저 있어야 함
@@ -371,6 +372,7 @@ export interface SimEvent {
   state: LifeState;
   status: string;
   eventStatus?: string; // 사건이 일어난 달의 처지(status는 장면 칸 끝의 처지)
+  jobSince?: number; // 장면 칸 끝에 일하는 중이면 그 일을 시작한 달(0부터). 요약 카드의 '가장 흔한 길' 시기에 쓴다
   salary: number;
   evidence?: StatEvidence;
   freq: number; // 1,000번 중 이 사건이 일어난 횟수

@@ -209,7 +209,7 @@ function jobHunt(j: Job, gate: Partial<EventCard>, opts: { hazard: number; tiers
         C("지금 기준으로 계속 지원한다", "safe", { label: "기준 유지" }),
       ],
       { stress: 10, satisfaction: -8 },
-      { needsNoJob: true, afterGrad: true, excludes: ["switched", "long-hunt"], minMonth: 9, branch: "choice", branchLabel: "긴 구직", weight: 4, evidence: EV_FIRSTJOB },
+      { needsNoJob: true, afterGrad: true, excludes: ["switched", "long-hunt"], minMonth: 9, minHunt: 9, branch: "choice", branchLabel: "긴 구직", weight: 4, evidence: EV_FIRSTJOB },
     ),
     E(
       "got-job",
@@ -261,14 +261,14 @@ function jobHunt(j: Job, gate: Partial<EventCard>, opts: { hazard: number; tiers
 // ---------- 유형별 사건 ----------
 
 const DEFAULT_PEOPLE: Record<Archetype, NonNullable<Job["people"]>> = {
-  open: { boss: "박 팀장", peer: "입사 동기 윤", other: "선배 한", otherRole: "선배" },
-  public: { boss: "김 차장", peer: "입사 동기 서", other: "선배 오", otherRole: "선배" },
-  trade: { boss: "최 반장", peer: "같이 들어온 막내 정", other: "선배 기사 강", otherRole: "선배" },
-  portfolio: { boss: "실장 류", peer: "같은 팀 디자이너 문", other: "클라이언트 담당자", otherRole: "클라이언트" },
-  exam: { boss: "선배 직원 최", peer: "스터디원 정", other: "같은 기수 동기", otherRole: "동기" },
-  license: { boss: "수간호사 박", peer: "입사 동기 이", other: "선배 한", otherRole: "선배" },
-  grad: { boss: "지도교수 김", peer: "랩 동기 송", other: "박사과정 선배 허", otherRole: "선배" },
-  startup: { boss: "멘토 대표 조", peer: "공동창업자 민", other: "첫 고객", otherRole: "고객" },
+  open: { boss: "박 팀장", peer: "입사 동기 윤지호", other: "한 선배", otherRole: "선배" },
+  public: { boss: "김 차장", peer: "입사 동기 서하은", other: "오 선배", otherRole: "선배" },
+  trade: { boss: "최 반장", peer: "같이 들어온 막내 정우진", other: "강 기사님", otherRole: "선배" },
+  portfolio: { boss: "류 실장", peer: "같은 팀 디자이너 문소희", other: "클라이언트 담당자", otherRole: "클라이언트" },
+  exam: { boss: "최 주무관", peer: "스터디원 정다은", other: "같은 기수 동기", otherRole: "동기" },
+  license: { boss: "박 수간호사", peer: "입사 동기 이수아", other: "한 선배", otherRole: "선배" },
+  grad: { boss: "김 교수님", peer: "랩 동기 송민재", other: "박사과정 허 선배", otherRole: "선배" },
+  startup: { boss: "멘토 조 대표", peer: "공동창업자 민서진", other: "첫 고객", otherRole: "고객" },
 };
 
 function examEvents(j: Job, ppl: NonNullable<Job["people"]>): EventCard[] {

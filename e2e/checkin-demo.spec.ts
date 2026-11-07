@@ -12,18 +12,23 @@ for (const [button, name, worlds] of [
     await page.getByRole("button", { name: button }).first().click();
     await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
 
-    // 큰 갈림길 고치기: 자세히를 펼치지 않아도 연도만 펼치면 보인다
+    // 큰 갈림길 고치기: 자세히를 펼치지 않아도 연도만 펼치면 보인다. 가장 흔한 길에 큰 갈림길이 없는 진로면 다음 진로에서 찾는다.
     const years = page.getByTestId("year");
     const fix = page.getByRole("button", { name: "나라면 이렇게 안 해" });
     let found = false;
-    for (let i = 0; i < (await years.count()); i++) {
-      await years.nth(i).locator("summary").first().click();
-      const visible = years.nth(i).getByRole("button", { name: "나라면 이렇게 안 해" }).locator("visible=true");
-      if (await visible.count()) {
-        await visible.first().click();
-        found = true;
-        break;
+    for (const tab of [null, /9급 행정직 공무원/] as const) {
+      if (tab) await page.getByRole("button", { name: tab }).first().click();
+      for (let i = 0; i < (await years.count()); i++) {
+        const sum = years.nth(i).locator("summary").first();
+        if ((await years.nth(i).getAttribute("open")) === null) await sum.click();
+        const visible = years.nth(i).getByRole("button", { name: "나라면 이렇게 안 해" }).locator("visible=true");
+        if (await visible.count()) {
+          await visible.first().click();
+          found = true;
+          break;
+        }
       }
+      if (found) break;
     }
     if (!found) await fix.first().waitFor({ timeout: 5_000 });
     const group = page.getByRole("radiogroup").first();
