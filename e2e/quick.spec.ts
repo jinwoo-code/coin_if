@@ -70,7 +70,7 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await pickAll(page, 0);
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("3개 중 3개").first()).toBeVisible();
-  await expect(page.getByText("성격 20문항, 지난번과 비교")).toBeVisible();
+  await expect(page.getByText("1. 성격 다시 재기")).toBeVisible();
   const big = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:profile") ?? "null").bigFive);
   await page.getByRole("button", { name: "이 차이만큼 내 성격 값 바꾸기" }).click();
   await expect(page.getByText(/바꿨어요/)).toBeVisible();
