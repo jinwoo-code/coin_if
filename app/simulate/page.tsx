@@ -16,6 +16,7 @@ import { choiceLine } from "@/lib/scenes";
 import { store } from "@/lib/store";
 import type { LifeState, LineNode, Multiverse, Profile, Selection, SimEvent, WorldStats, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
+import { iGa } from "@/lib/josa";
 import { T, plain } from "@/lib/copy";
 
 interface Row {
@@ -158,6 +159,24 @@ function bigEvents(events: SimEvent[]) {
     .slice(0, 2)
     .sort((a, b) => a.i - b.i)
     .map((x) => x.e);
+}
+
+// 맨 위 한 줄 결론: 진로 2개 이상을 1,000번 통계로 견준다(아래 '한눈에 비교' 표와 같은 값).
+function Verdict({ ids, mvs, months }: { ids: string[]; mvs: Record<string, Multiverse>; months: number }) {
+  const ws = ids.filter((id) => mvs[id]).map((id) => ({ w: getWorld(id), st: mvs[id].stats }));
+  if (ws.length < 2) return null;
+  const g = (x: (typeof ws)[number]) => x.st.gate?.share ?? 0;
+  const byGate = ws.toSorted((a, b) => g(b) - g(a));
+  const bySat = ws.toSorted((a, b) => b.st.satisfiedShare - a.st.satisfiedShare);
+  const gateTie = g(byGate[0]) === g(byGate[1]);
+  const satTie = bySat[0].st.satisfiedShare === bySat[1].st.satisfiedShare;
+  const gateText = gateTie ? "자리 잡는 비율은 비슷하고" : `자리 잡는 비율은 ${iGa(byGate[0].w.short)} 가장 높고(${byGate[0].st.gate?.label} ${g(byGate[0])}%)`;
+  const satText = satTie ? "만족하며 끝난 비율도 비슷해요." : !gateTie && bySat[0].w.id === byGate[0].w.id ? `만족하며 끝난 비율도 가장 높아요(${bySat[0].st.satisfiedShare}%).` : `만족하며 끝난 비율은 ${iGa(bySat[0].w.short)} 가장 높아요(${bySat[0].st.satisfiedShare}%).`;
+  return (
+    <p className="mt-2 font-semibold">
+      한 줄로: {durationLabel(months)} 안에 {gateText}, {satText}
+    </p>
+  );
 }
 
 // 맨 위 요약: 전부 지금 보는 가장 흔한 길의 값이다(시기 포함). 1,000번 값은 아래 '한눈에 비교' 표에 모은다.
@@ -486,6 +505,7 @@ export default function SimulatePage() {
           <p>
             {monthLabel(selection.startYm, 0)}부터 {durationLabel(selection.months)}을 진로마다 <strong>내 조건과 성향으로 {times(Object.values(mvs)[0]?.stats.runs ?? 1000)}번</strong> 살아봤어요.
           </p>
+          <Verdict ids={selection.worldIds} mvs={mvs} months={selection.months} />
           {selectedWorld && mvs[selectedWorld.id] ? (
             <p className="mt-1 text-muted">
               {selectedWorld.short}: {T.line} {mvs[selectedWorld.id].lines.length}개로 갈라졌고, 지금 보는 건 {T.mainLine}이에요({times(mvs[selectedWorld.id].lines.find((l) => l.isMain)?.count ?? 0)}번).
