@@ -16,7 +16,8 @@ export const T = {
   assumedFull: `${assumed}(아직 데이터 없음)`,
   liveMode: "AI가 직접 살아 보는 모드",
   // 숫자가 어느 삶에서 왔는지. 같은 화면에 두 기준이 섞이면 달라 보이니 작게 붙인다.
-  basisMain: "가장 흔한 길 기준",
+  basisMain: "가장 흔한 길 중 한 번의 삶",
+  basisLineCard: (runs: number) => `${runs.toLocaleString("ko-KR")}번의 가운데 값`,
   basisAll: (runs: string) => `${runs}번 전체의 가운데 값`,
   basisLine: "길마다 그 길을 간 삶들의 가운데 값이에요.",
 } as const;

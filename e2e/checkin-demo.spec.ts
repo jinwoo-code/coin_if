@@ -37,7 +37,7 @@ for (const [button, name, worlds] of [
     expect(corrected.length).toBeGreaterThanOrEqual(1);
 
     // 요약 카드·비교 표 숫자 기준
-    await expect(page.getByTestId("summary-basis")).toHaveText("가장 흔한 길 기준");
+    await expect(page.getByTestId("summary-basis")).toHaveText("가장 흔한 길 중 한 번의 삶");
     await expect(page.getByTestId("compare-all").getByText("1,000번 전체의 가운데 값").first()).toBeVisible();
 
     await page.goto("/me");

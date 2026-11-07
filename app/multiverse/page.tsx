@@ -56,6 +56,7 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
           <dd className="font-semibold">{line.salary ? won(line.salary) : "없음"}</dd>
         </div>
       </dl>
+      <p className="num mt-1 text-cap text-muted">모은 돈·연봉은 이 길 {T.basisLineCard(line.count)}이에요.</p>
       <div className="mt-3 flex gap-2">
         <button onClick={onOpen} className="btn-ghost min-h-[44px] flex-1 text-sm">
           이 세계 살아보기
