@@ -131,7 +131,18 @@ export default function ChoosePage() {
     if (profile) writeDraft({ chosen, months, mode, readiness });
   }, [profile, chosen, months, mode, readiness]);
 
-  const recs = useMemo(() => (profile ? recommend(profile, 6, stdMajors) : []), [profile, stdMajors]);
+  // 추천: 전공·가치관 추천 6개 + 고민 글에 이름이 나온 진로(사용성 점검 8번). 화면에는 '나와 n% 맞음' 높은 순으로.
+  const recs = useMemo(() => {
+    if (!profile) return [];
+    const d = (profile.dilemma ?? "").replace(/\s/g, "");
+    const said: WorldTemplate[] = [];
+    for (const w of WORLDS.toSorted((a, b) => b.short.length - a.short.length)) {
+      const k = w.short.replace(/\s/g, "");
+      if (d.includes(k) && !said.some((x) => x.short.replace(/\s/g, "").includes(k))) said.push(w);
+    }
+    const all = [...recommend(profile, 6, stdMajors), ...said.slice(0, 3)].filter((w, i, xs) => xs.findIndex((x) => x.id === w.id) === i);
+    return all.toSorted((a, b) => preFit(b, profile) - preFit(a, profile));
+  }, [profile, stdMajors]);
   const third = useMemo(() => (profile && chosen.length >= 2 ? suggestThirdPath(profile, chosen.slice(0, 2)) : null), [profile, chosen]);
 
   if (!profile) return null;
