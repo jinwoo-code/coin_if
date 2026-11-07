@@ -324,6 +324,7 @@ export function LifeForm({ life, onChange }: { life: Life; onChange: (l: Life) =
   const runway = life.livingCost - life.support > 0 ? Math.floor(life.savings / (life.livingCost - life.support)) : null;
   return (
     <div className="flex flex-col gap-4">
+      <p className="text-cap text-muted">미리 넣어 둔 숫자는 기본값이에요. 내 상황과 다르면 바꿔 주세요.</p>
       <div className="grid gap-3 sm:grid-cols-3">
         <Num label="모아 둔 돈" value={life.savings} unit="만원" onChange={(v) => set({ savings: v ?? 0 })} />
         <Num label="매달 집 지원" value={life.support} unit="만원" onChange={(v) => set({ support: v ?? 0 })} />
@@ -364,6 +365,7 @@ const HATES: HateTag[] = ["야근", "주말근무", "민원", "반복업무", "�
 export function WantsForm({ wants, onChange }: { wants: Wants; onChange: (w: Wants) => void }) {
   return (
     <div className="flex flex-col gap-4">
+      <p className="text-cap text-muted">미리 넣어 둔 연봉은 기본값이에요. 바라는 금액으로 바꿔 주세요.</p>
       <Num label="바라는 첫 연봉" value={wants.salary} unit="만원" step={100} onChange={(v) => onChange({ ...wants, salary: v ?? 0 })} />
       <Multi label="이건 정말 싫다" hint="고르면 그 일이 생겼을 때 만족도가 더 크게 깎여요" value={wants.hates} options={HATES} onChange={(hates) => onChange({ ...wants, hates })} />
     </div>

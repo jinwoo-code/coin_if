@@ -265,7 +265,7 @@ export default function ChoosePage() {
           <h2 id="ready" className="text-lg font-bold">
             고른 진로의 준비 상태
           </h2>
-          <p className="mt-1 text-sm text-muted">합격·취업 확률에 바로 쓰여요. 모르면 그대로 두세요.</p>
+          <p className="mt-1 text-sm text-muted">합격·취업 확률에 바로 쓰여요. 미리 골라 둔 보기는 기본값이에요. 내 상황과 다르면 바꿔 주세요.</p>
           <div className="mt-4 flex flex-col gap-4">
             {questions.map((id) => {
               const qq = READINESS[id];

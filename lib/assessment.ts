@@ -34,8 +34,8 @@ const DILEMMA: Step = {
   kind: "text",
   key: "dilemma",
   ask: "요즘 가장 고민되는 선택이 뭐예요?",
-  placeholder: "예: 개발자로 취업할지 공무원 시험을 볼지…",
-  quick: ["바로 취업할지 공무원을 준비할지", "전공을 살릴지 다른 길로 갈지", "취업할지 대학원에 갈지"],
+  placeholder: "예: 취업할지 시험을 볼지…",
+  quick: ["바로 취업할지 공무원을 준비할지", "전공을 살릴지 다른 길로 갈지", "취업할지 대학원에 갈지", "아직 잘 모르겠어요"],
 };
 const EXPERIENCES: Step = { kind: "text", key: "experiences", ask: "지금까지 해 본 것 중에 기억에 남는 경험이 있어요? 수업, 알바, 동아리 뭐든 좋아요.", placeholder: "예: 동아리에서 앱을 만들어 봤어요…" };
 const CONSTRAINTS: Step = { kind: "text", key: "constraints", ask: "진로를 정할 때 신경 쓰이는 게 더 있어요? 가족, 건강, 하고 싶은 것 뭐든요.", placeholder: "예: 부모님이 안정적인 일을 원하셔서…" };
