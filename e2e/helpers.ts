@@ -63,3 +63,8 @@ export function watchOtherPosts(page: Page) {
 }
 
 export const EMPTY = { decisionStyle: null, persistence: null, familyExpectation: null, regretType: null, coreValues: [], runwayMonths: null };
+
+// 시뮬레이션 타임라인은 연도·사건 '자세히'로 접혀 있다. 그 안의 내용을 볼 때 쓴다(저장본이 아닌 스트리밍 중에는 끝난 뒤에 부를 것).
+export async function openTimeline(page: Page) {
+  await page.evaluate(() => document.querySelectorAll<HTMLDetailsElement>('details[data-testid="year"], details[data-testid="event-detail"]').forEach((d) => (d.open = true)));
+}

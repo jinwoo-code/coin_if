@@ -1,5 +1,6 @@
 // AI 판단이 실패하면 화면에 'AI 판단 실패 → 규칙 계산'이 나온다. 응답 실패(500)와 네트워크 끊김은 가짜로, 틀린 키는 E2E_BAD_KEY=1로 실제 서버를 거쳐.
 import { expect, test } from "@playwright/test";
+import { openTimeline, SIM_WAIT } from "./helpers";
 
 const cases = process.env.E2E_BAD_KEY ? (["틀린 키"] as const) : (["응답 실패", "네트워크 끊김"] as const);
 for (const how of cases) {
@@ -20,7 +21,9 @@ for (const how of cases) {
     await expect.poll(() => calls, { timeout: 60_000 }).toBeGreaterThan(0);
     // 큰 갈림길 장면이 나올 때까지 기다렸다가 펼친다
     await expect(page.locator("details").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first()).toBeAttached({ timeout: 110_000 });
-    await page.locator("details").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first().locator("summary").click();
+    await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await openTimeline(page);
+    await page.locator("details:not([data-testid])").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first().locator("summary").click();
     await expect(failed).toBeVisible();
     await failed.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/judge-fail-${how}.png` });
@@ -40,7 +43,9 @@ for (const width of [320, 390]) {
     });
     await page.reload();
     const btn = page.getByRole("button", { name: "나라면 이렇게 안 해" }).first();
-    await expect(btn).toBeAttached({ timeout: 110_000 });
+    await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await openTimeline(page);
+    await expect(btn).toBeAttached();
     const gap = await btn.evaluate((el) => {
       let card = el.parentElement!;
       while (card && parseFloat(getComputedStyle(card).borderLeftWidth) === 0) card = card.parentElement!;

@@ -1,6 +1,6 @@
 "use client";
 // 3. 체험: 진로마다 1,000번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
-import { BarChart3, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
+import { BarChart3, ChevronDown, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -80,55 +80,127 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
 function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: WorldTemplate; current: boolean; mv: Multiverse; animate: boolean }) {
   const quiet = ev.eventId === "quiet";
   const pct = Math.round((ev.freq / mv.stats.runs) * 100);
+  const hasDetail = !quiet || ev.minor.length > 0 || Boolean(ev.evidence);
   return (
     <article
       className={`${animate ? "animate-rise" : ""} rounded-2xl border p-3 sm:p-3.5 ${quiet ? "bg-transparent" : "bg-surface"}`}
       style={{ borderColor: current ? world.color : "#E3E6EB", boxShadow: current ? `0 0 0 1px ${world.color}` : undefined, borderStyle: quiet ? "dashed" : "solid" }}
     >
-      <p className="num mb-1 text-cap font-semibold text-muted sm:hidden">{ev.label}</p>
+      <p className="num mb-1 text-cap font-semibold text-muted">{ev.label}</p>
       <p className="mb-1.5 text-cap font-semibold" style={{ color: world.color }}>
         {ev.status}
       </p>
-      {!quiet && !ev.routine ? (
-        <p className="num mb-1.5 text-cap text-muted">
-          {freqWord(pct)} · {times(mv.stats.runs)}번 중 {times(ev.freq)}번
-        </p>
-      ) : null}
       <h3 className={`text-[15px] font-bold leading-snug ${quiet ? "text-muted" : ""}`}>{ev.title}</h3>
       <p className="mt-1.5 text-sm text-muted">{ev.narration}</p>
-      {ev.reactions?.length ? (
-        <ul className="mt-2 space-y-1 text-cap text-muted">
-          {ev.reactions.map((r) => (
-            <li key={r.name}>
-              <b className="font-semibold">{r.name}</b> &quot;{r.line}&quot;
-            </li>
-          ))}
-        </ul>
-      ) : null}
       {ev.choice ? (
         <p className="mt-2 flex gap-1.5 text-sm font-medium">
           <CornerDownRight aria-hidden="true" size={16} className="mt-[3px] flex-none" style={{ color: world.color }} />
           <span>
             <span className="sr-only">나의 선택: </span>
             {ev.choice}
-            {choiceLine(ev) ? <span className="mt-0.5 block text-cap font-normal text-muted">{choiceLine(ev)}</span> : null}
           </span>
         </p>
       ) : null}
-      {ev.choice && ev.odds ? <Odds odds={ev.odds} /> : null}
-      <CorrectChoice ev={ev} world={world} />
-      <DeltaChips delta={ev.delta} />
-      {ev.minor.length ? <p className="mt-2 text-cap text-muted">그 밖에: {ev.minor.join(", ")}</p> : null}
-      <ForkNote mv={mv} ev={ev} world={world} />
-      {ev.evidence ? (
-        <p className="mt-2.5 flex gap-1.5 border-t border-hair pt-2.5 text-cap text-muted">
-          <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" />
-          <span>
-            근거: {plain(ev.evidence.label)} ({plain(ev.evidence.source)})
-          </span>
-        </p>
+      {hasDetail ? (
+        <details className="group/detail mt-1" data-testid="event-detail">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1 text-cap font-semibold text-muted [&::-webkit-details-marker]:hidden">
+            자세히 <ChevronDown aria-hidden="true" size={14} className="transition-transform group-open/detail:rotate-180" />
+          </summary>
+          {!quiet && !ev.routine ? (
+            <p className="num text-cap text-muted">
+              {freqWord(pct)} · {times(mv.stats.runs)}번 중 {times(ev.freq)}번
+            </p>
+          ) : null}
+          {choiceLine(ev) ? <p className="mt-1 text-cap text-muted">{choiceLine(ev)}</p> : null}
+          {ev.choice && ev.odds ? <Odds odds={ev.odds} /> : null}
+          <CorrectChoice ev={ev} world={world} />
+          <DeltaChips delta={ev.delta} />
+          {ev.reactions?.length ? (
+            <ul className="mt-2 space-y-1 text-cap text-muted">
+              {ev.reactions.map((r) => (
+                <li key={r.name}>
+                  <b className="font-semibold">{r.name}</b> &quot;{r.line}&quot;
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {ev.minor.length ? <p className="mt-2 text-cap text-muted">그 밖에: {ev.minor.join(", ")}</p> : null}
+          <ForkNote mv={mv} ev={ev} world={world} />
+          {ev.evidence ? (
+            <p className="mt-2.5 flex gap-1.5 border-t border-hair pt-2.5 text-cap text-muted">
+              <BarChart3 aria-hidden="true" size={14} className="mt-0.5 flex-none" />
+              <span>
+                근거: {plain(ev.evidence.label)} ({plain(ev.evidence.source)})
+              </span>
+            </p>
+          ) : null}
+        </details>
       ) : null}
     </article>
+  );
+}
+
+// 그해의 큰 사건: 갈림길 > 등급 있는 관문 > 상태가 크게 움직인 일. 접힌 줄에는 이 중 둘만, 일어난 순서대로 보여 준다.
+function bigEvents(events: SimEvent[]) {
+  const score = (e: SimEvent) => (e.branch ? 300 : 0) + (e.tierLabel ? 200 : 0) + Math.max(0, ...STATE_META.filter((m) => m.key !== "money").map((m) => Math.abs(e.delta[m.key] ?? 0)));
+  return events
+    .filter((e) => e.eventId !== "quiet" && !e.routine)
+    .map((e, i) => ({ e, i }))
+    .sort((a, b) => score(b.e) - score(a.e))
+    .slice(0, 2)
+    .sort((a, b) => a.i - b.i)
+    .map((x) => x.e);
+}
+
+// 맨 위 요약: 시기는 1,000번 통계, 나머지는 지금 보는 가장 흔한 길 값이다(캡션에 적는다).
+function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEvent | undefined; mv: Multiverse | undefined; done: boolean }) {
+  const gate = mv?.stats.gate;
+  const when = gate?.typicalMonth !== null && gate?.typicalMonth !== undefined && mv ? monthLabel(mv.startYm, gate.typicalMonth) : "기간 안에 드물어요";
+  return (
+    <section aria-label={`${world.name} 요약`} className="card p-3.5 sm:p-4" data-testid="sim-summary">
+      <div className="mb-1 flex items-center gap-2">
+        <LineBadge world={world} size={22} />
+        <h2 className="min-w-0 text-lg font-bold">{world.name}</h2>
+      </div>
+      <p className="mb-4 text-sm text-muted">{ev ? (done ? `끝날 때: ${ev.status}` : ev.status) : "출발 전"}</p>
+      {ev ? (
+        <>
+          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
+              <dt className="text-sm font-medium text-muted">{gate?.label ?? "합격·취업"} 시기</dt>
+              <dd className="num mt-1 break-keep text-lg font-extrabold">{when}</dd>
+            </div>
+            <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
+              <dt className="text-sm font-medium text-muted">끝날 때 만족도</dt>
+              <dd className="num mt-1 text-lg font-extrabold">
+                {ev.state.satisfaction}
+                <span className="ml-1 text-sm font-normal text-muted">/ 100</span>
+              </dd>
+            </div>
+            <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
+              <dt className="text-sm font-medium text-muted">모은 돈</dt>
+              <dd className="num mt-1 break-words text-lg font-extrabold">{won(ev.state.money)}</dd>
+            </div>
+            <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
+              <dt className="text-sm font-medium text-muted">연봉</dt>
+              <dd className="num mt-1 break-words text-lg font-extrabold">{ev.salary ? won(ev.salary) : "아직 없어요"}</dd>
+            </div>
+          </dl>
+          <details className="mt-2 text-cap text-muted">
+            <summary className="flex min-h-11 cursor-pointer items-center font-semibold">자세히</summary>
+            <p className="num">
+              스트레스 {ev.state.stress} / 100 · 역량 {ev.state.skill} / 100
+            </p>
+            {mv && gate ? (
+              <p className="num mt-1">
+                {times(mv.stats.runs)}번 전체로 보면 {gate.label} {gate.share}% <Ci pct={gate.share} n={mv.stats.runs} />
+              </p>
+            ) : null}
+            <p className="mt-1">시기는 {times(mv?.stats.runs ?? 1000)}번 중 보통 값이고, 나머지는 지금 보는 {T.mainLine}의 값이에요.</p>
+          </details>
+        </>
+      ) : null}
+    </section>
   );
 }
 
@@ -318,6 +390,13 @@ export default function SimulatePage() {
   }
 
   const current = rows.at(-1);
+  const years = rows.reduce<{ year: string; rows: Row[] }[]>((acc, r) => {
+    const year = r.label.match(/\d+년/)?.[0] ?? r.label;
+    const last = acc.at(-1);
+    if (last?.year === year) last.rows.push(r);
+    else acc.push({ year, rows: [r] });
+    return acc;
+  }, []);
   const selectedWorld = worlds.find((w) => w.id === selectedWorldId) ?? worlds[0];
   const visibleWorlds = selectedWorld ? [selectedWorld] : [];
   function pickWorld(id: string) {
@@ -364,20 +443,14 @@ export default function SimulatePage() {
           <p>
             {monthLabel(selection.startYm, 0)}부터 {durationLabel(selection.months)}을 진로마다 <strong>내 조건과 성향으로 {times(Object.values(mvs)[0]?.stats.runs ?? 1000)}번</strong> 살아봤어요.
           </p>
-          <ul className="mt-1.5 flex flex-col gap-1 text-muted">
-            {worlds.map((w) => {
-              const mv = mvs[w.id];
-              const main = mv?.lines.find((l) => l.isMain);
-              return mv ? (
-                <li key={w.id} className="flex gap-1.5">
-                  <LineBadge world={w} size={18} />
-                  <span>
-                    {w.short}: {T.line} {mv.lines.length}개로 갈라졌고, 지금 보는 건 {T.mainLine}이에요({times(main?.count ?? 0)}번).
-                  </span>
-                </li>
-              ) : null;
-            })}
-          </ul>
+          {selectedWorld && mvs[selectedWorld.id] ? (
+            <p className="mt-1 text-muted">
+              {selectedWorld.short}: {T.line} {mvs[selectedWorld.id].lines.length}개로 갈라졌고, 지금 보는 건 {T.mainLine}이에요({times(mvs[selectedWorld.id].lines.find((l) => l.isMain)?.count ?? 0)}번).
+            </p>
+          ) : null}
+          <p className="mt-1 text-cap text-muted">
+            {T.line}: {T.lineHint}
+          </p>
         </div>
       ) : null}
 
@@ -406,40 +479,7 @@ export default function SimulatePage() {
       ) : null}
 
       <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} ${T.mainLine} 결과` : `${T.mainLine} 결과`} className="min-w-0">
-        {/* 고른 진로의 지금 처지 */}
-        <div className="mt-3">
-          {visibleWorlds.map((w) => {
-            const ev = latest(w.id);
-            return (
-              <section key={w.id} aria-label={`${w.name} 지금 상태`} className="card p-3.5 sm:p-4">
-                <div className="mb-1 flex items-center gap-2">
-                  <LineBadge world={w} size={22} />
-                  <h2 className="min-w-0 text-lg font-bold">{w.name}</h2>
-                </div>
-                <p className="mb-4 text-sm text-muted">{ev ? `${ev.status}${ev.salary ? ` · 연봉 ${won(ev.salary)}` : ""}` : "출발 전"}</p>
-                {ev ? (
-                  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {STATE_META.filter((m) => ["satisfaction", "stress", "skill", "money"].includes(m.key)).map((m) => (
-                      <div key={m.key} className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
-                        <dt className="text-sm font-medium text-muted">{m.label}</dt>
-                        <dd className="num mt-1 break-words text-xl font-extrabold">
-                          {m.key === "money" ? (
-                            won(ev.state.money)
-                          ) : (
-                            <>
-                              {ev.state[m.key]}
-                              <span className="ml-1 text-sm font-normal text-muted">/ 100</span>
-                            </>
-                          )}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : null}
-              </section>
-            );
-          })}
-        </div>
+        <div className="mt-3">{selectedWorld ? <SummaryCard world={selectedWorld} ev={latest(selectedWorld.id)} mv={mvs[selectedWorld.id]} done={done} /> : null}</div>
       </div>
 
       {judging ? (
@@ -457,35 +497,53 @@ export default function SimulatePage() {
         </div>
       ) : null}
 
-      {/* 노선도 타임라인 */}
+      {/* 노선도 타임라인: 연도별로 접고, 접혀 있어도 그해의 큰 사건은 보인다. 살아보는 중에는 지금 해만 펼친다. */}
       <div className="mt-6 min-w-0">
-        <ol className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-x-3 sm:grid-cols-[80px_minmax(0,1fr)]">
-          {rows.map((row, ri) => {
-            const isCurrent = !done && ri === rows.length - 1;
+        <ol className="flex min-w-0 flex-col">
+          {years.map((y, yi) => {
+            const w = selectedWorld;
+            if (!w) return null;
+            const events = y.rows.flatMap((r) => r.events.filter((e) => e.worldId === w.id));
+            const big = bigEvents(events);
+            const live = !done && yi === years.length - 1;
             return (
-              <li key={row.station} className="contents">
-                <span className={`num hidden whitespace-pre-line pt-2 text-cap leading-snug sm:block ${isCurrent ? "font-bold text-ink" : "text-muted"}`}>{row.label.replace(" ", "\n")}</span>
-                {visibleWorlds.map((w) => {
-                  const ev = row.events.find((e) => e.worldId === w.id);
-                  return (
-                    <div key={w.id} className="relative min-w-0 pb-4 pl-6 sm:pl-7">
-                      <span aria-hidden="true" className={`absolute bottom-0 left-[9px] top-0 w-1 origin-top rounded-full ${animateTimeline && isCurrent ? "animate-draw" : ""}`} style={{ background: w.color }} />
-                      <span
-                        aria-hidden="true"
-                        className="absolute left-0 top-2 h-[22px] w-[22px] rounded-full border-[4px]"
-                        style={{ borderColor: w.color, background: isCurrent || ev?.branch ? w.color : "#fff", boxShadow: isCurrent ? `0 0 0 5px ${w.color}26` : undefined }}
-                      />
-                      {ev && mvs[w.id] ? <EventCard ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} /> : null}
-                    </div>
-                  );
-                })}
+              <li key={y.year} className="relative min-w-0 pb-3 pl-6 sm:pl-7">
+                <span aria-hidden="true" className={`absolute bottom-0 left-[9px] top-0 w-1 origin-top rounded-full ${animateTimeline && live ? "animate-draw" : ""}`} style={{ background: w.color }} />
+                <span
+                  aria-hidden="true"
+                  className="absolute left-0 top-3 h-[22px] w-[22px] rounded-full border-[4px]"
+                  style={{ borderColor: w.color, background: live || events.some((e) => e.branch) ? w.color : "#fff", boxShadow: live ? `0 0 0 5px ${w.color}26` : undefined }}
+                />
+                <details open={live} className="group rounded-2xl border border-hair bg-surface" data-testid="year">
+                  <summary className="flex min-h-11 cursor-pointer list-none items-start justify-between gap-2 rounded-2xl p-3 [&::-webkit-details-marker]:hidden">
+                    <span className="min-w-0">
+                      <span className="num block text-base font-bold">{y.year}</span>
+                      {big.length ? (
+                        big.map((e) => (
+                          <span key={e.station + e.eventId} className="mt-0.5 block text-sm">
+                            {e.title}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="mt-0.5 block text-sm text-muted">큰 일 없이 지나갔어요</span>
+                      )}
+                    </span>
+                    <ChevronDown aria-hidden="true" size={18} className="mt-1 flex-none text-muted transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="flex flex-col gap-2 px-2 pb-2 sm:px-3 sm:pb-3">
+                    {y.rows.map((row) => {
+                      const ev = row.events.find((e) => e.worldId === w.id);
+                      const isCurrent = !done && row === rows.at(-1);
+                      return ev && mvs[w.id] ? <EventCard key={row.station} ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} /> : null;
+                    })}
+                  </div>
+                </details>
               </li>
             );
           })}
 
           {done ? (
-            <li className="contents">
-              <span className="hidden pt-2 text-cap font-bold sm:block">종착역</span>
+            <li className="min-w-0">
               {visibleWorlds.map((w) => {
                 const mv = mvs[w.id];
                 const main = mv?.lines.find((l) => l.isMain);

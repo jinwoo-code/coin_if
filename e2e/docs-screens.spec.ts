@@ -103,6 +103,9 @@ for (const width of [390, 1280]) {
       const toMap = page.getByRole("link", { name: /다른 세계선 보기/ });
       await toMap.waitFor({ timeout: SIM_WAIT });
       await shot(page, "03-시뮬레이션-첫-진로");
+      await page.getByTestId("year").first().locator("summary").first().click();
+      await page.getByTestId("event-detail").first().locator("summary").click();
+      await shot(page, "03-2-시뮬레이션-연도-펼침");
       await page.getByRole("button", { name: "9급 행정직 공무원" }).click();
       await shot(page, "04-시뮬레이션-다른-진로");
       await page.getByTestId("compare-all").scrollIntoViewIfNeeded();
