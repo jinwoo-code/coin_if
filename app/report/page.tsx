@@ -268,7 +268,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
         );
       })}
       <h3 className="mt-6 text-base font-bold">자주 막히는 길로 가고 있다면</h3>
-      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 {T.line}이에요. 할 일은 AI가 내 조건에 맞춰 쓴 제안이에요.</p>
+      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 {T.line}이에요. {items.every((it) => it.ai !== false) ? "할 일은 AI가 내 조건에 맞춰 쓴 제안이에요." : items.some((it) => it.ai) ? "할 일 일부는 AI 제안을 못 받아 기본 할 일로 채웠어요." : "AI 제안을 못 받아 기본 할 일로 채웠어요."}</p>
       <ul className="mt-3 flex flex-col gap-3">
         {items.map((it) => (
           <li key={`${it.worldId}/${it.lineId}`} className="break-inside-avoid rounded-2xl bg-ground p-4">
@@ -476,7 +476,7 @@ export default function ReportPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-lineA">이번 비교에서 점수가 가장 높은 길</p>
                   <h3 className="mt-2 text-xl font-extrabold sm:text-2xl">{leaders.length === 1 ? `${getWorld(leaders[0].worldId).name} 경로가 내 가치관에 가장 가까워요` : `${leaders.map((w) => getWorld(w.worldId).name).join(" · ")} 경로가 공동 최고 점수예요`}</h3>
-                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 {T.assumedFull}라 작은 점수 차이는 큰 뜻이 없어요.</p>
+                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 {T.assumedFull}이라 작은 점수 차이는 큰 뜻이 없어요.</p>
                   <p className="mt-1 text-sm text-muted">가치관, 성격, {runs}번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요.</p>
                 </div>
                 <div className="flex shrink-0 items-baseline gap-3 border-t border-lineA/20 pt-4 sm:block sm:min-w-32 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0 sm:text-center">

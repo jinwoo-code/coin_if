@@ -130,7 +130,7 @@ export function CheckinChanges({ done, baseline, profile, onProfile }: { done: C
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-cap text-muted">고친 선택 하나의 무게는 {T.assumedFull}예요. 그 사건만이 아니라 모든 갈림길의 성향에 조금씩 퍼져요.</p>
+        <p className="mt-2 text-cap text-muted">고친 선택 하나의 무게는 {T.assumedFull}이에요. 그 사건만이 아니라 모든 갈림길의 성향에 조금씩 퍼져요.</p>
       </section>
 
       <section className="card mt-3 p-5" data-testid="change-rerun">

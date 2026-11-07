@@ -465,6 +465,7 @@ export interface PremiumItem {
   share: number; // 살아본 횟수 중 몇 %(2026-11-03 전에 저장한 것은 100번 중 몇 번 = 같은 값)
   satisfied: number; // 만족하며 끝난 비율(%)
   steps: string[];
+  ai?: boolean; // 할 일이 AI 문장이면 true, 규칙 문장(키 없음·실패·무료 키 보호)이면 false. 예전 저장본은 없음
 }
 
 export type Tone = "push" | "change" | "safe";

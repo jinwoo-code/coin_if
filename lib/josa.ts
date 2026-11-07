@@ -29,3 +29,8 @@ export function waGwa(word: string) {
   const b = lastBatchim(word);
   return word + (b === null || b === 0 ? "와" : "과");
 }
+
+export function eunNeun(word: string) {
+  const b = lastBatchim(word);
+  return word + (b === null || b === 0 ? "는" : "은");
+}

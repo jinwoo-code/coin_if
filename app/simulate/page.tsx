@@ -234,7 +234,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
       </h2>
       <p className="mt-1 text-sm text-muted">진로마다 {times(mvs[list[0].id].stats.runs)}번 살아본 결과예요. 진로 이름을 누르면 그 타임라인으로 가요.</p>
       <p className="mt-1 text-cap text-muted" data-testid="compare-basis">
-        {T.basisAll(times(mvs[list[0].id].stats.runs))}와 비율이에요. 위 요약 카드는 {T.basisMain}이라 다를 수 있어요.
+        {T.basisAll(times(mvs[list[0].id].stats.runs))}과 비율이에요. 위 요약 카드는 {T.basisMain}이라 다를 수 있어요.
       </p>
       <table className="num mt-4 w-full table-fixed text-left text-sm">
         <thead>
@@ -268,7 +268,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
           ))}
         </tbody>
       </table>
-      <p className="mt-3 text-cap text-muted">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 {T.assumedFull}라 예측이 아니라 비교용이에요.</p>
+      <p className="mt-3 text-cap text-muted">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 {T.assumedFull}이라 예측이 아니라 비교용이에요.</p>
     </section>
   );
 }
