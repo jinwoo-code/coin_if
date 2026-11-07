@@ -427,6 +427,8 @@ export default function SimulatePage() {
   }
 
   const current = rows.at(-1);
+  // 서버가 실패하면 멈춘 상태: 다시 살아보기를 누를 수 있어야 한다(안 그러면 뒤로 가기밖에 없다).
+  const stopped = Boolean(error) && !done;
   const years = rows.reduce<{ year: string; rows: Row[] }[]>((acc, r) => {
     const year = r.label.match(/\d+년/)?.[0] ?? r.label;
     const last = acc.at(-1);
@@ -449,16 +451,16 @@ export default function SimulatePage() {
   return (
     <Screen
       wide
-      title={done ? `${T.mainLine}을 다 살아봤어요` : "살아보는 중"}
+      title={done ? `${T.mainLine}을 다 살아봤어요` : stopped ? "살아보다 멈췄어요" : "살아보는 중"}
       back="/choose"
       right={
         <span aria-live="polite" className="num pr-2 text-sm font-bold">
-          {current ? current.label : "출발 준비 중…"}
+          {stopped ? "" : current ? current.label : "출발 준비 중…"}
         </span>
       }
       footer={
         <div className="flex gap-2">
-          <button className="btn-ghost flex-none px-4" onClick={rerun} disabled={!done} aria-label="다시 살아보기">
+          <button className="btn-ghost flex-none px-4" onClick={rerun} disabled={!done && !stopped} aria-label="다시 살아보기">
             <RotateCcw aria-hidden="true" size={18} />
             <span className="hidden sm:inline">다시 살아보기</span>
           </button>
@@ -466,6 +468,10 @@ export default function SimulatePage() {
             <Link href={`/multiverse?world=${selectedWorld?.id ?? ""}`} className="btn-primary flex-1">
               <GitBranch aria-hidden="true" size={18} /> 다른 {T.line} 보기
             </Link>
+          ) : stopped ? (
+            <button className="btn-primary flex-1" onClick={rerun}>
+              <RotateCcw aria-hidden="true" size={18} /> 다시 살아보기
+            </button>
           ) : (
             <button className="btn-primary flex-1" disabled>
               살아보는 중…
