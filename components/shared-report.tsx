@@ -22,7 +22,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
         <section key={w.id} className="mt-7 break-inside-avoid-page" aria-label={w.name}>
           <h2 className="text-xl font-bold">{w.name}</h2>
           <p className="mt-2 text-sm">
-            가치관 부합도 <strong>{w.fit}점</strong> · {yearsOf(w.months)} 안에 {w.gateLabel} <strong>{w.gateShare}%</strong> · 만족하며 끝남 {w.satisfied}% · 스트레스 높게 끝남 {w.stressed}%
+            종합 점수 <strong>{w.fit}점</strong> · {yearsOf(w.months)} 안에 {w.gateLabel} <strong>{w.gateShare}%</strong> · 만족하며 끝난 비율 {w.satisfied}% · 스트레스 높게 끝남 {w.stressed}%
           </p>
           <p className="text-cap text-muted">{w.runs.toLocaleString()}번 살아 본 결과예요. 확률의 바탕이 된 배수는 대부분 {T.assumedFull}이에요.</p>
           {w.good || w.hard ? (

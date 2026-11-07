@@ -197,7 +197,7 @@ function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev
               {legacy ? <dd className="num mt-0.5 text-cap text-muted">{T.basisAll(times(mv?.stats.runs ?? 1000))}</dd> : null}
             </div>
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
-              <dt className="text-sm font-medium text-muted">끝날 때 만족도</dt>
+              <dt className="text-sm font-medium text-muted">끝날 때 만족도(점수)</dt>
               <dd className="num mt-1 text-lg font-extrabold">
                 {ev.state.satisfaction}
                 <span className="ml-1 text-sm font-normal text-muted">/ 100</span>
@@ -243,7 +243,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
   if (list.length < 2) return null;
   const rows: { label: string; note?: string; value: (mv: Multiverse) => React.ReactNode }[] = [
     { label: "합격·취업", value: (mv) => `${mv.stats.gate?.share ?? 0}%` },
-    { label: "만족하며 끝남", note: list.some((w) => showsOutcome(w, mvs[w.id].stats)) ? "시험형은 끝 상태로 나눠요" : undefined, value: (mv) => (showsOutcome(list.find((w) => w.id === mv.worldId)!, mv.stats) ? <OutcomeCell st={mv.stats} /> : `${mv.stats.satisfiedShare}%`) },
+    { label: "만족하며 끝난 비율", note: list.some((w) => showsOutcome(w, mvs[w.id].stats)) ? "시험형은 끝 상태로 나눠요" : undefined, value: (mv) => (showsOutcome(list.find((w) => w.id === mv.worldId)!, mv.stats) ? <OutcomeCell st={mv.stats} /> : `${mv.stats.satisfiedShare}%`) },
     { label: "스트레스 높게 끝남", value: (mv) => `${mv.stats.stressedShare}%` },
     { label: "모은 돈", note: T.basisAll(times(mvs[list[0].id].stats.runs)), value: (mv) => won(mv.stats.final.money.p50) },
     { label: "가장 흔한 세계", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },

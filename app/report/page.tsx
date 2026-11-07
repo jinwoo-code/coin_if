@@ -55,7 +55,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
           </div>
         ) : (
           <div className="rounded-2xl bg-ground p-3">
-            <dt className="text-cap text-muted">만족하며 끝남</dt>
+            <dt className="text-cap text-muted">만족하며 끝난 비율</dt>
             <dd className="num text-xl font-extrabold">
               {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} className="block" />
             </dd>
@@ -263,7 +263,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
               {getWorld(it.worldId).short} · {it.line}
             </p>
             <p className="num text-cap text-muted">
-              {it.share}%가 이 길 · 만족하며 끝남 {it.satisfied}%
+              {it.share}%가 이 길 · 만족하며 끝난 비율 {it.satisfied}%
             </p>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm">
               {it.steps.map((st) => (
@@ -503,7 +503,7 @@ export default function ReportPage() {
                       <span className="ml-1 text-xl">점</span>
                       <span className="sr-only"> / 100점</span>
                     </p>
-                    <p className="mt-1 text-cap text-muted">가치관 부합도</p>
+                    <p className="mt-1 text-cap text-muted">종합 점수(비교용) · 살아본 결과까지 합친 값이라 고를 때 본 예상과 달라요</p>
                     <div className="mt-3 h-3 overflow-hidden rounded-full bg-hair" aria-hidden="true">
                       <span className="block h-full rounded-full" style={{ width: `${Math.max(0, Math.min(100, w.fit))}%`, background: world.color }} />
                     </div>

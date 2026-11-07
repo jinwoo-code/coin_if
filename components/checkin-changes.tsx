@@ -154,7 +154,7 @@ export function CheckinChanges({ done, baseline, profile, onProfile }: { done: C
                   </p>
                   <dl className="num mt-1 text-sm">
                     <Pair label={`${r.label}`} v={r.gate} n={r.n} />
-                    <Pair label="만족하며 끝남" v={r.satisfied} n={r.n} />
+                    <Pair label="만족하며 끝난 비율" v={r.satisfied} n={r.n} />
                     <Pair label="스트레스 높게 끝남" v={r.stressed} n={r.n} />
                   </dl>
                 </div>

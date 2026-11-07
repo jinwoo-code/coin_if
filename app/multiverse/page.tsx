@@ -44,7 +44,7 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
       </div>
       <dl className="num mt-2 grid grid-cols-3 gap-1 text-cap">
         <div>
-          <dt className="text-muted">만족하며 끝남</dt>
+          <dt className="text-muted">만족하며 끝난 비율</dt>
           <dd className="font-semibold">{satText(line)}</dd>
         </div>
         <div>
@@ -168,7 +168,7 @@ interface Explored {
 function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
   const rows: [string, (l: Line) => string][] = [
     ["살아본 횟수 중", (l) => `${times(l.count)}번`],
-    ["만족하며 끝남", (l) => satText(l)],
+    ["만족하며 끝난 비율", (l) => satText(l)],
     ["스트레스 높게 끝남", (l) => `${l.stressedShare}%`],
     ["모은 돈(가운데 값)", (l) => won(l.final.money.p50)],
     ["연봉", (l) => (l.salary ? won(l.salary) : "없음")],
@@ -508,7 +508,7 @@ function MultiversePage() {
             </div>
           ) : (
             <div className="rounded-2xl bg-ground p-3">
-              <p className="text-cap text-muted">만족하며 끝남</p>
+              <p className="text-cap text-muted">만족하며 끝난 비율</p>
               <p className="num text-2xl font-extrabold">
                 {st.satisfiedShare}% <Ci pct={st.satisfiedShare} n={st.runs} />
               </p>
@@ -627,7 +627,7 @@ function MultiversePage() {
             <p className="text-base font-bold">{explored.title}</p>
             <p className="num mt-1 text-sm text-muted">
               이 갈림길을 바꾼 채로 {times(explored.stats.runs)}번을 다시 살아봤어요. {st.gate?.label} {st.gate?.share}% → <strong className="text-ink">{explored.stats.gate?.share ?? 0}%</strong>{" "}
-              <Ci pct={explored.stats.gate?.share ?? 0} n={explored.stats.runs} />, 만족하며 끝남 {st.satisfiedShare}% → <strong className="text-ink">{explored.stats.satisfiedShare}%</strong>{" "}
+              <Ci pct={explored.stats.gate?.share ?? 0} n={explored.stats.runs} />, 만족하며 끝난 비율 {st.satisfiedShare}% → <strong className="text-ink">{explored.stats.satisfiedShare}%</strong>{" "}
               <Ci pct={explored.stats.satisfiedShare} n={explored.stats.runs} />
             </p>
             <ol className="mt-4 flex flex-col gap-4">

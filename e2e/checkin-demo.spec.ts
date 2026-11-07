@@ -59,7 +59,7 @@ for (const [button, name, worlds] of [
     // 3. 다시 살아 보기
     const rerun = page.getByTestId("change-rerun");
     for (const id of worlds) await expect(rerun.getByTestId(`rerun-${id}`)).toBeVisible({ timeout: 120_000 });
-    await expect(rerun.getByText("만족하며 끝남").first()).toBeVisible();
+    await expect(rerun.getByText("만족하며 끝난 비율").first()).toBeVisible();
     await expect(rerun.getByText(/%.*→.*%/).first()).toBeVisible();
 
     // 성격 값을 바꾸면 그 값으로 다시 잰다
