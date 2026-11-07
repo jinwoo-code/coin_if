@@ -9,9 +9,9 @@ import { DEMOS, demoSelection, isDemoPerson } from "@/lib/demo";
 import { store } from "@/lib/store";
 
 const BRANCHES = [
-  { color: "#2F5BEA", d: "M150 150 C 205 150, 210 58, 270 58 L 336 58", end: [336, 58], label: "개발자 3년차", delay: 0.55 },
-  { color: "#F26B1D", d: "M150 150 L 336 150", end: [336, 150], label: "공무원 3년차", delay: 0.7 },
-  { color: "#13A57B", d: "M150 150 C 205 150, 210 242, 270 242 L 336 242", end: [336, 242], label: "데이터 분석가 3년차", delay: 0.85 },
+  { color: "#2F5BEA", d: "M150 150 C 205 150, 210 58, 270 58 L 336 58", end: [336, 58], label: "간호사 3년차", delay: 0.55 },
+  { color: "#F26B1D", d: "M150 150 L 336 150", end: [336, 150], label: "초등교사 3년차", delay: 0.7 },
+  { color: "#13A57B", d: "M150 150 C 205 150, 210 242, 270 242 L 336 242", end: [336, 242], label: "시각 디자이너 3년차", delay: 0.85 },
 ];
 
 function HeroMap() {
@@ -214,7 +214,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-2 px-5 py-6 sm:px-8 md:flex-row md:items-center md:justify-between">
           <p className="text-cap text-muted">결과는 미래 예측이 아니라 선택을 돕는 리허설이에요. 결정은 언제나 직접 해요.</p>
           <Link href="/privacy" className="inline-flex min-h-11 items-center self-start text-cap text-muted underline underline-offset-4 hover:text-ink">
-            개인정보 처리방침(초안)
+            개인정보 처리방침
           </Link>
         </div>
       </footer>
