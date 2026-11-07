@@ -41,7 +41,9 @@ export async function POST(req: Request) {
     })),
   });
 
-  const ai: ReturnType<typeof fallback> = ruleOnly(profile) ? fallback() : await generateJSON<ReturnType<typeof fallback>>({
+  // 실패하면 generateJSON이 같은 rule 객체를 돌려준다. 그걸로 AI 문장인지 가린다.
+  const rule = fallback();
+  const ai: ReturnType<typeof fallback> = ruleOnly(profile) ? rule : await generateJSON<ReturnType<typeof fallback>>({
     tag: "premium_report",
     model: "smart",
     system:
@@ -51,12 +53,15 @@ export async function POST(req: Request) {
       `막힌 세계선(엔진 결과):\n${stuck.map((s) => `- [${s.key}] ${getWorld(s.worldId).name}: ${s.line} (살아본 횟수의 ${s.share}%, 만족 ${s.satisfied}%, 스트레스 높음 ${s.stressed}%)`).join("\n")}\n` +
       `이 학생이 본선에서 겪은 힘든 일:\n${ids.flatMap((id) => (scenes[id] ?? []).filter((e) => e.kind === "bad").map((e) => `- ${getWorld(id).short} ${e.label}: ${e.title}`)).join("\n")}\n\n` +
       `JSON으로 답해라: {"items":[{"key": 위 [ ] 안의 값 그대로, "steps": 할 일 3개}]}`,
-    fallback,
+    fallback: () => rule,
   });
 
+  // AI가 {"items":[…]} 대신 배열만 줄 때가 있다(2026-11-07 실측). 둘 다 받는다.
+  const aiItems = ai === rule ? [] : Array.isArray(ai) ? (ai as ReturnType<typeof fallback>["items"]) : (ai.items ?? []);
   const items: PremiumItem[] = stuck.map((s) => {
-    const w = ai.items?.find((x) => x.key === s.key && x.steps?.length) ?? fallback().items.find((x) => x.key === s.key)!;
-    return { worldId: s.worldId, lineId: s.lineId, line: s.line, share: s.share, satisfied: s.satisfied, steps: w.steps.slice(0, 3) };
+    const got = aiItems.find((x) => x?.key === s.key && Array.isArray(x.steps) && x.steps.length);
+    const w = got ?? rule.items.find((x) => x.key === s.key)!;
+    return { worldId: s.worldId, lineId: s.lineId, line: s.line, share: s.share, satisfied: s.satisfied, steps: w.steps.slice(0, 3), ai: !!got };
   });
   return NextResponse.json({ items, charged: paid.charged, unlimited: paid.unlimited, balance: paid.balance });
 }

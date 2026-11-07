@@ -11,6 +11,7 @@ import { buildPlan, itemsToCut, overText, rangeLabel, type Plan, type PlanEdits,
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { W } from "@/lib/weights";
+import { T, plain } from "@/lib/copy";
 
 interface Course {
   title: string;
@@ -163,7 +164,7 @@ function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: P
               {r.weekly ? <li>처음부터: 주당 공부 {r.weekly.from}시간 → {r.weekly.to}시간</li> : null}
               {r.applied.map((a) => (
                 <li key={a.label}>
-                  {monthLabel(startYm, a.month)}부터: {a.title} <span className="text-muted">({a.label})</span>
+                  {monthLabel(startYm, a.month)}부터: {a.title} <span className="text-muted">({plain(a.label)})</span>
                 </li>
               ))}
             </ul>
@@ -171,7 +172,7 @@ function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: P
           {r.notInSim.length ? <p className="mt-2 text-cap text-muted">시뮬레이션에 안 들어가는 줄: {r.notInSim.join(", ")}</p> : null}
           {r.late.length ? <p className="mt-1 text-cap text-muted">기간 안에 안 끝나서 뺀 줄: {r.late.join(", ")}</p> : null}
           {r.undated.length ? <p className="mt-1 text-cap text-muted">시점을 정하지 않아 뺀 항목: {r.undated.join(", ")}</p> : null}
-          <p className="mt-2 text-cap text-muted">계획을 제때 다 해낸다고 본 값이고, 항목 하나는 조건 한 단계로 쳐요. 자격증·준비도 배수는 대부분 가정값이에요. 합격·취업을 보장하지 않아요. {CI_NOTE}</p>
+          <p className="mt-2 text-cap text-muted">계획을 제때 다 해낸다고 본 값이고, 항목 하나는 조건 한 단계로 쳐요. 자격증·준비도 배수는 대부분 {T.assumedFull}이에요. 합격·취업을 보장하지 않아요. {CI_NOTE}</p>
         </div>
       ) : null}
     </div>
@@ -191,7 +192,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
     <div className="mt-5" data-testid={`plan-${world.id}`}>
       <h4 className="text-sm font-bold">월별 일정</h4>
       <p className="mt-1 text-cap text-muted">
-        {monthLabel(startYm, 0)}부터 {plan.months}개월. 시간의 {Math.round(W("report.plan.spare") * 100)}%는 여유로 비웠어요(가정값). 시간은 항목마다 NCS 훈련 기준 또는 가정값이라고 적었어요.
+        {monthLabel(startYm, 0)}부터 {plan.months}개월. 시간의 {Math.round(W("report.plan.spare") * 100)}%는 여유로 비웠어요({T.assumed}). 시간은 항목마다 NCS 훈련 기준 또는 {T.assumed}이라고 적었어요.
       </p>
       <label className="mt-2 flex items-center gap-2 text-sm">
         주당 공부 시간
@@ -224,8 +225,8 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
             </p>
             <p className="text-cap text-muted">
               {rangeLabel(startYm, r)}
-              {r.hours ? ` · 약 ${r.hours}시간(${r.hoursOfficial ? "NCS 훈련 기준" : "가정값"})` : ""}
-              {r.lane === "school" ? ` · 기간은 가정값${retrainMonths(profile, world) ? ` · ${tuitionNote(world.id)}` : ""}` : ""}
+              {r.hours ? ` · 약 ${r.hours}시간(${r.hoursOfficial ? "NCS 훈련 기준" : T.assumed})` : ""}
+              {r.lane === "school" ? ` · 기간은 ${T.assumed}${retrainMonths(profile, world) ? ` · ${plain(tuitionNote(world.id))}` : ""}` : ""}
               {r.overflow ? " · 계획 기간을 넘겨요" : ""}
             </p>
             <Bar r={r} months={plan.months} />
@@ -262,7 +263,7 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
       {plan.later.length ? (
         <details className="mt-2 text-sm" data-testid={`plan-later-${world.id}`}>
           <summary className="flex min-h-11 cursor-pointer items-center font-medium">나중에 볼 자격 {plan.later.length}개</summary>
-          <p className="text-cap text-muted">우선순위 상위 {W("report.plan.certLimit")}개만 일정에 넣었어요(개수는 가정값).</p>
+          <p className="text-cap text-muted">우선순위 상위 {W("report.plan.certLimit")}개만 일정에 넣었어요(개수는 {T.assumed}).</p>
           <ul className="mt-1 flex flex-col gap-1">
             {plan.later.map((r) => (
               <li key={r.item.id} className="flex flex-wrap items-center justify-between gap-2 text-cap">

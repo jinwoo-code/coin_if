@@ -18,9 +18,9 @@ import { runKey } from "@/lib/sync";
 import type { Lever, Multiverse, PremiumItem, Profile, Report, Selection, SimEvent, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 import { LiveLives } from "@/components/live-lives";
-import { MyData } from "@/components/my-data";
 import { SharePanel } from "@/components/share-panel";
 import { WeekPlan } from "@/components/week-plan";
+import { T } from "@/lib/copy";
 
 // 한 달 뒤 체크인을 캘린더에 넣는 .ics 파일
 function downloadCheckin() {
@@ -81,7 +81,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
           </dd>
         </div>
       </dl>
-      <p className="label mt-4">가장 많이 간 세계선</p>
+      <p className="label mt-4">가장 많이 간 {T.line}</p>
       <ul className="mt-2 flex flex-col gap-2">
         {mv.lines.slice(0, 3).map((l) => (
           <li key={l.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1">
@@ -98,10 +98,12 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
           </li>
         ))}
       </ul>
+      <p className="mt-1 text-cap text-muted">{T.basisLine}</p>
       <div className="mt-4 grid gap-2">
         <RangeRow label="모은 돈" {...st.final.money} color={world.color} money max={Math.max(st.final.money.p90, 1000)} />
         <RangeRow label="만족도" {...st.final.satisfaction} color={world.color} />
       </div>
+      <p className="mt-1 text-cap text-muted">이 막대는 {T.basisAll(times(st.runs))}이에요.</p>
       <p className="label mt-5">내가 바꿀 수 있는 것</p>
       {items === undefined ? (
         <p className="mt-2 flex items-center gap-2 text-cap text-muted">
@@ -127,7 +129,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
         </ol>
       )}
       <Link href={`/multiverse?world=${world.id}`} className="btn-ghost mt-4 min-h-[44px] w-full text-sm">
-        세계선 지도 보기
+        {T.lineMap} 보기
       </Link>
     </section>
   );
@@ -145,11 +147,12 @@ function Programs({ region }: { region: string }) {
   if (!items || items.length === 0) return null;
   const date = (s: string) => (s && s.length === 8 ? `${Number(s.slice(4, 6))}월 ${Number(s.slice(6))}일` : s);
   return (
-    <section className="card p-5 sm:p-6" aria-labelledby="programs">
-      <h2 id="programs" className="text-xl font-bold">
-        지금 신청할 수 있는 고용센터 프로그램
-      </h2>
-      <ul className="mt-3 flex flex-col gap-2.5">
+    <details className="group card" data-testid="programs">
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 rounded-card px-5 py-3 [&::-webkit-details-marker]:hidden">
+        <h2 className="font-bold">지금 신청할 수 있는 고용센터 프로그램</h2>
+        <ChevronDown aria-hidden="true" size={20} className="shrink-0 transition-transform group-open:rotate-180" />
+      </summary>
+      <ul className="flex flex-col gap-2.5 border-t border-hair px-5 py-4 sm:px-6">
         {items.map((p) => (
           <li key={`${p.center}${p.course}${p.start}`} className="text-sm">
             <span className="font-semibold">{p.course || p.name}</span>
@@ -160,8 +163,8 @@ function Programs({ region }: { region: string }) {
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-cap text-muted">고용24 구직자취업역량 강화프로그램 정보예요.</p>
-    </section>
+      <p className="px-5 pb-5 text-cap text-muted sm:px-6">고용24 구직자취업역량 강화프로그램 정보예요.</p>
+    </details>
   );
 }
 
@@ -209,7 +212,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
           <li>월별 일정, 증거물과 주제 제안</li>
           <li>계획 넣고 다시 살아 보기</li>
           <li>이번 주 할 일 직접 정하기, 상담사에게 공유(PDF·링크)</li>
-          <li>세계선 전체 비교 표, 바꿀 수 있는 것 전체, 막히는 길에서 할 일</li>
+          <li>{T.line} 전체 비교 표, 바꿀 수 있는 것 전체, 막히는 길에서 할 일</li>
         </ul>
         {hasSupabase() || demo ? (
           <button className="btn-primary mt-5 w-full" onClick={onOpen} disabled={busy}>
@@ -234,13 +237,14 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
         return (
           <div key={id} className="mt-5 break-inside-avoid">
             <h3 className="flex items-center gap-2 text-base font-bold">
-              <LineBadge world={world} size={22} /> {world.name}: 세계선 전체
+              <LineBadge world={world} size={22} /> {world.name}: {T.line} 전체
             </h3>
+            <p className="mt-2 text-cap text-muted">{T.basisLine}</p>
             <div className="-mx-1 mt-2 overflow-x-auto px-1">
               <table className="num w-full min-w-[480px] text-left text-sm">
                 <thead className="text-cap text-muted">
                   <tr>
-                    <th className="py-1.5 pr-2 font-medium">세계선</th>
+                    <th className="py-1.5 pr-2 font-medium">{T.line}</th>
                     <th className="py-1.5 pr-2 text-right font-medium">{times(mv.stats.runs)}번 중</th>
                     <th className="py-1.5 pr-2 text-right font-medium">만족</th>
                     <th className="py-1.5 pr-2 text-right font-medium">스트레스 높음</th>
@@ -264,7 +268,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
         );
       })}
       <h3 className="mt-6 text-base font-bold">자주 막히는 길로 가고 있다면</h3>
-      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 세계선이에요. 할 일은 AI가 내 조건에 맞춰 쓴 제안이에요.</p>
+      <p className="mt-1 text-cap text-muted">만족하며 끝난 비율이 가장 낮은 {T.line}이에요. {items.every((it) => it.ai !== false) ? "할 일은 AI가 내 조건에 맞춰 쓴 제안이에요." : items.some((it) => it.ai) ? "할 일 일부는 AI 제안을 못 받아 기본 할 일로 채웠어요." : "AI 제안을 못 받아 기본 할 일로 채웠어요."}</p>
       <ul className="mt-3 flex flex-col gap-3">
         {items.map((it) => (
           <li key={`${it.worldId}/${it.lineId}`} className="break-inside-avoid rounded-2xl bg-ground p-4">
@@ -427,6 +431,11 @@ export default function ReportPage() {
       wide
       title="비교 리포트"
       back="/multiverse"
+      right={
+        <Link href="/me" className="flex min-h-11 flex-none items-center px-2 text-sm font-semibold underline-offset-4 hover:underline print:hidden">
+          내 정보
+        </Link>
+      }
       footer={
         <div className="flex flex-wrap gap-2 sm:justify-end">
           <button className="btn-ghost flex-1 px-3 text-sm sm:flex-none sm:px-6 sm:text-base" onClick={downloadCheckin} disabled={!report}>
@@ -467,7 +476,7 @@ export default function ReportPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-lineA">이번 비교에서 점수가 가장 높은 길</p>
                   <h3 className="mt-2 text-xl font-extrabold sm:text-2xl">{leaders.length === 1 ? `${getWorld(leaders[0].worldId).name} 경로가 내 가치관에 가장 가까워요` : `${leaders.map((w) => getWorld(w.worldId).name).join(" · ")} 경로가 공동 최고 점수예요`}</h3>
-                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 가정값이라 작은 점수 차이는 큰 뜻이 없어요.</p>
+                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 {T.assumedFull}이라 작은 점수 차이는 큰 뜻이 없어요.</p>
                   <p className="mt-1 text-sm text-muted">가치관, 성격, {runs}번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요.</p>
                 </div>
                 <div className="flex shrink-0 items-baseline gap-3 border-t border-lineA/20 pt-4 sm:block sm:min-w-32 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0 sm:text-center">
@@ -479,7 +488,7 @@ export default function ReportPage() {
                 </div>
               </div>
             ) : (
-              <p className="card mt-6 p-5 text-muted">비교할 진로가 없어요. 세계선 지도에서 진로를 선택해 주세요.</p>
+              <p className="card mt-6 p-5 text-muted">비교할 진로가 없어요. {T.lineMap}에서 진로를 선택해 주세요.</p>
             )}
           </section>
 
@@ -522,24 +531,47 @@ export default function ReportPage() {
             </ul>
           </section>
 
-          {/* 무료로 다 보는 칸이라 처음부터 펼쳐 둔다. 접어 두면 잠긴 프리미엄처럼 보인다. */}
-          <details open className="group card" data-testid="report-runs">
-            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 rounded-card px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
-              <h2 id="hundred" className="text-xl font-bold">
-                {runs}번 살아본 결과
-              </h2>
-              <ChevronDown aria-hidden="true" size={20} className="shrink-0 transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="border-t border-hair p-4 sm:p-6">
-              <p className="mb-4 text-sm text-muted">같은 길을 내 조건과 성향으로 {runs}번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
+          {/* 세계선 지도와 겹쳐서 진로마다 한 줄만 두고, 전체 숫자는 접는다. 무료로 다 볼 수 있으니 자물쇠는 안 붙인다. */}
+          <section className="card p-5 sm:p-6" aria-labelledby="hundred">
+            <h2 id="hundred" className="text-xl font-bold">
+              {runs}번 살아본 결과
+            </h2>
+            <ul className="mt-3 flex flex-col gap-3">
+              {report.worlds.map((w) => {
+                const mv = mvs[w.worldId];
+                const world = getWorld(w.worldId);
+                const gate = mv?.stats.gate;
+                if (!mv) return null;
+                return (
+                  <li key={w.worldId} className="flex min-w-0 items-start gap-2 text-sm">
+                    <LineBadge world={world} size={22} />
+                    <span className="min-w-0">
+                      <span className="font-semibold">{world.short}</span>{" "}
+                      <span className="num">
+                        {durationLabel(mv.months)} 안에 {gate?.label} <strong>{gate?.share ?? 0}%</strong> <Ci pct={gate?.share ?? 0} n={mv.stats.runs} />
+                        {gate?.typicalMonth !== null && gate?.typicalMonth !== undefined ? ` · 보통 ${monthLabel(mv.startYm, gate.typicalMonth)}` : ""}
+                      </span>
+                      <Link href={`/multiverse?world=${w.worldId}`} className="mt-0.5 flex min-h-11 items-center gap-1 font-semibold underline underline-offset-4">
+                        {T.lineMap}에서 자세히 보기 <ArrowRight aria-hidden="true" size={14} />
+                      </Link>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            <details className="group mt-2" data-testid="report-runs">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1 text-sm font-semibold text-muted [&::-webkit-details-marker]:hidden">
+                숫자 전부 펼치기 <ChevronDown aria-hidden="true" size={16} className="transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mb-4 mt-2 text-sm text-muted">같은 길을 내 조건과 성향으로 {runs}번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
               <div className="grid gap-4 md:grid-cols-2">
                 {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
               </div>
               {report.worlds.map((w) => (
                 <LiveLives key={w.worldId} world={getWorld(w.worldId)} />
               ))}
-            </div>
-          </details>
+            </details>
+          </section>
 
           {stale ? (
             <div className="card flex flex-col gap-3 p-5" data-testid="report-stale">
@@ -591,16 +623,39 @@ export default function ReportPage() {
           </div>
 
           {selection && unlocked ? (
-            <section className="card flex flex-col gap-6 p-5 sm:p-6" aria-label="필요한 것과 내 격차">
+            <section className="flex flex-col gap-3" aria-labelledby="gap-title">
+              <h2 id="gap-title" className="text-xl font-bold">
+                진로별 준비 계획
+              </h2>
               {report.worlds.map((w) => (
-                <GapSection key={w.worldId} profile={profile} world={getWorld(w.worldId)} months={selection.months} startYm={selection.startYm} />
+                <details key={w.worldId} className="group card" data-testid="gap-world">
+                  <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 rounded-card px-5 py-3 [&::-webkit-details-marker]:hidden">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <LineBadge world={getWorld(w.worldId)} size={24} />
+                      <span className="min-w-0">
+                        <span className="block font-bold">{getWorld(w.worldId).name}</span>
+                        <span className="block text-cap text-muted">필요한 것, 월별 일정, 증거물</span>
+                      </span>
+                    </span>
+                    <ChevronDown aria-hidden="true" size={20} className="shrink-0 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="border-t border-hair p-5 sm:p-6">
+                    <GapSection profile={profile} world={getWorld(w.worldId)} months={selection.months} startYm={selection.startYm} />
+                  </div>
+                </details>
               ))}
             </section>
           ) : null}
           {selection && !unlocked && report.worlds[0] ? (
-            <section className="card p-5 sm:p-6" aria-label="프리미엄 미리 보기" data-testid="premium-preview">
-              <p className="label">프리미엄 미리 보기</p>
-              <div className="mt-2">
+            <details className="group card" data-testid="premium-preview">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 rounded-card px-5 py-3 [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0">
+                  <span className="block font-bold">프리미엄 미리 보기</span>
+                  <span className="block text-cap text-muted">필요한 것과 내 격차 상위 3개</span>
+                </span>
+                <ChevronDown aria-hidden="true" size={20} className="shrink-0 transition-transform group-open:rotate-180" />
+              </summary>
+              <div className="border-t border-hair p-5 sm:p-6">
                 <GapSection
                   profile={profile}
                   world={getWorld(report.worlds[0].worldId)}
@@ -608,11 +663,11 @@ export default function ReportPage() {
                   startYm={selection.startYm}
                   preview={{ goal: `${durationLabel(selection.months)} 안에 ${mvs[report.worlds[0].worldId]?.stats.gate?.label ?? ""} ${mvs[report.worlds[0].worldId]?.stats.gate?.share ?? 0}%` }}
                 />
+                <p className="mt-3 flex items-center gap-1.5 text-cap text-muted">
+                  <Lock aria-hidden="true" size={13} /> 나머지 격차와 일정·증거물·다시 살아 보기·공유는 프리미엄에서 볼 수 있어요.
+                </p>
               </div>
-              <p className="mt-3 flex items-center gap-1.5 text-cap text-muted">
-                <Lock aria-hidden="true" size={13} /> 나머지 격차와 일정·증거물·다시 살아 보기·공유는 프리미엄에서 볼 수 있어요.
-              </p>
-            </section>
+            </details>
           ) : null}
 
           <Premium items={premium} mvs={mvs} ids={report.worlds.map((w) => w.worldId)} busy={premiumBusy} onOpen={openPremium} demo={demo} />
@@ -635,9 +690,6 @@ export default function ReportPage() {
         </p>
       ) : null}
       {report && selection && unlocked ? <SharePanel open={shareOpen} onClose={() => setShareOpen(false)} profile={profile} selection={selection} report={report} mvs={mvs} /> : null}
-      <div className="print:hidden">
-        <MyData />
-      </div>
     </Screen>
   );
 }

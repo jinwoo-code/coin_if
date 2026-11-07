@@ -9,6 +9,7 @@ import { RIASEC_LABEL } from "@/lib/tests";
 import type { Requirements } from "@/lib/requirements";
 import { store } from "@/lib/store";
 import type { Interests, Profile, WorldTemplate } from "@/lib/types";
+import { T, plain } from "@/lib/copy";
 
 function useSaved(worldId: string) {
   const [saved, setSaved] = useState<EvidenceSaved>(() => store.getEvidence()[worldId] ?? {});
@@ -36,7 +37,7 @@ function Card({ card, saved, update }: { card: EvidenceCard; saved: EvidenceSave
   return (
     <li className="rounded-lg border border-hair p-3" data-testid={`evidence-card-${card.id}`}>
       <p className="font-medium">{card.unit ? `${card.unit}: ${card.form}` : card.form}</p>
-      <p className="mt-0.5 text-cap text-muted">분량 {card.amount}(가정값)</p>
+      <p className="mt-0.5 text-cap text-muted">분량 {card.amount}({T.assumed})</p>
 
       {!card.noTopic && suggestions.length ? (
         <div className="mt-2">
@@ -65,12 +66,12 @@ function Card({ card, saved, update }: { card: EvidenceCard; saved: EvidenceSave
       <p className="mt-3 text-sm font-medium">
         완성 기준 {done.filter((c) => card.checks.includes(c)).length}/{card.checks.length}
         <span className="ml-1.5 text-cap font-normal text-muted">
-          {card.checksGrade === "ncs" ? `NCS 수행준거 원문. 전체 ${card.checksTotal}개 중 능력단위요소마다 하나` : card.checksGrade === "curated" ? "공식 항목" : "가정값(팀이 정함)"}
+          {card.checksGrade === "ncs" ? `NCS 수행준거 원문. 전체 ${card.checksTotal}개 중 능력단위요소마다 하나` : card.checksGrade === "curated" ? "공식 항목" : T.assumed}
         </span>
       </p>
       {card.checksRef ? (
         <p className="mt-0.5 text-cap text-muted">
-          {card.checksRef.label}{" "}
+          {plain(card.checksRef.label)}{" "}
           <a className="underline" href={card.checksRef.url} target="_blank" rel="noreferrer">
             사본
           </a>{" "}
@@ -124,7 +125,7 @@ function ExamSection({ plan, world }: { plan: ExamPlan; world: WorldTemplate }) 
   return (
     <div className="mt-5" data-testid={`evidence-${world.id}`}>
       <h4 className="text-sm font-bold">포트폴리오 대신: {plan.total}</h4>
-      <p className="mt-1 text-cap text-muted">이 시험은 작업물을 보지 않아요. 분량 {plan.amount}(가정값). 기록은 이 기기에만 남아요.</p>
+      <p className="mt-1 text-cap text-muted">이 시험은 작업물을 보지 않아요. 분량 {plan.amount}({T.assumed}). 기록은 이 기기에만 남아요.</p>
       <div className="mt-2 rounded-lg border border-hair p-3">
         <label className="block text-sm">
           본 날짜
@@ -198,7 +199,7 @@ function PortfolioSection({ req, profile, world, gaps }: { req: Requirements; pr
     <div className="mt-5" data-testid={`evidence-${world.id}`}>
       <h4 className="text-sm font-bold">증거물: 내가 이 일을 할 줄 안다는 것</h4>
       <p className="mt-1 text-cap text-muted">
-        이 진로의 형태: {plan.total}(가정값). {plan.basis ?? "NCS에 맞는 직무가 없어 공식 완성 기준이 없어요."} 일정의 경험·작업물 시간 안에서 만들어요. 고른 주제와 체크는 이 기기에만 남아요.
+        이 진로의 형태: {plan.total}({T.assumed}). {plain(plan.basis) ?? "NCS에 맞는 직무가 없어 공식 완성 기준이 없어요."} 일정의 경험·작업물 시간 안에서 만들어요. 고른 주제와 체크는 이 기기에만 남아요.
       </p>
       <button type="button" disabled={busy} onClick={ask} className="mt-2 min-h-11 rounded-full border border-hair bg-surface px-4 text-sm font-medium disabled:opacity-60">
         {busy ? "주제를 찾는 중이에요…" : saved.suggestions ? "주제 다시 제안받기" : "내게 맞는 주제 제안받기"}

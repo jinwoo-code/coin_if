@@ -285,6 +285,7 @@
         "long-hunt"
       ],
       "minMonth": 9,
+      "minHunt": 9,
       "branch": "choice",
       "branchLabel": "긴 구직",
       "evidence": {

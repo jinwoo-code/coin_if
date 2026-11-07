@@ -1,12 +1,12 @@
 // 전체 화면을 390px·1280px로 찍어 docs/screens/{폭}/에 둔다(UI·UX 점검용). 평소 테스트에서는 건너뛴다.
 // 실행: DOCS_SCREENS=1 BASE_URL=https://coinif.vercel.app npx playwright test e2e/docs-screens.spec.ts
-import { mkdirSync } from "node:fs";
+import { appendFileSync, mkdirSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { counter, next, pickAll, REMOTE, savedProfile, SIM_WAIT } from "./helpers";
 
-const ROOT = "docs/screens";
+const ROOT = process.env.SCREENS_OUT ?? "docs/screens";
 // 전체 페이지를 찍으면 하단 고정 버튼이 본문 중간을 가리므로 사진에서만 흐름 안에 둔다.
-const unstick = (page: Page) => page.addStyleTag({ content: ".fixed.bottom-0,.sticky.bottom-0{position:static!important}" });
+const unstick = (page: Page) => page.addStyleTag({ content: ".fixed.bottom-0,.sticky.bottom-0,.sticky.top-0{position:static!important}" });
 
 for (const width of [390, 1280]) {
   test.describe(`${width}px`, () => {
@@ -16,7 +16,12 @@ for (const width of [390, 1280]) {
     const shot = async (page: Page, name: string, full = true) => {
       mkdirSync(dir, { recursive: true });
       if (full) await unstick(page);
+      if (full) await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForTimeout(400);
+      if (process.env.TERMS_LOG) {
+        const text = await page.evaluate(() => document.body.textContent ?? "");
+        for (const m of text.matchAll(/.{0,25}(가정값|본선|신뢰구간|실시간 판단|시연용).{0,15}/g)) appendFileSync(process.env.TERMS_LOG, `${width} ${name}: ${m[0]}\n`);
+      }
       await page.screenshot({ path: `${dir}/${name}.png`, fullPage: full });
     };
 
@@ -88,7 +93,7 @@ for (const width of [390, 1280]) {
     });
 
     test("첫 화면부터 리포트와 공유 링크까지", async ({ page, context }) => {
-      test.setTimeout(REMOTE ? 1_200_000 : 400_000);
+      test.setTimeout(REMOTE ? 1_200_000 : 240_000);
       await page.goto("/");
       await page.waitForTimeout(2500); // 노선 그려지는 효과
       await shot(page, "01-첫-화면");
@@ -99,6 +104,10 @@ for (const width of [390, 1280]) {
       const toMap = page.getByRole("link", { name: /다른 세계선 보기/ });
       await toMap.waitFor({ timeout: SIM_WAIT });
       await shot(page, "03-시뮬레이션-첫-진로");
+      const year = page.getByTestId("year").filter({ has: page.getByTestId("event-detail") }).first();
+      await year.locator("summary").first().click();
+      await year.getByTestId("event-detail").first().locator("summary").first().click();
+      await shot(page, "03-2-시뮬레이션-연도-펼침");
       await page.getByRole("button", { name: "9급 행정직 공무원" }).click();
       await shot(page, "04-시뮬레이션-다른-진로");
       await page.getByTestId("compare-all").scrollIntoViewIfNeeded();
@@ -180,6 +189,7 @@ for (const width of [390, 1280]) {
         ["32-실시간-판단", "/live"],
         ["33-가치관-검사", "/deepen"],
         ["34-로그인", "/login"],
+        ["39-내-정보", "/me"],
         ["35-토큰-충전", "/tokens"],
         ["36-대학-초대코드", "/org"],
         ["37-개인정보-처리방침", "/privacy"],

@@ -2,12 +2,12 @@
 import { gapDeltas } from "../gap-sim";
 import type { GapItem } from "../gap";
 import { buildMultiverse, levers } from "../multiverse";
-import { planRerun, type PlanInput } from "../plan-sim";
+import { checkinRerun, planRerun, type PlanInput } from "../plan-sim";
 import type { Profile } from "../types";
 import { getWorld } from "../worlds";
 
-self.onmessage = (e: MessageEvent<{ id: number; kind?: "levers" | "multiverse" | "gap" | "plan"; plan?: PlanInput; profile: Profile; worldId: string; months: number; startYm: string; gaps?: GapItem[] }>) => {
-  const { id, kind, profile, worldId, months, startYm, gaps, plan } = e.data;
+self.onmessage = (e: MessageEvent<{ id: number; kind?: "levers" | "multiverse" | "gap" | "plan" | "checkin"; plan?: PlanInput; after?: Profile; profile: Profile; worldId: string; months: number; startYm: string; gaps?: GapItem[] }>) => {
+  const { id, kind, profile, worldId, months, startYm, gaps, plan, after } = e.data;
   try {
     const world = getWorld(worldId);
     if (kind === "gap") {
@@ -16,6 +16,10 @@ self.onmessage = (e: MessageEvent<{ id: number; kind?: "levers" | "multiverse" |
     }
     if (kind === "plan" && plan) {
       self.postMessage({ id, rerun: planRerun(profile, world, months, startYm, plan) });
+      return;
+    }
+    if (kind === "checkin" && after) {
+      self.postMessage({ id, checkin: checkinRerun(profile, after, world, months, startYm) });
       return;
     }
     const { mv, paths } = buildMultiverse(profile, world, months, startYm);

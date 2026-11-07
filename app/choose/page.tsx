@@ -10,16 +10,12 @@ import { waGwa } from "@/lib/josa";
 import { answerOf, READINESS } from "@/lib/readiness";
 import { retrainMonths, tuitionNote } from "@/lib/retrain";
 import { CostNote } from "@/components/account";
-import { PILOT_SJT, pilotAnswered } from "@/lib/pilot";
 import { keyTier } from "@/lib/live-client";
 import { store } from "@/lib/store";
 import type { Profile, WorldTemplate } from "@/lib/types";
 import { FAMILIES, getWorld, majorMatch, preFit, recommend, suggestThirdPath, WORLDS } from "@/lib/worlds";
 import { Seg } from "../interview/form";
-import { canDeepen } from "@/lib/assessment";
-import { daysToCheckin } from "@/lib/ongoing";
-import { chaptersDone } from "@/lib/chapters";
-import { MyData } from "@/components/my-data";
+import { T, plain } from "@/lib/copy";
 
 const PERIODS = [
   { months: 6, label: "6개월" },
@@ -30,7 +26,7 @@ const PERIODS = [
 ];
 const MODES = [
   { id: "basic" as const, label: "기본 모드", desc: "진로마다 1,000번 살아봐요. 몇 초면 돼요." },
-  { id: "live" as const, label: "실시간 판단 모드", desc: "큰 갈림길마다 AI가 직접 판단해요. 진로마다 30번, 몇 분 걸려요." },
+  { id: "live" as const, label: T.liveMode, desc: "큰 갈림길마다 AI가 직접 판단해요. 진로마다 30번, 몇 분 걸려요." },
 ];
 
 const KIND: Record<WorldTemplate["archetype"], string> = {
@@ -133,6 +129,11 @@ export default function ChoosePage() {
     <Screen
       title="진로와 기간 고르기"
       back="/interview"
+      right={
+        <Link href="/me" className="flex min-h-11 flex-none items-center px-2 text-sm font-semibold underline-offset-4 hover:underline">
+          내 정보
+        </Link>
+      }
       footer={
         <>
           <button className="btn-primary w-full" disabled={chosen.length < 2} onClick={start}>
@@ -149,33 +150,6 @@ export default function ChoosePage() {
         <p className="mt-1 text-sm text-muted">
           {profile.major ? `${waGwa(profile.major)} 내 가치관으로 먼저 추천했어요. ` : ""}진로 {WORLDS.length}개 중 2~3개를 골라 주세요.
         </p>
-        {Object.keys(profile.holdoutPicks).length ? (
-          <Link href="/checkin" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
-            <span>
-              <strong className="font-semibold">한 달 체크인</strong>
-              <span className="text-muted"> · {checkinNote(profile)}</span>
-            </span>
-            <ChevronRight aria-hidden="true" size={16} />
-          </Link>
-        ) : null}
-        {store.isPilotInvited() ? (
-          <Link href="/pilot" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
-            <span>
-              <strong className="font-semibold">파일럿 상황 질문</strong>
-              <span className="text-muted"> · {profile.pilot?.withdrawnAt ? "빠짐" : `${pilotAnswered(profile)}/${PILOT_SJT.length}개`}</span>
-            </span>
-            <ChevronRight aria-hidden="true" size={16} />
-          </Link>
-        ) : null}
-        {profile.depthMode !== "quick" ? (
-          <Link href="/story" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
-            <span>
-              <strong className="font-semibold">인생 이야기</strong>
-              <span className="text-muted"> · {chaptersDone(profile)}/6장, 정밀 단계</span>
-            </span>
-            <ChevronRight aria-hidden="true" size={16} />
-          </Link>
-        ) : null}
         {profile.legacyBigFive ? (
           <Link href="/interview?more=1" data-testid="legacy-big-five" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
             <span>
@@ -185,16 +159,6 @@ export default function ChoosePage() {
             <ChevronRight aria-hidden="true" size={16} />
           </Link>
         ) : null}
-        {canDeepen(profile) ? (
-          <Link href="/interview?more=1" className="mt-3 flex min-h-[44px] items-center justify-between rounded-2xl border border-hair bg-surface px-4 py-2.5 text-sm hover:border-ink">
-            <span>
-              <strong className="font-semibold">더 정확하게 하기</strong>
-              <span className="text-muted"> · 성격 50문항, 흥미 검사(약 20~30분)</span>
-            </span>
-            <ChevronRight aria-hidden="true" size={16} />
-          </Link>
-        ) : null}
-
         {chosenWorlds.length ? (
           <div className="mt-4 flex flex-wrap gap-1.5" aria-label="고른 진로">
             {chosenWorlds.map((w) => (
@@ -259,7 +223,7 @@ export default function ChoosePage() {
             .filter((w) => retrainMonths({ major: profile.major, readiness }, w))
             .map((w) => (
               <p key={w.id} className="text-sm">
-                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월(가정값)을 학과 다니는 데 써요. {tuitionNote(w.id)}.
+                <span className="font-semibold">{w.short}:</span> 전공이 달라 학과부터 다녀야 해요. 시뮬레이션 앞 {retrainMonths({ major: profile.major, readiness }, w)}개월({T.assumed})을 학과 다니는 데 써요. {plain(tuitionNote(w.id))}.
               </p>
             ))}
         </section>
@@ -332,12 +296,6 @@ export default function ChoosePage() {
         </div>
         {mode === "live" && tier === "free" ? <p className="mt-2 text-sm text-muted">무료 키라 오래 걸리고 한도에 걸릴 수 있어요. 멈추면 나중에 이어서 할 수 있어요.</p> : null}
       </section>
-      <MyData />
     </Screen>
   );
-}
-
-function checkinNote(p: Profile) {
-  const d = daysToCheckin(p);
-  return d === null || d <= 0 ? "지금 할 때예요" : `${d}일 뒤(시연용으로 지금도 돼요)`;
 }

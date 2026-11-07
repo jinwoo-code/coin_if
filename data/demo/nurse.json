@@ -4,16 +4,119 @@
   "dilemma": "졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요",
   "experiences": "기본간호학 실습과 내과 병동 실습을 마쳤고, 카페 알바를 1년 했어요",
   "constraints": "집이 경기도라 수도권 병원이면 좋겠고, 3교대를 오래 버틸 수 있을지 걱정돼요",
-  "values": ["보람", "안정", "돈", "성장"],
-  "bigFive": { "O": 3.5, "C": 4, "E": 3, "A": 4, "N": 3.5 },
+  "values": [
+    "보람",
+    "안정",
+    "돈",
+    "성장"
+  ],
+  "bigFive": {
+    "O": 3.5,
+    "C": 4,
+    "E": 3,
+    "A": 4,
+    "N": 3.5
+  },
   "speechStyle": "차분하게 말하고, 걱정되는 건 먼저 꺼내는 편",
   "summary": "사람을 돕는 데서 보람을 느끼지만, 교대 근무와 체력이 걱정이에요.",
-  "spec": { "school": "4년제", "status": "재학", "gradIn": 15, "gpa": 3.7, "certs": [], "toeic": null, "projects": 0, "workMonths": 12, "internMonths": 0, "awards": 0, "github": null },
-  "readiness": { "license": 1, "practice": 1 },
-  "life": { "savings": 300, "support": 40, "livingCost": 90, "military": "해당없음", "enlistIn": null, "region": "경기·인천", "studyHours": 3, "partTimeHours": 8 },
-  "wants": { "salary": 3800, "hates": ["야근"] },
-  "behavior": { "persistence": 4, "risk": 2.5, "coping": 3, "social": 3.5 },
-  "depth": { "bigFiveItems": 20, "behaviorItems": 6, "interestItems": 0, "resume": false, "github": false, "spec": true, "life": true },
-  "worldIds": ["nurse", "civil-servant"],
-  "months": 36
+  "spec": {
+    "school": "4년제",
+    "status": "재학",
+    "gradIn": 15,
+    "gpa": 3.7,
+    "certs": [],
+    "toeic": null,
+    "projects": 0,
+    "workMonths": 12,
+    "internMonths": 0,
+    "awards": 0,
+    "github": null
+  },
+  "readiness": {
+    "license": 1,
+    "practice": 1
+  },
+  "life": {
+    "savings": 300,
+    "support": 40,
+    "livingCost": 90,
+    "military": "해당없음",
+    "enlistIn": null,
+    "region": "경기·인천",
+    "studyHours": 3,
+    "partTimeHours": 8
+  },
+  "wants": {
+    "salary": 3800,
+    "hates": [
+      "야근"
+    ]
+  },
+  "behavior": {
+    "persistence": 4,
+    "risk": 2.5,
+    "coping": 3,
+    "social": 3.5
+  },
+  "depth": {
+    "bigFiveItems": 20,
+    "behaviorItems": 6,
+    "interestItems": 0,
+    "resume": false,
+    "github": false,
+    "spec": true,
+    "life": true
+  },
+  "worldIds": [
+    "nurse",
+    "civil-servant"
+  ],
+  "months": 36,
+  "depthMode": "quick",
+  "holdout": {
+    "seed": "demo-nurse",
+    "ids": [
+      "s17",
+      "s11",
+      "s16",
+      "s14",
+      "s7",
+      "s10"
+    ]
+  },
+  "holdoutPicks": {
+    "s17": 1,
+    "s11": 1,
+    "s16": 2
+  },
+  "checkinExample": {
+    "picks": {
+      "s17": 1,
+      "s11": 1,
+      "s16": 3
+    },
+    "real": "safe",
+    "mini": {
+      "b15": 4,
+      "b20": 3,
+      "b10": 2,
+      "b30": 3,
+      "b23": 4,
+      "b28": 2,
+      "b33": 4,
+      "b18": 2,
+      "b1": 3,
+      "b6": 3,
+      "b31": 3,
+      "b16": 3,
+      "b17": 4,
+      "b22": 2,
+      "b42": 5,
+      "b32": 2,
+      "b39": 4,
+      "b9": 2,
+      "b29": 4,
+      "b19": 3
+    }
+  }
 }

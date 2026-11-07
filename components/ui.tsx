@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { won } from "@/lib/format";
 import { TokenChip } from "./account";
 import type { ChoiceOdds, LifeState, WorldTemplate } from "@/lib/types";
+import { T, plain } from "@/lib/copy";
 
 // ---------- 화면 틀 ----------
 
@@ -193,13 +194,13 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
 export function Ci({ pct, n, className = "" }: { pct: number; n: number; className?: string }) {
   const [lo, hi] = wilson(pct, n);
   return (
-    <span className={`num text-cap font-normal text-muted ${className}`} title="95% 신뢰구간(Wilson)">
+    <span className={`num text-cap font-normal text-muted ${className}`} title={`${T.ci}: ${T.ciDetail}`}>
       ({lo}~{hi}%)
     </span>
   );
 }
 
-export const CI_NOTE = "괄호는 표본 오차 범위(95% 신뢰구간)예요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.";
+export const CI_NOTE = `괄호는 ${T.ci}예요. 모델 자체가 틀릴 가능성은 들어 있지 않아요.`;
 
 // ---------- 1,000번 살아본 분포: 10%~90% 범위 띠 + 가운데 값 ----------
 
@@ -237,7 +238,7 @@ const GRADE_NOTE = "실제 통계가 아니에요. 평균 성향인 사람이 �
 
 // 갈림길 장면: 보통은 몇 %가 이 선택을 하는지, 나는 몇 %인지, 그 기준 비율의 근거 등급
 export function Odds({ odds }: { odds: ChoiceOdds }) {
-  const badge = odds.grade === "stat" ? (odds.otherGroup ? "통계(다른 집단 기준)" : "통계") : odds.grade === "interview" ? (odds.n ? `현직자 ${odds.n}명` : "현직자") : "가정값";
+  const badge = odds.grade === "stat" ? (odds.otherGroup ? "통계(다른 집단 기준)" : "통계") : odds.grade === "interview" ? (odds.n ? `현직자 ${odds.n}명` : "현직자") : T.assumed;
   return (
     <details className="mt-1 text-cap text-muted">
       <summary className="flex min-h-[44px] cursor-pointer list-none flex-wrap items-center gap-x-1.5 gap-y-1 py-1">
@@ -253,7 +254,7 @@ export function Odds({ odds }: { odds: ChoiceOdds }) {
             {odds.population}이에요. {odds.otherGroup}
           </p>
         ) : null}
-        <p>{odds.grade === "assumed" ? GRADE_NOTE : odds.ref}</p>
+        <p>{odds.grade === "assumed" ? GRADE_NOTE : plain(odds.ref)}</p>
         {odds.aiFailed ? <p className="font-semibold text-ink">AI 판단 실패 → 규칙 계산</p> : null}
         <p>{odds.byAi ? "'나는'은 AI 분신의 판단을 기준 비율에서 크게 벗어나지 않게 반영한 값이에요." : "'나는'은 내 성향을 규칙으로 계산해 기준 비율에서 크게 벗어나지 않게 반영한 값이에요."}</p>
       </div>

@@ -185,19 +185,22 @@ function TwinMatch({ p }: { p: Profile }) {
       <p className="mt-2 text-sm">
         상황 질문 {t.n}개는 시뮬레이션에 쓰지 않고 따로 뒀어요. 분신에게 같은 질문을 줬더니 {t.n}개 중 {t.hits}개에서 나와 같은 걸 골랐어요. 아무거나 찍으면 {t.chanceHits}개쯤 맞혀요.
       </p>
-      <p className="mt-1.5 text-cap text-muted">
-        브라이어 점수 <span className="num">{t.brier.toFixed(2)}</span> (찍기 <span className="num">{t.chanceBrier.toFixed(2)}</span>, 낮을수록 잘 맞힘).{" "}
-        {t.n < 6 ? "문항이 적어서 우연이 크게 섞여요. 표준으로 더 하면 채점 문항이 6개가 돼요." : "문항이 6개라 우연이 아직 꽤 섞여요."}
-      </p>
-      {base ? (
-        <p className="mt-1.5 text-cap text-muted">
-          이야기에서 확인한 값을 빼면{" "}
-          <span className="num">
-            {base.n}개 중 {base.hits}개
-          </span>
-          , 브라이어 <span className="num">{base.brier.toFixed(2)}</span>이에요.
+      <p className="mt-1.5 text-cap text-muted">{t.n < 6 ? "문항이 적어서 우연이 크게 섞여요. 표준으로 더 하면 채점 문항이 6개가 돼요." : "문항이 6개라 우연이 아직 꽤 섞여요."}</p>
+      <details className="mt-1 text-cap text-muted">
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold">자세히</summary>
+        <p>
+          브라이어 점수 <span className="num">{t.brier.toFixed(2)}</span> (찍기 <span className="num">{t.chanceBrier.toFixed(2)}</span>, 낮을수록 잘 맞힘).
         </p>
-      ) : null}
+        {base ? (
+          <p className="mt-1">
+            이야기에서 확인한 값을 빼면{" "}
+            <span className="num">
+              {base.n}개 중 {base.hits}개
+            </span>
+            , 브라이어 <span className="num">{base.brier.toFixed(2)}</span>이에요.
+          </p>
+        ) : null}
+      </details>
       {self ? (
         <p className="mt-1.5 text-cap text-muted">
           체크인에서 나도 처음 답과 같게 고른 건{" "}

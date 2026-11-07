@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { TossPaymentsWidgets } from "@tosspayments/tosspayments-sdk";
 import { Screen } from "@/components/ui";
 import { FEATURE_LABEL, PRODUCTS } from "@/lib/products";
+import { T } from "@/lib/copy";
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "";
 
@@ -68,7 +69,7 @@ export default function Tokens() {
       <ul className="card mt-3 divide-y divide-hair">
         {[
           ["simulate", ""],
-          ["premium_report", "세계선 전체 비교, 바꿀 수 있는 것 전체, 막혔을 때 할 일, PDF"],
+          ["premium_report", `${T.line} 전체 비교, 바꿀 수 있는 것 전체, 막혔을 때 할 일, PDF`],
           ["talk", `${info?.talkLimit ?? 20}마디까지`],
         ].map(([k, note]) => (
           <li key={k} className="flex items-center justify-between gap-3 p-4">

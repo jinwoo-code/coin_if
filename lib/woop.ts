@@ -12,7 +12,12 @@ export function topForks(mvs: Record<string, Multiverse>, n = 2): WoopFork[] {
       out.push({ worldId: id, worldName: w.short, label: e.branchLabel, share: Math.round((hit.count / mv.stats.runs) * 100) });
     }
   }
-  return out.toSorted((a, b) => b.share - a.share).slice(0, n);
+  // 같은 이름 갈림길이 해마다 있으면(공무원 '계속할지 고민' 1·2·3년차) 가장 자주 만난 하나만 남긴다.
+  const seen = new Set<string>();
+  return out
+    .toSorted((a, b) => b.share - a.share)
+    .filter((f) => (seen.has(f.label) ? false : (seen.add(f.label), true)))
+    .slice(0, n);
 }
 
 // 규칙 문장. AI 문장이 갈림길을 말하지 않으면 이걸 쓴다.

@@ -1,6 +1,7 @@
 // 서버 전용: 세계선의 장면에 AI가 문장을 입힌다.
 // 숫자(사건, 선택, 상태값)는 전부 규칙 엔진이 정했고, AI는 문장만 쓴다. 그래서 이야기와 통계가 어긋나지 않는다.
 import { generateJSON } from "./llm";
+import { badWords, PHASE_WORD, phaseOf, stripRoleTags } from "./narrate-check";
 import type { Profile, SimEvent, WorldTemplate } from "./types";
 
 function profileBrief(p: Profile): string {
@@ -30,30 +31,38 @@ export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes:
   const targets = scenes.filter((s) => s.eventId !== "quiet");
   if (targets.length === 0) return scenes;
   const out = new Map<string, Beat>();
-  for (let i = 0; i < targets.length; i += 16) {
-    const chunk = targets.slice(i, i + 16);
-    const beats = await generateJSON<Beat[]>({
+  const worldOf = (s: SimEvent) => worlds.find((x) => x.id === s.worldId)!;
+  // 장면 처지에 있을 수 있는 인물만 넘긴다(학생 장면에 입사 동기, 수험 장면에 민원인이 나오지 않게).
+  const fitsOf = (s: SimEvent) => (n: WorldTemplate["npcs"][number]) => npcFits(worldOf(s), n, s);
+  const ask = (chunk: SimEvent[], avoid: Record<string, string[]> = {}) =>
+    generateJSON<Beat[]>({
       tag: `${feature} narrate x${chunk.length}`,
       model: "fast",
-      system: "너는 진로 시뮬레이션의 이야기 작가다. 이미 정해진 사건과 주인공의 선택을 현실적인 문장으로 풀어 쓴다. " + "사건이나 선택, 숫자를 바꾸거나 새로 지어내지 않는다. 과장하지 말고 있을 법한 수준으로, 한국어로 쓴다.",
+      system:
+        "너는 진로 시뮬레이션의 이야기 작가다. 이미 정해진 사건과 주인공의 선택을 현실적인 문장으로 풀어 쓴다. " +
+        "사건이나 선택, 숫자를 바꾸거나 새로 지어내지 않는다. 과장하지 말고 있을 법한 수준으로, 한국어로 쓴다. " +
+        "주인공의 지금 처지(phase)를 반드시 지킨다: 학생·수험생·구직 중이면 직장·동료·상사·출근 이야기를 쓰지 않는다.",
       prompt:
         `주인공 정보:\n${profileBrief(profile)}\n\n` +
         `아래 각 항목에 대해 JSON 배열로 답해라. 각 원소는 {"key","narration","choice"}.\n` +
-        `- narration: 1~2문장, 과거형. situation을 주인공의 경험·제약·처지(status)가 묻어나게 다시 쓰고, people 중 한 명의 반응을 이름으로 넣는다.\n` +
+        `- narration: 1~2문장, 과거형. situation을 주인공의 경험·제약·처지(phase)가 묻어나게 다시 쓴다. people이 있으면 그중 한 명의 반응을 그 호칭 그대로 넣고(괄호나 관계 표시는 붙이지 않는다), people이 비어 있으면 다른 인물을 지어내지 않는다.\n` +
+        `- avoid가 있으면 그 말을 쓰지 않는다(처지와 안 맞는 말).\n` +
         `- choice: decided(주인공이 실제로 한 선택)를 주인공 입장의 과거형 한 문장으로. 내용은 바꾸지 않는다.\n\n` +
         JSON.stringify(
           chunk.map((s) => {
-            const w = worlds.find((x) => x.id === s.worldId)!;
+            const w = worldOf(s);
+            const status = s.eventStatus ?? s.status;
             return {
               key: keyOf(s),
               when: s.label,
               path: w.name,
-              status: s.status,
-              people: w.npcs.map((n) => `${n.name}(${n.role}): ${n.persona}`),
+              phase: `${PHASE_WORD[phaseOf(status)]} · ${status}`,
+              people: w.npcs.filter(fitsOf(s)).map((n) => ({ 호칭: n.name, 성격: n.persona })),
               event: s.title,
               situation: s.narration,
               decided: s.choice,
               recent: (memories[s.worldId] ?? []).slice(-3),
+              ...(avoid[keyOf(s)]?.length ? { avoid: avoid[keyOf(s)] } : {}),
             };
           }),
           null,
@@ -61,8 +70,33 @@ export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes:
         ),
       fallback: () => [],
     });
-    if (Array.isArray(beats)) beats.forEach((b) => b?.key && out.set(b.key, b));
+  // 받은 문장을 다듬고 처지와 안 맞는 말이 있는지 본다. 걸리면 한 번 다시 쓰게 하고, 그래도 걸리면 원래 사건 글을 쓴다.
+  const accept = (chunk: SimEvent[], beats: Beat[] | unknown) => {
+    const bad: Record<string, string[]> = {};
+    if (!Array.isArray(beats)) return bad;
+    for (const b of beats as Beat[]) {
+      const s = chunk.find((x) => keyOf(x) === b?.key);
+      if (!s || typeof b.narration !== "string") continue;
+      const narration = stripRoleTags(b.narration, worldOf(s));
+      const hits = badWords(narration, s, worldOf(s), fitsOf(s));
+      if (hits.length) bad[b.key] = hits;
+      else out.set(b.key, { ...b, narration });
+    }
+    return bad;
+  };
+  let redone = 0;
+  let dropped = 0;
+  for (let i = 0; i < targets.length; i += 16) {
+    const chunk = targets.slice(i, i + 16);
+    const bad = accept(chunk, await ask(chunk));
+    const again = chunk.filter((s) => bad[keyOf(s)]);
+    if (again.length) {
+      redone += again.length;
+      const still = accept(again, await ask(again, bad));
+      dropped += Object.keys(still).length;
+    }
   }
+  if (redone) console.log(`[서술] 처지와 안 맞는 말로 다시 쓴 장면 ${redone}개, 그래도 걸려 원래 글을 쓴 장면 ${dropped}개`);
   return scenes.map((s) => {
     const b = out.get(keyOf(s));
     return b ? { ...s, narration: b.narration || s.narration, choice: b.choice || s.choice } : s;

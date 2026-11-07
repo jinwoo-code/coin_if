@@ -16,6 +16,8 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
   return labels.map((label, station) => {
     const inside = path.months.slice(station * size, station * size + size);
     const last = inside[inside.length - 1];
+    const tenure = /(\d+)개월차$/.exec(last.status);
+    const jobSince = tenure ? last.month - Number(tenure[1]) + 1 : undefined;
     const withEvent = inside.filter((m) => m.event);
     const main = withEvent.toSorted((a, b) => rank(b) - rank(a) || a.month - b.month)[0];
     // 같은 역의 변화를 모두 더한다(점수 변화를 한눈에)
@@ -40,6 +42,7 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
         delta,
         state: last.state,
         status: last.status,
+        jobSince,
         salary: last.salary,
         freq: 0,
         routine: true,
@@ -84,6 +87,7 @@ export function scenesOf(world: WorldTemplate, path: Path, lineId: string, month
       state: last.state,
       status: last.status,
       eventStatus: main.status,
+      jobSince,
       salary: last.salary,
       evidence: e.evidence,
       freq: stats.events[e.id]?.count ?? 0,

@@ -103,3 +103,29 @@ export function planRerun(p: Profile, w: WorldTemplate, months: number, startYm:
     weekly: from === input.weekly ? null : { from, to: input.weekly },
   };
 }
+
+// 체크인 전후 비교: 고친 선택·성격을 넣기 전과 뒤를 같은 시드로 1,000번. AI 판단은 프로필이 바뀌면 못 쓰므로 양쪽 다 빼서 규칙으로 같게 잰다.
+export interface CheckinRerun {
+  label: string;
+  months: number;
+  n: number;
+  gate: { before: number; after: number };
+  satisfied: { before: number; after: number };
+  stressed: { before: number; after: number };
+}
+export function checkinRerun(before: Profile, after: Profile, w: WorldTemplate, months: number, startYm: string, n = RUNS): CheckinRerun {
+  const measure = (p: Profile) => {
+    const clean = { ...p, judges: {} };
+    return statsOf(clean, w, runAll(clean, w, months, startYm, undefined, n));
+  };
+  const a = measure(before);
+  const b = measure(after);
+  return {
+    label: a.gate?.label ?? "합격·취업",
+    months,
+    n,
+    gate: { before: a.gate?.share ?? 0, after: b.gate?.share ?? 0 },
+    satisfied: { before: a.satisfiedShare, after: b.satisfiedShare },
+    stressed: { before: a.stressedShare, after: b.stressedShare },
+  };
+}

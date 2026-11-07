@@ -433,6 +433,18 @@ interface Sim {
   idle: number;
   gradIn: number; // 일 없이 준비한 개월 수
   offset: number; // 학과를 다시 다닌 기간. 사건의 '몇 개월째'는 그 뒤부터 센다
+  usedAt: Map<string, number>; // used에 들어간 달(구직 기간을 셀 때만 씀)
+  leftAt: number; // 마지막으로 일을 그만둔 달(없으면 -1)
+}
+
+function mark(sim: Sim, id: string, month: number) {
+  sim.used.add(id);
+  sim.usedAt.set(id, month);
+}
+
+// 구직을 시작한 달: 졸업(유예 포함), 사건이 요구하는 상태가 켜진 달(면허 등), 마지막 퇴사 중 가장 늦은 때.
+function huntStart(e: EventCard, sim: Sim) {
+  return Math.max(sim.gradIn - (e.gradGrace ?? 0), sim.leftAt, ...(e.requires ?? []).map((id) => sim.usedAt.get(id) ?? 0));
 }
 
 const BIG_PER_MONTH = 0.22;
@@ -451,6 +463,7 @@ function eligible(e: EventCard, sim: Sim, month: number, calMonth: number) {
     (e.minMonth ?? 0) <= month - sim.offset &&
     (!e.afterGrad || month >= sim.gradIn - (e.gradGrace ?? 0)) &&
     (e.maxMonth ?? Infinity) >= month - sim.offset &&
+    (!e.minHunt || month - huntStart(e, sim) >= e.minHunt) &&
     (!e.calendar || e.calendar.includes(calMonth)) &&
     has(sim, e.requires) &&
     none(sim, e.excludes) &&
@@ -585,6 +598,8 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     idle: 0,
     gradIn: p.spec.gradIn,
     offset: 0,
+    usedAt: new Map(),
+    leftAt: -1,
   };
   const enlist = p.life.military === "미필" && p.life.enlistIn !== null ? p.life.enlistIn : null;
   const retrain = retrainMonths(p, world);
@@ -617,7 +632,8 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       if (sim.employedSince !== null && world.archetype !== "exam") {
         sim.employedSince = null;
         sim.salary = 0;
-        sim.used.add("quit");
+        mark(sim, "quit", month);
+        sim.leftAt = month;
       }
     } else if (enlist !== null && month === enlist + SERVICE_MONTHS) event = DISCHARGE_B;
     // 생활비 바닥: 모은 돈이 바닥나거나, 이야기에서 말한 '집 지원 없이 버틸 수 있는 기간'이 졸업 뒤 지났을 때(더 이른 쪽)
@@ -634,7 +650,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     let tierLabel: string | undefined;
 
     if (event) {
-      sim.used.add(event.id);
+      mark(sim, event.id, month);
       const ctx: ForkCtx = { state: sim.state, idle: sim.idle, tenure: sim.employedSince === null ? 0 : month - sim.employedSince };
       trace?.(event, ctx);
       const bucket = bucketOf(event.stateKeys, ctx);
@@ -703,7 +719,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
         employedAt ??= month;
         sim.used.delete("quit");
       }
-      if (choice?.sets) sim.used.add(choice.sets);
+      if (choice?.sets) mark(sim, choice.sets, month);
       if (choice?.raise) {
         sim.salary = Math.round(sim.salary * (1 + choice.raise / 100));
         if (choice.sets === "moved") sim.employedSince = month;
@@ -711,7 +727,8 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       if (choice?.quits) {
         sim.employedSince = null;
         sim.salary = 0;
-        sim.used.add("quit");
+        mark(sim, "quit", month);
+        sim.leftAt = month;
       }
       if (event.branch === "choice") choiceKeys.push(signatureKey(event, choiceIndex));
       if (event.branch === "luck" || (event.branch === "choice" && isMajor(choice))) {

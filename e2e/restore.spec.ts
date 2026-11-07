@@ -33,6 +33,7 @@ for (const mainId of ["", "hired:0"]) {
     });
     await seed(page, mainId, DEMO_PROFILE);
     await page.goto("/simulate");
+    await page.getByTestId("year").first().locator("summary").first().click();
     await expect(page.getByText("본선 장면")).toBeVisible();
     await expect(page.getByText("다른 길 장면")).toHaveCount(0);
     expect(calls).toBe(0);
@@ -84,6 +85,7 @@ test("진로는 하나씩 보고, 마지막에 한눈에 비교한다", async ({
     },
   );
   await page.goto("/simulate");
+  await page.getByTestId("year").first().locator("summary").first().click();
   await expect(page.getByText("개발자 장면")).toBeVisible();
   await expect(page.getByText("공무원 장면")).toHaveCount(0);
   const compare = page.getByTestId("compare-all");
@@ -92,4 +94,28 @@ test("진로는 하나씩 보고, 마지막에 한눈에 비교한다", async ({
   await expect(page.getByText("공무원 장면")).toBeVisible();
   await expect(page.getByText("개발자 장면")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "9급 행정직 공무원" })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("연도별로 접혀 있고, 큰 사건은 보이고, 수치·이유·보통→나는 눌러야 펼쳐진다", async ({ page }) => {
+  const big = { ...scene("m", "첫 회사에 합격"), eventId: "hire", tierLabel: "30~299인 회사", branch: "choice", choice: "바로 입사한다", delta: { stress: 30 }, freq: 400, odds: { base: 32, mine: 40, grade: "assumed" }, routine: true, minor: [] }; // 되풀이 관문이어도 접힌 줄에 나온다
+  await seed(page, "m", DEMO_PROFILE);
+  await page.evaluate(
+    ({ K, big }) => {
+      localStorage.setItem(`${K}lines`, JSON.stringify({ developer: { m: [big] } }));
+    },
+    { K: K(""), big },
+  );
+  await page.goto("/simulate");
+  const year = page.getByTestId("year").first();
+  await expect(page.getByTestId("sim-summary").getByText("모은 돈")).toBeVisible();
+  await expect(year.locator("summary").first().getByText("첫 회사에 합격")).toBeVisible();
+  await expect(page.getByText("바로 입사한다")).toBeHidden();
+  await year.locator("summary").first().click();
+  await expect(page.getByText("바로 입사한다")).toBeVisible();
+  await expect(page.getByText(/보통은 32%/)).toBeHidden();
+  await expect(page.getByText("스트레스 +30")).toBeHidden();
+  await page.getByTestId("event-detail").locator("summary").first().click();
+  await expect(page.getByText(/보통은 32%/)).toBeVisible();
+  await expect(page.getByText(/나는 40%/)).toBeVisible();
+  await expect(page.getByText("스트레스 +30")).toBeVisible();
 });

@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { quickPart, savedProfile } from "./helpers";
+import { quickPart, savedProfile, autoOpenReport } from "./helpers";
+
+test.beforeEach(async ({ page }) => autoOpenReport(page));
 
 // 파일럿 링크 → 동의·사전 설문 → 빠르게 검사 → 사후 설문. 키를 비워 AI 안 부름.
 test("파일럿: 쓰기 전 설문이 먼저 나오고, 프로필에 붙고, 사후 설문까지 저장된다", async ({ page }) => {

@@ -12,6 +12,7 @@ import { isPilotId, PILOT_CONSENT, PILOT_SJT, PILOT_VERSION, pilotActive, withdr
 import { store } from "@/lib/store";
 import { fetchStatus } from "@/lib/sync";
 import type { Profile } from "@/lib/types";
+import { T } from "@/lib/copy";
 
 const PER_PAGE = 4;
 
@@ -84,7 +85,7 @@ export default function PilotPage() {
           </div>
         }
       >
-        <p className="mt-3 text-sm text-muted">시뮬레이션이 &apos;나라면 어떻게 고를지&apos;를 정하는 무게는 지금 팀이 정한 가정값이에요. 파일럿 참여자의 답으로 이 무게를 다시 재려고 해요. 앱 이용 동의와는 따로 받는 동의예요.</p>
+        <p className="mt-3 text-sm text-muted">시뮬레이션이 &apos;나라면 어떻게 고를지&apos;를 정하는 무게는 지금 {T.assumedFull}이에요. 파일럿 참여자의 답으로 이 무게를 다시 재려고 해요. 앱 이용 동의와는 따로 받는 동의예요.</p>
         {withdrawn ? <p className="mt-3 rounded-xl bg-[#FFF4E5] px-3 py-2 text-cap text-[#7A4300]">파일럿에서 빠졌어요. 다시 참여하려면 아래에 동의해 주세요.</p> : null}
         <ol className="mt-4 flex flex-col gap-3">
           {PILOT_CONSENT.map((c, i) => (
