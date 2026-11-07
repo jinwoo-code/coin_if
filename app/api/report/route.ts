@@ -4,8 +4,16 @@ import { ruleOnly } from "@/lib/ai-guard";
 import { generateJSON } from "@/lib/llm";
 import { finalFit, getWorld, todoFor } from "@/lib/worlds";
 import { won } from "@/lib/format";
+import { iGa, waGwa } from "@/lib/josa";
 import { obstacleUsesFork, ruleObstacle, shortText, topForks } from "@/lib/woop";
 import type { Multiverse, Profile, Report, SimEvent } from "@/lib/types";
+
+// "A와 B 중", "A, B와 C 중"
+function wishOf(names: string[]) {
+  if (names.length < 2) return `${iGa(names[0] ?? "고른 길")} 내게 맞는지 정하기`;
+  const head = names.slice(0, -1).join(", ");
+  return `${waGwa(head)} ${names.at(-1)} 중 내게 맞는 길을 정하기`;
+}
 
 export async function POST(req: Request) {
   const { profile, multiverses, scenes } = (await req.json()) as { profile: Profile; multiverses: Record<string, Multiverse>; scenes: Record<string, SimEvent[]> };
@@ -25,7 +33,8 @@ export async function POST(req: Request) {
       return { worldId: id, good: good.slice(0, 2).join(", ") || "큰 굴곡 없이 적응했다", hard: hard.slice(0, 2).join(", ") || "뚜렷한 어려움은 없었다" };
     }),
     woop: {
-      wish: `${profile.dilemma} 사이에서 내게 맞는 길을 정하기`,
+      // 고민 글을 그대로 끼우면 문장이 깨진다("…모르겠어요 사이에서"). 고른 진로 이름으로 쓴다.
+      wish: wishOf(ids.map((id) => getWorld(id).name)),
       outcome: "어느 쪽이든 후회 없이 선택했다고 말할 수 있는 상태",
       obstacle: ruleObstacle(forks, "막상 알아보려니 귀찮고, 거절당할까 봐 미루게 됨"),
       plan: "만약 이번 주 수요일 수업이 끝나면, 관심 있는 길의 현직자 1명에게 메시지를 보낸다",

@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       `JSON으로 답해라: {"summary": 이 학생을 2문장으로 요약(판단하지 말고 들은 대로), ` +
       `"speechStyle": 학생 답변의 말투 특징을 1문장으로(존댓말/반말, 문장 길이, 자주 쓰는 표현 등)}`,
     fallback: () => ({
-      summary: `${eulReul(body.values[0])} 가장 중요하게 여기면서 “${body.dilemma}” 사이에서 고민하고 있어요.`,
+      summary: `${eulReul(body.values[0])} 가장 중요하게 여기고, “${body.dilemma}”라는 고민이 있어요.`,
       speechStyle: "짧고 솔직하게 말하고, 고민을 털어놓을 때는 반말을 섞는 편",
     }),
   });
