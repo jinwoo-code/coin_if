@@ -79,6 +79,8 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
 
 function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: WorldTemplate; current: boolean; mv: Multiverse; animate: boolean }) {
   const quiet = ev.eventId === "quiet";
+  // 큰 갈림길(내 선택으로 갈리는 곳, 또는 보기 3개 이상)은 고치기 버튼을 접지 않고 선택 바로 아래에 둔다.
+  const bigFork = ev.branch === "choice" || (world.events.find((e) => e.id === ev.eventId)?.choices.length ?? 0) >= 3;
   const pct = Math.round((ev.freq / mv.stats.runs) * 100);
   const hasDetail = !quiet || ev.minor.length > 0 || Boolean(ev.evidence);
   return (
@@ -101,6 +103,7 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
           </span>
         </p>
       ) : null}
+      {bigFork ? <CorrectChoice ev={ev} world={world} /> : null}
       {hasDetail ? (
         <details className="group/detail mt-1" data-testid="event-detail">
           <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1 text-cap font-semibold text-muted [&::-webkit-details-marker]:hidden">
@@ -113,7 +116,7 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
           ) : null}
           {choiceLine(ev) ? <p className="mt-1 text-cap text-muted">{choiceLine(ev)}</p> : null}
           {ev.choice && ev.odds ? <Odds odds={ev.odds} /> : null}
-          <CorrectChoice ev={ev} world={world} />
+          {bigFork ? null : <CorrectChoice ev={ev} world={world} />}
           <DeltaChips delta={ev.delta} />
           {ev.reactions?.length ? (
             <ul className="mt-2 space-y-1 text-cap text-muted">
@@ -166,11 +169,17 @@ function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEve
       </div>
       <p className="mb-4 text-sm text-muted">{ev ? (done ? `끝날 때: ${ev.status}` : ev.status) : "출발 전"}</p>
       {ev ? (
+        <p className="mb-2 text-cap text-muted" data-testid="summary-basis">
+          {T.basisMain}
+        </p>
+      ) : null}
+      {ev ? (
         <>
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
               <dt className="text-sm font-medium text-muted">{gate?.label ?? "합격·취업"} 시기</dt>
               <dd className="num mt-1 break-keep text-lg font-extrabold">{when}</dd>
+              <dd className="num mt-0.5 text-cap text-muted">{T.basisAll(times(mv?.stats.runs ?? 1000))}</dd>
             </div>
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
               <dt className="text-sm font-medium text-muted">끝날 때 만족도</dt>
@@ -198,7 +207,7 @@ function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEve
                 {times(mv.stats.runs)}번 전체로 보면 {gate.label} {gate.share}% <Ci pct={gate.share} n={mv.stats.runs} />
               </p>
             ) : null}
-            <p className="mt-1">시기는 {times(mv?.stats.runs ?? 1000)}번 중 보통 값이고, 나머지는 지금 보는 {T.mainLine}의 값이에요.</p>
+            <p className="mt-1">시기는 {times(mv?.stats.runs ?? 1000)}번 중 보통 값이고, 나머지는 지금 보는 {T.mainLine}의 값이에요. 그래서 아래 비교 표의 가운데 값과 다를 수 있어요.</p>
           </details>
         </>
       ) : null}
@@ -210,11 +219,11 @@ function SummaryCard({ world, ev, mv, done }: { world: WorldTemplate; ev: SimEve
 function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Record<string, Multiverse>; onPick: (id: string) => void }) {
   const list = worlds.filter((w) => mvs[w.id]);
   if (list.length < 2) return null;
-  const rows: { label: string; value: (mv: Multiverse) => React.ReactNode }[] = [
+  const rows: { label: string; note?: string; value: (mv: Multiverse) => React.ReactNode }[] = [
     { label: "합격·취업", value: (mv) => `${mv.stats.gate?.share ?? 0}%` },
     { label: "만족하며 끝남", value: (mv) => `${mv.stats.satisfiedShare}%` },
     { label: "스트레스 높게 끝남", value: (mv) => `${mv.stats.stressedShare}%` },
-    { label: "모은 돈(가운데)", value: (mv) => won(mv.stats.final.money.p50) },
+    { label: "모은 돈", note: T.basisAll(times(mvs[list[0].id].stats.runs)), value: (mv) => won(mv.stats.final.money.p50) },
     { label: "가장 흔한 세계", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },
     { label: `갈라진 ${T.line}`, value: (mv) => `${mv.lines.length}개` },
   ];
@@ -224,6 +233,9 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
         진로를 한눈에 비교해요
       </h2>
       <p className="mt-1 text-sm text-muted">진로마다 {times(mvs[list[0].id].stats.runs)}번 살아본 결과예요. 진로 이름을 누르면 그 타임라인으로 가요.</p>
+      <p className="mt-1 text-cap text-muted" data-testid="compare-basis">
+        {T.basisAll(times(mvs[list[0].id].stats.runs))}와 비율이에요. 위 요약 카드는 {T.basisMain}이라 다를 수 있어요.
+      </p>
       <table className="num mt-4 w-full table-fixed text-left text-sm">
         <thead>
           <tr>
@@ -245,6 +257,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
             <tr key={r.label} className="border-t border-hair">
               <th scope="row" className="py-2.5 pr-1 text-cap font-medium text-muted">
                 {r.label}
+                {r.note ? <span className="block font-normal">{r.note}</span> : null}
               </th>
               {list.map((w) => (
                 <td key={w.id} className="break-words py-2.5 pl-2 font-semibold">

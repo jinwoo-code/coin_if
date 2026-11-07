@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, BookmarkCheck, Clock3, Route } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/components/account";
-import { DEMOS, demoSelection, isDemoPerson } from "@/lib/demo";
+import { DEMOS, demoSelection, demoStart, isDemoPerson } from "@/lib/demo";
 import { store } from "@/lib/store";
 
 const BRANCHES = [
@@ -98,7 +98,7 @@ export default function Home() {
   function startDemo(kind: keyof typeof DEMOS) {
     store.reset();
     store.setLocalOnly(true); // 예시 인물은 계정에 올리지 않는다
-    store.setProfile(DEMOS[kind].profile);
+    store.setProfile(demoStart(kind));
     store.setSelection(demoSelection(kind));
     router.push("/simulate");
   }

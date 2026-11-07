@@ -6,16 +6,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
+import { CheckinChanges } from "@/components/checkin-changes";
 import { CheckinMail } from "@/components/checkin-mail";
 import { FLAGS } from "@/lib/flags";
 import { Screen } from "@/components/ui";
 import { MINI_ITEMS } from "@/lib/mini-ipip";
-import { bigFiveDiff, daysToCheckin, selfAgreement, TONE_WORD, withCorrection, withNewBigFive } from "@/lib/ongoing";
+import { daysToCheckin, selfAgreement, TONE_WORD, withCorrection } from "@/lib/ongoing";
 import { store } from "@/lib/store";
 import { SJT } from "@/lib/tests";
 import { twinScore } from "@/lib/twin";
 import type { Checkin, Profile, Tone } from "@/lib/types";
-import { isDemoPerson } from "@/lib/demo";
+import { demoCheckinExample, isDemoPerson } from "@/lib/demo";
 
 const REAL: { v: Tone | "none"; t: string }[] = [
   { v: "push", t: "하던 걸 더 밀어붙였어요" },
@@ -33,7 +34,7 @@ export default function CheckinPage() {
   const [done, setDone] = useState<Checkin | null>(null);
   const [askMini, setAskMini] = useState(false);
   const [mini, setMini] = useState<Record<string, number>>({});
-  const [applied, setApplied] = useState(false);
+  const [baseline, setBaseline] = useState<Profile | null>(null);
 
   useEffect(() => {
     const p = store.getProfile();
@@ -44,7 +45,10 @@ export default function CheckinPage() {
   if (!profile) return null;
   const items = SJT.filter((q) => profile.holdoutPicks[q.id] !== undefined);
   const days = daysToCheckin(profile);
-  const due = days === null || days <= 0;
+  // 예시 인물은 날짜와 상관없이 늘 시연용으로 저장한다.
+  const demoPerson = isDemoPerson(profile);
+  const example = demoPerson ? demoCheckinExample(profile) : null;
+  const due = !demoPerson && (days === null || days <= 0);
   const miniLeft = askMini ? MINI_ITEMS.filter((i) => mini[i.id] === undefined).length : 0;
   const ready = items.every((q) => picks[q.id] !== undefined) && real !== null && !miniLeft;
 
@@ -54,6 +58,7 @@ export default function CheckinPage() {
     let next: Profile = { ...profile, checkins: [...profile.checkins, c] };
     if (real !== "none") next = withCorrection(next, { source: "checkin", eventId: `checkin:${c.at.slice(0, 10)}`, title: "한 달 체크인: 실제로 한 선택", from: null, to: real });
     store.setProfile(next);
+    setBaseline(profile);
     setProfile(next);
     setDone(c);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -69,7 +74,6 @@ export default function CheckinPage() {
   if (done) {
     const self = selfAgreement(profile, done);
     const twin = twinScore(profile);
-    const diff = done.mini ? bigFiveDiff(profile, done.mini) : null;
     return (
       <Screen
         title="한 달 체크인"
@@ -101,40 +105,7 @@ export default function CheckinPage() {
           {done.real !== "none" ? <p className="mt-2 text-sm">지난 한 달 실제로 {TONE_WORD[done.real]}을 골랐어요. 다음에 살아볼 때부터 분신도 그쪽으로 조금 더 기울어요.</p> : null}
           <p className="mt-2 text-cap text-muted">문항이 적어서 우연이 크게 섞여요. 체크인이 쌓일수록 믿을 만해져요.</p>
         </section>
-        {diff ? (
-          <section className="card mt-4 p-5" aria-label="성격 다시 재기">
-            <p className="label">성격 20문항, 지난번과 비교</p>
-            <ul className="num mt-3 flex flex-col gap-1.5 text-sm">
-              {diff.map((d) => (
-                <li key={d.key} className="flex justify-between gap-2">
-                  <span>{d.label}</span>
-                  <span>
-                    {d.before.toFixed(1)} → {d.after.toFixed(1)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-sm">성격은 한 달 만에 크게 안 바뀌어요. 달라 보여도 그날 기분이나 문항이 적어서일 수 있어요. 그래서 자동으로 바꾸지 않아요.</p>
-            {applied ? (
-              <p role="status" className="mt-3 text-sm font-semibold">
-                바꿨어요. 다음에 살아볼 때부터 반영돼요.
-              </p>
-            ) : (
-              <button
-                type="button"
-                className="btn-ghost mt-3 w-full"
-                onClick={() => {
-                  const next = withNewBigFive(profile, done.mini!);
-                  store.setProfile(next);
-                  setProfile(next);
-                  setApplied(true);
-                }}
-              >
-                이 차이만큼 내 성격 값 바꾸기
-              </button>
-            )}
-          </section>
-        ) : null}
+        <CheckinChanges done={done} baseline={baseline ?? profile} profile={profile} onProfile={setProfile} />
         {FLAGS.checkinMail ? <CheckinMail /> : null}
         {profile.checkins.length > 1 ? (
           <section className="card mt-4 p-5">
@@ -165,11 +136,13 @@ export default function CheckinPage() {
     return (
       <Screen title="한 달 체크인" back="/me">
         <section className="card mt-4 p-5">
-          <p className="text-base font-bold">
-            다음 체크인까지 <span className="num">{days}</span>일 남았어요
-          </p>
+          {days !== null && days > 0 ? (
+            <p className="text-base font-bold">
+              다음 체크인까지 <span className="num">{days}</span>일 남았어요
+            </p>
+          ) : null}
           <p className="mt-2 text-sm text-muted">한 달쯤 지나서 상황 질문 몇 개를 다시 묻고, 그동안 실제로 어떻게 했는지 물어요. 분신이 나를 얼마나 닮았는지 재는 기준이 돼요.</p>
-          {isDemoPerson(profile) ? (
+          {demoPerson ? (
             <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setDemo(true)}>
               시연용: 지금 해 보기
             </button>
@@ -190,6 +163,20 @@ export default function CheckinPage() {
       }
     >
       {!due ? <p className="mt-3 rounded-2xl bg-[#FFF4CC] px-4 py-3 text-sm">시연용이에요. 한 달이 안 지나서 '나도 처음 답과 같게'가 실제보다 높게 나올 수 있어요.</p> : null}
+      {example ? (
+        <button
+          type="button"
+          className="btn-ghost mt-3 w-full"
+          onClick={() => {
+            setPicks(example.picks);
+            setReal(example.real);
+            setMini(example.mini);
+            setAskMini(true);
+          }}
+        >
+          시연용: 예시 답 채우기
+        </button>
+      ) : null}
       <p className="mt-3 text-sm text-muted">예전에 답한 질문도 있어요. 기억나는 답이 아니라 지금의 나라면 뭘 고를지 골라 주세요.</p>
       <ol className="mt-2">
         {items.map((q, i) => (

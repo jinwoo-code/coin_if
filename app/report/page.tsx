@@ -98,10 +98,12 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
           </li>
         ))}
       </ul>
+      <p className="mt-1 text-cap text-muted">{T.basisLine}</p>
       <div className="mt-4 grid gap-2">
         <RangeRow label="모은 돈" {...st.final.money} color={world.color} money max={Math.max(st.final.money.p90, 1000)} />
         <RangeRow label="만족도" {...st.final.satisfaction} color={world.color} />
       </div>
+      <p className="mt-1 text-cap text-muted">이 막대는 {T.basisAll(times(st.runs))}이에요.</p>
       <p className="label mt-5">내가 바꿀 수 있는 것</p>
       {items === undefined ? (
         <p className="mt-2 flex items-center gap-2 text-cap text-muted">
@@ -237,6 +239,7 @@ function Premium({ items, mvs, ids, busy, onOpen, demo }: { items: PremiumItem[]
             <h3 className="flex items-center gap-2 text-base font-bold">
               <LineBadge world={world} size={22} /> {world.name}: {T.line} 전체
             </h3>
+            <p className="mt-2 text-cap text-muted">{T.basisLine}</p>
             <div className="-mx-1 mt-2 overflow-x-auto px-1">
               <table className="num w-full min-w-[480px] text-left text-sm">
                 <thead className="text-cap text-muted">

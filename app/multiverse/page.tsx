@@ -512,7 +512,9 @@ function MultiversePage() {
           {st.salary.p50 ? <RangeRow label="연봉(일하는 경우)" {...st.salary} color={world.color} money max={6000} /> : null}
           <RangeRow label="만족도" {...st.final.satisfaction} color={world.color} />
         </div>
-        <p className="mt-2 text-cap text-muted">굵은 선은 가운데 값, 옅은 띠는 10번 중 8번이 들어간 범위예요. {CI_NOTE}</p>
+        <p className="mt-2 text-cap text-muted">
+          {T.basisAll(times(st.runs))}이 굵은 선이고, 옅은 띠는 10번 중 8번이 들어간 범위예요. {CI_NOTE}
+        </p>
 
         {st.factors.length ? (
           <div className="mt-5 border-t border-hair pt-4">
@@ -588,6 +590,9 @@ function MultiversePage() {
         </h2>
         <p className="mt-1 text-sm text-muted">갈림길마다 {times(mv.stats.runs)}번 중 몇 번이 어느 쪽으로 갔는지예요. 두 세계를 골라 비교해 보세요.</p>
         {pickedLines.length === 2 ? <Compare a={pickedLines[0]} b={pickedLines[1]} world={world} /> : null}
+        <p className="mt-1 text-cap text-muted" data-testid="tree-basis">
+          {T.basisLine}
+        </p>
         <ul className="mt-5">
           <Tree node={mv.tree} mv={mv} world={world} picked={picked} onOpen={openLine} onPick={togglePick} />
         </ul>

@@ -39,11 +39,7 @@ test("내 정보: 부가 메뉴가 여기로 옮겨졌고, 전체 지우기는 �
   await expect(page.getByRole("heading", { name: "전체 지울까요?" })).toBeVisible();
   await page.getByRole("button", { name: "취소" }).click();
   expect(await page.evaluate(() => localStorage.getItem("cr:v10:profile"))).not.toBeNull();
-  // 시연 인물만 체크인을 앞당길 수 있다(시연 인물 파일에는 상황 질문 답이 없어 여기서 넣는다)
-  await page.evaluate(() => {
-    const p = JSON.parse(localStorage.getItem("cr:v10:profile")!);
-    localStorage.setItem("cr:v10:profile", JSON.stringify({ ...p, holdout: { ids: ["s7", "s8", "s9"], seed: 1 }, holdoutPicks: { s7: 0, s8: 0, s9: 0 }, since: new Date().toISOString() }));
-  });
+  // 시연 인물만 체크인을 앞당길 수 있다
   await page.goto("/me");
   await page.getByRole("link", { name: /한 달 체크인/ }).click();
   await expect(page.getByRole("button", { name: "시연용: 지금 해 보기" })).toBeVisible();
