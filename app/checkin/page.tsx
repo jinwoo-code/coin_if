@@ -15,6 +15,7 @@ import { store } from "@/lib/store";
 import { SJT } from "@/lib/tests";
 import { twinScore } from "@/lib/twin";
 import type { Checkin, Profile, Tone } from "@/lib/types";
+import { isDemoPerson } from "@/lib/demo";
 
 const REAL: { v: Tone | "none"; t: string }[] = [
   { v: "push", t: "하던 걸 더 밀어붙였어요" },
@@ -60,7 +61,7 @@ export default function CheckinPage() {
 
   if (!items.length)
     return (
-      <Screen title="한 달 체크인" back="/choose">
+      <Screen title="한 달 체크인" back="/me">
         <p className="mt-4 text-sm">검사에서 상황 질문에 답한 뒤에 할 수 있어요.</p>
       </Screen>
     );
@@ -72,7 +73,7 @@ export default function CheckinPage() {
     return (
       <Screen
         title="한 달 체크인"
-        back="/choose"
+        back="/me"
         footer={
           <Link href="/choose" className="btn-primary flex w-full items-center justify-center">
             진로 고르기로
@@ -162,15 +163,17 @@ export default function CheckinPage() {
 
   if (!due && !demo)
     return (
-      <Screen title="한 달 체크인" back="/choose">
+      <Screen title="한 달 체크인" back="/me">
         <section className="card mt-4 p-5">
           <p className="text-base font-bold">
             다음 체크인까지 <span className="num">{days}</span>일 남았어요
           </p>
           <p className="mt-2 text-sm text-muted">한 달쯤 지나서 상황 질문 몇 개를 다시 묻고, 그동안 실제로 어떻게 했는지 물어요. 분신이 나를 얼마나 닮았는지 재는 기준이 돼요.</p>
-          <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setDemo(true)}>
-            시연용: 지금 해 보기
-          </button>
+          {isDemoPerson(profile) ? (
+            <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setDemo(true)}>
+              시연용: 지금 해 보기
+            </button>
+          ) : null}
         </section>
         {FLAGS.checkinMail ? <CheckinMail /> : null}
       </Screen>
@@ -179,7 +182,7 @@ export default function CheckinPage() {
   return (
     <Screen
       title="한 달 체크인"
-      back="/choose"
+      back="/me"
       footer={
         <button className="btn-primary w-full" disabled={!ready} onClick={save}>
           {ready ? "저장" : `${items.filter((q) => picks[q.id] === undefined).length + (real === null ? 1 : 0) + miniLeft}문항 남았어요`}
