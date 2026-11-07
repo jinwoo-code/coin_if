@@ -97,7 +97,7 @@ test("진로는 하나씩 보고, 마지막에 한눈에 비교한다", async ({
 });
 
 test("연도별로 접혀 있고, 큰 사건은 보이고, 수치·이유·보통→나는 눌러야 펼쳐진다", async ({ page }) => {
-  const big = { ...scene("m", "첫 회사에 합격"), eventId: "hire", branch: "choice", choice: "바로 입사한다", delta: { stress: 30 }, freq: 400, odds: { base: 32, mine: 40, grade: "assumed" }, routine: false, minor: [] };
+  const big = { ...scene("m", "첫 회사에 합격"), eventId: "hire", tierLabel: "30~299인 회사", branch: "choice", choice: "바로 입사한다", delta: { stress: 30 }, freq: 400, odds: { base: 32, mine: 40, grade: "assumed" }, routine: true, minor: [] }; // 되풀이 관문이어도 접힌 줄에 나온다
   await seed(page, "m", DEMO_PROFILE);
   await page.evaluate(
     ({ K, big }) => {

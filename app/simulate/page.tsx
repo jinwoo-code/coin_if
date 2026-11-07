@@ -140,11 +140,13 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
   );
 }
 
-// 그해의 큰 사건: 갈림길 > 등급 있는 관문 > 상태가 크게 움직인 일. 접힌 줄에는 이 중 둘만, 일어난 순서대로 보여 준다.
+// 그해의 큰 사건: 합격·입사(등급 있는 관문) > 갈림길 > 상태가 크게 움직인 일. 접힌 줄에는 이 중 둘만, 일어난 순서대로 보여 준다.
+// 합격처럼 되풀이되는(routine) 관문도 큰 일이라 routine만으로 빼지 않는다. 15는 표시를 고르는 데만 쓰는 기준이다.
 function bigEvents(events: SimEvent[]) {
-  const score = (e: SimEvent) => (e.branch ? 300 : 0) + (e.tierLabel ? 200 : 0) + Math.max(0, ...STATE_META.filter((m) => m.key !== "money").map((m) => Math.abs(e.delta[m.key] ?? 0)));
+  const swing = (e: SimEvent) => Math.max(0, ...STATE_META.filter((m) => m.key !== "money").map((m) => Math.abs(e.delta[m.key] ?? 0)));
+  const score = (e: SimEvent) => (e.tierLabel ? 400 : 0) + (e.branch ? 300 : 0) + swing(e);
   return events
-    .filter((e) => e.eventId !== "quiet" && !e.routine)
+    .filter((e) => e.eventId !== "quiet" && (!e.routine || e.branch || e.tierLabel || swing(e) >= 15))
     .map((e, i) => ({ e, i }))
     .sort((a, b) => score(b.e) - score(a.e))
     .slice(0, 2)

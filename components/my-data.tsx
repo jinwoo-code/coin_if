@@ -41,7 +41,7 @@ export function MyData() {
   return (
     <section aria-labelledby="my-data" className="mt-8 border-t border-hair pt-5">
       <h2 id="my-data" className="label">
-        내 정보
+        내 기록 지우기
       </h2>
       <p className="mt-1 text-cap text-muted">검사 결과는 이 기기에 저장되고, 로그인하면 계정에도 저장돼요. 이야기 원문은 이 기기에만 있어요.</p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
