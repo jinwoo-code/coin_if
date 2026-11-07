@@ -305,6 +305,9 @@ export interface Path {
   final: LifeState;
   employedAt: number | null; // 처음 일을 시작한 달
   salary: number; // 끝났을 때 연봉
+  outcome?: "gate" | "preparing" | "switched"; // 기간 끝 상태: 이 진로에 들어감(합격·취업) / 아직 준비 중 / 다른 길로 감
+  otherJob?: boolean; // 다른 길로 간 뒤 그 일을 구했는지
+  otherPath?: boolean; // 기간 끝에 다른 길에 있는지(합격·입사 뒤 그만두고 간 사람 포함)
 }
 
 // 세계선 나무의 마디
@@ -394,8 +397,10 @@ export interface WorldStats {
   events: Record<string, { count: number; typicalMonth: number }>;
   final: Record<keyof LifeState, { p10: number; p50: number; p90: number }>;
   medianState: LifeState;
-  satisfiedShare: number;
+  satisfiedShare: number; // 이 진로 안에서 만족하며 끝남(다른 길로 간 삶은 만족 안 함으로 셈, 2026-11-02 결정)
   stressedShare: number;
+  // 기간 끝 상태 세 갈래. 준비 중은 만족을 세지 않는다(진행 중). 다른 길은 그 일의 만족도로 센다(가정값 모델)
+  outcome?: { gate: { share: number; satisfied: number; left: number; stayedSatisfied: number }; preparing: { share: number }; switched: { share: number; satisfied: number; working: number } };
   gate: { label: string; share: number; typicalMonth: number | null } | null; // 합격·취업
   salary: { p10: number; p50: number; p90: number };
   factors: FactorNote[];

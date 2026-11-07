@@ -60,7 +60,7 @@ function HeroMap() {
 }
 
 const STEPS = [
-  { title: "나를 알려 주기", body: "AI와 인터뷰하고 성격 질문 20개에 답해요. 빠르게 하면 약 11분이에요" },
+  { title: "나를 알려 주기", body: "AI와 인터뷰하고 성격 질문 20개에 답해요" },
   { title: "여러 길을 동시에 살아보기", body: "실제 직업 통계로 정한 사건이 분기마다 일어나요" },
   { title: "그때의 나와 이야기하기", body: "끝에 선 나에게 묻고, 이번 주에 할 일을 받아 가요" },
 ];
@@ -71,6 +71,7 @@ export default function Home() {
   const [resumeHref, setResumeHref] = useState("/choose");
   const [demoKind, setDemoKind] = useState<keyof typeof DEMOS>("developer");
   const demoDialog = useRef<HTMLDialogElement>(null);
+  const pickDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const check = () => {
       setHasProgress(Boolean(store.getProfile()));
@@ -88,6 +89,7 @@ export default function Home() {
 
   // 예시 인물을 시작하면 이 기기 기록을 지운다. 내 기록이 있으면 먼저 묻는다(이미 예시 인물이면 잃을 게 없다).
   function requestDemo(kind: keyof typeof DEMOS) {
+    pickDialog.current?.close();
     const p = store.getProfile();
     if (p && !isDemoPerson(p)) {
       setDemoKind(kind);
@@ -152,19 +154,16 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/interview" className="btn-primary sm:px-5">
-              약 11분 인터뷰로 시작하기
+              인터뷰로 시작하기
               <ArrowRight aria-hidden="true" size={18} />
             </Link>
-            <button onClick={() => requestDemo("developer")} className="btn-ghost sm:px-5">
-              예시 인물로 바로 보기
+            <button onClick={() => pickDialog.current?.showModal()} className="btn-ghost sm:px-5">
+              예시로 둘러보기
             </button>
           </div>
-          <button onClick={() => requestDemo("nurse")} className="mt-2 min-h-11 self-start text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
-            간호학과 3학년 예시로 보기
-          </button>
-          <p className="mt-2 flex items-center gap-2 text-sm text-muted">
+          <p className="mt-3 flex items-center gap-2 text-sm text-muted">
             <Clock3 aria-hidden="true" size={15} className="flex-none" />
-            처음이라면 예시 인물로 먼저 둘러보세요.
+            인터뷰는 빠르게 하면 약 11분이에요. 처음이라면 예시로 먼저 둘러보세요.
           </p>
         </section>
 
@@ -218,6 +217,30 @@ export default function Home() {
           </Link>
         </div>
       </footer>
+      <dialog ref={pickDialog} aria-labelledby="pick-title" className="w-[calc(100%-40px)] max-w-md rounded-[24px] border border-hair bg-surface p-6 text-ink shadow-xl backdrop:bg-ink/40">
+        <h2 id="pick-title" className="text-xl font-bold">
+          누구의 리허설을 볼까요?
+        </h2>
+        <p className="mt-2 text-sm text-muted">가상 인물이에요. 로그인 없이 끝까지 볼 수 있어요.</p>
+        <ul className="mt-5 flex flex-col gap-3">
+          {(Object.keys(DEMOS) as (keyof typeof DEMOS)[]).map((k) => {
+            const d = DEMOS[k].profile;
+            return (
+              <li key={k}>
+                <button onClick={() => requestDemo(k)} className="flex min-h-[64px] w-full flex-col items-start justify-center rounded-2xl border border-hair bg-surface px-4 py-3 text-left hover:border-ink">
+                  <span className="text-base font-bold">
+                    {d.major} {d.name}
+                  </span>
+                  <span className="mt-0.5 text-sm text-muted">{d.dilemma}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        <button onClick={() => pickDialog.current?.close()} className="btn-ghost mt-4 w-full">
+          닫기
+        </button>
+      </dialog>
       <dialog ref={demoDialog} aria-labelledby="demo-title" aria-describedby="demo-description" className="w-[calc(100%-40px)] max-w-md rounded-[24px] border border-hair bg-surface p-6 text-ink shadow-xl backdrop:bg-ink/40">
         <h2 id="demo-title" className="text-xl font-bold">
           예시 인물로 새로 시작할까요?

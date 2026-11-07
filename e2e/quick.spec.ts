@@ -17,7 +17,9 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await page.getByRole("listitem").filter({ hasText: "빠르게" }).click();
 
   await page.getByRole("button", { name: "바로 취업할지 공무원을 준비할지" }).click();
-  await page.getByRole("button", { name: "이 스펙으로 다음" }).click();
+  // 스펙은 두 화면. 빠르게 테스트는 '나중에 채우기'로 넘어간다(표준·전체 흐름은 두 화면을 다 지난다)
+  await expect(page.getByRole("button", { name: "다음: 자격증·경험" })).toBeVisible();
+  await page.getByRole("button", { name: "나중에 채우기" }).click();
   for (const v of ["안정", "성장", "돈", "여유"]) await page.getByRole("button", { name: new RegExp(`^${v}`) }).click();
   await page.getByRole("button", { name: "다음", exact: true }).click();
 
@@ -49,6 +51,7 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
 
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("cr:v10:profile") ?? "null"));
   expect(saved.depthMode).toBe("quick");
+  expect(saved.depth.spec).toBe(false); // 나중에 채우기: '더 정확하게 하기'에서 다시 묻는다
   expect(Object.keys(saved.answers.sjt)).toEqual(["s1", "s2", "s3", "s4", "s5", "s6"]);
   expect(Object.keys(saved.holdoutPicks)).toHaveLength(3);
   expect(saved.holdout.ids).toHaveLength(6);

@@ -1,10 +1,10 @@
 // 리포트는 결론과 행동만 펼쳐 두고, 숫자·준비 계획·미리 보기·고용센터는 접어 둔다. 접어도 잠긴 건 아니다.
 import { expect, test } from "@playwright/test";
-import { SIM_WAIT } from "./helpers";
+import { SIM_WAIT, openDemo } from "./helpers";
 
 async function toReport(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: /예시 인물로 바로 보기/ }).click();
+  await openDemo(page);
   await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
 }
 
@@ -18,7 +18,7 @@ test("결론·행동은 펼치고 나머지는 접는다, 눌러서 다 볼 수 
   const runs = page.getByTestId("report-runs");
   await expect(runs).not.toHaveAttribute("open", "");
   await expect(runs.getByText("가장 많이 간 세계선").first()).toBeHidden();
-  await runs.locator("summary").click();
+  await runs.locator("summary").first().click(); // 안에 시험형 '어떻게 셌나요?' 접기도 있다
   await expect(runs.getByText("가장 많이 간 세계선").first()).toBeVisible();
   await expect(runs.getByRole("img", { name: /잠김/ })).toHaveCount(0);
   const gap = page.getByTestId("gap-world").first();

@@ -20,9 +20,9 @@ const config: Config = {
         sans: ['"Pretendard Variable"', "Pretendard", "system-ui", "sans-serif"],
       },
       fontSize: {
-        // 본문 기준 16px, 1.25배 단계
-        cap: ["12px", { lineHeight: "1.5" }],
-        sm: ["14px", { lineHeight: "1.55" }],
+        // 본문 기준 16px. 보조 글자 13px·작은 본문 15px 이상(UI·UX 2단계 10번, docs/대비-점검.md)
+        cap: ["13px", { lineHeight: "1.5" }],
+        sm: ["15px", { lineHeight: "1.55" }],
         base: ["16px", { lineHeight: "1.6" }],
         lg: ["18px", { lineHeight: "1.5" }],
         xl: ["22px", { lineHeight: "1.35", letterSpacing: "-0.02em" }],

@@ -142,6 +142,22 @@ const [ENLIST_B, DISCHARGE_B, BROKE_B] = GLOBAL_EVENTS.map((e) => attachBase(e, 
 
 // 1순위 가치에 가장 큰 가중치(value.fitRank). 이야기에서 확인한 핵심 가치가 있으면 story.coreValueShare만큼 섞는다.
 // 가치관을 안 고른 사람은 0이 아니라 8개 가치관의 기대값으로 본다(data/norms.json과 같은 생각).
+// 다른 길로 간 뒤의 일: 어떤 일인지 몰라서 유형 틀 'open' 진로 중 하나의 부합도로 만족도 평소 수준을 정한다(가정값).
+// lib/worlds가 불러질 때 목록을 넣는다(engine이 worlds를 import하면 서로 부르게 돼서).
+let OPEN_WORLDS: WorldTemplate[] = [];
+export function setOpenWorlds(ws: WorldTemplate[]) {
+  OPEN_WORLDS = ws;
+}
+// 다른 길이 어떤 일인지는 삶마다 'open' 진로 중 하나를 고른다(그 일의 사건은 살지 않고, 부합도로 만족도 평소 수준만 정함).
+function otherFits(p: Profile) {
+  return OPEN_WORLDS.length ? OPEN_WORLDS.map((w) => valueFit(w, p)) : [0.5];
+}
+// 그 일에서 일하는 동안 일어날 수 있는 사건(일하는 중에만 나는 것, 입사·규모 조건 없는 것). 만족도·스트레스만 반영한다.
+function otherEvents(i: number) {
+  const w = OPEN_WORLDS[i];
+  return w ? w.events.filter((e) => e.needsJob && !e.hires && !e.onlyTier && !e.requires?.length && !e.minTenure) : [];
+}
+
 export function valueFit(world: WorldTemplate, p: Profile) {
   if (!p.values.length) return blendValueFit(VALUE_KEYS.reduce((s, v) => s + (world.fitValues[v] ?? 0.5), 0) / VALUE_KEYS.length, world.fitValues, p.story);
   return blendValueFit(
@@ -434,6 +450,7 @@ interface Sim {
   gradIn: number; // 일 없이 준비한 개월 수
   offset: number; // 학과를 다시 다닌 기간. 사건의 '몇 개월째'는 그 뒤부터 센다
   usedAt: Map<string, number>; // used에 들어간 달(구직 기간을 셀 때만 씀)
+  otherSince: number | null; // 다른 길로 간 뒤 그 일을 시작한 달
   leftAt: number; // 마지막으로 일을 그만둔 달(없으면 -1)
 }
 
@@ -600,7 +617,13 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
     offset: 0,
     usedAt: new Map(),
     leftAt: -1,
+    otherSince: null,
   };
+  // 다른 길 구직은 따로 시드를 쓴다. 본 난수 순서를 안 건드려서 갈아타기 전까지의 삶과 다른 결과는 그대로다.
+  const otherRand = seededRandom(`${seed}|other`);
+  const fits = otherFits(p);
+  let otherSat = 50;
+  let otherEv: EventCard[] = [];
   const enlist = p.life.military === "미필" && p.life.enlistIn !== null ? p.life.enlistIn : null;
   const retrain = retrainMonths(p, world);
   // 학과를 다니는 중에 입대하면 그만큼 뒤로 밀린다.
@@ -737,11 +760,26 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       }
     }
 
+    // 다른 길로 간 뒤: 한 달에 한 번 그 일을 구할 기회(가정값)
+    if (!inService && sim.employedSince === null && sim.otherSince === null && sim.used.has("switched") && otherRand() < W("switch.hireRate")) {
+      sim.otherSince = month;
+      const pick = Math.floor(otherRand() * fits.length);
+      otherSat = Math.round(48 + W("value.jobSat") * fits[pick]);
+      otherEv = otherEvents(pick);
+    }
+    const inOther = sim.otherSince !== null && sim.employedSince === null;
+    // 그 일의 사건: 이 진로와 같은 빈도(큰 사건 + 일상)로 하나 뽑아 만족도·스트레스만 더한다(가정값, 다른 길의 상세는 안 삶)
+    if (inOther && otherEv.length && otherRand() < BIG_PER_MONTH + ROUTINE_PER_MONTH) {
+      const e = otherEv[Math.floor(otherRand() * otherEv.length)];
+      delta = addDelta(delta, { satisfaction: e.effect.satisfaction ?? 0, stress: e.effect.stress ?? 0 });
+    }
+
     // 이번 달 돈의 흐름
     let flow: number;
     if (inService)
       flow = 60; // 병 봉급에서 쓰고 남는 돈(가정)
     else if (sim.employedSince !== null) flow = (sim.salary / 12) * NET_RATE - p.life.livingCost;
+    else if (inOther) flow = (W("switch.salary") / 12) * NET_RATE - p.life.livingCost;
     else {
       const work = p.life.partTimeHours + (sim.used.has("more-work") ? 20 : 0);
       flow = p.life.support + work * 4.345 * MIN_WAGE - p.life.livingCost - (sim.used.has("quit") ? 0 : world.prepCost);
@@ -754,15 +792,18 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       ? { sat: 45, stress: 50 }
       : inRetrain
         ? { sat: 50, stress: 50 }
-        : sim.used.has("switched") && sim.employedSince === null
-          ? { sat: 50, stress: 45 } // 다른 노선으로 갈아탐: 이 진로의 시계는 멈춘다
+        : inOther
+          ? { sat: otherSat, stress: 40 } // 다른 길에서 일하는 중: 그 일의 만족도(가정값)
+          : sim.used.has("switched") && sim.employedSince === null
+            ? { sat: 50, stress: 45 } // 다른 길을 찾는 중
           : sim.employedSince !== null
             ? { sat: jobSat, stress: 38 + Math.max(0, world.hoursPerWeek - 40) * 1.5 }
             : { sat: Math.max(35, 52 - sim.idle * 0.6), stress: 48 };
     if (!inService && !inRetrain && sim.employedSince === null && !sim.used.has("switched")) sim.idle += 1;
     sim.state = applyDelta(drift(sim.state, target), delta);
-    log.push({ month, event, choiceIndex, reason, pick, tierLabel, delta, state: sim.state, status: statusOf(world, sim, month, inService, inRetrain), salary: sim.salary });
+    log.push({ month, event, choiceIndex, reason, pick, tierLabel, delta, state: sim.state, status: inOther ? "다른 길에서 일하는 중" : statusOf(world, sim, month, inService, inRetrain), salary: sim.salary });
   }
 
-  return { seed, months: log, signature, sigMonths, choiceKeys, final: sim.state, employedAt, salary: sim.salary };
+  const outcome = employedAt !== null ? "gate" : sim.used.has("switched") ? "switched" : "preparing";
+  return { seed, months: log, signature, sigMonths, choiceKeys, final: sim.state, employedAt, salary: sim.salary, outcome, otherJob: sim.otherSince !== null, otherPath: sim.used.has("switched") };
 }

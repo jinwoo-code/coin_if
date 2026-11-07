@@ -1,5 +1,6 @@
 // 저장된 결과 복원과 예시 인물 시작 확인. AI·시뮬레이션 호출 없이 저장값으로 본다.
 import { expect, test } from "@playwright/test";
+import { openDemo } from "./helpers";
 import { DEMO_PROFILE, demoSelection } from "../lib/demo";
 
 const K = (n: string) => `cr:v10:${n}`;
@@ -45,13 +46,13 @@ test("내 기록이 있으면 예시 인물 시작 전에 묻고, 취소하면 �
   await seed(page, "", { ...DEMO_PROFILE, name: "내이름" });
   await page.goto("/");
   await expect(page.getByTestId("resume-banner").getByRole("link", { name: /이어서 하기/ })).toHaveAttribute("href", "/simulate");
-  await page.getByRole("button", { name: "간호학과 3학년 예시로 보기" }).click();
+  await openDemo(page, "nurse");
   const dialog = page.getByRole("dialog", { name: "예시 인물로 새로 시작할까요?" });
   await expect(dialog).toBeVisible();
   await dialog.getByRole("button", { name: "취소하고 기록 유지하기" }).click();
   await expect(dialog).toBeHidden();
   expect(await page.evaluate((k) => JSON.parse(localStorage.getItem(k)!).name, K("profile"))).toBe("내이름");
-  await page.getByRole("button", { name: "예시 인물로 바로 보기" }).click();
+  await openDemo(page);
   await page.route("**/api/**", (r) => r.abort());
   await dialog.getByRole("button", { name: "예시 인물로 새로 시작하기" }).click();
   await expect(page).toHaveURL(/simulate/);
@@ -62,7 +63,7 @@ test("예시 인물 기록만 있으면 묻지 않는다", async ({ page }) => {
   await seed(page, "", DEMO_PROFILE);
   await page.goto("/");
   await page.route("**/api/**", (r) => r.abort());
-  await page.getByRole("button", { name: "예시 인물로 바로 보기" }).click();
+  await openDemo(page);
   await expect(page).toHaveURL(/simulate/);
 });
 

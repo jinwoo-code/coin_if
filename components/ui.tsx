@@ -63,7 +63,7 @@ export function LineBadge({ world, size = 28, outline = false }: { world: WorldT
       style={{
         width: size,
         height: size,
-        fontSize: Math.round(size * 0.46),
+        fontSize: Math.max(13, Math.round(size * 0.46)), // 보조 글자 최소 13px(UI·UX 10번)
         background: outline ? "#fff" : world.color,
         color: outline ? "#14171F" : world.onColor,
         boxShadow: outline ? `inset 0 0 0 ${size > 22 ? 3 : 2}px ${world.color}` : undefined,

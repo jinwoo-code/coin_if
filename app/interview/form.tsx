@@ -32,8 +32,12 @@ export function Seg<T extends string | number>({ label, value, options, onChange
   );
 }
 
-export function Multi<T extends string>({ label, value, options, onChange, hint }: { label: string; value: T[]; options: T[]; onChange: (v: T[]) => void; hint?: string }) {
+export function Multi<T extends string>({ label, value, options, onChange, hint, limit }: { label: string; value: T[]; options: T[]; onChange: (v: T[]) => void; hint?: string; limit?: number }) {
   const id = useId();
+  const [all, setAll] = useState(false);
+  // limit이 있으면 앞의 몇 개와 이미 고른 것만 보여 주고 나머지는 '더보기'로
+  const shown = all || !limit ? options : options.filter((o, i) => i < limit || value.includes(o));
+  const hidden = options.length - shown.length;
   return (
     <div className="flex flex-col gap-1.5">
       <span id={id} className="label">
@@ -41,7 +45,7 @@ export function Multi<T extends string>({ label, value, options, onChange, hint 
       </span>
       {hint ? <span className="-mt-1 text-cap text-muted">{hint}</span> : null}
       <div role="group" aria-labelledby={id} className="flex flex-wrap gap-1.5">
-        {options.map((o) => {
+        {shown.map((o) => {
           const on = value.includes(o);
           return (
             <button
@@ -49,12 +53,17 @@ export function Multi<T extends string>({ label, value, options, onChange, hint 
               type="button"
               aria-pressed={on}
               onClick={() => onChange(on ? value.filter((x) => x !== o) : [...value, o])}
-              className={`min-h-[40px] rounded-full border px-3.5 text-sm transition-colors ${on ? "border-ink bg-ink font-semibold text-white" : "border-hair bg-surface hover:border-ink"}`}
+              className={`min-h-11 rounded-full border px-3.5 text-sm transition-colors ${on ? "border-ink bg-ink font-semibold text-white" : "border-hair bg-surface hover:border-ink"}`}
             >
               {o}
             </button>
           );
         })}
+        {hidden > 0 ? (
+          <button type="button" onClick={() => setAll(true)} className="min-h-11 rounded-full px-3.5 text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink">
+            더보기 {hidden}개
+          </button>
+        ) : null}
       </div>
     </div>
   );
@@ -110,13 +119,13 @@ export function monthsToFeb(now = new Date()) {
 
 const COMMON_CERTS = ["컴활1급", "컴활2급", "한국사1급", "한국사2급", "운전면허"];
 
-// 전공과 관련된 진로들이 쓰는 자격증을 먼저 보여 준다.
+// 전공과 관련된 진로들이 쓰는 자격증을 먼저 보여 준다(화면에는 앞 6개, 나머지는 '더보기').
 function certSuggestions(major: string) {
   const m = major.replace(/\s/g, "");
   const related = WORLDS.filter((w) => w.majors.some((k) => m.includes(k))).flatMap((w) => w.certs);
   // 관련 진로가 있으면 그 자격증 + 공통 자격증만, 없으면 전체에서 몇 개
   const rest = related.length ? [] : WORLDS.flatMap((w) => w.certs);
-  return Array.from(new Set([...related, ...COMMON_CERTS, ...rest])).slice(0, 14);
+  return Array.from(new Set([...related, ...COMMON_CERTS, ...rest])).slice(0, 24);
 }
 
 const IT_WORDS = ["컴퓨터", "소프트웨어", "정보", "전산", "IT", "게임", "데이터", "인공지능", "모바일"];
@@ -124,11 +133,13 @@ const IT_WORDS = ["컴퓨터", "소프트웨어", "정보", "전산", "IT", "게
 export function SpecForm({
   spec,
   major,
+  part = 0,
   onChange,
   onImported,
 }: {
   spec: Spec;
   major: string;
+  part?: 0 | 1 | 2; // 0이면 한 화면에 전부, 1은 학교·학점·어학, 2는 자격증·경험
   onChange: (s: Spec) => void;
   onImported: (src: "resume" | "github", extra?: { experiences?: string; coding?: number }) => void;
 }) {
@@ -187,8 +198,11 @@ export function SpecForm({
     setCustom("");
   }
 
+  const first = part !== 2;
+  const second = part !== 1;
   return (
     <div className="flex flex-col gap-4">
+      {first ? (
       <div className={`grid gap-2 ${isIT ? "sm:grid-cols-2" : ""}`}>
         <button type="button" className="btn-ghost min-h-[48px] text-sm" onClick={() => fileRef.current?.click()} disabled={busy !== ""}>
           {busy === "resume" ? <Loader2 aria-hidden="true" size={18} className="animate-spin" /> : <FileUp aria-hidden="true" size={18} />} 이력서 PDF로 채우기
@@ -212,11 +226,14 @@ export function SpecForm({
           </form>
         ) : null}
       </div>
+      ) : null}
       {msg ? (
         <p role="status" className="rounded-xl bg-ground px-3 py-2 text-cap">
           {msg}
         </p>
       ) : null}
+      {first ? (
+        <>
       <Seg label="학교" value={spec.school} options={(["고졸", "전문대", "4년제", "대학원"] as const).map((v) => ({ v, t: v }))} onChange={(school) => set({ school })} />
       <Seg
         label="지금"
@@ -242,7 +259,11 @@ export function SpecForm({
         <Num label="학점(4.5 만점)" value={spec.gpa} step={0.01} max={4.5} placeholder="선택" onChange={(gpa) => set({ gpa })} />
         <Num label="토익" value={spec.toeic} step={5} max={990} placeholder="선택" onChange={(toeic) => set({ toeic })} />
       </div>
-      <Multi label="자격증" hint="내 전공과 관련된 자격증을 먼저 보여 줘요. 없으면 아래에 직접 적어 주세요" value={spec.certs} options={suggestions} onChange={(certs) => set({ certs })} />
+        </>
+      ) : null}
+      {second ? (
+        <>
+      <Multi label="자격증" hint="내 전공과 관련된 자격증을 먼저 보여 줘요. 없으면 아래에 직접 적어 주세요" value={spec.certs} options={suggestions} limit={6} onChange={(certs) => set({ certs })} />
       <form
         className="-mt-2 flex gap-1.5"
         onSubmit={(e) => {
@@ -265,6 +286,8 @@ export function SpecForm({
         <Num label="인턴·현장실습" value={spec.internMonths} unit="개월" onChange={(v) => set({ internMonths: v ?? 0 })} />
       </div>
       <p className="text-cap text-muted">진로마다 필요한 준비(코딩, 포트폴리오, 면허, 실습 등)는 진로를 고른 뒤에 따로 물어봐요.</p>
+        </>
+      ) : null}
     </div>
   );
 }

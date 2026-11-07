@@ -128,6 +128,20 @@
     "direction": "docs/검사-설계-근거.md '검사 구성': 가치관 → 선택 이유. 방향은 가치의 뜻(성장·인정·기여=더 해 봄, 돈·자율=바꿈, 안정·여유·관계=신중)",
     "magnitude": "assumed"
   },
+  "switch.hireRate": {
+    "label": "다른 길로 간 뒤 그 일을 구할 확률(한 달)",
+    "value": 0.089,
+    "kind": "prob",
+    "direction": "청년 첫 취업까지 평균 11.2개월(통계청 청년층 부가조사 2026)을 한 달 확률 1 ÷ 11.2로 바꾼 값. 전향한 사람에게 같은지는 근거 없음",
+    "magnitude": "assumed"
+  },
+  "switch.salary": {
+    "label": "다른 길 첫 연봉(만원)",
+    "value": 3595,
+    "kind": "level",
+    "direction": "신입 초임 30~299인 3,595만원(한국경영자총협회 2023)을 그대로 씀. 다른 길이 어떤 일인지 몰라서",
+    "magnitude": "assumed"
+  },
   "value.jobSat": {
     "label": "가치관이 맞을 때 일 만족도",
     "value": 32,

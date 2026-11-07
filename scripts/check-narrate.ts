@@ -1,6 +1,6 @@
 // 서술 AI 처지 검사 단위 테스트(AI 안 부름): 처지 나누기, 처지에 안 맞는 말, 역할 괄호 지우기.
 // 실행: npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-narrate.ts
-import { badWords, phaseOf, stripRoleTags } from "../lib/narrate-check";
+import { badWords, dropDuplicateSentences, duplicateSentences, phaseOf, stripRoleTags } from "../lib/narrate-check";
 import { npcFits } from "../lib/sim";
 import type { SimEvent } from "../lib/types";
 import { getWorld } from "../lib/worlds";
@@ -39,6 +39,13 @@ eq("구직 장면의 출근", check("developer", "취업 준비 중", "아침마
 
 eq("역할 괄호 지우기", stripRoleTags(`입사 동기 이수아(동료)는 물었다. 박 수간호사(윗사람)도 웃었다.`, nurse), "입사 동기 이수아는 물었다. 박 수간호사도 웃었다.");
 eq("다른 괄호는 그대로", stripRoleTags("기출(2025년)을 풀었다.", nurse), "기출(2025년)을 풀었다.");
+
+// 장면 안 중복 문장
+eq("원문을 한 번 더 붙임", dropDuplicateSentences("김 팀장이 큰 사고 없이 2주 단위 개발이 이어졌다고 짧게 언급했다. 큰 사고 없이 2주 단위 개발이 이어졌다."), "김 팀장이 큰 사고 없이 2주 단위 개발이 이어졌다고 짧게 언급했다.");
+eq("똑같은 문장 두 번", duplicateSentences("모의고사를 풀었다. 점수가 올랐다. 모의고사를 풀었다."), [2]);
+eq("다른 문장은 그대로", duplicateSentences("면접에서 떨어졌다. 한 선배가 다음 공고를 알려 줬다."), []);
+eq("물음표·느낌표도 문장 끝", duplicateSentences("정말 붙었을까? 정말 붙었을까!"), [1]);
+eq("짧은 문장 하나는 그대로", dropDuplicateSentences("합격했다."), "합격했다.");
 
 console.log(fail ? `\n실패 ${fail}개` : "\n전부 통과");
 process.exitCode = fail ? 1 : 0;

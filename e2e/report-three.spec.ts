@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
-import { REMOTE, SIM_WAIT, autoOpenReport } from "./helpers";
+import { REMOTE, SIM_WAIT, autoOpenReport, openDemo } from "./helpers";
 
 test.beforeEach(async ({ page }) => autoOpenReport(page));
 
 // 끝맺음 흐름: 시연 인물 → 프리미엄 생성 → 계획 수정 → 다시 살아 보기 → 공유.
 // 공유 링크를 실제로 여는 건 0007이 있어야 해서 배포 사이트에서는 E2E_SHARE_DB=1일 때만 한다.
 const CASES = [
-  { id: "developer", name: "개발자", button: /예시 인물로 바로 보기/, weekly: "60" },
-  { id: "nurse", name: "간호사", button: /간호학과 3학년 예시로 보기/, weekly: "30" },
-  { id: "civil-servant", name: "9급", button: /예시 인물로 바로 보기/, weekly: "71" },
+  { id: "developer", name: "개발자", button: "developer" as const, weekly: "60" },
+  { id: "nurse", name: "간호사", button: "nurse" as const, weekly: "30" },
+  { id: "civil-servant", name: "9급", button: "developer" as const, weekly: "71" },
 ];
 
 for (const c of CASES) {
@@ -16,7 +16,7 @@ for (const c of CASES) {
     test.setTimeout(REMOTE ? 900_000 : 300_000);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
-    await page.getByRole("button", { name: c.button }).first().click();
+    await openDemo(page, c.button);
     await page.waitForURL(/simulate|multiverse/, { timeout: 60_000 });
     await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.includes("multiverses") && localStorage.getItem(k) !== "null"), null, { timeout: SIM_WAIT });
     await page.goto("/report");

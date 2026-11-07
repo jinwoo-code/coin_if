@@ -94,7 +94,10 @@ function finalDist(paths: Path[]) {
 }
 
 const share = (paths: Path[], f: (p: Path) => boolean) => (paths.length ? Math.round((paths.filter(f).length / paths.length) * 100) : 0);
-const satisfied = (p: Path) => p.final.satisfaction >= 60;
+// 이 진로 안에서 만족하며 끝남. 다른 길로 간 삶은 그 일의 만족과 상관없이 '만족 안 함'으로 센다(2026-11-02 결정).
+// 다른 길의 만족은 outcome.switched.satisfied로 따로 본다.
+const satMet = (p: Path) => p.final.satisfaction >= 60;
+const satisfied = (p: Path) => !p.otherPath && satMet(p);
 export const isSatisfied = satisfied;
 const stressed = (p: Path) => p.final.stress >= 65;
 
@@ -122,6 +125,19 @@ export function gateLabel(world: WorldTemplate) {
   }
 }
 
+// 기간 끝 상태 세 갈래: 이 진로에 들어감 / 아직 준비 중(진행 중이라 만족을 세지 않음) / 다른 길로 감(그 일의 만족으로 셈)
+export function outcomeOf(paths: Path[]): NonNullable<WorldStats["outcome"]> {
+  const kind = (x: Path) => x.outcome ?? (x.employedAt !== null ? "gate" : "preparing");
+  const g = paths.filter((x) => kind(x) === "gate");
+  const sw = paths.filter((x) => kind(x) === "switched");
+  return {
+    // 합격(입사)한 사람 중: 이 진로에 남아 만족 / 그만두고 다른 길로 감 / 남은 사람 중 만족(공식 재직자 만족도와 비교하는 값)
+    gate: { share: share(paths, (x) => kind(x) === "gate"), satisfied: share(g, satisfied), left: share(g, (x) => !!x.otherPath), stayedSatisfied: share(g.filter((x) => !x.otherPath), satMet) },
+    preparing: { share: share(paths, (x) => kind(x) === "preparing") },
+    switched: { share: share(paths, (x) => kind(x) === "switched"), satisfied: share(sw, satMet), working: share(sw, (x) => !!x.otherJob) },
+  };
+}
+
 export function statsOf(p: Profile, world: WorldTemplate, paths: Path[]): WorldStats {
   const firsts = new Map<string, number[]>();
   for (const path of paths) {
@@ -147,6 +163,7 @@ export function statsOf(p: Profile, world: WorldTemplate, paths: Path[]): WorldS
     medianState,
     satisfiedShare: share(paths, satisfied),
     stressedShare: share(paths, stressed),
+    outcome: outcomeOf(paths),
     gate: { label: gateLabel(world), share: share(paths, (x) => x.employedAt !== null), typicalMonth: hired.length ? median(hired.map((x) => x.employedAt!)) : null },
     salary: { p10: pct(sal, 0.1), p50: pct(sal, 0.5), p90: pct(sal, 0.9) },
     factors: factorNotes(p, world, factorKeys(p, world)),

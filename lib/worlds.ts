@@ -8,7 +8,7 @@ import extraFacts from "@/data/jobdata/extra-facts.json";
 import { JOBS } from "@/data/jobs";
 import { buildWorld } from "./archetypes";
 import { withBase } from "./base";
-import { valueFit } from "./engine";
+import { setOpenWorlds, valueFit } from "./engine";
 import type { BigFive, Fact, Interests, Profile, WorldStats, WorldTemplate } from "./types";
 import { examChance, WA } from "./weights";
 
@@ -19,6 +19,9 @@ const extra = extraFacts as Record<string, Fact[]>;
 const CURATED = ([developer, civilServant, dataAnalyst, marketer] as unknown as WorldTemplate[]).map((w) => ({ ...w, events: w.events.map((e) => (e.competition ? { ...e, chance: examChance(e.competition) } : e)) }));
 const GENERATED = JOBS.map((j, i) => buildWorld(j, i + 4));
 export const WORLDS: WorldTemplate[] = [...CURATED, ...GENERATED].map((w) => withBase({ ...w, facts: [...w.facts, ...(extra[w.id] ?? [])] }));
+
+// 다른 길로 간 삶의 만족도 기준: 유형 틀 'open' 진로들(engine이 worlds를 import하지 않게 여기서 넣는다)
+setOpenWorlds(WORLDS.filter((w) => w.archetype === "open"));
 
 export const FAMILIES = Array.from(new Set(WORLDS.map((w) => w.family)));
 

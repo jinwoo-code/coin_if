@@ -2,7 +2,7 @@
 // 실행: DOCS_SCREENS=1 BASE_URL=https://coinif.vercel.app npx playwright test e2e/docs-screens.spec.ts
 import { appendFileSync, mkdirSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
-import { counter, next, pickAll, REMOTE, savedProfile, SIM_WAIT } from "./helpers";
+import { counter, next, pickAll, REMOTE, savedProfile, SIM_WAIT, openDemo } from "./helpers";
 
 const ROOT = process.env.SCREENS_OUT ?? "docs/screens";
 // 전체 페이지를 찍으면 하단 고정 버튼이 본문 중간을 가리므로 사진에서만 흐름 안에 둔다.
@@ -50,8 +50,11 @@ for (const width of [390, 1280]) {
       await expect(page.getByRole("button", { name: "바로 취업할지 공무원을 준비할지" })).toBeVisible();
       await shot(page, "22-검사-04-고민");
       await page.getByRole("button", { name: "바로 취업할지 공무원을 준비할지" }).click();
-      await expect(page.getByRole("button", { name: "이 스펙으로 다음" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "다음: 자격증·경험" })).toBeVisible();
       await shot(page, "22-검사-05-스펙");
+      await page.getByRole("button", { name: "다음: 자격증·경험" }).click();
+      await expect(page.getByRole("button", { name: "이 스펙으로 다음" })).toBeVisible();
+      await shot(page, "22-검사-05b-자격증-경험");
       await page.getByRole("button", { name: "이 스펙으로 다음" }).click();
       for (const v of ["안정", "성장", "돈", "여유"]) await page.getByRole("button", { name: new RegExp(`^${v}`) }).click();
       await shot(page, "22-검사-06-가치관");
@@ -97,7 +100,7 @@ for (const width of [390, 1280]) {
       await page.goto("/");
       await page.waitForTimeout(2500); // 노선 그려지는 효과
       await shot(page, "01-첫-화면");
-      await page.getByRole("button", { name: "예시 인물로 바로 보기" }).click();
+      await openDemo(page);
       await page.waitForURL(/simulate/);
       await page.waitForTimeout(4000);
       await shot(page, "02-시뮬레이션-진행-중", false);
@@ -179,7 +182,7 @@ for (const width of [390, 1280]) {
       await expect(page.getByTestId("resume-banner")).toBeVisible();
       await page.waitForTimeout(2500);
       await shot(page, "16-첫-화면-이어서-하기");
-      await page.getByRole("button", { name: "예시 인물로 바로 보기" }).click();
+      await openDemo(page);
       await shot(page, "17-예시-인물-확인-창", false);
       await page.getByRole("button", { name: "취소하고 기록 유지하기" }).click();
 
