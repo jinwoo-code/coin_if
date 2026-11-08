@@ -1,5 +1,6 @@
 "use client";
 // 1. 상담·진단: AI 인터뷰 + 스펙·생활 조건 + 성격 검사(Mini-IPIP) + 상황 질문으로 '나'를 만든다.
+import { SpecNotice, specMissing } from "@/components/spec-notice";
 import { ArrowUp, Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -719,6 +720,7 @@ export default function InterviewPage() {
 
       {done && profile ? (
         <div className="flex animate-rise flex-col gap-4 pt-2">
+          {specMissing(profile) ? <SpecNotice onGo={deepen} /> : null}
           <section className="card p-5">
             <p className="label">요약</p>
             <label htmlFor="summary" className="sr-only">

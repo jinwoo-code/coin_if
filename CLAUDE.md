@@ -44,6 +44,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-share.ts   # 공유본 단
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-plan-sim.ts   # 계획 넣고 다시 살아 보기 단위 테스트 + 시연 인물 전후 표
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-calendar.ts   # 시험 달 단위 테스트(생활비 바닥이 시험을 없애지 않는지, 합격 기회 없는 불합격, 9급 시작 달 폭)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/pilot-report.ts data/pilot/profiles.json   # 파일럿 전·후 설문 집계(자유 답 포함, 출력 커밋 금지). --selftest로 자체 확인
+npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/count-ai-calls.ts 2026-11-08T08:00:00Z   # 그 시각(UTC) 이후 배포본 AI 호출 수(usage_logs, 기능별). 시연 준비는 docs/시연-준비.md
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/report-summary.ts   # 시연 진로 3개 요약표 → docs/리포트-요약표.md
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/diagnose-satisfaction.ts   # 10년 만족도 분포(대표 진로 5개 × 인물 2명, 보기만)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-retrain.ts 경영학과   # 전공 안 맞을 때 학과 다니기 전후(해당 진로만)
@@ -195,6 +196,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test    # 기본: 배포 사�
 4. (보류: 채용정보 기관 키 필요) `market.json`의 신입 공고 제시 연봉으로 유형 틀 진로의 초임 보정.
 5. 실제 Gemini 키로 전체 흐름 10번 돌려 보고 프롬프트 다듬기(`[토큰]` 로그로 회당 원가 측정).
 6. Vercel 배포(환경 변수에 키 넣기). 발표장 네트워크가 불안하면 목업 모드 백업.
+7. (발표 뒤) 스펙을 안 적은 사람의 중립 계산: 지금은 기본값(전문대·재학·12개월 뒤 졸업, `lib/profile.ts` DEFAULT_SPEC)으로 계산하고 검사 결과·시뮬레이션 요약 위에 안내만 띄운다(`components/spec-notice.tsx`). 평균 인물 3년 안 취업률이 4년제보다 학교 배수로 0~4%p, 졸업 시기까지 합치면 최대 약 20%p(은행원) 낮다. 바꾸려면 `depth.spec`이 false일 때 `lib/factors.ts` 학교 배수 1, 재학·졸업 시기도 중립값을 정하고, 응시자격(`lib/cert-eligibility.ts`)·격차(`lib/gap.ts`)의 학교 판정도 같이 본다. 바꾼 뒤 check-all·validate.
 
 미루는 개발은 없다(팀장 결정, 2026-11-04). 문서에 '나중에'·'발표 후'로 적힌 것도 전부 만든다. 파일럿·기관 키·인터뷰·유료 키가 있어야 하는 것은 코드까지 만들고, 그 값이 들어오기 전에는 결과가 없다고 적는다.
 

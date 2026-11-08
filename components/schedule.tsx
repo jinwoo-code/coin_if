@@ -130,7 +130,7 @@ function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: P
           <p className="mt-1 text-lg font-bold">
             <span className="num">{r.before}%</span> <Ci pct={r.before} n={r.n} /> → <span className="num">{r.after}%</span> <Ci pct={r.after} n={r.n} />
           </p>
-          {nothing && r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 계획의 항목은 시뮬레이션이 보는 조건을 바꾸지 않아요. 숫자가 같아도 소용없는 항목이라는 뜻은 아니에요.{world.archetype === "exam" ? " 시험형은 주당 공부 시간을 고치면 달라져요." : ""}</p> : null}
+          {nothing && r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 계획의 항목은 시뮬레이션이 보는 조건을 바꾸지 않아요. 숫자가 같아도 소용없는 항목이라는 뜻은 아니에요.{world.archetype === "exam" ? " 시험형은 주당 쓸 수 있는 시간을 고치면 달라져요." : ""}</p> : null}
           {nothing && !r.notInSim.length ? <p className="mt-1 text-cap font-medium">이 기간 안에 끝나는 항목이 없어요. 계획 기간을 늘리면 달라질 수 있어요.</p> : null}
           {!nothing && r.before === r.after ? <p className="mt-1 text-cap font-medium">이 기간 안에는 숫자가 달라지지 않았어요. 계획 기간을 늘리면 달라질 수 있어요.</p> : null}
           {r.after === 0 && plan.schoolMonths > 0 && !stale ? (
@@ -195,10 +195,11 @@ export function ScheduleSection({ rows, profile, world, months, startYm }: { row
         {monthLabel(startYm, 0)}부터 {plan.months}개월. 시간의 {Math.round(W("report.plan.spare") * 100)}%는 여유로 비웠어요({T.assumed}). 시간은 항목마다 NCS 훈련 기준 또는 {T.assumed}이라고 적었어요.
       </p>
       <label className="mt-2 flex items-center gap-2 text-sm">
-        주당 공부 시간
-        <input type="number" min={0} max={100} value={plan.weekly} className="min-h-11 w-20 rounded-lg border border-hair px-2" onChange={(e) => save({ ...edits, weekly: Math.max(0, Math.min(100, Number(e.target.value) || 0)) })} />
+        주당 쓸 수 있는 시간
+        <input type="number" min={0} max={100} value={plan.weekly} aria-describedby={`weekly-note-${world.id}`} className="min-h-11 w-20 rounded-lg border border-hair px-2" onChange={(e) => save({ ...edits, weekly: Math.max(0, Math.min(100, Number(e.target.value) || 0)) })} />
         시간
       </label>
+      <p id={`weekly-note-${world.id}`} className="mt-1 text-cap text-muted">공부 가능 시간에서 알바 시간을 뺀 값이에요.</p>
 
       {plan.over ? (
         <div className="mt-2 rounded-lg bg-ground p-3" role="status">

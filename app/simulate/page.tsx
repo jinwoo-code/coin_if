@@ -1,5 +1,6 @@
 "use client";
 // 3. 체험: 진로마다 1,000번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
+import { SpecNotice, specMissing } from "@/components/spec-notice";
 import { BarChart3, ChevronDown, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -331,6 +332,7 @@ export default function SimulatePage() {
   const [error, setError] = useState("");
   const [selectedWorldId, setSelectedWorldId] = useState("");
   const [judging, setJudging] = useState<{ done: number; total: number } | null>(null);
+  const [noSpec, setNoSpec] = useState(false);
   const startedRef = useRef(false);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -339,6 +341,7 @@ export default function SimulatePage() {
     startedRef.current = true;
     const profile = store.getProfile();
     const sel = store.getSelection();
+    setNoSpec(specMissing(profile));
     if (!profile || !sel) {
       router.replace("/choose");
       return;
@@ -481,7 +484,8 @@ export default function SimulatePage() {
       back="/choose"
       right={
         <span aria-live="polite" className="num pr-2 text-sm font-bold">
-          {stopped ? "" : current ? current.label : "출발 준비 중…"}
+          {/* 진행 표시: 살아보는 중에만. 끝난 뒤 마지막 칸(예: 2029년 9~11월)이 남으면 보고 있는 장면의 날짜처럼 보인다 */}
+          {stopped || done ? "" : current ? current.label : "출발 준비 중…"}
         </span>
       }
       footer={
@@ -549,6 +553,7 @@ export default function SimulatePage() {
       ) : null}
 
       <div id="selected-world-content" role="region" aria-label={selectedWorld ? `${selectedWorld.name} ${T.mainLine} 결과` : `${T.mainLine} 결과`} className="min-w-0">
+        {noSpec ? <div className="mt-3"><SpecNotice /></div> : null}
         <div className="mt-3">{selectedWorld ? <SummaryCard world={selectedWorld} ev={latest(selectedWorld.id)} mv={mvs[selectedWorld.id]} done={done} scenes={rows.flatMap((r) => r.events).filter((e) => e.worldId === selectedWorld.id)} /> : null}</div>
       </div>
 

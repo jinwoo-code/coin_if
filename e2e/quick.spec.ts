@@ -49,6 +49,9 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   // 학교를 안 고르고 넘어갔으면 기본값(전문대)을 고른 것처럼 보이지 않는다
   await expect(page.getByText("아직 안 적음")).toBeVisible();
   await expect(page.getByText(/^전문대 /)).toHaveCount(0);
+  // 안 적은 스펙은 어떤 기본값으로 계산했는지 알려 준다
+  await expect(page.getByTestId("spec-notice")).toContainText("전문대 재학·1년 뒤 졸업 기준으로 계산했어요");
+  await expect(page.getByTestId("spec-notice").getByRole("button", { name: /적으러 가기/ })).toBeVisible();
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await expect(page).toHaveURL(/\/choose/);
 

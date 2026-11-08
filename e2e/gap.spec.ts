@@ -27,7 +27,7 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   await expect(page.getByTestId("gap-civil-servant").getByText(/하루 공부를 2시간 늘렸을 때/).first()).toBeVisible({ timeout: 60_000 });
   // 시간 초과 → 기간 늘리기
   const plan = page.getByTestId("plan-developer");
-  await plan.getByRole("spinbutton", { name: /주당 공부 시간/ }).fill("1");
+  await plan.getByRole("spinbutton", { name: /주당 쓸 수 있는 시간/ }).fill("1");
   await expect(plan.getByText(/주 \d+시간이 필요한데 지금은 1시간이에요/)).toBeVisible();
   await plan.getByRole("button", { name: /기간을 \d+개월로 늘리기/ }).click();
   await expect(plan.getByText(/주 \d+시간이 필요한데/)).toHaveCount(0);
@@ -40,12 +40,12 @@ test("리포트에 필요한 것과 내 격차가 나온다", async ({ page }) =
   await expect(rerun.getByText(/배수는 대부분 우리가 정한 값/)).toBeVisible();
   await rerun.scrollIntoViewIfNeeded();
   await rerun.screenshot({ path: "test-results/plan-rerun-390.png" });
-  await plan.getByRole("spinbutton", { name: /주당 공부 시간/ }).fill("40");
+  await plan.getByRole("spinbutton", { name: /주당 쓸 수 있는 시간/ }).fill("40");
   await expect(rerun.getByText("계획이 바뀌었어요", { exact: false })).toBeVisible();
   await plan.getByRole("button", { name: "처음 일정으로" }).click();
   const cs = page.getByTestId("plan-rerun-civil-servant");
   await cs.getByRole("button", { name: "다시 살아 보기" }).click();
-  await expect(cs.getByText(/시험형은 주당 공부 시간을 고치면 달라져요/)).toBeVisible({ timeout: 60_000 });
+  await expect(cs.getByText(/시험형은 주당 쓸 수 있는 시간을 고치면 달라져요/)).toBeVisible({ timeout: 60_000 });
   // 합격자 평균 공부량 버튼 → 일정의 주당 시간이 공부 시간으로 들어가 전후가 달라진다
   await cs.getByRole("button", { name: /합격자 평균 공부량/ }).click();
   await expect(cs.getByText(/처음부터: 주당 공부 \d+시간 → 71시간/)).toBeVisible({ timeout: 60_000 });

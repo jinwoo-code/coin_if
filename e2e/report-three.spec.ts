@@ -30,7 +30,7 @@ for (const c of CASES) {
     // 계획 수정
     const plan = page.getByTestId(`plan-${c.id}`);
     await expect(plan).toBeVisible({ timeout: 60_000 });
-    await plan.getByRole("spinbutton", { name: "주당 공부 시간" }).fill(c.weekly);
+    await plan.getByRole("spinbutton", { name: "주당 쓸 수 있는 시간" }).fill(c.weekly);
 
     // 다시 살아 보기
     const rerun = page.getByTestId(`plan-rerun-${c.id}`);
