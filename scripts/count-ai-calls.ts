@@ -2,8 +2,8 @@
 // npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/count-ai-calls.ts 2026-11-08T08:00:00Z
 // 시각을 안 주면 최근 30분. 로그인 안 한 예시 인물 호출도 남는다(user 칸만 비어 있음).
 const since = process.argv[2] ?? new Date(Date.now() - 30 * 60_000).toISOString();
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 if (!url || !key) {
   console.log("NEXT_PUBLIC_SUPABASE_URL·SUPABASE_SERVICE_ROLE_KEY가 없어요(.env.local).");
   process.exit(1);
