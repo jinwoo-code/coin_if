@@ -784,7 +784,8 @@ export default function InterviewPage() {
             <dl className="num mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               <dt className="text-muted">학교</dt>
               <dd>
-                {profile.spec.school} {profile.spec.status}
+                {/* 학교를 안 고르고 넘어가면(depth.spec false) 기본값을 고른 것처럼 보이지 않게 */}
+                {profile.depth.spec ? `${profile.spec.school} ${profile.spec.status}` : "아직 안 적음"}
               </dd>
               <dt className="text-muted">자격증</dt>
               <dd>{profile.spec.certs.join(", ") || "없음"}</dd>

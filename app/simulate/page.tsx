@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { textColor } from "@/lib/color";
 import { showsOutcome } from "@/components/outcome-split";
-import { Ci, freqWord, LineBadge, MockNotice, Odds, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
+import { Ci, freqWord, LineBadge, MockNotice, Narration, Odds, repeatedInYear, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { CorrectChoice } from "@/components/correct";
@@ -80,7 +80,7 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
   );
 }
 
-function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: WorldTemplate; current: boolean; mv: Multiverse; animate: boolean }) {
+function EventCard({ ev, world, current, mv, animate, repeated }: { ev: SimEvent; world: WorldTemplate; current: boolean; mv: Multiverse; animate: boolean; repeated: boolean }) {
   const quiet = ev.eventId === "quiet";
   // 큰 갈림길(내 선택으로 갈리는 곳, 또는 보기 3개 이상)은 고치기 버튼을 접지 않고 선택 바로 아래에 둔다.
   const bigFork = ev.branch === "choice" || (world.events.find((e) => e.id === ev.eventId)?.choices.length ?? 0) >= 3;
@@ -97,7 +97,7 @@ function EventCard({ ev, world, current, mv, animate }: { ev: SimEvent; world: W
         {ev.eventStatus ?? ev.status}
       </p>
       <h3 className={`text-[15px] font-bold leading-snug ${quiet ? "text-muted" : ""}`}>{ev.title}</h3>
-      <p className="mt-1.5 text-sm text-muted">{ev.narration}</p>
+      <Narration ev={ev} repeated={repeated} className="mt-1.5 text-sm text-muted" />
       {ev.choice ? (
         <p className="mt-2 flex gap-1.5 text-sm font-medium">
           <CornerDownRight aria-hidden="true" size={16} className="mt-[3px] flex-none" style={{ color: world.color }} />
@@ -602,11 +602,14 @@ export default function SimulatePage() {
                     <ChevronDown aria-hidden="true" size={18} className="mt-1 flex-none text-muted transition-transform group-open:rotate-180" />
                   </summary>
                   <div className="flex flex-col gap-2 px-2 pb-2 sm:px-3 sm:pb-3">
-                    {y.rows.map((row) => {
+                    {(() => {
+                      const rep = repeatedInYear(y.rows.flatMap((r) => r.events.filter((e) => e.worldId === w.id)));
+                      return y.rows.map((row) => {
                       const ev = row.events.find((e) => e.worldId === w.id);
                       const isCurrent = !done && row === rows.at(-1);
-                      return ev && mvs[w.id] ? <EventCard key={row.station} ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} /> : null;
-                    })}
+                      return ev && mvs[w.id] ? <EventCard key={row.station} ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} repeated={rep.has(ev.station)} /> : null;
+                      });
+                    })()}
                   </div>
                 </details>
               </li>

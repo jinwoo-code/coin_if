@@ -1,7 +1,7 @@
 // '그때의 나'와 대화. 시뮬레이션 기억을 근거로, 사용자의 말투로 답한다.
 import { NextResponse } from "next/server";
 import { hasCrisis } from "@/lib/crisis";
-import { generateJSON } from "@/lib/llm";
+import { generateJSON, hasLLM } from "@/lib/llm";
 import { getWorld } from "@/lib/worlds";
 import { memoriesOf } from "@/lib/sim";
 import { won } from "@/lib/format";
@@ -54,6 +54,7 @@ export async function POST(req: Request) {
   const events = scenes.filter((e) => e.eventId !== "quiet");
   const last = scenes[scenes.length - 1];
   // 목업: 질문에 맞는 기억 하나를 골라 짧게 답한다.
+  let usedFallback = false;
   const fallback = () => {
     if (events.length === 0) return { reply: "기억이 아직 흐릿해. 시뮬레이션을 먼저 끝까지 살아 줘.", memory: null };
     const bads = events.filter((e) => e.kind === "bad");
@@ -92,15 +93,19 @@ export async function POST(req: Request) {
       `지금까지 대화:\n${history.map((h) => `${h.role === "user" ? "과거의 나" : "미래의 나"}: ${h.text}`).join("\n")}\n` +
       `과거의 나: ${message}\n\n` +
       `JSON으로 답해라: {"reply": 답변, "memory": 답변에서 언급한 기억을 "시점: 사건" 형태로, 없으면 null}`,
-    fallback,
+    fallback: () => {
+      usedFallback = hasLLM(); // 키가 있는데 기본 답으로 갔으면 실패(목업 모드는 표시 안 함)
+      return fallback();
+    },
   });
+  const marked = usedFallback ? { ...result, fallback: true } : result;
 
   if (user && admin) {
-    const turns = [...(chat?.turns ?? []), { role: "user", text: message }, { role: "self", text: result.reply, memory: result.memory ?? undefined }];
+    const turns = [...(chat?.turns ?? []), { role: "user", text: message }, { role: "self", text: result.reply, memory: result.memory ?? undefined, ...(usedFallback ? { fallback: true } : {}) }];
     const count = (chat?.count ?? 0) + 1;
     const { error } = await admin.from("chats").upsert({ ...chatKey, turns, count }, { onConflict: "user_id,run_key,career,line_id" });
     if (error) console.error("[대화 저장 실패]", error.message);
-    return NextResponse.json({ ...result, used: count, limit: TALK_LIMIT });
+    return NextResponse.json({ ...marked, used: count, limit: TALK_LIMIT });
   }
-  return NextResponse.json(result);
+  return NextResponse.json(marked);
 }

@@ -46,6 +46,9 @@ test("빠르게 모드로 끝까지", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "입력한 정보" })).toBeVisible({ timeout: 60_000 });
   await expect(page.getByText(/^3개 중 [0-3]개$/)).toBeVisible();
   await expect(page.getByText(/정확도|정밀도/)).toHaveCount(0);
+  // 학교를 안 고르고 넘어갔으면 기본값(전문대)을 고른 것처럼 보이지 않는다
+  await expect(page.getByText("아직 안 적음")).toBeVisible();
+  await expect(page.getByText(/^전문대 /)).toHaveCount(0);
   await page.getByRole("button", { name: "이대로 진로 고르기" }).click();
   await expect(page).toHaveURL(/\/choose/);
 

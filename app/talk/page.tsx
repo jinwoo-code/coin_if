@@ -4,7 +4,7 @@ import { ArrowUp, BarChart3, Clock, CornerDownRight, GitBranch } from "lucide-re
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { LineBadge, MockNotice, Screen, Sheet, Typing } from "@/components/ui";
+import { FallbackNote, LineBadge, MockNotice, Screen, Sheet, Typing } from "@/components/ui";
 import { eulReul, euro, iGa } from "@/lib/josa";
 import { store } from "@/lib/store";
 import { runKey } from "@/lib/sync";
@@ -19,7 +19,7 @@ function periodText(months: number) {
   return months >= 12 ? `${months / 12}년` : `${months}개월`;
 }
 
-function SelfBubble({ world, text, name, memory, onMemory }: { world: WorldTemplate; text: string; name: string; memory?: string; onMemory?: () => void }) {
+function SelfBubble({ world, text, name, memory, onMemory, fallback }: { world: WorldTemplate; text: string; name: string; memory?: string; onMemory?: () => void; fallback?: boolean }) {
   return (
     <div className="flex animate-rise items-start gap-2.5">
       <LineBadge world={world} size={32} />
@@ -28,6 +28,7 @@ function SelfBubble({ world, text, name, memory, onMemory }: { world: WorldTempl
         <p className="rounded-[20px] rounded-tl-md px-4 py-3 text-base" style={{ background: `${world.color}14` }}>
           {text}
         </p>
+        {fallback ? <FallbackNote /> : null}
         {memory ? (
           <button onClick={onMemory} className="chip min-h-[36px] self-start px-3 text-cap">
             <Clock aria-hidden="true" size={14} /> 기억: {memory}
@@ -131,7 +132,7 @@ function TalkPage() {
         setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: `${data.error}. 다른 ${eulReul(T.line)} 골라서 이어 가 줘.` }] }));
         return;
       }
-      setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: data.reply, memory: data.memory ?? undefined }] }));
+      setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: data.reply, memory: data.memory ?? undefined, ...(data.fallback ? { fallback: true } : {}) }] }));
       if (data.used === 1) window.dispatchEvent(new Event("cr:tokens")); // 첫 마디에 2토큰
     } catch {
       setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: "지금은 대답하기 어려워. 잠깐 뒤에 다시 물어봐 줘." }] }));
@@ -224,7 +225,7 @@ function TalkPage() {
               {m.text}
             </p>
           ) : (
-            <SelfBubble key={i} world={world} name={selfName} text={m.text} memory={m.memory} onMemory={() => setOpenMemory(m.memory ? findEvent(m.memory) : null)} />
+            <SelfBubble key={i} world={world} name={selfName} text={m.text} memory={m.memory} fallback={m.fallback} onMemory={() => setOpenMemory(m.memory ? findEvent(m.memory) : null)} />
           ),
         )}
         {busy ? (

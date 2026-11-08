@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { won } from "@/lib/format";
 import { TokenChip } from "./account";
-import type { ChoiceOdds, LifeState, WorldTemplate } from "@/lib/types";
+import type { ChoiceOdds, LifeState, SimEvent, WorldTemplate } from "@/lib/types";
 import { T, plain } from "@/lib/copy";
 
 // ---------- 화면 틀 ----------
@@ -265,3 +265,32 @@ export function Odds({ odds }: { odds: ChoiceOdds }) {
   );
 }
 
+
+// AI 문장 대신 기본 문장이 나갈 때 붙이는 작은 안내(판단 실패 표시와 같은 자리·크기)
+export const FALLBACK_NOTE = "AI 문장 대신 기본 문장";
+export function FallbackNote() {
+  return <span className="mt-1 block text-cap font-semibold text-muted">{FALLBACK_NOTE}</span>;
+}
+
+// 같은 해(장면 이름 앞 네 자리)에 같은 문장이 또 나오면 그 장면 번호를 돌려준다. 같은 기본 문장을 한 해에 한 번만 보이게 할 때 쓴다.
+export function repeatedInYear(evs: SimEvent[]): Set<number> {
+  const seen = new Set<string>();
+  const out = new Set<number>();
+  for (const e of evs) {
+    if (e.eventId === "quiet") continue;
+    const k = `${e.label.slice(0, 4)}|${e.worldId}|${e.narration}`;
+    if (seen.has(k)) out.add(e.station);
+    else seen.add(k);
+  }
+  return out;
+}
+
+// 장면 문장. 되풀이면 문장 대신 짧게, AI 서술 실패면 안내를 붙인다.
+export function Narration({ ev, repeated, className }: { ev: SimEvent; repeated: boolean; className: string }) {
+  return (
+    <p className={className}>
+      {repeated ? "앞과 같은 일이 또 있었어요." : ev.narration}
+      {ev.narrationFallback && !repeated ? <FallbackNote /> : null}
+    </p>
+  );
+}

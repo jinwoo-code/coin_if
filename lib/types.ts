@@ -366,6 +366,7 @@ export interface SimEvent {
   title: string;
   kind: EventCard["kind"];
   narration: string;
+  narrationFallback?: boolean; // AI 서술을 받으려다 실패해(또는 처지 검사에 걸려) 사건 원문 그대로인 장면. 키가 없을 때(목업)는 표시 안 함
   choice: string;
   choiceIndex: number;
   reason: string;
@@ -436,6 +437,7 @@ export interface ChatMessage {
   role: "user" | "self";
   text: string;
   memory?: string;
+  fallback?: boolean; // AI가 답하지 못해 기본 문장으로 대신한 답(키는 있는데 실패한 경우만)
 }
 
 export interface Report {

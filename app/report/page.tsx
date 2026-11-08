@@ -450,6 +450,9 @@ export default function ReportPage() {
             <h2 id="fit" className="text-2xl font-extrabold sm:text-3xl">
               내 가치관과 얼마나 맞았을까?
             </h2>
+            <p className="mt-2 text-sm text-muted" data-testid="no-guarantee">
+              이 리포트는 준비 계획이지 합격·취업을 보장하지 않아요.
+            </p>
             {profile.values.length ? (
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <p className="text-sm font-semibold text-muted">중요하게 생각한 가치</p>

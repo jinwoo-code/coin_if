@@ -13,6 +13,9 @@ test("결론·행동은 펼치고 나머지는 접는다, 눌러서 다 볼 수 
   await toReport(page);
   await page.goto("/report");
   await expect(page.getByTestId("fit-leader")).toBeVisible({ timeout: 120_000 });
+  // 펼치지 않은 첫 화면에도 보장하지 않는다는 한 줄
+  await expect(page.getByTestId("no-guarantee")).toBeVisible();
+  await expect(page.getByTestId("no-guarantee")).toHaveText(/준비 계획이지 합격·취업을 보장하지 않아요/);
   await expect(page.getByRole("heading", { name: "이번 주 실행 계획" })).toBeVisible();
   await expect(page.getByRole("link", { name: /세계선 지도에서 자세히 보기/ }).first()).toBeVisible();
   const runs = page.getByTestId("report-runs");

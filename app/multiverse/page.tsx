@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { textColor } from "@/lib/color";
 import { OutcomeSplit, showsOutcome } from "@/components/outcome-split";
-import { Ci, CI_NOTE, LineBadge, MockNotice, Odds, RangeRow, Screen, Sheet, Typing, won } from "@/components/ui";
+import { Ci, CI_NOTE, LineBadge, MockNotice, Narration, Odds, RangeRow, repeatedInYear, Screen, Sheet, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -115,7 +115,7 @@ function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: Li
 
 // ---------- 세계선 안의 장면(시트) ----------
 
-function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; onFlip: (ev: SimEvent) => void }) {
+function SceneRow({ ev, world, onFlip, repeated = false }: { ev: SimEvent; world: WorldTemplate; onFlip: (ev: SimEvent) => void; repeated?: boolean }) {
   if (ev.eventId === "quiet")
     return (
       <li className="relative pl-6 text-cap text-muted">
@@ -132,7 +132,7 @@ function SceneRow({ ev, world, onFlip }: { ev: SimEvent; world: WorldTemplate; o
         {ev.label} · {ev.status}
       </p>
       <h4 className="text-[15px] font-bold">{ev.title}</h4>
-      <p className="mt-1 text-sm text-muted">{ev.narration}</p>
+      <Narration ev={ev} repeated={repeated} className="mt-1 text-sm text-muted" />
       {ev.choice ? (
         <p className="mt-1.5 flex gap-1.5 text-sm font-medium">
           <CornerDownRight aria-hidden="true" size={16} className="mt-[3px] flex-none" style={{ color: world.color }} />
@@ -631,8 +631,8 @@ function MultiversePage() {
               <Ci pct={explored.stats.satisfiedShare} n={explored.stats.runs} />
             </p>
             <ol className="mt-4 flex flex-col gap-4">
-              {explored.scenes.map((ev) => (
-                <SceneRow key={ev.station} ev={ev} world={world} onFlip={() => undefined} />
+              {explored.scenes.map((ev, _i, all) => (
+                <SceneRow key={ev.station} ev={ev} world={world} onFlip={() => undefined} repeated={repeatedInYear(all).has(ev.station)} />
               ))}
             </ol>
             <button className="btn-ghost mt-5 w-full" onClick={() => setExplored(null)}>
@@ -651,8 +651,8 @@ function MultiversePage() {
             ) : null}
             {scenes ? (
               <ol className="mt-4 flex flex-col gap-4">
-                {scenes.map((ev) => (
-                  <SceneRow key={ev.station} ev={ev} world={world} onFlip={flip} />
+                {scenes.map((ev, _i, all) => (
+                  <SceneRow key={ev.station} ev={ev} world={world} onFlip={flip} repeated={repeatedInYear(all).has(ev.station)} />
                 ))}
               </ol>
             ) : (

@@ -1,6 +1,6 @@
 // 서버 전용: 세계선의 장면에 AI가 문장을 입힌다.
 // 숫자(사건, 선택, 상태값)는 전부 규칙 엔진이 정했고, AI는 문장만 쓴다. 그래서 이야기와 통계가 어긋나지 않는다.
-import { generateJSON } from "./llm";
+import { generateJSON, hasLLM } from "./llm";
 import { badWords, dropDuplicateSentences, PHASE_WORD, phaseOf, stripRoleTags } from "./narrate-check";
 import type { Profile, SimEvent, WorldTemplate } from "./types";
 
@@ -97,9 +97,13 @@ export async function narrate(profile: Profile, worlds: WorldTemplate[], scenes:
     }
   }
   if (redone) console.log(`[서술] 처지와 안 맞는 말로 다시 쓴 장면 ${redone}개, 그래도 걸려 원래 글을 쓴 장면 ${dropped}개`);
+  // 키가 있는데 AI 문장을 못 받은 장면(실패·처지 검사에 걸림)은 표시를 남겨 화면에 'AI 문장 대신 기본 문장'을 붙인다.
+  const failed = hasLLM();
   return scenes.map((s) => {
     const b = out.get(keyOf(s));
-    return b ? { ...s, narration: b.narration || s.narration, choice: b.choice || s.choice } : s;
+    if (b?.narration) return { ...s, narration: b.narration, choice: b.choice || s.choice, narrationFallback: undefined };
+    const base = b ? { ...s, choice: b.choice || s.choice } : s;
+    return s.eventId !== "quiet" && failed ? { ...base, narrationFallback: true } : base;
   });
 }
 

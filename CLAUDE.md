@@ -48,7 +48,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/report-summary.ts   # 시연 진
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/diagnose-satisfaction.ts   # 10년 만족도 분포(대표 진로 5개 × 인물 2명, 보기만)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-retrain.ts 경영학과   # 전공 안 맞을 때 학과 다니기 전후(해당 진로만)
 npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/check-salary.ts   # 경고만: 첫 연봉이 재직자 하위 25%보다 높은 진로
-BASE_URL=https://coinif.vercel.app npx playwright test    # 기본: 배포 사이트에서(팀장 지시). 로컬은 npx playwright test. 화면 흐름 테스트(e2e/): 전체 흐름(시연 인물 + 검사 깊이 3개), 리포트 3인(`report-three`: 프리미엄 생성 → 계획 수정 → 다시 살아 보기 → 공유), 빠르게+체크인, 표준, 인생 이야기, 실시간, AI 판단 실패 표시, 고치기 버튼 여백, 모든 화면 넘침, 플래그. 키를 비워 AI를 안 부름(E2E_REAL_AI=1이면 부름, E2E_BAD_KEY=1이면 틀린 키로 실제 실패)
+BASE_URL=https://coinif.vercel.app npx playwright test    # 기본: 배포 사이트에서(팀장 지시). 로컬은 npx playwright test. 화면 흐름 테스트(e2e/): 전체 흐름(시연 인물 + 검사 깊이 3개), 리포트 3인(`report-three`: 프리미엄 생성 → 계획 수정 → 다시 살아 보기 → 공유), 빠르게+체크인, 표준, 인생 이야기, 실시간, AI 판단 실패 표시, AI 문장 대신 기본 문장 표시(`fallback-text`, E2E_BAD_KEY=1이면 표시가 보여야 함), 고치기 버튼 여백, 모든 화면 넘침, 플래그. 키를 비워 AI를 안 부름(E2E_REAL_AI=1이면 부름, E2E_BAD_KEY=1이면 틀린 키로 실제 실패)
 ```
 
 파일럿 링크: `/interview?pilot=1`(이 기기에 초대 표시 → 동의·시작 전 설문 `/pilot/survey?when=pre` → 검사 → 검사 결과·진로 고르기에 '파일럿 상황 질문' → `/pilot` → 리포트에 '파일럿 마무리 설문' `/pilot/survey?when=post`). 집계는 `scripts/pilot-report.ts`.
