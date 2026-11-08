@@ -11,7 +11,8 @@ export const COSTS = {
 export type Feature = keyof typeof COSTS;
 
 export const TALK_LIMIT = 20; // 대화: 갈래 길 하나에 내가 보내는 마디 수
-export const LIVE_MONTHLY_LIMIT = 3; // 대학 계약 학생의 직접 모드 한 달 횟수
+export const LIVE_MONTHLY_LIMIT = 1; // 대학 계약 학생의 직접 모드 한 달 포함 횟수(2026-11-09 이용권 C안). 넘으면 지금은 막는다(토큰으로 더 쓰기는 준비 중)
+export const LIVE_OVER_LIMIT_MESSAGE = `이번 달 학교 이용권 ${LIVE_MONTHLY_LIMIT}회를 다 썼어요. 토큰 ${COSTS.live_simulate}개로 더 쓸 수 있어요(준비 중).`;
 export const SIGNUP_BONUS = 5; // 가입 선물(DB 트리거와 같은 값)
 
 // 충전 상품. 결제 금액은 서버가 이 표로 확인한다. 1개 단위 판매는 없다.

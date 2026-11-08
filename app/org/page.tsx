@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Screen } from "@/components/ui";
 import { FLAGS } from "@/lib/flags";
+import { LIVE_MONTHLY_LIMIT } from "@/lib/token-policy";
 
 interface Org {
   name: string;
@@ -90,7 +91,7 @@ export default function OrgPage() {
         <section className="card mt-4 p-5">
           <p className="label">{state.org.name}</p>
           <p className="mt-1 text-2xl font-extrabold">학교 계약 이용 중</p>
-          <p className="mt-1 text-sm text-muted">{state.org.until}까지 토큰이 줄지 않아요. AI가 직접 살아 보는 모드는 한 달 3번까지예요.</p>
+          <p className="mt-1 text-sm text-muted">{state.org.until}까지 토큰이 줄지 않아요. AI가 직접 살아 보는 모드는 한 달 {LIVE_MONTHLY_LIMIT}번까지예요.</p>
           <p className="mt-3 text-cap text-muted">학교에는 학생 개인 결과가 아니라 5명 이상 모인 항목의 합계만 보여요.</p>
           {FLAGS.counselor ? <CounselShare /> : null}
         </section>

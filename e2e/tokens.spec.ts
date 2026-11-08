@@ -35,6 +35,7 @@ test("토큰 API: 값과 주문 거부", async ({ request }) => {
   const info = await (await request.get("/api/tokens")).json();
   expect(info.costs).toEqual({ simulate: 0, live_simulate: 3, premium_report: 5, talk: 0 });
   expect(info.talkLimit).toBe(20);
+  expect(info.liveMonthlyLimit).toBe(1); // 대학 학생 직접 모드 한 달 1회(이용권 C안, 넘으면 막음)
   // 로그인 안 하면 주문을 못 만든다
   const res = await request.post("/api/pay/order", { data: { productId: "t5", agreed: true } });
   expect(res.status()).toBe(401);

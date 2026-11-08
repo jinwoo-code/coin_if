@@ -1,6 +1,6 @@
 // 내 토큰 잔액과 대학 무제한 여부. 본인 행만 읽는다(RLS, anon 키 + 세션).
 import { NextResponse } from "next/server";
-import { COSTS, TALK_LIMIT } from "@/lib/tokens";
+import { COSTS, LIVE_MONTHLY_LIMIT, TALK_LIMIT } from "@/lib/tokens";
 import { currentUser, supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const sb = supabaseServer();
   const user = await currentUser();
-  if (!sb || !user) return NextResponse.json({ loggedIn: false, costs: COSTS, talkLimit: TALK_LIMIT });
+  if (!sb || !user) return NextResponse.json({ loggedIn: false, costs: COSTS, talkLimit: TALK_LIMIT, liveMonthlyLimit: LIVE_MONTHLY_LIMIT });
   const today = new Date().toISOString().slice(0, 10);
   const [{ data: bal }, { data: orgs }] = await Promise.all([
     sb.from("token_balances").select("balance").eq("user_id", user.id).maybeSingle(),
@@ -25,5 +25,6 @@ export async function GET() {
     org: live ? { name: live.name, until: live.contract_end, status: live.status } : null,
     costs: COSTS,
     talkLimit: TALK_LIMIT,
+    liveMonthlyLimit: LIVE_MONTHLY_LIMIT,
   });
 }
