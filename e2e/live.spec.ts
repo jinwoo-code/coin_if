@@ -54,7 +54,7 @@ test("실시간 판단 모드 멈춤과 이어서 하기", async ({ page }) => {
   expect((await page.locator("main").innerText()).replace(/\s/g, "").includes(text.split("어떤 갈래로")[0].replace(/\s/g, "").slice(-30))).toBeTruthy();
 
   // 세계선 지도·리포트에서 1,000번 통계와 따로 'AI가 직접 살아 본 30개의 삶' 칸으로 잇는다(그 삶을 규칙으로 다시 살지 않는다)
-  await page.getByRole("button", { name: /세계선 지도·대화·리포트에서 이어 보기/ }).click();
+  await page.getByRole("button", { name: /갈래 길 지도·대화·리포트에서 이어 보기/ }).click();
   await expect(page).toHaveURL(/\/multiverse/, { timeout: 60_000 });
   await expect(page.getByText(/1,000번 중/).first()).toBeVisible(); // 나무는 1,000번
   const card = page.getByRole("region", { name: /AI가 직접 살아 본 30개의 삶/ });

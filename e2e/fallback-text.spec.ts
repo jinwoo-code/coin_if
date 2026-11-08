@@ -11,7 +11,7 @@ test(`서술 기본 문장 안내와 한 해 반복 접기 (${BAD ? "틀린 키"
   await page.goto("/");
   await openDemo(page, "nurse");
   await expect(page).toHaveURL(/\/simulate/, { timeout: 30_000 });
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+  await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
   await openTimeline(page);
   const notes = page.getByText("AI 문장 대신 기본 문장");
   if (BAD) await expect(notes.first()).toBeVisible();

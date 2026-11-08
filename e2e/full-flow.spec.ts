@@ -27,7 +27,7 @@ async function mockLiveJudge(page: Page) {
 // 시뮬이 끝나고 세계선 지도까지
 async function simulateToMap(page: Page) {
   await expect(page).toHaveURL(/\/simulate/);
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).click({ timeout: SIM_WAIT });
+  await page.getByRole("link", { name: /다른 갈래 길 보기/ }).click({ timeout: SIM_WAIT });
   await expect(page).toHaveURL(/\/multiverse/);
   await expect(page.getByText(/1,000번 중/).first()).toBeVisible({ timeout: 60_000 });
 }
@@ -44,13 +44,13 @@ test("시연 인물 끝까지", async ({ page }) => {
   const flip = page.getByRole("button", { name: /여기서 다르게 골랐다면|운이 반대였다면/ }).first();
   await expect(flip).toBeVisible({ timeout: 60_000 });
   await flip.click();
-  await expect(page.getByText("반대로 간 세계")).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByText("반대로 간 길")).toBeVisible({ timeout: 90_000 });
   await expect(page.getByText(/다시 살아봤어요/)).toBeVisible();
-  await page.getByRole("button", { name: "원래 세계로 돌아가기" }).click();
+  await page.getByRole("button", { name: "원래 길로 돌아가기" }).click();
 
   // 이 세계의 나와 대화
   await page.route("**/api/talk", (r) => r.fulfill({ json: { reply: "그 세계에서는 그렇게 됐어.", memory: null } }));
-  await page.getByRole("button", { name: /이 세계의 나와 대화하기/ }).click();
+  await page.getByRole("button", { name: /이 길의 나와 대화하기/ }).click();
   await expect(page).toHaveURL(/\/talk/);
   await page.getByRole("textbox").fill("어땠어?");
   await page.keyboard.press("Enter");
@@ -69,7 +69,7 @@ test("시연 인물 끝까지", async ({ page }) => {
   });
   await page.goto("/live");
   await expect(page.getByRole("status")).toContainText("다 살아봤어요", { timeout: 120_000 });
-  await page.getByRole("button", { name: /세계선 지도·대화·리포트에서 이어 보기/ }).click();
+  await page.getByRole("button", { name: /갈래 길 지도·대화·리포트에서 이어 보기/ }).click();
   await expect(page).toHaveURL(/\/multiverse/, { timeout: 60_000 });
   await expect(page.getByRole("region", { name: /AI가 직접 살아 본 30개의 삶/ })).toContainText("30번 중");
 

@@ -53,7 +53,7 @@ for (const how of cases) {
     const failed = page.getByText("AI 판단 실패 → 규칙 계산").first();
     await expect.poll(() => calls, { timeout: 60_000 }).toBeGreaterThan(0);
     // 시뮬레이션이 끝날 때까지 기다린 뒤(무료 키 배포본은 몇 분 걸림) 큰 갈림길 장면을 찾는다
-    await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
     await expect(page.locator("details").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first()).toBeAttached({ timeout: 30_000 });
     await openTimeline(page);
     await page.locator("details:not([data-testid])").filter({ hasText: "AI 판단 실패 → 규칙 계산" }).first().locator("summary").click();
@@ -77,7 +77,7 @@ for (const width of [320, 390]) {
     });
     await page.reload();
     const btn = page.getByRole("button", { name: "나라면 이렇게 안 해" }).first();
-    await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
     await openTimeline(page);
     await expect(btn).toBeAttached();
     const gap = await btn.evaluate((el) => {
@@ -120,7 +120,7 @@ for (const how of ["서버 실패", "응답 중간에 끊김"] as const) {
     fail = false;
     await again.click();
     mark("다시 살아보기 누름");
-    await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
     mark("끝까지 감");
   });
 }

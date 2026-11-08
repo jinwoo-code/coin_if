@@ -8,7 +8,7 @@ test("스펙 안 적음 안내와 끝난 뒤 머리글 진행 표시", async ({ 
   await page.goto("/");
   await openDemo(page, "developer");
   await expect(page).toHaveURL(/\/simulate/, { timeout: 30_000 });
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+  await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
   const progress = page.locator("header span[aria-live='polite']");
   await expect(progress).toHaveText("");
   // 예시 인물은 스펙을 적었으니 안내가 없다

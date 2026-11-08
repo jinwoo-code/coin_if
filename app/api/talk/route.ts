@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   if (user && admin) {
     const { data } = await admin.from("chats").select("turns, count").match(chatKey).maybeSingle();
     chat = (data as Chat | null) ?? null;
-    if ((chat?.count ?? 0) >= TALK_LIMIT) return NextResponse.json({ error: `이 세계선의 대화는 ${TALK_LIMIT}마디까지예요`, limit: TALK_LIMIT }, { status: 429 });
+    if ((chat?.count ?? 0) >= TALK_LIMIT) return NextResponse.json({ error: `이 길의 대화는 ${TALK_LIMIT}마디까지예요`, limit: TALK_LIMIT }, { status: 429 });
     if (!chat?.count) {
       const paid = await spend("talk", `${runKey ?? ""}:${worldId}:${lineId ?? ""}`);
       if (!paid.ok) return paywall(paid);

@@ -59,7 +59,7 @@ function LineCard({ line, world, picked, onOpen, onPick }: { line: Line; world: 
       <p className="num mt-1 text-cap text-muted">모은 돈·연봉은 이 길 {T.basisLineCard(line.count)}이에요.</p>
       <div className="mt-3 flex gap-2">
         <button onClick={onOpen} className="btn-ghost min-h-[44px] flex-1 text-sm">
-          이 세계 살아보기
+          이 길 살아보기
         </button>
         <button onClick={onPick} aria-pressed={picked} className={`chip min-h-[44px] flex-none px-3 text-sm ${picked ? "border-ink bg-ink text-white" : ""}`}>
           {picked ? <Check aria-hidden="true" size={16} /> : <ArrowLeftRight aria-hidden="true" size={16} />} 비교
@@ -175,7 +175,7 @@ function Compare({ a, b, world }: { a: Line; b: Line; world: WorldTemplate }) {
     ["역량", (l) => String(l.final.skill.p50)],
   ];
   return (
-    <section aria-label="두 세계 비교" className="card mt-4 animate-rise overflow-hidden">
+    <section aria-label="두 길 비교" className="card mt-4 animate-rise overflow-hidden">
       <div className="grid grid-cols-[1fr_1fr_1fr] gap-2 border-b border-hair p-3.5 text-sm font-bold">
         <span className="text-muted">비교</span>
         <span>{a.title}</span>
@@ -423,7 +423,7 @@ function MultiversePage() {
     const force = ev.branch === "luck" ? { eventId: ev.eventId, outcome: "skip" as const } : { eventId: ev.eventId, choiceIndex: (ev.choiceIndex + 1) % card.choices.length };
     const name = card.branchLabel ?? card.title;
     const alt = force.choiceIndex !== undefined ? (card.choices[force.choiceIndex].label ?? card.choices[force.choiceIndex].text) : "";
-    const title = ev.branch === "luck" ? `${quoted(name, iGa)} 일어나지 않은 세계` : `'${name}'에서 ${quoted(alt, eulReul)} 고른 세계`;
+    const title = ev.branch === "luck" ? `${quoted(name, iGa)} 일어나지 않은 길` : `'${name}'에서 ${quoted(alt, eulReul)} 고른 길`;
     setBusy(true);
     try {
       const res = await fetch("/api/explore", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, selection, worldId: world.id, force }) });
@@ -528,11 +528,14 @@ function MultiversePage() {
         <div className="mt-4 grid gap-2.5">
           <RangeRow label="모은 돈" {...st.final.money} color={world.color} money max={Math.max(st.final.money.p90, 1000)} />
           {st.salary.p50 ? <RangeRow label="연봉(일하는 경우)" {...st.salary} color={world.color} money max={6000} /> : null}
-          <RangeRow label="만족도" {...st.final.satisfaction} color={world.color} />
+          <RangeRow label="끝날 때 만족도(점수)" {...st.final.satisfaction} color={world.color} />
         </div>
-        <p className="mt-2 text-cap text-muted">
-          {T.basisAll(times(st.runs))}이 굵은 선이고, 옅은 띠는 10번 중 8번이 들어간 범위예요. {CI_NOTE}
-        </p>
+        <details className="mt-1 text-cap text-muted">
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold">막대 읽는 법</summary>
+          <p>
+            {T.basisAll(times(st.runs))}이 굵은 선이고, 옅은 띠는 10번 중 8번이 들어간 범위예요. 만족도는 끝날 때 점수(0~100)라 위의 &apos;만족하며 끝난 비율&apos;(%)과 달라요. {CI_NOTE}
+          </p>
+        </details>
 
         {st.factors.length ? (
           <div className="mt-5 border-t border-hair pt-4">
@@ -570,7 +573,7 @@ function MultiversePage() {
       <details className="card mt-4 p-5 [&_summary::-webkit-details-marker]:hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-bold">
           <span className="flex items-center gap-2">
-            <BarChart3 aria-hidden="true" size={18} style={{ color: world.color }} /> 이 세계를 만든 근거 자료 {world.facts.length}개
+            <BarChart3 aria-hidden="true" size={18} style={{ color: world.color }} /> 이 진로의 근거 자료 {world.facts.length}개
           </span>
           <span className="text-cap font-semibold text-muted">펼치기</span>
         </summary>
@@ -606,7 +609,7 @@ function MultiversePage() {
         <h2 id="tree" className="flex items-center gap-2 text-xl font-bold">
           <GitBranch aria-hidden="true" size={20} style={{ color: world.color }} /> 갈라진 {T.line} {mv.lines.length}개
         </h2>
-        <p className="mt-1 text-sm text-muted">갈림길마다 {times(mv.stats.runs)}번 중 몇 번이 어느 쪽으로 갔는지예요. 두 세계를 골라 비교해 보세요.</p>
+        <p className="mt-1 text-sm text-muted">갈림길마다 {times(mv.stats.runs)}번 중 몇 번이 어느 쪽으로 갔는지예요. 두 길을 골라 비교해 보세요.</p>
         {pickedLines.length === 2 ? <Compare a={pickedLines[0]} b={pickedLines[1]} world={world} /> : null}
         <p className="mt-1 text-cap text-muted" data-testid="tree-basis">
           {T.basisLine}
@@ -621,7 +624,7 @@ function MultiversePage() {
       <LiveLives world={world} />
 
       {/* 세계선 하나 살아보기 */}
-      <Sheet open={open !== null} onClose={() => setOpen(null)} title={explored ? "반대로 간 세계" : (open?.title ?? "")}>
+      <Sheet open={open !== null} onClose={() => setOpen(null)} title={explored ? "반대로 간 길" : (open?.title ?? "")}>
         {explored ? (
           <div>
             <p className="text-base font-bold">{explored.title}</p>
@@ -636,13 +639,13 @@ function MultiversePage() {
               ))}
             </ol>
             <button className="btn-ghost mt-5 w-full" onClick={() => setExplored(null)}>
-              원래 세계로 돌아가기
+              원래 길로 돌아가기
             </button>
           </div>
         ) : open ? (
           <div>
             <p className="num text-sm text-muted">
-              {times(mv.stats.runs)}번 중 {times(open.count)}번이 이 세계로 왔어요. 아래는 그중 가장 전형적인 한 번이에요.
+              {times(mv.stats.runs)}번 중 {times(open.count)}번이 이 길로 왔어요. 아래는 그중 가장 전형적인 한 번이에요.
             </p>
             {busy ? (
               <p className="mt-3 flex items-center gap-2 text-sm text-muted">
@@ -657,11 +660,11 @@ function MultiversePage() {
               </ol>
             ) : (
               <p className="mt-4 flex items-center gap-2 text-sm text-muted">
-                <Typing label="불러오는 중" /> 이 세계를 살아보는 중…
+                <Typing label="불러오는 중" /> 이 길을 살아보는 중…
               </p>
             )}
             <button className="btn-primary mt-5 w-full" onClick={() => talkTo(open)}>
-              <MessageCircle aria-hidden="true" size={18} /> 이 세계의 나와 대화하기
+              <MessageCircle aria-hidden="true" size={18} /> 이 길의 나와 대화하기
             </button>
           </div>
         ) : null}

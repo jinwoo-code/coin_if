@@ -16,7 +16,7 @@ test("글자 대비·크기 점검", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await openDemo(page);
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+  await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
 
   const rows: Record<string, unknown>[] = [];
   for (const width of [390, 1280]) {

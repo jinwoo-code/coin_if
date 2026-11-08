@@ -15,7 +15,7 @@ test("모든 화면 넘침 검사", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await openDemo(page);
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+  await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
   await page.evaluate(() => localStorage.setItem("cr:v10:pilotInvite", "true"));
 
   const report: object[] = [];

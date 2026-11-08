@@ -104,7 +104,7 @@ for (const width of [390, 1280]) {
       await page.waitForURL(/simulate/);
       await page.waitForTimeout(4000);
       await shot(page, "02-시뮬레이션-진행-중", false);
-      const toMap = page.getByRole("link", { name: /다른 세계선 보기/ });
+      const toMap = page.getByRole("link", { name: /다른 갈래 길 보기/ });
       await toMap.waitFor({ timeout: SIM_WAIT });
       await shot(page, "03-시뮬레이션-첫-진로");
       const year = page.getByTestId("year").filter({ has: page.getByTestId("event-detail") }).first();

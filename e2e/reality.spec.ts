@@ -13,7 +13,7 @@ for (const [name, body, shown] of [
     await page.route("**/api/live?*", (r) => r.fulfill({ json: body }));
     await page.goto("/");
     await openDemo(page);
-    await page.getByRole("link", { name: /다른 세계선 보기/ }).click({ timeout: SIM_WAIT });
+    await page.getByRole("link", { name: /다른 갈래 길 보기/ }).click({ timeout: SIM_WAIT });
     await expect(page.getByText("지금 현실에서는")).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("채용 공고는 기관 키 연결 후 보여 드려요")).toHaveCount(shown ? 1 : 0);
     await expect(page.getByText(/고용24에 연결하지 못했어요/)).toHaveCount(0);

@@ -10,7 +10,7 @@ for (const [button, name, worlds] of [
     test.setTimeout(600_000);
     await page.goto("/");
     await openDemo(page, button);
-    await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+    await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
 
     // 큰 갈림길 고치기: 자세히를 펼치지 않아도 연도만 펼치면 보인다. 가장 흔한 길에 큰 갈림길이 없는 진로면 다음 진로에서 찾는다.
     const years = page.getByTestId("year");
@@ -37,7 +37,7 @@ for (const [button, name, worlds] of [
     expect(corrected.length).toBeGreaterThanOrEqual(1);
 
     // 요약 카드·비교 표 숫자 기준
-    await expect(page.getByTestId("summary-basis")).toHaveText("가장 흔한 길 중 한 번의 삶");
+    await expect(page.getByTestId("summary-basis")).toHaveText(/^가장 흔한 길 중 한 번의 삶/);
     await expect(page.getByTestId("compare-all").getByText("1,000번 전체의 가운데 값").first()).toBeVisible();
 
     await page.goto("/me");

@@ -85,7 +85,7 @@ export default function Admin() {
               ? s.careers.map((c) => <Row key={c.career} left={careerName(c.career)} right={`${c.students}명`} />)
               : empty}
           </Block>
-          <Block title="많이 막힌 길" note="학생마다 만족 비율이 가장 낮게 끝난 세계선">
+          <Block title="많이 막힌 길" note="학생마다 만족 비율이 가장 낮게 끝난 갈래 길">
             {s.stuck?.length
               ? s.stuck.map((x) => <Row key={x.career + x.line} left={x.line} sub={`${careerName(x.career)} · 끝나고 만족 ${x.satisfied}%`} right={`${x.students}명`} />)
               : empty}

@@ -74,7 +74,7 @@ function ForkNote({ mv, ev, world }: { mv: Multiverse; ev: SimEvent; world: Worl
       <span>
         갈림길 · {ev.branch === "choice" ? "내 선택" : "운"}으로 갈림
         <span className="block font-normal text-muted">
-          여기서 {times(fork.parent.count)}번 중 {times(others)}번은 다른 세계로 갔어요
+          여기서 {times(fork.parent.count)}번 중 {times(others)}번은 다른 길로 갔어요
         </span>
       </span>
     </Link>
@@ -206,6 +206,7 @@ function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev
       {ev ? (
         <p className="mb-2 text-cap text-muted" data-testid="summary-basis">
           {T.basisMain}
+          {mv ? <span className="num"> · {times(mv.stats.runs)}번 중 {times(mv.lines.find((l) => l.isMain)?.count ?? 0)}번이 이 길로 갔어요</span> : null}
         </p>
       ) : null}
       {ev ? (
@@ -217,10 +218,10 @@ function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev
               {legacy ? <dd className="num mt-0.5 text-cap text-muted">{T.basisAll(times(mv?.stats.runs ?? 1000))}</dd> : null}
             </div>
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
-              <dt className="text-sm font-medium text-muted">끝날 때 만족도(점수)</dt>
+              <dt className="text-sm font-medium text-muted">이 삶의 만족도</dt>
               <dd className="num mt-1 text-lg font-extrabold">
-                {ev.state.satisfaction}
-                <span className="ml-1 text-sm font-normal text-muted">/ 100</span>
+                {ev.state.satisfaction}점
+                <span className="ml-1 text-sm font-normal text-muted">/ 100점</span>
               </dd>
             </div>
             <div className="min-w-0 rounded-xl bg-ground p-3 sm:p-4">
@@ -237,7 +238,7 @@ function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev
             <p className="num">
               스트레스 {ev.state.stress} / 100 · 역량 {ev.state.skill} / 100
             </p>
-            <p className="mt-1">위 숫자는 모두 지금 보는 {T.mainLine} 한 번의 값이에요. {times(mv?.stats.runs ?? 1000)}번 전체 값은 아래 &apos;진로를 한눈에 비교해요&apos; 표에 있어요.</p>
+            <p className="mt-1">위 숫자는 모두 지금 보는 {T.mainLine} 한 번의 값이에요. 만족도는 끝날 때 점수(0~100)이고, {times(mv?.stats.runs ?? 1000)}번 중 만족하며 끝난 비율(%)은 아래 &apos;진로를 한눈에 비교해요&apos; 표에 있어요.</p>
           </details>
         </>
       ) : null}
@@ -245,72 +246,75 @@ function SummaryCard({ world, ev, mv, done, scenes }: { world: WorldTemplate; ev
   );
 }
 
-// 시험형 칸: 합격(그중 만족) / 준비 중 / 다른 길(그중 만족)
+// 시험형 칸: 합격자 중 만족을 크게, 준비 중·다른 길은 작게(전부 끝 상태 비율)
 function OutcomeCell({ st }: { st: WorldStats }) {
   const o = st.outcome!;
   return (
-    <span className="flex flex-col text-cap leading-snug">
-      <span>합격 {o.gate.share}% (그중 만족 {o.gate.satisfied}%)</span>
-      <span>준비 중 {o.preparing.share}%</span>
-      <span>다른 길 {o.switched.share}% (그중 만족 {o.switched.satisfied}%)</span>
+    <span className="flex flex-col gap-0.5">
+      <span>합격 {o.gate.share}%</span>
+      <span className="text-cap font-medium text-muted">
+        합격자 중 만족 {o.gate.satisfied}% · 준비 중 {o.preparing.share}% · 다른 길 {o.switched.share}%
+      </span>
     </span>
   );
 }
 
 // 진로를 하나씩 본 뒤 한눈에 비교한다. 숫자는 전부 엔진 값이고, 진로가 하나면 안 그린다.
+// 휴대폰에서 항목 이름이 좁은 왼쪽 칸에서 줄바꿈되지 않게, 항목 이름을 값 위 한 줄에 둔다(표 역할은 ARIA로 유지).
 function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Record<string, Multiverse>; onPick: (id: string) => void }) {
   const list = worlds.filter((w) => mvs[w.id]);
   if (list.length < 2) return null;
+  const runs = times(mvs[list[0].id].stats.runs);
+  const exam = list.some((w) => showsOutcome(w, mvs[w.id].stats));
   const rows: { label: string; note?: string; value: (mv: Multiverse) => React.ReactNode }[] = [
     { label: "합격·취업", value: (mv) => `${mv.stats.gate?.share ?? 0}%` },
-    { label: "만족하며 끝난 비율", note: list.some((w) => showsOutcome(w, mvs[w.id].stats)) ? "시험형은 끝 상태로 나눠요" : undefined, value: (mv) => (showsOutcome(list.find((w) => w.id === mv.worldId)!, mv.stats) ? <OutcomeCell st={mv.stats} /> : `${mv.stats.satisfiedShare}%`) },
+    { label: "만족하며 끝난 비율", note: exam ? "시험형은 끝날 때 상태로 나눠요" : undefined, value: (mv) => (showsOutcome(list.find((w) => w.id === mv.worldId)!, mv.stats) ? <OutcomeCell st={mv.stats} /> : `${mv.stats.satisfiedShare}%`) },
     { label: "스트레스 높게 끝남", value: (mv) => `${mv.stats.stressedShare}%` },
-    { label: "모은 돈", note: T.basisAll(times(mvs[list[0].id].stats.runs)), value: (mv) => won(mv.stats.final.money.p50) },
-    { label: "가장 흔한 세계", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },
+    { label: "모은 돈", note: T.basisAll(runs), value: (mv) => won(mv.stats.final.money.p50) },
+    { label: "가장 흔한 길 비율", value: (mv) => `${Math.round(((mv.lines.find((l) => l.isMain)?.count ?? 0) / mv.stats.runs) * 100)}%` },
     { label: `갈라진 ${T.line}`, value: (mv) => `${mv.lines.length}개` },
   ];
+  const cols = { gridTemplateColumns: `repeat(${list.length}, minmax(0, 1fr))` };
   return (
     <section className="card mt-6 p-4 sm:p-6" aria-labelledby="compare-all" data-testid="compare-all">
       <h2 id="compare-all" className="text-lg font-bold">
         진로를 한눈에 비교해요
       </h2>
-      <p className="mt-1 text-sm text-muted">진로마다 {times(mvs[list[0].id].stats.runs)}번 살아본 결과예요. 진로 이름을 누르면 그 타임라인으로 가요.</p>
-      <p className="mt-1 text-cap text-muted" data-testid="compare-basis">
-        {T.basisAll(times(mvs[list[0].id].stats.runs))}과 비율이에요. 위 요약 카드는 {T.basisMain}이라 다를 수 있어요.
-      </p>
-      <table className="num mt-4 w-full table-fixed text-left text-sm">
-        <thead>
-          <tr>
-            <th scope="col" className="w-[30%] pb-2 font-normal">
-              <span className="sr-only">항목</span>
-            </th>
+      <p className="mt-1 text-sm text-muted">진로마다 {runs}번 살아본 결과예요. 이름을 누르면 그 진로를 봐요.</p>
+      <div role="table" aria-labelledby="compare-all" className="num mt-4">
+        <div role="rowgroup">
+          <div role="row" className="grid gap-x-3 pb-2" style={cols}>
             {list.map((w) => (
-              <th key={w.id} scope="col" className="pb-2 pl-2 align-bottom font-bold">
-                <button type="button" onClick={() => onPick(w.id)} className="flex min-h-11 w-full flex-col items-start gap-1 text-left underline-offset-4 hover:underline sm:flex-row sm:items-center sm:gap-2">
-                  <LineBadge world={w} size={20} />
+              <div key={w.id} role="columnheader" className="min-w-0">
+                <button type="button" onClick={() => onPick(w.id)} className="flex min-h-11 w-full items-center gap-2 text-left font-bold underline-offset-4 hover:underline">
+                  <LineBadge world={w} size={24} />
                   <span className="min-w-0 break-keep">{w.short}</span>
                 </button>
-              </th>
+              </div>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </div>
+        </div>
+        <div role="rowgroup">
           {rows.map((r) => (
-            <tr key={r.label} className="border-t border-hair">
-              <th scope="row" className="py-2.5 pr-1 text-cap font-medium text-muted">
+            <div key={r.label} role="row" className="grid gap-x-3 border-t border-hair py-3" style={cols}>
+              <div role="rowheader" className="col-span-full mb-1 text-cap font-medium text-muted">
                 {r.label}
-                {r.note ? <span className="block font-normal">{r.note}</span> : null}
-              </th>
+                {r.note ? <span className="font-normal"> · {r.note}</span> : null}
+              </div>
               {list.map((w) => (
-                <td key={w.id} className="break-words py-2.5 pl-2 font-semibold">
+                <div key={w.id} role="cell" className="min-w-0 break-words text-lg font-bold">
                   {r.value(mvs[w.id])}
-                </td>
+                </div>
               ))}
-            </tr>
+            </div>
           ))}
-        </tbody>
-      </table>
-      <p className="mt-3 text-cap text-muted">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 {T.assumedFull}이라 예측이 아니라 비교용이에요.</p>
+        </div>
+      </div>
+      <details className="mt-2 text-cap text-muted" data-testid="compare-basis">
+        <summary className="min-h-11 cursor-pointer py-2">숫자 기준 · {T.assumed} 포함</summary>
+        <p>{T.basisAll(runs)}과 비율이에요. 위 요약 카드는 {T.basisMain}이라 다를 수 있어요.</p>
+        <p className="mt-1">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 {T.assumedFull}이라 예측이 아니라 비교용이에요.</p>
+      </details>
     </section>
   );
 }
@@ -517,14 +521,6 @@ export default function SimulatePage() {
             {monthLabel(selection.startYm, 0)}부터 {durationLabel(selection.months)}을 진로마다 <strong>내 조건과 성향으로 {times(Object.values(mvs)[0]?.stats.runs ?? 1000)}번</strong> 살아봤어요.
           </p>
           <Verdict ids={selection.worldIds} mvs={mvs} months={selection.months} />
-          {selectedWorld && mvs[selectedWorld.id] ? (
-            <p className="mt-1 text-muted">
-              {selectedWorld.short}: {T.line} {mvs[selectedWorld.id].lines.length}개로 갈라졌고, 지금 보는 건 {T.mainLine}이에요({times(mvs[selectedWorld.id].lines.find((l) => l.isMain)?.count ?? 0)}번).
-            </p>
-          ) : null}
-          <p className="mt-1 text-cap text-muted">
-            {T.line}: {T.lineHint}
-          </p>
         </div>
       ) : null}
 
@@ -635,7 +631,7 @@ export default function SimulatePage() {
                     {mv && main ? (
                       <section className="rounded-2xl p-3.5 sm:p-4" style={{ background: `${w.color}12` }}>
                         <h3 className="text-sm font-bold">
-                          {times(mv.stats.runs)}번 중 이 세계로 온 건 {times(main.count)}번
+                          {times(mv.stats.runs)}번 중 이 길로 온 건 {times(main.count)}번
                         </h3>
                         <p className="mt-1 text-sm">{main.title}</p>
                         <p className="num mt-2 text-cap text-muted">

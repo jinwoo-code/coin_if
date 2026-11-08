@@ -88,7 +88,7 @@ function HundredRuns({ world, mv, items, premium }: { world: WorldTemplate; mv: 
       <p className="mt-1 text-cap text-muted">{T.basisLine}</p>
       <div className="mt-4 grid gap-2">
         <RangeRow label="모은 돈" {...st.final.money} color={world.color} money max={Math.max(st.final.money.p90, 1000)} />
-        <RangeRow label="만족도" {...st.final.satisfaction} color={world.color} />
+        <RangeRow label="끝날 때 만족도(점수)" {...st.final.satisfaction} color={world.color} />
       </div>
       <p className="mt-1 text-cap text-muted">이 막대는 {T.basisAll(times(st.runs))}이에요.</p>
       <p className="label mt-5">내가 바꿀 수 있는 것</p>
@@ -558,7 +558,7 @@ export default function ReportPage() {
               <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1 text-sm font-semibold text-muted [&::-webkit-details-marker]:hidden">
                 숫자 전부 펼치기 <ChevronDown aria-hidden="true" size={16} className="transition-transform group-open:rotate-180" />
               </summary>
-              <p className="mb-4 mt-2 text-sm text-muted">같은 길을 내 조건과 성향으로 {runs}번 살아봤을 때 어떤 세계로 얼마나 갈라졌는지예요.</p>
+              <p className="mb-4 mt-2 text-sm text-muted">같은 길을 내 조건과 성향으로 {runs}번 살아봤을 때 어떤 길로 얼마나 갈라졌는지예요.</p>
               <div className="grid gap-4 md:grid-cols-2">
                 {report.worlds.map((w) => (mvs[w.worldId] ? <HundredRuns key={w.worldId} world={getWorld(w.worldId)} mv={mvs[w.worldId]} items={leverMap[w.worldId]} premium={Boolean(premium)} /> : null))}
               </div>

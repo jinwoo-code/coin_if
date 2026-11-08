@@ -5,7 +5,7 @@ import { SIM_WAIT, openDemo } from "./helpers";
 async function toReport(page: import("@playwright/test").Page) {
   await page.goto("/");
   await openDemo(page);
-  await page.getByRole("link", { name: /다른 세계선 보기/ }).waitFor({ timeout: SIM_WAIT });
+  await page.getByRole("link", { name: /다른 갈래 길 보기/ }).waitFor({ timeout: SIM_WAIT });
 }
 
 test("결론·행동은 펼치고 나머지는 접는다, 눌러서 다 볼 수 있다", async ({ page }) => {
@@ -17,12 +17,12 @@ test("결론·행동은 펼치고 나머지는 접는다, 눌러서 다 볼 수 
   await expect(page.getByTestId("no-guarantee")).toBeVisible();
   await expect(page.getByTestId("no-guarantee")).toHaveText(/준비 계획이지 합격·취업을 보장하지 않아요/);
   await expect(page.getByRole("heading", { name: "이번 주 실행 계획" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /세계선 지도에서 자세히 보기/ }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /갈래 길 지도에서 자세히 보기/ }).first()).toBeVisible();
   const runs = page.getByTestId("report-runs");
   await expect(runs).not.toHaveAttribute("open", "");
-  await expect(runs.getByText("가장 많이 간 세계선").first()).toBeHidden();
+  await expect(runs.getByText("가장 많이 간 갈래 길").first()).toBeHidden();
   await runs.locator("summary").first().click(); // 안에 시험형 '어떻게 셌나요?' 접기도 있다
-  await expect(runs.getByText("가장 많이 간 세계선").first()).toBeVisible();
+  await expect(runs.getByText("가장 많이 간 갈래 길").first()).toBeVisible();
   await expect(runs.getByRole("img", { name: /잠김/ })).toHaveCount(0);
   const gap = page.getByTestId("gap-world").first();
   await expect(gap).not.toHaveAttribute("open", "");
