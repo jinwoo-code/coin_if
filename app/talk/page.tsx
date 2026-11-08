@@ -179,7 +179,7 @@ function TalkPage() {
             <label htmlFor="ask" className="sr-only">
               그때의 나에게 질문
             </label>
-            <input id="ask" name="ask" autoComplete="off" className="field h-[52px] flex-1 rounded-full py-0" value={input} onChange={(e) => setInput(e.target.value)} placeholder={`${iGa(world.short)} 된 나에게 물어보기…`} />
+            <input id="ask" name="ask" aria-label="미래의 나에게 물어보기" autoComplete="off" className="field h-[52px] flex-1 rounded-full py-0" value={input} onChange={(e) => setInput(e.target.value)} placeholder={`${iGa(world.short)} 된 나에게 물어보기…`} />
             <button type="submit" aria-label="질문 보내기" disabled={busy || !input.trim()} className="flex h-[52px] w-[52px] flex-none items-center justify-center rounded-full bg-ink text-white transition-colors disabled:bg-[#C9CDD4]">
               <ArrowUp aria-hidden="true" size={22} />
             </button>

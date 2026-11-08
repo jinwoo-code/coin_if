@@ -233,7 +233,7 @@ function jobHunt(j: Job, gate: Partial<EventCard>, opts: { hazard: number; tiers
     ),
     E(
       "got-job",
-      `${j.short}로 일하게 됐다`,
+      `${euro(j.short)} 일하게 됐다`,
       "good",
       "최종 합격 연락을 받았다. 다음 달 첫 출근이다.",
       [C("첫 출근 전에 미리 공부해 둔다", "push", { effect: { skill: 3 } }), C("남은 기간은 푹 쉰다", "safe", { effect: { stress: -6 } })],
@@ -799,7 +799,7 @@ function publicEvents(j: Job): EventCard[] {
     ),
     E(
       "got-public",
-      `${j.short}로 최종 합격했다`,
+      `${euro(j.short)} 최종 합격했다`,
       "good",
       "최종 합격. 근무지는 지방 혁신도시일 수도 있다고 했다.",
       [C("이사 준비를 바로 시작한다", "push"), C("가족과 먼저 상의한다", "safe", { effect: { relation: 3 } })],

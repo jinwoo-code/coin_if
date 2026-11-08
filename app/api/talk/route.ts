@@ -68,11 +68,11 @@ export async function POST(req: Request) {
         memory: memo(bad),
       };
     if (/힘들|어려|최악/.test(message))
-      return { reply: `${bad.label}에 “${bad.title}” 그때가 제일 힘들었어. 그때 내 선택은 “${bad.choice}”였고, 지금 생각하면 그게 최선이었는지는 잘 모르겠어.`, memory: memo(bad) };
+      return { reply: `${bad.label}에 “${bad.title}” 그때가 제일 힘들었어. 그때 나는 “${bad.choice}” 쪽을 골랐는데, 지금 생각하면 그게 최선이었는지는 잘 모르겠어.`, memory: memo(bad) };
     if (/돈|연봉|월급/.test(message))
       return { reply: `지금 모아 둔 돈은 ${won(last.state.money)} 정도야.${last.salary ? ` 연봉은 ${won(last.salary)}.` : " 아직 월급은 없어."} ${last.state.money < 0 ? "솔직히 빠듯해." : "넉넉하진 않아도 버틸 만해."}`, memory: null };
     return {
-      reply: `가장 최근 큰일은 ${lastEv.label}에 “${lastEv.title}”였어. 그때 내 선택은 “${lastEv.choice}”였어. 지금은 ${last.status}. 너라면 어떻게 했을 것 같아?`,
+      reply: `가장 최근 큰일은 ${lastEv.label}에 있었어. “${lastEv.title}”. 그때 나는 “${lastEv.choice}” 쪽을 골랐어. 지금은 ${last.status}. 너라면 어떻게 했을 것 같아?`,
       memory: memo(lastEv),
     };
   };

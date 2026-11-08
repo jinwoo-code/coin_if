@@ -155,7 +155,8 @@ export function statsOf(p: Profile, world: WorldTemplate, paths: Path[]): WorldS
   const final = finalDist(paths);
   const medianState = Object.fromEntries(KEYS.map((k) => [k, final[k].p50])) as unknown as LifeState;
   const hired = paths.filter((x) => x.employedAt !== null);
-  const sal = hired.map((x) => x.salary).toSorted((a, b) => a - b);
+  // 연봉은 '일하는 경우'라 기간 끝에 이 진로에서 일하는 삶만 센다(취업했다가 그만둔 삶은 0이라 빼야 범위가 0부터 시작하지 않는다)
+  const sal = paths.map((x) => x.salary).filter((s) => s > 0).toSorted((a, b) => a - b);
   return {
     runs: paths.length,
     events,
