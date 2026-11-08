@@ -89,8 +89,8 @@ export default function OrgPage() {
       ) : state.org ? (
         <section className="card mt-4 p-5">
           <p className="label">{state.org.name}</p>
-          <p className="mt-1 text-2xl font-extrabold">무제한 이용 중</p>
-          <p className="mt-1 text-sm text-muted">{state.org.until}까지 토큰이 줄지 않아요.</p>
+          <p className="mt-1 text-2xl font-extrabold">학교 계약 이용 중</p>
+          <p className="mt-1 text-sm text-muted">{state.org.until}까지 토큰이 줄지 않아요. AI가 직접 살아 보는 모드는 한 달 3번까지예요.</p>
           <p className="mt-3 text-cap text-muted">학교에는 학생 개인 결과가 아니라 5명 이상 모인 항목의 합계만 보여요.</p>
           {FLAGS.counselor ? <CounselShare /> : null}
         </section>
@@ -107,7 +107,7 @@ export default function OrgPage() {
             </p>
           ) : null}
           <button className="btn-primary mt-4 w-full" disabled={busy || !code.trim()}>
-            {busy ? "확인하는 중…" : "학교 무제한 이용 시작"}
+            {busy ? "확인하는 중…" : "학교 계약으로 이용 시작"}
           </button>
         </form>
       )}

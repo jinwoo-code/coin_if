@@ -15,7 +15,7 @@ export const maxDuration = 300;
 
 export async function POST(req: Request) {
   const body = (await req.json()) as { profile: Profile; selection: Selection };
-  // 1토큰(로그인한 경우만. 대학 계약 기간이면 무제한). 부족하면 402 → 화면이 충전으로 보낸다.
+  // 기본 시뮬레이션은 0토큰(lib/token-policy.ts). 로그인했으면 0토큰 행으로 이용 횟수만 남는다(한 달 3회 제한은 발표 뒤).
   const paid = await spend("simulate", null);
   if (!paid.ok) return paywall(paid);
   const profile = normalizeProfile(body.profile);

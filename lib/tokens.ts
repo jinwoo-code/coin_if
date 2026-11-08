@@ -1,18 +1,11 @@
 // 토큰 차감(서버 전용). 잔액 확인과 차감은 DB 함수 spend_tokens가 한 번에 한다(동시에 눌러도 마이너스가 안 된다).
-// 가격은 사업계획서 6장(1토큰 990원) 그대로. 일반 리포트는 무료라 여기 없다.
+// 가격·횟수는 lib/token-policy.ts 한 곳. 0토큰 기능도 로그인했으면 0토큰 행을 남겨 이용 횟수를 센다.
 import "server-only";
 import { supabaseAdmin } from "./supabase/admin";
 import { currentUser } from "./supabase/server";
 
-export const COSTS = {
-  simulate: 1, // 시뮬레이션 1회(진로 2~3개)
-  live_simulate: 4, // 실시간 판단 모드 1회(진로 2~3개, 가정값)
-  premium_report: 5, // 프리미엄 리포트
-  talk: 2, // 미래의 나와 대화, 세계선 하나에 20마디까지
-} as const;
-export type Feature = keyof typeof COSTS;
-export const TALK_LIMIT = 20;
-export const LIVE_MONTHLY_LIMIT = 3; // 대학 계약 학생의 실시간 판단 모드 한 달 횟수(가정값)
+import { COSTS, LIVE_MONTHLY_LIMIT, TALK_LIMIT, type Feature } from "./token-policy";
+export { COSTS, LIVE_MONTHLY_LIMIT, TALK_LIMIT, type Feature };
 
 export type Spend =
   { ok: true; charged: boolean; unlimited: boolean; already?: boolean; balance: number; orgId: string | null; userId: string | null; ref: string } | { ok: false; status: 401 | 402 | 503; error: string; balance?: number; cost?: number };
@@ -35,7 +28,7 @@ export async function spend(feature: Feature, key: string | null, opts: { requir
   }
   const r = data as { ok: boolean; unlimited?: boolean; already?: boolean; balance: number; cost?: number; org_id?: string };
   if (!r.ok) return { ok: false, status: 402, error: "토큰이 부족해요", balance: r.balance, cost: r.cost };
-  return { ok: true, charged: !r.unlimited && !r.already, unlimited: Boolean(r.unlimited), already: Boolean(r.already), balance: r.balance, orgId: r.org_id ?? null, userId: user.id, ref };
+  return { ok: true, charged: COSTS[feature] > 0 && !r.unlimited && !r.already, unlimited: Boolean(r.unlimited), already: Boolean(r.already), balance: r.balance, orgId: r.org_id ?? null, userId: user.id, ref };
 }
 
 // 프리미엄 리포트를 연 적이 있는지(대학 계약은 0토큰 행으로 남는다).
@@ -46,6 +39,7 @@ export async function hasPremium(userId: string) {
 
 // 서버 쪽 실패로 결과를 못 줬을 때 돌려준다(반대 금액 행을 더한다. 원장은 고치지 않는다).
 export async function refund(userId: string, feature: Feature, ref: string, amount: number = COSTS[feature]) {
+  if (amount <= 0) return; // 0토큰 기능은 돌려줄 게 없다
   await supabaseAdmin()
     ?.from("token_ledger")
     .insert({ user_id: userId, amount, reason: "refund", ref: `refund:${ref}` })

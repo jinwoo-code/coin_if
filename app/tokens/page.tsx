@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { TossPaymentsWidgets } from "@tosspayments/tosspayments-sdk";
 import { Screen } from "@/components/ui";
-import { FEATURE_LABEL, PRODUCTS } from "@/lib/products";
+import { COSTS, FEATURE_LABEL, LIVE_MONTHLY_LIMIT, PRODUCTS, REFUND_NOTICE, SIGNUP_BONUS, TALK_LIMIT } from "@/lib/token-policy";
 import { T } from "@/lib/copy";
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "";
@@ -46,7 +46,7 @@ export default function Tokens() {
         ) : !info.loggedIn ? (
           <>
             <p className="font-semibold">로그인하지 않으면 무료로 체험할 수 있어요.</p>
-            <p className="mt-1 text-sm text-muted">로그인하면 결과가 계정에 남고, 가입 선물로 토큰 5개를 드려요.</p>
+            <p className="mt-1 text-sm text-muted">로그인하면 결과가 계정에 남고, 가입 선물로 토큰 {SIGNUP_BONUS}개를 드려요.</p>
             <Link href="/login" className="btn-primary mt-4 w-full">
               로그인
             </Link>
@@ -54,8 +54,10 @@ export default function Tokens() {
         ) : info.unlimited ? (
           <>
             <p className="label">{info.org?.name}</p>
-            <p className="mt-1 text-2xl font-extrabold">무제한 이용 중</p>
-            <p className="mt-1 text-sm text-muted">{info.org?.until}까지 학교가 계약해서 토큰이 줄지 않아요.</p>
+            <p className="mt-1 text-2xl font-extrabold">학교 계약 이용 중</p>
+            <p className="mt-1 text-sm text-muted">
+              {info.org?.until}까지 토큰이 줄지 않아요. 프리미엄 리포트 포함, {T.liveMode}는 한 달 <span className="num">{LIVE_MONTHLY_LIMIT}</span>번까지예요.
+            </p>
           </>
         ) : (
           <>
@@ -66,34 +68,39 @@ export default function Tokens() {
       </section>
 
       <h2 className="mt-8 text-lg font-bold">어디에 쓰나요</h2>
-      <p className="mt-1 text-sm text-muted">토큰은 로그인했을 때만 빠져요. 로그인하지 않으면 시뮬레이션·대화는 그냥 쓸 수 있고, 프리미엄 리포트만 로그인이 필요해요.</p>
-      <ul className="card mt-3 divide-y divide-hair">
-        {[
-          ["simulate", ""],
-          ["premium_report", `${T.line} 전체 비교, 바꿀 수 있는 것 전체, 막혔을 때 할 일, PDF`],
-          ["talk", `${info?.talkLimit ?? 20}마디까지`],
-        ].map(([k, note]) => (
+      <p className="mt-1 text-sm text-muted">토큰은 로그인했을 때만 빠져요. 프리미엄 리포트는 로그인이 필요해요.</p>
+      <ul className="card mt-3 divide-y divide-hair" data-testid="token-costs">
+        {(
+          [
+            ["simulate", `검사, ${T.lineMap}, 진로 비교표 포함`],
+            ["talk", `${T.line} 하나에 ${TALK_LIMIT}마디까지`],
+            ["live_simulate", "진로마다 30번, AI가 큰 갈림길을 직접 판단"],
+            ["premium_report", `${T.line} 전체 비교, 격차 전체, 월별 일정, 다시 살아 보기, 공유`],
+          ] as const
+        ).map(([k, note]) => (
           <li key={k} className="flex items-center justify-between gap-3 p-4">
             <span>
               <span className="font-semibold">{FEATURE_LABEL[k]}</span>
-              {note ? <span className="block text-cap text-muted">{note}</span> : null}
+              <span className="block text-cap text-muted">{note}</span>
             </span>
-            <span className="num flex-none font-bold">{info?.costs[k] ?? "-"}개</span>
+            <span className="num flex-none font-bold">{COSTS[k] === 0 ? "무료" : `${COSTS[k]}개`}</span>
           </li>
         ))}
         <li className="flex items-center justify-between gap-3 p-4">
-          <span className="font-semibold">일반 리포트</span>
+          <span>
+            <span className="font-semibold">일반 리포트 · 한 달 체크인</span>
+          </span>
           <span className="flex-none font-bold">무료</span>
         </li>
       </ul>
 
       <h2 className="mt-8 text-lg font-bold">충전</h2>
       <p className="mt-1 text-sm text-muted">
-        1토큰 990원. 학교가 계약했다면{" "}
+        5개·12개 묶음으로 팔아요(1개씩은 안 팔아요). 학교가 계약했다면{" "}
         <Link href="/org" className="font-semibold underline underline-offset-4">
           초대코드
         </Link>
-        로 무제한 이용할 수 있어요.
+        를 넣으면 토큰 없이 써요.
       </p>
       <Checkout canPay={Boolean(info?.loggedIn && !info.unlimited && CLIENT_KEY)} />
       {!CLIENT_KEY ? <p className="mt-2 text-cap text-muted">결제 키가 설정되지 않아 충전 버튼이 꺼져 있어요.</p> : null}
@@ -107,6 +114,7 @@ function Checkout({ canPay }: { canPay: boolean }) {
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [agreed, setAgreed] = useState(false);
   const widgets = useRef<TossPaymentsWidgets | null>(null);
   const rendered = useRef(false);
 
@@ -115,7 +123,7 @@ function Checkout({ canPay }: { canPay: boolean }) {
     setReady(false);
     setBusy(true);
     try {
-      const res = await fetch("/api/pay/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId }) });
+      const res = await fetch("/api/pay/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, agreed }) });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error ?? "주문을 만들지 못했어요.");
       setOrder(d);
@@ -173,11 +181,24 @@ function Checkout({ canPay }: { canPay: boolean }) {
 
   return (
     <>
+      <section className="card mt-3 p-4" aria-labelledby="refund-title" data-testid="refund-notice">
+        <h3 id="refund-title" className="font-bold">
+          환불·유효기간
+        </h3>
+        <p className="mt-1 text-sm">{REFUND_NOTICE}</p>
+        <label className="mt-3 flex min-h-11 cursor-pointer items-center gap-3 text-sm font-semibold">
+          <input type="checkbox" className="h-5 w-5 flex-none accent-ink" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} required aria-required="true" />
+          위 내용을 확인했어요(필수)
+        </label>
+      </section>
       <ul className="mt-3 grid gap-2">
         {PRODUCTS.map((p) => (
           <li key={p.id} className="card flex items-center justify-between p-4">
-            <span className="num text-lg font-bold">{p.tokens}토큰</span>
-            <button className="btn-ghost min-h-[44px] px-5" disabled={!canPay || busy} onClick={() => choose(p.id)} aria-label={`${p.tokens}토큰 ${p.price.toLocaleString("ko-KR")}원 충전`}>
+            <span>
+              <span className="num text-lg font-bold">{p.tokens}토큰</span>
+              <span className="num block text-cap text-muted">1개에 {Math.round(p.price / p.tokens).toLocaleString("ko-KR")}원</span>
+            </span>
+            <button className="btn-ghost min-h-[44px] px-5" disabled={!canPay || busy || !agreed} onClick={() => choose(p.id)} aria-label={`${p.tokens}토큰 ${p.price.toLocaleString("ko-KR")}원 충전`}>
               <span className="num">{p.price.toLocaleString("ko-KR")}원</span>
             </button>
           </li>

@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply: CRISIS_REPLY, memory: null, crisis: true });
   }
 
-  // 로그인했으면: 세계선(이 시뮬레이션의)마다 첫 마디에 2토큰, 20마디까지. 마디 수는 서버가 DB에서 센다.
+  // 로그인했으면: 대화는 0토큰(lib/token-policy.ts), 갈래 길(이 시뮬레이션의)마다 TALK_LIMIT마디까지. 마디 수는 서버가 DB에서 센다.
   const user = await currentUser();
   const admin = supabaseAdmin();
   const chatKey = { user_id: user?.id ?? "", run_key: runKey ?? "", career: worldId, line_id: lineId ?? "" };

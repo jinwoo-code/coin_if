@@ -133,7 +133,7 @@ function TalkPage() {
         return;
       }
       setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: data.reply, memory: data.memory ?? undefined, ...(data.fallback ? { fallback: true } : {}) }] }));
-      if (data.used === 1) window.dispatchEvent(new Event("cr:tokens")); // 첫 마디에 2토큰
+      if (data.used === 1) window.dispatchEvent(new Event("cr:tokens")); // 첫 마디에 토큰을 쓰는 경우(지금은 0토큰) 잔액 칩 다시 읽기
     } catch {
       setChats((c) => ({ ...c, [key]: [...withMine, { role: "self", text: "지금은 대답하기 어려워. 잠깐 뒤에 다시 물어봐 줘." }] }));
     } finally {

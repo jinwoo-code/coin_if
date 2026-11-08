@@ -81,8 +81,8 @@ export function TokenChip() {
   }, []);
   if (!t) return null;
   return (
-    <Link href="/tokens" className="chip min-h-11 px-3 text-cap font-semibold" aria-label={t.unlimited ? "대학 무제한 이용 중" : `토큰 ${t.balance}개`}>
-      {t.unlimited ? "무제한" : <span className="num">토큰 {t.balance}</span>}
+    <Link href="/tokens" className="chip min-h-11 px-3 text-cap font-semibold" aria-label={t.unlimited ? "학교 계약 이용 중" : `토큰 ${t.balance}개`}>
+      {t.unlimited ? "학교 계약" : <span className="num">토큰 {t.balance}</span>}
     </Link>
   );
 }
@@ -101,8 +101,10 @@ export function CostNote({ cost }: { cost: number }) {
   const text = !t.loggedIn
     ? "로그인하면 결과가 계정에 저장돼요. 로그인 없이도 무료로 해 볼 수 있어요."
     : t.unlimited
-      ? "학교 무제한 이용 중이라 토큰이 줄지 않아요."
-      : `토큰 ${cost}개를 써요(남은 토큰 ${t.balance}개).`;
+      ? "학교 계약에 포함돼 토큰이 줄지 않아요."
+      : cost === 0
+        ? "토큰을 쓰지 않아요(무료)."
+        : `토큰 ${cost}개를 써요(남은 토큰 ${t.balance}개).`;
   return (
     <p className="mt-2 text-center text-cap text-muted">
       {text}
