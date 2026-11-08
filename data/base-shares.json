@@ -1123,6 +1123,28 @@
           }
         }
       ]
+    },
+    "da-first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.9,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 18.7개월, 그만둠 0.100). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.05,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 18.7개월, 그만둠 0.100). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.05,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 18.7개월, 그만둠 0.100). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        }
+      ]
     }
   },
   "developer": {
@@ -1620,6 +1642,28 @@
             "stress:mid": 0.469,
             "stress:high": 0.569
           }
+        }
+      ]
+    },
+    "dev-first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.565,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 16.1개월, 그만둠 0.435). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.326,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 16.1개월, 그만둠 0.435). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.109,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 16.1개월, 그만둠 0.435). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
         }
       ]
     }
@@ -3047,6 +3091,28 @@
           "ref": "nurse.firstYearResign·nurse.leaveField: 병원간호사회(실태조사), 대한간호협회(분석)(2021) 신규간호사 1년 이내 사직률 52.8%, 라포르시안 2023-06-05 보도, https://www.rapportian.com/news/articleView.html?idxno=161614 / 사직자 중 현장 이탈 12.1%. 평균 인물이 이 비율로 고를 때 1년 안 사직·현장 이탈이 이 값이 되도록 맞춘 값(그만둠 0.573, 그중 떠남 0.124)."
         }
       ]
+    },
+    "first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.583,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 5개 목표 평균 14.9개월, 그만둠 0.418). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.313,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 5개 목표 평균 14.9개월, 그만둠 0.418). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.104,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 5개 목표 평균 14.9개월, 그만둠 0.418). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        }
+      ]
     }
   },
   "marketer": {
@@ -3452,6 +3518,28 @@
             "stress:mid": 0.464,
             "stress:high": 0.565
           }
+        }
+      ]
+    },
+    "mkt-first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.708,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 14.8개월, 그만둠 0.291). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.219,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 14.8개월, 그만둠 0.291). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.073,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 14.8개월, 그만둠 0.291). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
         }
       ]
     }
@@ -3906,6 +3994,28 @@
             "stress:high|tenure:new": 0.412,
             "stress:high|tenure:settled": 0.412
           }
+        }
+      ]
+    },
+    "first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.9,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 23개 목표 평균 19.5개월, 그만둠 0.100). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.05,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 23개 목표 평균 19.5개월, 그만둠 0.100). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.05,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 23개 목표 평균 19.5개월, 그만둠 0.100). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
         }
       ]
     }
@@ -4529,6 +4639,28 @@
             "stress:high|tenure:new": 0.422,
             "stress:high|tenure:settled": 0.418
           }
+        }
+      ]
+    },
+    "first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.629,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 8개 목표 평균 14.0개월, 그만둠 0.371). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.278,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 8개 목표 평균 14.0개월, 그만둠 0.371). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.093,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 8개 목표 평균 14.0개월, 그만둠 0.371). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
         }
       ]
     }
@@ -5763,6 +5895,28 @@
             "stress:high|tenure:new": 0.425,
             "stress:high|tenure:settled": 0.425
           }
+        }
+      ]
+    },
+    "first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.399,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 4개 목표 평균 11.5개월, 그만둠 0.601). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.451,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 4개 목표 평균 11.5개월, 그만둠 0.601). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
+        },
+        {
+          "share": 0.15,
+          "grade": "calibrated",
+          "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 4개 목표 평균 11.5개월, 그만둠 0.601). 그만둠 안 옮김:진로 바꿈 3:1은 가정값."
         }
       ]
     }

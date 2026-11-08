@@ -2,7 +2,7 @@
 // 사람이 사건을 하나하나 쓴 진로(data/worlds/*.json)만큼 자세하진 않지만, 어떤 전공의 어떤 직업이든 같은 엔진으로 돌릴 수 있다.
 // 숫자(확률·연봉)는 공개 통계가 있는 것만 출처와 함께 쓰고, 없는 것은 '가정'이라고 적는다.
 import { examChance } from "./weights";
-import { eulReul, eunNeun, iGa, waGwa } from "./josa";
+import { eulReul, eunNeun, euro, iGa, waGwa } from "./josa";
 import type { Archetype, Choice, EventCard, Fact, LifeState, StatEvidence, ValueKey, WorldTemplate, Interests, BigFive, HateTag } from "./types";
 
 // ---------- 직업 한 줄의 모양 ----------
@@ -74,6 +74,25 @@ export function sizeTiers(w: [number, number, number, number], place = "회사")
 const C = (text: string, tone: Choice["tone"], extra: Partial<Choice> = {}): Choice => ({ text, tone, ...extra });
 function E(id: string, title: string, kind: EventCard["kind"], text: string, choices: Choice[], effect: Partial<LifeState>, extra: Partial<EventCard> = {}): EventCard {
   return { id, title, kind, weight: 1, text, choices, effect, ...extra };
+}
+
+// 신규 1년 안에 그만둘지 고르는 갈림길(일반 직장 유형 open·portfolio·trade·license, 직업에 따로 있으면 그것만).
+// 첫 출근 2~10개월째, 그 사이 한 달에 0.25(가정값). 기준 비율은 data/base-shares.json '{유형}/first-year'(KOSIS 직종별 근속으로 보정).
+function firstYear(j: Job): EventCard {
+  const place = j.place ?? "회사";
+  return E(
+    "first-year",
+    "신규 1년, 그만둘지 고민된다",
+    "bad",
+    "생각했던 일과 달랐다. 같은 시기에 들어온 사람 한 명이 그만뒀다는 소식을 들었다.",
+    [
+      C("버티며 1년을 채운다", "push", { label: "버팀", effect: { stress: 3 } }),
+      C(`다른 ${euro(place)} 옮긴다`, "change", { quits: true, label: "다른 곳으로", effect: { stress: -10 } }),
+      C("이 일을 그만두고 다른 길을 찾는다", "change", { quits: true, sets: "switched", label: "진로 바꿈", effect: { stress: -14 } }),
+    ],
+    { stress: 8, satisfaction: -6 },
+    { needsJob: true, minTenure: 2, maxTenure: 10, chance: 0.25, branch: "choice", branchLabel: "신규 1년 고민", evidence: EV_TENURE },
+  );
 }
 
 // 일을 시작한 뒤의 공통 사건(모든 유형)
@@ -887,6 +906,7 @@ export function buildWorld(j: Job, index: number): WorldTemplate {
       events = [...jobHunt(j, {}, { hazard: j.hazard ?? 0.07, tiers }), ...workLife(j, ppl)];
   }
   if (j.archetype === "exam") events = [...events, ...workLife(j, ppl).filter((e) => ["first-mistake", "mentor", "raise"].includes(e.id))];
+  if (["open", "portfolio", "trade", "license"].includes(j.archetype) && !j.events?.some((e) => e.id.endsWith("first-year"))) events = [...events, firstYear(j)];
   if (j.events) events = [...events, ...j.events];
 
   const [color, onColor] = PALETTE[index % PALETTE.length];

@@ -59,8 +59,8 @@ console.log(`\n평균 절대 오차: 근속 ${f1(absMean(rows.map((r) => r.tenEr
 
 // 시연 인물(규칙 계산)
 console.log("\n## 시연 인물\n");
-console.log("| 인물 | 진로 | 첫 출근(가운데, 몇 개월째) | 3년 안 이 진로 취업·합격 | 근속(목표 18.4) | 1년+ 참고(48.6) | 3년+ 참고(19.4) | 그만둔 비율(참고 70.7) | 1년 안 사직(간호사 목표 52.8) |");
-console.log("|---|---|---|---|---|---|---|---|---|");
+console.log("| 인물 | 진로 | 첫 출근(가운데, 몇 개월째) | 3년 안 이 진로 취업·합격 | 근속(목표 18.4) | 1년+ 참고(48.6) | 3년+ 참고(19.4) | 그만둔 비율(참고 70.7) | 1년 안 사직(간호사 목표 52.8) | 만족하며 끝남 |");
+console.log("|---|---|---|---|---|---|---|---|---|---|");
 for (const [name, p, ids] of [
   ["김민준", DEMO_PROFILE, ["developer", "civil-servant"]],
   ["이서연", NURSE_DEMO_PROFILE, ["nurse", "civil-servant"]],
@@ -68,7 +68,7 @@ for (const [name, p, ids] of [
   for (const id of ids) {
     const m = measure({ ...p, judges: {} } as Profile, getWorld(id));
     dump[`${name}|${id}`] = { ...m, tenures: undefined };
-    console.log(`| ${name} | ${getWorld(id).short} | ${m.firstHereMedian + 1} | ${pc(m.in3y)} | ${f1(m.tenure)} | ${pc(m.u1y)} | ${pc(m.u3y)} | ${pc(m.quitShare)} | ${pc(m.resign1y)} |`);
+    console.log(`| ${name} | ${getWorld(id).short} | ${m.firstHereMedian + 1} | ${pc(m.in3y)} | ${f1(m.tenure)} | ${pc(m.u1y)} | ${pc(m.u3y)} | ${pc(m.quitShare)} | ${pc(m.resign1y)} | ${f1(m.satisfied)} |`);
     if (id === "nurse") nurseRows.push(`| 이서연 | ${tNr} | ${pc(m.resign1y)} | ${err(m.resign1y * 100, tNr)} | ${tNl} | ${pc(m.leaveField)} | ${err(m.leaveField * 100, tNl)} | ${m.resign1yN} |`);
   }
 }

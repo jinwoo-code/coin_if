@@ -45,7 +45,7 @@
     "radiologist": { "code": "245", "match": "맞음" },
     "emt": { "code": "246", "match": "근사", "note": "보건 의료 관련 종사자" },
     "civil-servant": { "code": null, "match": "없음", "note": "공무원은 직종이 아니라 고용 형태라 맞는 코드 없음(보정 안 함)" },
-    "data-analyst": { "code": "223", "match": "근사", "note": "공채형이라 보정 안 함(참고)" },
+    "data-analyst": { "code": "223", "match": "근사", "note": "데이터 분석은 데이터 및 네트워크 관련 전문가로 봄(212 인문 및 사회과학 전문가·391 통계 관련 사무원일 수도 있음). 공공기관 소속이라 공채형이지만 상세판이라 자기 목표로 보정함" },
     "pub-office": { "code": null, "match": "없음", "note": "공공기관 사무직은 직종 코드로 못 가름(보정 안 함)" },
     "tax-acct": { "code": "261", "match": "근사", "note": "법률 전문가 안에 세무사(시험형이라 보정 안 함)" },
     "teacher-elem": { "code": "252", "match": "맞음", "note": "시험형이라 보정 안 함" },

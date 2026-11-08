@@ -20,7 +20,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/update-norms.ts data/pilot/profi
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-exam-k.ts     # 시험형 준비된 응시자 보정 k를 9급 합격자 통계로 찾기(보기만, 약 1분)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/measure-base.ts   # 갈림길 기준 비율(가정값)을 평균 인물로 재서 data/base-shares.json(통계·인터뷰 값은 안 덮어씀)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/calibrate.ts      # 결과 통계 목표(data/calibration-targets.json) vs 지금 시뮬레이션(평균 인물 53개 진로 + 시연 인물 2명, 1,000번 × 120개월, 약 1분). --runs·--months·--only
-npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-base.ts --part nurse      # 기준 비율을 결과 통계에 맞춤(보기만, --apply로 base-shares.json에 grade calibrated). 근속(tenure)은 찾기만 함(docs/기준비율-현황.md)
+npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-base.ts --part first-year   # 기준 비율을 결과 통계에 맞춤(보기만, --apply로 base-shares.json에 grade calibrated). first-year = 일반 직장 '신규 1년'(KOSIS 묶음 평균), nurse = 간호사 신규 1년, tenure = 번아웃·이직 제안(찾기만, 반영 안 함)
 npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/sync-kosis.ts   # KOSIS 직종별 평균근속(KSCO 3자리) → data/kosis/tenure-by-occupation.json + 진로별 근속 목표 표(KOSIS_API_KEY, --offline은 저장 파일로)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-base.ts     # 모든 갈림길에 기준 비율이 있고 합이 1인지
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-coherence.ts   # 상태 모순 세기(53개 진로 × 1,000번 × 10년 × 인물 3명, 약 2분): 취업 후 구직 사건, 긴 구직이 너무 이름, 합격 후 불합격, 퇴사 없이 첫 출근, 장면 머리 처지. 전부 0이어야 함
@@ -179,7 +179,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test    # 기본: 배포 사�
 - 실시간 판단 모드: 30번을 실제 키로 끝까지 돌려 본 적 없다(무료 키 한도, 호출 12번까지만 봄. 끝까지는 가짜 AI로 확인). 기본 모드보다 낫다는 근거 없음(7단계 전). 표본이 작아 세계선 나무 대신 앞 갈림길 둘로 묶어 보여 준다. 대학 한 달 3회는 실제 DB로 확인 안 함. AI 실패로 규칙 계산으로 끝내면 AI가 판단 못 한 몫을 돌려주는데, 실제 DB로 확인 안 함(재요청까지 호출로 세서 조금 적게 돌려줄 수 있다). 세계선 지도·대화·리포트로 이어지지만 세계선 다시 살기·갈림길 바꾸기·선택 고치기는 숨긴다. 세계선 지도·리포트에서는 1,000번 통계와 섞지 않고 'AI가 직접 살아 본 30개의 삶' 칸으로 따로 보여 준다(`components/live-lives.tsx`, 오차 범위 포함). 결과는 계정에 안 올려 대학 집계에 안 들어간다.
 - 실제 Gemini 키(무료 등급)로 흐름 확인함. 무료 등급 한도는 모델마다 다르다(3.6 Flash 하루 20회 확인, 3.5 Flash-Lite는 대시보드 기준 분당 15회·하루 500회). 발표 전 한도 확인. **`.env.local` 키는 2026-11-04에도 Google 응답 기준 무료 등급이다.** 한도에 걸리면 조용히 규칙 계산·목업으로 넘어간다.
 - 선택(AI 분신·기준 비율):
-  - 기준 비율은 보기 1,903개 중 통계 1개, 현직자 0개, 결과 통계에 맞춰 보정 3개(간호사 신규 1년, 2026-11-08), 나머지 전부 가정값(평균 인물을 엔진으로 잰 값)이다. 유일한 통계(32.3%)도 대상이 달라 누구에게나 '통계(다른 집단 기준)'로 나온다(앱이 성별·나이를 안 묻는다).
+  - 기준 비율은 보기 2,032개 중 통계 1개, 현직자 0개, 결과 통계에 맞춰 보정 132개(간호사 신규 1년 3개 + 일반 직장 진로의 '신규 1년' 갈림길, 2026-11-08, `docs/기준비율-현황.md`), 나머지 전부 가정값(평균 인물을 엔진으로 잰 값)이다. 일반 직장 쪽은 KOSIS 직종별 근속으로 만든 진로 목표의 묶음 평균에 맞춘 값이라 진로마다 맞춘 게 아니다. 유일한 통계(32.3%)도 대상이 달라 누구에게나 '통계(다른 집단 기준)'로 나온다(앱이 성별·나이를 안 묻는다).
   - 비교 집단 평균(`data/norms.json`)은 **미국 청년 15,471명 표본**(Baldasaro 외 2013, 문항 평균을 요인별로 평균 낸 값)이다. 한국판 평균을 공개 자료에서 못 찾았다. 평균 인물·규칙 기울기·성향 이유가 모두 이 값에 기댄다. 파일럿 30명이 모이면 `scripts/update-norms.ts`로 바꾼다(자기 선택 표본이라 이것도 대표 표본은 아니다).
   - `rule.scale` 0.25는 상한에 걸리는 비율을 낮추려고 맞춘 값이지, 맞다는 근거가 없다. 기준선을 잰 인물(평균 인물)은 그대로라 기준 비율은 다시 재지 않았다. `fit-weights.ts`는 배율을 곱하기 전 규칙 확률을 맞춘다.
   - AI와 규칙은 셋 중 하나꼴로 반대 방향이다(`docs/선택-AI-규칙-진단.md`, 5명 × 8곳, 호출마다 한 번). 어느 쪽이 맞는지는 모른다(모드 비교 전).

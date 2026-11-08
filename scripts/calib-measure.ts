@@ -1,6 +1,6 @@
 // scripts/calibrate.ts·scripts/fit-base.ts가 같이 쓰는 측정(엔진·데이터는 안 바꿈).
 import norms from "../data/norms.json";
-import { runAll } from "../lib/multiverse";
+import { runAll, statsOf } from "../lib/multiverse";
 import { normalizeProfile } from "../lib/profile";
 import { READINESS } from "../lib/readiness";
 import type { Path, Profile, WorldTemplate } from "../lib/types";
@@ -62,6 +62,7 @@ export function measure(p: Profile, w: WorldTemplate, runs: number, months: numb
   const in3y = paths.filter((x) => x.months.slice(0, 36).some((m) => HERE.test(m.status))).length / paths.length;
   const firstHere = paths.map((x) => x.months.findIndex((m) => HERE.test(m.status))).filter((i) => i >= 0);
   return {
+    satisfied: statsOf(p, w, paths).satisfiedShare, // 기간 끝에 이 진로에서 만족하며 끝남
     n: paths.length,
     hadJob: had.length / paths.length,
     quitShare: had.length ? ended.length / had.length : NaN,
