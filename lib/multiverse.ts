@@ -235,9 +235,9 @@ function flatten(n: LineNode, trail: LineNode[] = []): { node: LineNode; trail: 
 function lineTitle(world: WorldTemplate, trail: LineNode[], hasKids: boolean, rareMajority: boolean) {
   const steps = trail.filter((n) => n.cause !== "start");
   if (steps.length === 0) {
-    if (rareMajority) return "여러 갈래로 드물게 갈라진 세계";
-    const fail: Record<string, string> = { exam: "기간 안에 합격하지 못한 세계", license: "기간 안에 자리 잡지 못한 세계", grad: "기간 안에 입학하지 못한 세계", startup: "기간 안에 매출로 자리 잡지 못한 세계" };
-    return fail[world.archetype] ?? `기간 안에 ${euro(world.short)} 일하지 못한 세계`;
+    if (rareMajority) return "여러 갈래로 드물게 갈라진 길";
+    const fail: Record<string, string> = { exam: "기간 안에 합격하지 못한 길", license: "기간 안에 자리 잡지 못한 길", grad: "기간 안에 입학하지 못한 길", startup: "기간 안에 매출로 자리 잡지 못한 길" };
+    return fail[world.archetype] ?? `기간 안에 ${euro(world.short)} 일하지 못한 길`;
   }
   const tail = steps
     .slice(-2)

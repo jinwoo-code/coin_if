@@ -46,7 +46,7 @@ export function recommend(profile: Profile, limit = 6, extraMajors: string[] = [
 
 export function getWorld(id: string): WorldTemplate {
   const world = WORLDS.find((w) => w.id === id);
-  if (!world) throw new Error(`없는 진로 세계: ${id}`);
+  if (!world) throw new Error(`없는 진로: ${id}`);
   return world;
 }
 

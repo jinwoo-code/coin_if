@@ -135,7 +135,13 @@ export const store = {
   setEvidence: (a: Record<string, EvidenceSaved>) => write(KEYS.evidence, a),
   getSelection: () => read<Selection>(KEYS.selection),
   setSelection: (s: Selection) => write(KEYS.selection, s),
-  getMultiverses: () => read<Record<string, Multiverse>>(KEYS.multiverses),
+  // 2026-11-09 전에 저장한 결과의 갈래 길 이름 끝 '세계'(예: '합격하지 못한 세계')를 지금 말 '길'로 바꿔 보여 준다
+  getMultiverses: () => {
+    const m = read<Record<string, Multiverse>>(KEYS.multiverses);
+    if (!m) return m;
+    for (const mv of Object.values(m)) for (const l of mv.lines ?? []) if (l.title?.endsWith(" 세계")) l.title = l.title.slice(0, -2) + "길";
+    return m;
+  },
   setMultiverses: (m: Record<string, Multiverse> | null) => write(KEYS.multiverses, m),
   getLines: () => read<LineCache>(KEYS.lines) ?? {},
   getLine: (worldId: string, lineId: string) => read<LineCache>(KEYS.lines)?.[worldId]?.[lineId] ?? null,

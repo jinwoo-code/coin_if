@@ -698,7 +698,7 @@ export function simulatePath(p: Profile, world: WorldTemplate, months: number, s
       const d = decide(pulled, sim.state, event.choices, rand, shares.every((x) => x !== undefined) ? (shares as number[]) : undefined, judge, lean);
       const forced = force?.eventId === event.id && force.choiceIndex !== undefined;
       choiceIndex = forced ? Math.min(force.choiceIndex!, event.choices.length - 1) : d.index;
-      reason = forced ? "다른 세계에서는 이렇게 골랐어요" : d.reason;
+      reason = forced ? "다른 길에서는 이렇게 골랐어요" : d.reason;
       const chosen = event.choices[choiceIndex];
       if (chosen && event.choices.length >= 2) habit[chosen.tone]++;
       if (event.choices.length >= 2) {
