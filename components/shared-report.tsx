@@ -1,6 +1,6 @@
 // 공유본 화면(링크·PDF 같이 씀). 서버 컴포넌트로도 그린다. 값은 lib/shared-report.ts에 있는 칸뿐이다.
 import { AI_NOTICE, type SharedReport } from "@/lib/shared-report";
-import { T } from "@/lib/copy";
+import { plain, T } from "@/lib/copy";
 
 const yearsOf = (m: number) => (m % 12 ? `${m}개월` : `${m / 12}년`);
 
@@ -41,14 +41,14 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
             {w.gap.top.map((t) => (
               <li key={t.title} className="mt-1">
                 {t.title} <span className="text-cap text-muted">({t.status})</span>
-                {t.why.length ? <span className="block text-cap text-muted">{t.why.join(" · ")}</span> : null}
+                {t.why.length ? <span className="block text-cap text-muted">{t.why.map((x) => plain(x)).join(" · ")}</span> : null}
               </li>
             ))}
           </ol>
 
           <h3 className="mt-4 text-base font-bold">월별 일정</h3>
           <p className="text-cap text-muted">
-            주당 {w.plan.weekly}시간, {w.plan.months}개월 기준. 시간은 NCS 훈련 기준 또는 {T.assumedFull}이에요. {w.plan.note}
+            주당 {w.plan.weekly}시간, {w.plan.months}개월 기준. 시간은 NCS 훈련 기준 또는 {T.assumedFull}이에요. {plain(w.plan.note)}
           </p>
           <ul className="mt-1 text-sm">
             {w.plan.rows.map((r) => (
@@ -64,7 +64,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
               <ul className="mt-1 text-sm">
                 {w.evidence.map((e) => (
                   <li key={e.title} className="mt-0.5">
-                    {e.title} <span className="text-cap text-muted">{e.amount}({T.assumed})</span>
+                    {e.title} <span className="text-cap text-muted">{plain(e.amount)}({T.assumed})</span>
                     {e.topic ? <span className="block text-cap">주제: {e.topic}</span> : null}
                   </li>
                 ))}
