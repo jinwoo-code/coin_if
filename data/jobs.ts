@@ -676,6 +676,30 @@ export const JOBS: Job[] = [
     tiers: sizeTiers([0.5, 0.35, 0.15, 0], "병원"),
     facts: [{ label: "신규 간호사 1년 내 사직률", value: "57.4% (2018년 42.7%)", source: "병원간호사회 자료, 대한간호협회 분석(뉴시스 보도)", year: "2022년", url: NURSE_URL }],
     tags: ["야근", "주말근무"],
+    // 신규 1년 안에 그만둘지 고르는 갈림길. 기준 비율은 data/base-shares.json(license/nurse-first-year, 통계에 맞춰 보정).
+    // 첫 출근 2~10개월째에만 나오고, 그 사이 한 달에 chance로 일어난다(가정값: 대부분의 신규가 1년 안에 이 고민을 만나게).
+    events: [
+      {
+        id: "nurse-first-year",
+        title: "신규 1년, 그만둘지 고민된다",
+        kind: "bad",
+        weight: 1,
+        text: "인수인계와 3교대가 이어졌다. 같은 병동 신규 한 명이 사직서를 냈다.",
+        choices: [
+          { text: "버티며 1년을 채운다", tone: "push", label: "버팀", effect: { stress: 3 } },
+          { text: "다른 병원으로 옮긴다", tone: "change", quits: true, label: "다른 병원으로", effect: { stress: -10 } },
+          { text: "간호 일을 그만둔다", tone: "change", quits: true, sets: "switched", label: "간호를 떠남", effect: { stress: -14 } },
+        ],
+        effect: { stress: 10, satisfaction: -8 },
+        needsJob: true,
+        minTenure: 2,
+        maxTenure: 10,
+        chance: 0.25,
+        branch: "choice",
+        branchLabel: "신규 1년 고민",
+        evidence: { label: "신규간호사 1년 이내 사직률 52.8%, 사직자 중 현장 이탈 12.1%(2021)", source: "병원간호사회 실태조사, 대한간호협회 분석(라포르시안 보도)", url: "https://www.rapportian.com/news/articleView.html?idxno=161614" },
+      },
+    ],
   },
   {
     id: "physio",

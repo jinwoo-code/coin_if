@@ -238,7 +238,10 @@ const GRADE_NOTE = "실제 통계가 아니에요. 평균 성향인 사람이 �
 
 // 갈림길 장면: 보통은 몇 %가 이 선택을 하는지, 나는 몇 %인지, 그 기준 비율의 근거 등급
 export function Odds({ odds }: { odds: ChoiceOdds }) {
-  const badge = odds.grade === "stat" ? (odds.otherGroup ? "통계(다른 집단 기준)" : "통계") : odds.grade === "interview" ? (odds.n ? `현직자 ${odds.n}명` : "현직자") : T.assumed;
+  const badge =
+    odds.grade === "stat" ? (odds.otherGroup ? "통계(다른 집단 기준)" : "통계") : odds.grade === "interview" ? (odds.n ? `현직자 ${odds.n}명` : "현직자") : odds.grade === "calibrated" ? "통계에 맞춰 보정" : T.assumed;
+  // 보정 값의 ref는 "목표 id: 출처 …"라 화면에는 id를 떼고 보여 준다
+  const ref = odds.grade === "calibrated" ? `맞춘 통계: ${(odds.ref ?? "").replace(/^[\w.·]+: /, "")}` : odds.ref;
   return (
     <details className="mt-1 text-cap text-muted">
       <summary className="flex min-h-[44px] cursor-pointer list-none flex-wrap items-center gap-x-1.5 gap-y-1 py-1">
@@ -254,7 +257,7 @@ export function Odds({ odds }: { odds: ChoiceOdds }) {
             {odds.population}이에요. {odds.otherGroup}
           </p>
         ) : null}
-        <p>{odds.grade === "assumed" ? GRADE_NOTE : plain(odds.ref)}</p>
+        <p className="break-words">{odds.grade === "assumed" ? GRADE_NOTE : plain(ref)}</p>
         {odds.aiFailed ? <p className="font-semibold text-ink">AI 판단 실패 → 규칙 계산</p> : null}
         <p>{odds.byAi ? "'나는'은 AI 분신의 판단을 기준 비율에서 크게 벗어나지 않게 반영한 값이에요." : "'나는'은 내 성향을 규칙으로 계산해 기준 비율에서 크게 벗어나지 않게 반영한 값이에요."}</p>
       </div>

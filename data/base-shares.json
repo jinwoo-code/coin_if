@@ -3025,6 +3025,28 @@
           }
         }
       ]
+    },
+    "nurse-first-year": {
+      "stateKeys": [
+        "stress"
+      ],
+      "choices": [
+        {
+          "share": 0.427,
+          "grade": "calibrated",
+          "ref": "nurse.firstYearResign·nurse.leaveField: 병원간호사회(실태조사), 대한간호협회(분석)(2021) 신규간호사 1년 이내 사직률 52.8%, 라포르시안 2023-06-05 보도, https://www.rapportian.com/news/articleView.html?idxno=161614 / 사직자 중 현장 이탈 12.1%. 평균 인물이 이 비율로 고를 때 1년 안 사직·현장 이탈이 이 값이 되도록 맞춘 값(그만둠 0.573, 그중 떠남 0.124)."
+        },
+        {
+          "share": 0.502,
+          "grade": "calibrated",
+          "ref": "nurse.firstYearResign·nurse.leaveField: 병원간호사회(실태조사), 대한간호협회(분석)(2021) 신규간호사 1년 이내 사직률 52.8%, 라포르시안 2023-06-05 보도, https://www.rapportian.com/news/articleView.html?idxno=161614 / 사직자 중 현장 이탈 12.1%. 평균 인물이 이 비율로 고를 때 1년 안 사직·현장 이탈이 이 값이 되도록 맞춘 값(그만둠 0.573, 그중 떠남 0.124)."
+        },
+        {
+          "share": 0.071,
+          "grade": "calibrated",
+          "ref": "nurse.firstYearResign·nurse.leaveField: 병원간호사회(실태조사), 대한간호협회(분석)(2021) 신규간호사 1년 이내 사직률 52.8%, 라포르시안 2023-06-05 보도, https://www.rapportian.com/news/articleView.html?idxno=161614 / 사직자 중 현장 이탈 12.1%. 평균 인물이 이 비율로 고를 때 1년 안 사직·현장 이탈이 이 값이 되도록 맞춘 값(그만둠 0.573, 그중 떠남 0.124)."
+        }
+      ]
     }
   },
   "marketer": {

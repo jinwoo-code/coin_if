@@ -7,7 +7,7 @@ import { scrubStory } from "./story";
 import type { EventCard, Profile, WorldTemplate } from "./types";
 
 // 프롬프트(app/api/judge/route.ts)를 고치면 올린다. 판단 캐시 키에 들어가서 다시 판단하게 된다.
-export const JUDGE_PROMPT_VERSION = "3";
+export const JUDGE_PROMPT_VERSION = "4"; // 4: 기준 비율 일부를 결과 통계에 맞춰 보정(2026-11-08)
 
 export interface JudgeEntry {
   probs: number[]; // 보기 순서대로(합 1)

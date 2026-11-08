@@ -575,7 +575,7 @@ function MultiversePage() {
           <span className="text-cap font-semibold text-muted">펼치기</span>
         </summary>
         <p className="num mt-3 text-sm font-semibold">
-          기준선: 통계 {baseSummary(world).stat} · 현직자 {baseSummary(world).interview} · {T.assumed} {baseSummary(world).assumed}
+          기준선: 통계 {baseSummary(world).stat} · 현직자 {baseSummary(world).interview} · 통계에 맞춰 보정 {baseSummary(world).calibrated} · {T.assumed} {baseSummary(world).assumed}
         </p>
         <p className="text-cap text-muted">{T.ciDetail}</p>
         <p className="text-cap text-muted">갈림길 보기 {baseSummary(world).total}개의 '보통은 몇 %' 값이 어디서 왔는지예요.</p>

@@ -178,8 +178,8 @@ export interface Choice {
   base?: BaseShare; // 같은 상황에서 실제 사람들이 이 보기를 고른 비율(data/base-shares.json에서 붙임)
 }
 
-// 기준 비율의 근거: stat = 공개 통계(ref에 출처·연도·URL), interview = 현직자 인터뷰(ref에 "현직자 N명"), assumed = 가정값
-export type BaseGrade = "stat" | "interview" | "assumed";
+// 기준 비율의 근거: stat = 공개 통계(ref에 출처·연도·URL), interview = 현직자 인터뷰(ref에 "현직자 N명"), calibrated = 결과 통계에 맞춰 보정(ref에 목표 id·출처, scripts/fit-base.ts), assumed = 가정값
+export type BaseGrade = "stat" | "interview" | "calibrated" | "assumed";
 export interface BasePopulation {
   label: string; // 예: "일 경험 없는 15~29세 남성 실업자 기준"
   noWork?: boolean; // 일 경험(경력·인턴)이 없는 사람 대상

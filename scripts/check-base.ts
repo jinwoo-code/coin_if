@@ -12,7 +12,7 @@ import { WORLDS } from "../lib/worlds";
 const EPS = 1e-9;
 const errors: string[] = [];
 let forks = 0;
-const grades: Record<string, number> = { stat: 0, interview: 0, assumed: 0 };
+const grades: Record<string, number> = { stat: 0, interview: 0, calibrated: 0, assumed: 0 };
 
 function check(where: string, e: EventCard) {
   if (e.choices.length < 2) return;
@@ -72,7 +72,7 @@ for (const w of WORLDS.slice(0, 12)) {
 }
 
 console.log(`평균 인물 = 기준 비율 확인 ${normChecks}건(깊이 4 × 스트레스 3 × 상황 칸)`);
-console.log(`갈림길 ${forks}개(진로 ${WORLDS.length}개 + 공통 사건) · 보기 등급: 통계 ${grades.stat}, 현직자 ${grades.interview}, 가정값 ${grades.assumed}`);
+console.log(`갈림길 ${forks}개(진로 ${WORLDS.length}개 + 공통 사건) · 보기 등급: 통계 ${grades.stat}, 현직자 ${grades.interview}, 통계에 맞춰 보정 ${grades.calibrated}, 가정값 ${grades.assumed}`);
 if (errors.length) {
   console.log(`실패 ${errors.length}건\n${errors.slice(0, 30).join("\n")}`);
   process.exit(1);

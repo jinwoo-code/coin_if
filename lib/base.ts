@@ -101,5 +101,5 @@ export function baseSummary(w: WorldTemplate) {
   const all = w.events.flatMap((e) => (e.choices.length >= 2 ? e.choices.map((c) => c.base?.grade ?? "assumed") : []));
   const pct = (g: string) => (all.length ? (all.filter((x) => x === g).length / all.length) * 100 : 0);
   const text = (x: number) => (x > 0 && x < 1 ? "1% 미만" : `${Math.round(x)}%`);
-  return { total: all.length, stat: text(pct("stat")), interview: text(pct("interview")), assumed: text(pct("assumed")) };
+  return { total: all.length, stat: text(pct("stat")), interview: text(pct("interview")), calibrated: text(pct("calibrated")), assumed: text(pct("assumed")) };
 }

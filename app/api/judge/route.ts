@@ -13,7 +13,7 @@ import { normalizeProfile } from "@/lib/profile";
 import type { BaseShare, Choice, LifeState, Profile, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
 
-const gradeText = (b: BaseShare) => (b.grade === "stat" ? "공개 통계" : b.grade === "interview" ? (b.ref ?? "현직자 인터뷰") : "가정값");
+const gradeText = (b: BaseShare) => (b.grade === "stat" ? "공개 통계" : b.grade === "interview" ? (b.ref ?? "현직자 인터뷰") : b.grade === "calibrated" ? "결과 통계에 맞춰 보정" : "가정값");
 
 // 실시간 판단 모드: 상황 칸 대신 그때까지의 흐름을 준다. 큰 일 이름은 진로 데이터에서 찾는다(브라우저가 보낸 글을 프롬프트에 넣지 않는다).
 interface LiveInput {

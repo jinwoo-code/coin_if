@@ -29,6 +29,7 @@ export interface Job {
   facts?: Fact[];
   tags?: HateTag[]; // 이 일에서 자주 생기는 '싫은 것'
   why?: string; // 제3의 길로 제안할 때 이유
+  events?: EventCard[]; // 이 직업에만 있는 사건(유형 틀 사건 뒤에 붙인다. 예: 간호사 신규 1년 고민)
 }
 
 export interface Tier {
@@ -886,6 +887,7 @@ export function buildWorld(j: Job, index: number): WorldTemplate {
       events = [...jobHunt(j, {}, { hazard: j.hazard ?? 0.07, tiers }), ...workLife(j, ppl)];
   }
   if (j.archetype === "exam") events = [...events, ...workLife(j, ppl).filter((e) => ["first-mistake", "mentor", "raise"].includes(e.id))];
+  if (j.events) events = [...events, ...j.events];
 
   const [color, onColor] = PALETTE[index % PALETTE.length];
   const facts: Fact[] = [...(j.facts ?? [])];
