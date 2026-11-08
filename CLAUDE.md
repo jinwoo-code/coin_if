@@ -21,6 +21,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-exam-k.ts     # 시험형 �
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/measure-base.ts   # 갈림길 기준 비율(가정값)을 평균 인물로 재서 data/base-shares.json(통계·인터뷰 값은 안 덮어씀)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/calibrate.ts      # 결과 통계 목표(data/calibration-targets.json) vs 지금 시뮬레이션(평균 인물 53개 진로 + 시연 인물 2명, 1,000번 × 120개월, 약 1분). --runs·--months·--only
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-base.ts --part nurse      # 기준 비율을 결과 통계에 맞춤(보기만, --apply로 base-shares.json에 grade calibrated). 근속(tenure)은 찾기만 함(docs/기준비율-현황.md)
+npx tsx@4.19.2 --tsconfig tsconfig.json --env-file=.env.local scripts/sync-kosis.ts   # KOSIS 직종별 평균근속(KSCO 3자리) → data/kosis/tenure-by-occupation.json + 진로별 근속 목표 표(KOSIS_API_KEY, --offline은 저장 파일로)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-base.ts     # 모든 갈림길에 기준 비율이 있고 합이 1인지
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-coherence.ts   # 상태 모순 세기(53개 진로 × 1,000번 × 10년 × 인물 3명, 약 2분): 취업 후 구직 사건, 긴 구직이 너무 이름, 합격 후 불합격, 퇴사 없이 첫 출근, 장면 머리 처지. 전부 0이어야 함
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-narrate.ts   # 서술 AI 처지 검사 단위 테스트(학생 장면의 입사 동기, 수험 장면의 민원인, 역할 괄호, 장면 안 중복 문장)
@@ -56,7 +57,7 @@ BASE_URL=https://coinif.vercel.app npx playwright test    # 기본: 배포 사�
 
 기능 플래그(`lib/flags.ts`, 값이 1이면 켜짐, 빌드에 들어감): `NEXT_PUBLIC_FEATURE_CHECKIN_MAIL`, `NEXT_PUBLIC_FEATURE_COUNSELOR`. 둘 다 개발 환경(`.env.local`)에서만 켜고 배포에는 넣지 않는다(켜려면 0006 적용, 메일은 `vercel.json` crons도). 끄면 화면에 안 보이고 API는 404. 실시간 결과 잇기·토큰 돌려주기는 플래그 없이 켜져 있다.
 
-`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 모든 AI 호출을 3.5 Flash-Lite로 하나씩 4.5초 간격, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름), `DATA_GO_KR_KEY`(공공데이터포털, 스크립트 전용. 배포에는 안 넣어도 됨). 절대 커밋하지 말 것.
+`.env.local`: `GEMINI_API_KEY`(없으면 목업 모드), `GEMINI_TIER`(`free`면 모든 AI 호출을 3.5 Flash-Lite로 하나씩 4.5초 간격, 비우거나 `paid`면 그대로. 배포에는 `free`를 넣지 말 것), `GEMINI_API_KEY_2~4`(`free`일 때만, 한도에 걸리면 넘어갈 키), `WORK24_KEY_*` 7개(고용24, 서비스마다 키가 다름), `KOSIS_API_KEY`(KOSIS, 스크립트 전용. Vercel에는 '민감한 값'이라 env pull로 못 받음), `DATA_GO_KR_KEY`(공공데이터포털, 스크립트 전용. 배포에는 안 넣어도 됨). 절대 커밋하지 말 것.
 
 스택: Next.js 14 App Router, React 18, TypeScript, Tailwind 3, `@google/genai`(Gemini 3.5 Flash-Lite / 3.6 Flash, 한도면 다른 모델로 돌려 씀), Pretendard 자체 호스팅, lucide-react, fast-xml-parser, unpdf. 브라우저 localStorage(`lib/store.ts`, 저장 버전 `v10`, v4~v9는 처음 읽을 때 옮김) + 로그인하면 Supabase.
 

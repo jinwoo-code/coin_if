@@ -104,15 +104,15 @@
     },
     {
       "id": "byJob.tenureRatio",
-      "name": "직종별 평균 근속연수(전체 평균 대비 배수)",
+      "name": "직종별 평균근속(전직종 대비 배수)",
       "value": null,
       "unit": "배",
-      "population": "고용형태별근로실태조사, 전 연령",
-      "source": null,
+      "population": "임금근로자 전 연령, 남녀 전체(2025)",
+      "source": { "org": "고용노동부", "year": 2025, "title": "고용형태별근로실태조사: 직종, 성별 임금 및 근로조건", "url": "https://kosis.kr/statHtml/statHtml.do?orgId=118&tblId=DT_118N_PAYM41", "via": "KOSIS OpenAPI(scripts/sync-kosis.ts → data/kosis/tenure-by-occupation.json), 진로 → KSCO 코드는 data/kosis/ksco-map.json" },
       "appliesTo": "일반 직장 진로",
-      "simMeasure": "진로 목표 = common.firstJobTenure × (그 직종 평균 근속 ÷ 전체 평균 근속). 전 연령 값이라 그대로 쓰지 않고 상대값만 쓴다.",
-      "use": "대기",
-      "reason": ".env.local에 KOSIS_API_KEY가 없어 표를 받지 못했다. 표 id·기준 연도·진로별 직종(KSCO) 코드는 키를 받은 뒤 채운다."
+      "simMeasure": "진로 목표 = common.firstJobTenure × (그 직종 평균근속 ÷ 전직종 평균근속 7.1년). 전 연령 값이라 상대값만 쓴다.",
+      "use": "참고",
+      "reason": "표는 받았다(2026-11-08). 기준 비율은 유형(묶음)마다 하나라 진로마다 다른 목표에 맞출 수 없고, 공통 목표(①)도 비율만으로는 못 맞춰서 보정은 보류(docs/기준비율-현황.md). 나이 든 사람이 많은 직종(은행원·승무원)은 길게 나온다."
     },
     {
       "id": "byJob.turnoverRatio",
@@ -124,7 +124,7 @@
       "appliesTo": "일반 직장 진로",
       "simMeasure": "진로 목표에 곱하는 상대값(산업 이직률 ÷ 전 산업 이직률). 근속과 같이 쓸지는 표를 본 뒤 정한다.",
       "use": "대기",
-      "reason": "위와 같음(KOSIS 키 없음). 산업(KSIC) 코드는 키를 받은 뒤 채운다."
+      "reason": "직종별 근속(byJob.tenureRatio)을 먼저 받았다. 산업별 이직률은 진로와 산업이 1대1이 아니라 받지 않았다(사업체노동력조사 DT_118N_MON066 등 후보만 확인)."
     }
   ]
 }
