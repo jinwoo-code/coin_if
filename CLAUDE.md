@@ -19,6 +19,7 @@ npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-weights.ts --selftest 30 --i
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/update-norms.ts data/pilot/profiles.json   # 파일럿 동의자 평균으로 비교 집단(norms) 바꾸기(보기만). 30명 이상이면 --apply, 그 뒤 measure-base부터 다시
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/fit-exam-k.ts     # 시험형 준비된 응시자 보정 k를 9급 합격자 통계로 찾기(보기만, 약 1분)
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/measure-base.ts   # 갈림길 기준 비율(가정값)을 평균 인물로 재서 data/base-shares.json(통계·인터뷰 값은 안 덮어씀)
+npx tsx@4.19.2 --tsconfig tsconfig.json scripts/calibrate.ts      # 결과 통계 목표(data/calibration-targets.json) vs 지금 시뮬레이션(평균 인물 53개 진로 + 시연 인물 2명, 1,000번 × 120개월, 약 1분). --runs·--months·--only
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-base.ts     # 모든 갈림길에 기준 비율이 있고 합이 1인지
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-coherence.ts   # 상태 모순 세기(53개 진로 × 1,000번 × 10년 × 인물 3명, 약 2분): 취업 후 구직 사건, 긴 구직이 너무 이름, 합격 후 불합격, 퇴사 없이 첫 출근, 장면 머리 처지. 전부 0이어야 함
 npx tsx@4.19.2 --tsconfig tsconfig.json scripts/check-narrate.ts   # 서술 AI 처지 검사 단위 테스트(학생 장면의 입사 동기, 수험 장면의 민원인, 역할 괄호, 장면 안 중복 문장)
