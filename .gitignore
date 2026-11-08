@@ -18,3 +18,4 @@ pilot*.json
 * [0-9].*
 /e2e-failures/
 docs/screens/deck/demo.webm
+docs/screens/deck/demo-2min.mp4
