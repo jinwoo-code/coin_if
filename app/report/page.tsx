@@ -286,7 +286,7 @@ const WOOP_STEPS: { key: keyof Report["woop"]; label: string }[] = [
 ];
 
 // 무료: 할 일 3개(체크만). 언제·어디서를 정하는 칸은 프리미엄.
-function FreeTodos({ todos }: { todos: string[] }) {
+function FreeTodos({ todos, best }: { todos: string[]; best: number }) {
   const [done, setDone] = useState<Record<number, boolean>>({});
   return (
     <section className="card p-5 sm:p-6" aria-labelledby="todo" data-testid="free-todos">
@@ -294,7 +294,8 @@ function FreeTodos({ todos }: { todos: string[] }) {
         <h2 id="todo" className="text-xl font-bold">
           이번 주 할 일
         </h2>
-        <Mascot place="report" mood="cheer" size={48} />
+        {/* 부합도에 따라 표정만 바뀐다. 말은 늘 '준비하면 된다' 쪽(판정처럼 안 보이게). 70·50 경계는 우리가 정한 값 */}
+        <Mascot place="report" mood={best >= 70 ? "cheer" : best < 50 ? "think" : "happy"} size={48} />
       </div>
       <ul className="mt-3 flex flex-col">
         {todos.slice(0, 3).map((t, i) => (
@@ -617,7 +618,7 @@ export default function ReportPage() {
                 ))}
               </ol>
             </section>
-            {unlocked ? <WeekPlan report={report} /> : <FreeTodos todos={report.todos} />}
+            {unlocked ? <WeekPlan report={report} /> : <FreeTodos todos={report.todos} best={best} />}
           </div>
 
           {selection && unlocked ? (

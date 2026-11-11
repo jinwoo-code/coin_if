@@ -556,7 +556,7 @@ export default function SimulatePage() {
 
       {judging ? (
         <div className="mt-5" aria-live="polite">
-          <Buddy size={56} />
+          <Buddy size={56} chatter={[`큰 갈림길 ${judging.done}/${judging.total}곳 판단했어요!`, "나라면 어떻게 할지 고민 중…", "조금만요, 거의 다 왔어요."]} />
           <RouteProgress total={Math.max(1, judging.total)} current={judging.done} label="분신 판단 진행" />
           <p className="num mt-2 text-cap text-muted">
             분신이 큰 갈림길에서 나라면 어떻게 할지 판단하는 중이에요 ({judging.done}/{judging.total})
@@ -655,7 +655,7 @@ export default function SimulatePage() {
       <div ref={endRef} />
       {done ? <CompareAll worlds={worlds} mvs={mvs} onPick={pickWorld} /> : null}
 
-      {rows.length === 0 && !error ? <div className="mt-8"><Buddy text="1,000번 살아보고 첫 번째 역으로 출발하는 중…" sub="보통 1분 안팎 걸려요." /></div> : null}
+      {rows.length === 0 && !error ? <div className="mt-8"><Buddy text="1,000번 살아보고 첫 번째 역으로 출발하는 중…" sub="보통 1분 안팎 걸려요." chatter={["한 삶, 또 한 삶… 영차!", "갈림길을 하나씩 지나는 중…", "지금 열심히 살아 보는 중이에요!"]} /></div> : null}
       {error ? (
         <div role="alert" className="mt-4 flex items-center gap-3 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
           <MascotFace mood="dizzy" size={44} />

@@ -160,7 +160,15 @@ export function Typing({ label }: { label: string }) {
 
 // ---------- 기다리는 동안 보이는 갈래 ----------
 // 마스코트가 노선 위를 통통 뛰며 오간다. '동작 줄이기'면 멈춘 그림만(globals.css).
-export function Buddy({ text, sub, size = 72 }: { text?: React.ReactNode; sub?: React.ReactNode; size?: number }) {
+export function Buddy({ text, sub, size = 72, chatter }: { text?: React.ReactNode; sub?: React.ReactNode; size?: number; chatter?: string[] }) {
+  // 기다리는 동안 4초마다 갈래가 한마디(진행 숫자를 받아 말한다)
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!chatter?.length) return;
+    const id = setInterval(() => setN((x) => x + 1), 4000);
+    return () => clearInterval(id);
+  }, [chatter?.length]);
+  const say = chatter?.length ? chatter[n % chatter.length] : null;
   return (
     <div role="status" className="flex flex-col items-center gap-2 py-4 text-center">
       <div aria-hidden="true" className="relative" style={{ width: size * 2, height: size * 0.95 }}>
@@ -172,6 +180,11 @@ export function Buddy({ text, sub, size = 72 }: { text?: React.ReactNode; sub?: 
           </span>
         </span>
       </div>
+      {say ? (
+        <p key={say} className="mascot-bubble relative order-first mb-1 rounded-2xl border-2 border-ink bg-surface px-3 py-1.5 text-cap font-semibold">
+          {say}
+        </p>
+      ) : null}
       {text ? <p className="text-sm font-semibold">{text}</p> : null}
       {sub ? <p className="text-cap text-muted">{sub}</p> : null}
     </div>
