@@ -122,7 +122,10 @@ export default function Home() {
         <a href="#how" className="ml-auto hidden min-h-11 items-center text-sm font-medium text-muted hover:text-ink sm:inline-flex">
           이용 방법
         </a>
-        <span className="ml-auto sm:ml-2">
+        <Link href="/guide" className="ml-auto inline-flex min-h-11 items-center text-sm font-medium text-muted hover:text-ink sm:ml-2">
+          기능 둘러보기
+        </Link>
+        <span className="ml-2">
           <AccountButton />
         </span>
       </header>
@@ -222,9 +225,14 @@ export default function Home() {
             </h2>
             <p className="mt-1 text-sm text-muted">갈림길 마을에서 태어난 안내자 갈래의 이야기. 앱을 쓰면서 한 장씩 열려요.</p>
           </div>
-          <Link href="/legend" className="btn-ghost">
-            갈래 이야기 읽기 <ArrowRight aria-hidden="true" size={18} />
-          </Link>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Link href="/guide" className="btn-primary">
+              기능 둘러보기 <ArrowRight aria-hidden="true" size={18} />
+            </Link>
+            <Link href="/legend" className="btn-ghost">
+              갈래 이야기 읽기
+            </Link>
+          </div>
         </div>
       </section>
       <footer className="border-t border-hair">

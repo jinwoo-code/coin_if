@@ -18,6 +18,7 @@ export function DemoGuide() {
     { title: `${T.lineMap}`, note: `${T.line} 나무, 갈림길 바꿔 보기, 바꿀 수 있는 것 Top 3`, href: "/multiverse" },
     { title: "그 길의 나와 대화", note: `${T.lineMap}에서 길을 고른 뒤 '대화하기'` },
     { title: "리포트", note: "결론·할 일, 예시 인물은 프리미엄(격차·일정·다시 살아 보기·공유)까지 무료", href: "/report" },
+    { title: "기능 설명 전체", note: "갈래가 기능 9가지를 하나씩 소개해요", href: "/guide" },
     { title: "갈래 이야기", note: "마스코트 갈래를 누르고, 잡고, 던져 보세요", href: "/legend" },
   ];
   return (
