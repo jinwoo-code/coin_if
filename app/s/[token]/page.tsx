@@ -4,7 +4,7 @@ import { SharedReportView } from "@/components/shared-report";
 import { readShare } from "@/lib/share-store";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "공유된 진로 리허설 결과", robots: { index: false, follow: false }, referrer: "no-referrer" };
+export const metadata: Metadata = { title: "공유된 If:Life 결과", robots: { index: false, follow: false }, referrer: "no-referrer" };
 
 export default async function SharedPage({ params }: { params: { token: string } }) {
   const found = await readShare(params.token);

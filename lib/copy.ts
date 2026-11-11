@@ -3,7 +3,7 @@
 import { euro } from "./josa";
 
 const line = "갈래 길";
-const assumed = "우리가 정한 값";
+const assumed = "팀이 정한 가정값";
 
 export const T = {
   line,
@@ -13,8 +13,12 @@ export const T = {
   ci: "오차 범위",
   ciDetail: "오차 범위는 95% 신뢰구간(Wilson)이에요.",
   assumed,
-  assumedFull: `${assumed}(아직 데이터 없음)`,
+  assumedFull: assumed,
   liveMode: "AI가 직접 살아 보는 모드",
+  // 확률 배수 안내(2026-11-12 팀장 지시). 기준 비율이 결과 통계로 보정된 진로(44개)와 아닌 진로(9개)를 나눈다.
+  multCal: "갈림길의 기준 비율은 통계에 맞췄고, 내 조건이 확률을 바꾸는 크기(배수)는 아직 팀이 정한 가정값이에요.",
+  multNoCal: "이 진로는 맞출 통계가 없어 기준 비율과 배수 일부가 팀이 정한 가정값이에요.",
+  multMixed: "기준 비율은 통계로 보정된 진로만 통계 기준이고, 배수는 아직 팀이 정한 가정값이에요.",
   // 숫자가 어느 삶에서 왔는지. 같은 화면에 두 기준이 섞이면 달라 보이니 작게 붙인다.
   basisMain: "가장 흔한 길 중 한 번의 삶",
   basisLineCard: (runs: number) => `${runs.toLocaleString("ko-KR")}번의 가운데 값`,

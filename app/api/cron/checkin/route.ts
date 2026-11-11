@@ -42,7 +42,7 @@ export async function GET(req: Request) {
       body: JSON.stringify({
         from,
         to,
-        subject: "진로 리허설: 한 달 체크인할 때예요",
+        subject: "If:Life: 한 달 체크인할 때예요",
         text: `한 달이 지났어요. 상황 질문 몇 개를 다시 답하면 분신이 나를 얼마나 닮았는지 볼 수 있어요.\n\n${site}/checkin\n\n그만 받으려면 같은 화면에서 '메일 끄기'를 누르세요.`,
       }),
     }).catch(() => null);

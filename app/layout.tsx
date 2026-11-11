@@ -5,7 +5,7 @@ import "./globals.css";
 import { SyncBridge } from "@/components/account";
 
 export const metadata: Metadata = {
-  title: "AI 진로 리허설",
+  title: "If:Life · AI 진로 시뮬레이션",
   description: "가보기 전에 먼저 살아보는 체험형 AI 진로 컨설팅",
 };
 

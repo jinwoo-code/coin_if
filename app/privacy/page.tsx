@@ -3,7 +3,7 @@ import { Screen } from "@/components/ui";
 import { COLLECTED, CONSENT_VERSION } from "@/lib/consent";
 import { FLAGS } from "@/lib/flags";
 
-export const metadata = { title: "개인정보 처리방침(초안) · AI 진로 리허설" };
+export const metadata = { title: "개인정보 처리방침(초안) · If:Life" };
 
 const SECTIONS: { title: string; body: string[] }[] = [
   {

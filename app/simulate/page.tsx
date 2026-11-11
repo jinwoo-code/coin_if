@@ -1,5 +1,6 @@
 "use client";
 // 3. 체험: 진로마다 1,000번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
+import { isCalibrated } from "@/lib/base";
 import { DemoGuide } from "@/components/demo-guide";
 import { MascotFace } from "@/components/mascot";
 import { SpecNotice, specMissing } from "@/components/spec-notice";
@@ -315,7 +316,7 @@ function CompareAll({ worlds, mvs, onPick }: { worlds: WorldTemplate[]; mvs: Rec
       <details className="mt-2 text-cap text-muted" data-testid="compare-basis">
         <summary className="min-h-11 cursor-pointer py-2">숫자 기준 · {T.assumed} 포함</summary>
         <p>{T.basisAll(runs)}과 비율이에요. 위 요약 카드는 {T.basisMain}이라 다를 수 있어요.</p>
-        <p className="mt-1">합격·취업의 뜻은 진로마다 달라요. 확률 배수 대부분은 {T.assumedFull}이라 예측이 아니라 비교용이에요.</p>
+        <p className="mt-1">합격·취업의 뜻은 진로마다 달라요. {T.multMixed} 예측이 아니라 비교용이에요.</p>
       </details>
     </section>
   );
@@ -609,11 +610,37 @@ export default function SimulatePage() {
                   <div className="flex flex-col gap-2 px-2 pb-2 sm:px-3 sm:pb-3">
                     {(() => {
                       const rep = repeatedInYear(y.rows.flatMap((r) => r.events.filter((e) => e.worldId === w.id)));
-                      return y.rows.map((row) => {
-                      const ev = row.events.find((e) => e.worldId === w.id);
-                      const isCurrent = !done && row === rows.at(-1);
-                      return ev && mvs[w.id] ? <EventCard key={row.station} ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} repeated={rep.has(ev.station)} /> : null;
-                      });
+                      const card = (row: (typeof y.rows)[number]) => {
+                        const ev = row.events.find((e) => e.worldId === w.id);
+                        const isCurrent = !done && row === rows.at(-1);
+                        return ev && mvs[w.id] ? <EventCard key={row.station} ev={ev} world={w} current={isCurrent} mv={mvs[w.id]} animate={animateTimeline && isCurrent} repeated={rep.has(ev.station)} /> : null;
+                      };
+                      // '조용히 지나간 시간'이 2칸 이상 이어지면 한 줄로 접는다(눌러서 펼침). 지금 살고 있는 칸은 안 접는다.
+                      const isQuiet = (row: (typeof y.rows)[number]) => row.events.find((e) => e.worldId === w.id)?.eventId === "quiet" && !(!done && row === rows.at(-1));
+                      const out: React.ReactNode[] = [];
+                      for (let i = 0; i < y.rows.length; ) {
+                        let j = i;
+                        while (j < y.rows.length && isQuiet(y.rows[j])) j++;
+                        if (j - i >= 2 && selection) {
+                          const group = y.rows.slice(i, j);
+                          const first = group[0].events.find((e) => e.worldId === w.id)!;
+                          const last = group.at(-1)!.events.find((e) => e.worldId === w.id)!;
+                          const from = first.label.match(/^\d+년 \d+월?/)?.[0].replace(/(\d+)$/, "$1월").replace("월월", "월") ?? first.label;
+                          out.push(
+                            <details key={`quiet-${first.station}`} className="rounded-2xl border border-dashed border-hair px-3 py-1">
+                              <summary className="flex min-h-11 cursor-pointer items-center text-sm text-muted">
+                                {from}~{monthLabel(selection.startYm, last.month)} 큰 일 없이 지나갔어요
+                              </summary>
+                              <div className="flex flex-col gap-2 pb-2">{group.map(card)}</div>
+                            </details>,
+                          );
+                          i = j;
+                        } else {
+                          out.push(card(y.rows[i]));
+                          i++;
+                        }
+                      }
+                      return out;
                     })()}
                   </div>
                 </details>
@@ -664,7 +691,7 @@ export default function SimulatePage() {
           <p className="min-w-0">{error}</p>
         </div>
       ) : null}
-      <p className="mt-8 text-cap text-muted">사건이 일어날 확률과 내 선택은 내 조건·가치관·성격과 공개 통계를 바탕으로 정해져요. 확률 배수 중 일부는 아직 {T.assumedFull}이에요.</p>
+      <p className="mt-8 text-cap text-muted">사건이 일어날 확률과 내 선택은 내 조건·가치관·성격과 공개 통계를 바탕으로 정해져요. {selectedWorld ? (isCalibrated(selectedWorld) ? T.multCal : T.multNoCal) : T.multMixed}</p>
     </Screen>
   );
 }

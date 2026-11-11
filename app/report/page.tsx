@@ -474,8 +474,8 @@ export default function ReportPage() {
               <div className="mt-6 flex flex-col gap-5 rounded-[24px] border border-lineA/30 bg-[#EDF2FF] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7" data-testid="fit-leader">
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-lineA">이번 비교에서 점수가 가장 높은 길</p>
-                  <h3 className="mt-2 text-xl font-extrabold sm:text-2xl">{leaders.length === 1 ? `${getWorld(leaders[0].worldId).name} 경로가 내 가치관에 가장 가까워요` : `${leaders.map((w) => getWorld(w.worldId).name).join(" · ")} 경로가 공동 최고 점수예요`}</h3>
-                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. 배수 대부분이 {T.assumedFull}이라 작은 점수 차이는 큰 뜻이 없어요.</p>
+                  <h3 className="mt-2 text-xl font-extrabold sm:text-2xl">가치관 기준 비교 점수가 가장 높은 길: {leaders.map((w) => getWorld(w.worldId).name).join(" · ")}</h3>
+                  <p className="mt-3 text-sm">정답이 아니라 비교용 점수예요. {T.multMixed} 그래서 작은 점수 차이는 큰 뜻이 없어요.</p>
                   <p className="mt-1 text-sm text-muted">가치관, 성격, {runs}번 살아본 결과(합격·만족·스트레스)를 합쳐 계산했어요.</p>
                 </div>
                 <div className="flex shrink-0 items-baseline gap-3 border-t border-lineA/20 pt-4 sm:block sm:min-w-32 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0 sm:text-center">

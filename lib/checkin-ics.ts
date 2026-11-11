@@ -9,7 +9,7 @@ export function downloadCheckin(days = 30) {
     "BEGIN:VEVENT",
     `UID:${Date.now()}@career-rehearsal`,
     `DTSTART;VALUE=DATE:${ymd}`,
-    "SUMMARY:진로 리허설 체크인",
+    "SUMMARY:If:Life 체크인",
     "DESCRIPTION:한 달 동안 해 본 일을 입력하고 다시 살아보세요.",
     "END:VEVENT",
     "END:VCALENDAR",

@@ -1,4 +1,6 @@
 // 공유본 화면(링크·PDF 같이 씀). 서버 컴포넌트로도 그린다. 값은 lib/shared-report.ts에 있는 칸뿐이다.
+import { isCalibrated } from "@/lib/base";
+import { WORLDS } from "@/lib/worlds";
 import { AI_NOTICE, type SharedReport } from "@/lib/shared-report";
 import { plain, T } from "@/lib/copy";
 
@@ -11,7 +13,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
         {AI_NOTICE}
       </p>
       <p className="mt-1 text-cap text-muted">사건·확률·돈은 규칙 엔진이 계산했고, 문장 일부는 AI가 썼어요. 준비 계획이지 합격·취업을 보장하지 않아요.</p>
-      <h1 className="mt-5 text-2xl font-extrabold">{data.person.name}의 진로 리허설 결과</h1>
+      <h1 className="mt-5 text-2xl font-extrabold">{data.person.name}의 If:Life 결과</h1>
       <p className="mt-1 text-sm text-muted">
         {data.person.major}
         {data.createdAt ? ` · ${data.createdAt.slice(0, 10)} 기준` : ""}
@@ -24,7 +26,7 @@ export function SharedReportView({ data, expiresAt }: { data: SharedReport; expi
           <p className="mt-2 text-sm">
             종합 점수 <strong>{w.fit}점</strong> · {yearsOf(w.months)} 안에 {w.gateLabel} <strong>{w.gateShare}%</strong> · 만족하며 끝난 비율 {w.satisfied}% · 스트레스 높게 끝남 {w.stressed}%
           </p>
-          <p className="text-cap text-muted">{w.runs.toLocaleString()}번 살아 본 결과예요. 확률의 바탕이 된 배수는 대부분 {T.assumedFull}이에요.</p>
+          <p className="text-cap text-muted">{w.runs.toLocaleString()}번 살아 본 결과예요. {(() => { const wt = WORLDS.find((x) => x.id === w.id); return wt && !isCalibrated(wt) ? T.multNoCal : T.multCal; })()}</p>
           {w.good || w.hard ? (
             <p className="mt-2 text-sm">
               좋았던 점: {w.good}

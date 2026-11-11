@@ -99,7 +99,7 @@ function Tree({ node, mv, world, picked, onOpen, onPick, depth = 0 }: { node: Li
             </p>
           ) : null}
           {line ? <LineCard line={line} world={world} picked={picked.includes(line.id)} onOpen={() => onOpen(line)} onPick={() => onPick(line)} /> : null}
-          {node.other > 0 ? <p className="num mt-1.5 text-cap text-muted">+ 너무 드물어서 묶은 갈래 {node.other}번</p> : null}
+          {node.other > 0 ? <p className="num mt-1.5 text-cap text-muted">+ 그 밖의 드문 길 {node.other}번</p> : null}
         </div>
       </div>
       {node.children.length ? (
@@ -286,7 +286,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
   // 보여 줄 게 없을 때: 고용24 연결 실패면 안내, 공고가 기관 키 전이면 그 문구만, 원래 보여 줄 게 없는 진로(시험형 등 NCS 직무 없음)면 칸을 안 그린다.
   if (!w && !live.duties?.length && !hasTraining) {
     if (live.dutiesFailed) return <p className="mt-4 rounded-2xl bg-surface px-4 py-3 text-cap text-muted shadow-[0_0_0_1px_#E3E6EB]">고용24에 연결하지 못했어요. 잠시 뒤 다시 열어 주세요.</p>;
-    if (!live.wantedLocked) return null;
+    return null; // 공고 칸만 남는 경우(기관 키 전)도 칸 자체를 숨긴다
   }
   return (
     <section aria-labelledby="live" className="card mt-4 p-5">
@@ -320,7 +320,7 @@ function LiveCard({ world, region }: { world: WorldTemplate; region: string }) {
           </ul>
         </div>
       ) : null}
-      {live.wantedLocked ? <p className="mt-3 rounded-xl bg-ground px-3 py-2 text-cap text-muted">채용 공고는 기관 키 연결 후 보여 드려요</p> : null}
+      {/* 채용 공고 칸은 기관 키가 없으면 아예 숨긴다(2026-11-12 팀장 지시) */}
       {live.duties?.length ? (
         <div className="mt-4">
           <p className="label">실제로 하는 일(NCS {live.ncs})</p>

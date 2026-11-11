@@ -23,7 +23,10 @@ export function DemoGuide() {
   ];
   return (
     <details className="mt-3 rounded-2xl border-2 border-sun bg-sunSoft px-4 py-3 text-sm" data-testid="demo-guide">
-      <summary className="flex min-h-11 cursor-pointer items-center font-bold">예시로 둘러볼 곳 {steps.length}곳</summary>
+      <summary className="flex min-h-11 cursor-pointer flex-col justify-center">
+        <span className="font-bold">예시로 둘러볼 곳 {steps.length}곳</span>
+        <span className="text-cap text-muted">예시 인물 결과로 이 서비스의 기능을 차례로 볼 수 있는 곳이에요.</span>
+      </summary>
       <ol className="mt-2 flex flex-col gap-2 pb-1">
         {steps.map((s, i) => (
           <li key={s.title} className="flex gap-2">

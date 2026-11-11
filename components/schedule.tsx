@@ -1,5 +1,6 @@
 "use client";
 // 리포트 월별 일정. 계산은 lib/schedule.ts(AI 없음), 고친 값은 이 기기에만.
+import { isCalibrated } from "@/lib/base";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CI_NOTE, Ci } from "@/components/ui";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -172,7 +173,7 @@ function PlanRerunBox({ plan, rows, profile, world, startYm, onEdit }: { plan: P
           {r.notInSim.length ? <p className="mt-2 text-cap text-muted">시뮬레이션에 안 들어가는 줄: {r.notInSim.join(", ")}</p> : null}
           {r.late.length ? <p className="mt-1 text-cap text-muted">기간 안에 안 끝나서 뺀 줄: {r.late.join(", ")}</p> : null}
           {r.undated.length ? <p className="mt-1 text-cap text-muted">시점을 정하지 않아 뺀 항목: {r.undated.join(", ")}</p> : null}
-          <p className="mt-2 text-cap text-muted">계획을 제때 다 해낸다고 본 값이고, 항목 하나는 조건 한 단계로 쳐요. 자격증·준비도 배수는 대부분 {T.assumedFull}이에요. 합격·취업을 보장하지 않아요. {CI_NOTE}</p>
+          <p className="mt-2 text-cap text-muted">계획을 제때 다 해낸다고 본 값이고, 항목 하나는 조건 한 단계로 쳐요. {isCalibrated(world) ? T.multCal : T.multNoCal} 합격·취업을 보장하지 않아요. {CI_NOTE}</p>
         </div>
       ) : null}
     </div>

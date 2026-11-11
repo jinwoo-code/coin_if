@@ -117,7 +117,7 @@ export default function Home() {
             <path d="M9 12c4 0 4 6 8 6h5" stroke="#13A57B" strokeWidth="2.6" strokeLinecap="round" />
             <circle cx="9" cy="12" r="3" fill="#fff" stroke="#14171F" strokeWidth="2" />
           </svg>
-          진로 리허설
+          If:Life
         </span>
         <a href="#how" className="ml-auto hidden min-h-11 items-center text-sm font-medium text-muted hover:text-ink sm:inline-flex">
           이용 방법
@@ -149,7 +149,7 @@ export default function Home() {
           </div>
           <p className="mb-5 flex items-center gap-2 text-sm font-semibold text-muted">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lineA" />
-            나의 가능성을 탐색하는 AI 진로 리허설
+            AI 진로 시뮬레이션
           </p>
           <h1 className="text-3xl font-extrabold !leading-[1.2] sm:text-4xl lg:text-[54px]">
             가보기 전에,

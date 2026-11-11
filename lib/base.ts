@@ -96,6 +96,11 @@ export function populationGap(p: Profile, pop: BasePopulation): string | null {
   return null;
 }
 
+// 기준 비율이 결과 통계로 보정된 진로인지(보기 하나라도 calibrated·stat이면). 화면 안내 문구를 고를 때만 쓴다.
+export function isCalibrated(w: WorldTemplate): boolean {
+  return w.events.some((e) => e.choices.some((c) => c.base?.grade === "calibrated" || c.base?.grade === "stat"));
+}
+
 // 이 진로의 기준선 보기 중 등급별 비율(%)
 export function baseSummary(w: WorldTemplate) {
   const all = w.events.flatMap((e) => (e.choices.length >= 2 ? e.choices.map((c) => c.base?.grade ?? "assumed") : []));

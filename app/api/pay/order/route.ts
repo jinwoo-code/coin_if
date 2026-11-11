@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   return NextResponse.json({
     orderId,
     amount: p.price,
-    orderName: `진로 리허설 토큰 ${p.tokens}개`,
+    orderName: `If:Life 토큰 ${p.tokens}개`,
     customerKey: user.id, // 토스 위젯의 구매자 식별값(이메일·전화 같은 개인정보가 아닌 무작위 id)
     customerEmail: user.email,
   });

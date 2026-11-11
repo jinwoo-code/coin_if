@@ -27,7 +27,7 @@ export default function LegendPage() {
       <div className="mt-4 flex flex-col items-center rounded-card bg-sunSoft px-5 py-6 text-center">
         <Mascot place="legend" mood="happy" firstLine="제 이야기, 궁금했어요?" />
         <p className="mt-3 text-sm text-muted">
-          진로 리허설의 안내자 갈래가 태어난 이야기예요. 앱을 쓰면서 한 장씩 열려요. <span className="num font-semibold text-ink">({opened}/{CHAPTERS.length})</span>
+          If:Life의 안내자 갈래가 태어난 이야기예요. 앱을 쓰면서 한 장씩 열려요. <span className="num font-semibold text-ink">({opened}/{CHAPTERS.length})</span>
         </p>
       </div>
 

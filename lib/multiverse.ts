@@ -271,9 +271,14 @@ export function multiverseOf(p: Profile, world: WorldTemplate, months: number, s
     .map(({ node, trail, runs }) => {
       const ps = runs.map((i) => paths[i]);
       const final = finalDist(ps);
-      // 대표 회차: 만족도가 가운데에 가장 가까운 회차
-      const target = final.satisfaction.p50;
-      const rep = runs.reduce((best, i) => (Math.abs(paths[i].final.satisfaction - target) < Math.abs(paths[best].final.satisfaction - target) ? i : best), runs[0] ?? 0);
+      // 대표 회차: 길 이름에 적힌 갈림길까지만 겪고 여기서 끝난 회차(드물어서 잘라 낸 갈래에서 합쳐진 회차는 뺀다.
+      // 넣으면 '큰 변화 없이' 길의 대표가 신규 1년에 그만둔 삶이 될 수 있었다, 2026-11-12). 그런 회차가 없을 때만 전체에서.
+      // 그 안에서 만족도가 가운데에 가장 가까운 회차. 길의 통계(만족·돈·연봉)는 예전처럼 합쳐진 회차까지 센다.
+      const depth = trail.length - 1;
+      const exact = runs.filter((i) => Math.min(paths[i].signature.length, MAX_DEPTH) === depth);
+      const pool = exact.length ? exact : runs;
+      const target = finalDist(pool.map((i) => paths[i])).satisfaction.p50;
+      const rep = pool.reduce((best, i) => (Math.abs(paths[i].final.satisfaction - target) < Math.abs(paths[best].final.satisfaction - target) ? i : best), pool[0] ?? 0);
       const sal = ps.filter((x) => x.salary > 0).map((x) => x.salary);
       return {
         id: node.id,
