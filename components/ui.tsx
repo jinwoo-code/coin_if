@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { won } from "@/lib/format";
 import { TokenChip } from "./account";
+import { MascotFace } from "./mascot";
 import type { ChoiceOdds, LifeState, SimEvent, WorldTemplate } from "@/lib/types";
 import { T, plain } from "@/lib/copy";
 
@@ -157,28 +158,20 @@ export function Typing({ label }: { label: string }) {
   );
 }
 
-// ---------- 기다리는 동안 보이는 작은 친구 ----------
-// 동그란 캐릭터가 노선 위를 통통 뛰며 간다. '동작 줄이기'면 멈춘 그림만(globals.css).
+// ---------- 기다리는 동안 보이는 갈래 ----------
+// 마스코트가 노선 위를 통통 뛰며 오간다. '동작 줄이기'면 멈춘 그림만(globals.css).
 export function Buddy({ text, sub, size = 72 }: { text?: React.ReactNode; sub?: React.ReactNode; size?: number }) {
   return (
     <div role="status" className="flex flex-col items-center gap-2 py-4 text-center">
-      <svg aria-hidden="true" width={size * 2} height={size} viewBox="0 0 144 72" className="overflow-visible">
-        <line x1="6" y1="64" x2="138" y2="64" stroke="#E3E6EB" strokeWidth="4" strokeLinecap="round" />
-        <line x1="6" y1="64" x2="138" y2="64" stroke="#14171F" strokeWidth="4" strokeLinecap="round" strokeDasharray="2 14" className="buddy-track" />
-        <g className="buddy-walk">
-          <g className="buddy-hop">
-            <ellipse cx="72" cy="44" rx="17" ry="16" fill="#FFD25E" stroke="#14171F" strokeWidth="2.5" />
-            <g className="buddy-blink">
-              <circle cx="66" cy="42" r="2.4" fill="#14171F" />
-              <circle cx="78" cy="42" r="2.4" fill="#14171F" />
-            </g>
-            <circle cx="61" cy="48" r="2.6" fill="#FF9B9B" opacity=".7" />
-            <circle cx="83" cy="48" r="2.6" fill="#FF9B9B" opacity=".7" />
-            <path d="M68 49 q4 3.5 8 0" fill="none" stroke="#14171F" strokeWidth="2" strokeLinecap="round" />
-            <path d="M72 28 q2 -7 7 -8" fill="none" stroke="#14171F" strokeWidth="2" strokeLinecap="round" />
-          </g>
-        </g>
-      </svg>
+      <div aria-hidden="true" className="relative" style={{ width: size * 2, height: size * 0.95 }}>
+        <span className="absolute inset-x-1 bottom-1 h-1 rounded-full bg-hair" />
+        <span className="buddy-track absolute inset-x-1 bottom-1 h-1 rounded-full" />
+        <span className="buddy-walk absolute bottom-0 left-1/2 -ml-[var(--h)]" style={{ ["--h" as string]: `${size * 0.4}px` }}>
+          <span className="buddy-hop block">
+            <MascotFace mood="happy" size={size * 0.8} />
+          </span>
+        </span>
+      </div>
       {text ? <p className="text-sm font-semibold">{text}</p> : null}
       {sub ? <p className="text-cap text-muted">{sub}</p> : null}
     </div>

@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/components/account";
 import { DEMOS, demoSelection, demoStart, isDemoPerson } from "@/lib/demo";
 import { store } from "@/lib/store";
+import { Mascot, MascotFace } from "@/components/mascot";
 
 const BRANCHES = [
   { color: "#2F5BEA", d: "M150 150 C 205 150, 210 58, 270 58 L 336 58", end: [336, 58], label: "간호사 3년차", delay: 0.55 },
@@ -140,6 +141,9 @@ export default function Home() {
       ) : null}
       <main id="main" className="mx-auto grid w-full max-w-[1200px] flex-1 items-center gap-10 px-5 pb-14 pt-6 sm:px-8 sm:pt-10 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:pb-20">
         <section className="flex min-w-0 flex-col">
+          <div className="mb-4">
+            <Mascot place="home" align="left" size={64} firstLine="안녕하세요, 저는 갈래예요! 눌러 보거나 잡아 보세요." />
+          </div>
           <p className="mb-5 flex items-center gap-2 text-sm font-semibold text-muted">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lineA" />
             나의 가능성을 탐색하는 AI 진로 리허설
@@ -207,6 +211,20 @@ export default function Home() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+      <section aria-labelledby="legend-title" className="border-t border-hair bg-sunSoft">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start gap-4 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
+          <MascotFace mood="think" size={64} />
+          <div className="flex-1">
+            <h2 id="legend-title" className="text-lg font-bold">
+              갈래는 어디서 왔을까요?
+            </h2>
+            <p className="mt-1 text-sm text-muted">갈림길 마을에서 태어난 안내자 갈래의 이야기. 앱을 쓰면서 한 장씩 열려요.</p>
+          </div>
+          <Link href="/legend" className="btn-ghost">
+            갈래 이야기 읽기 <ArrowRight aria-hidden="true" size={18} />
+          </Link>
         </div>
       </section>
       <footer className="border-t border-hair">

@@ -1,5 +1,6 @@
 "use client";
 // 3. 체험: 진로마다 1,000번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
+import { MascotFace } from "@/components/mascot";
 import { SpecNotice, specMissing } from "@/components/spec-notice";
 import { BarChart3, ChevronDown, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
 import Link from "next/link";
@@ -656,9 +657,10 @@ export default function SimulatePage() {
 
       {rows.length === 0 && !error ? <div className="mt-8"><Buddy text="1,000번 살아보고 첫 번째 역으로 출발하는 중…" sub="보통 1분 안팎 걸려요." /></div> : null}
       {error ? (
-        <p role="alert" className="mt-4 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
-          {error}
-        </p>
+        <div role="alert" className="mt-4 flex items-center gap-3 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
+          <MascotFace mood="dizzy" size={44} />
+          <p className="min-w-0">{error}</p>
+        </div>
       ) : null}
       <p className="mt-8 text-cap text-muted">사건이 일어날 확률과 내 선택은 내 조건·가치관·성격과 공개 통계를 바탕으로 정해져요. 확률 배수 중 일부는 아직 {T.assumedFull}이에요.</p>
     </Screen>

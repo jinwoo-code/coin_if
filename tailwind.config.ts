@@ -15,6 +15,8 @@ const config: Config = {
         lineB: "#F26B1D",
         lineC: "#13A57B",
         lineD: "#7B4DDB",
+        sun: "#FFD25E", // 마스코트 갈래의 노랑(포인트 색, 글자에는 안 씀)
+        sunSoft: "#FFF6DA",
       },
       fontFamily: {
         sans: ['"Pretendard Variable"', "Pretendard", "system-ui", "sans-serif"],
@@ -30,7 +32,7 @@ const config: Config = {
         "3xl": ["36px", { lineHeight: "1.15", letterSpacing: "-0.035em" }],
         "4xl": ["48px", { lineHeight: "1.08", letterSpacing: "-0.04em" }],
       },
-      borderRadius: { card: "18px" },
+      borderRadius: { card: "22px" },
       keyframes: {
         rise: { from: { opacity: "0", transform: "translateY(8px)" }, to: { opacity: "1", transform: "none" } },
         draw: { from: { transform: "scaleY(0)" }, to: { transform: "scaleY(1)" } },

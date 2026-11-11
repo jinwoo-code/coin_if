@@ -1,5 +1,6 @@
 "use client";
 // 5. 실행 계획과 사후 관리: 비교 리포트 + WOOP 실행 계획 + 이번 주 할 일 + 체크인
+import { Mascot } from "@/components/mascot";
 import { ArrowDown, ArrowRight, CalendarPlus, Check, ChevronDown, Lock, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -289,9 +290,12 @@ function FreeTodos({ todos }: { todos: string[] }) {
   const [done, setDone] = useState<Record<number, boolean>>({});
   return (
     <section className="card p-5 sm:p-6" aria-labelledby="todo" data-testid="free-todos">
-      <h2 id="todo" className="text-xl font-bold">
-        이번 주 할 일
-      </h2>
+      <div className="flex items-end justify-between gap-3">
+        <h2 id="todo" className="text-xl font-bold">
+          이번 주 할 일
+        </h2>
+        <Mascot place="report" mood="cheer" size={48} />
+      </div>
       <ul className="mt-3 flex flex-col">
         {todos.slice(0, 3).map((t, i) => (
           <li key={t}>
