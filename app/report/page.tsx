@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { OutcomeSplit, showsOutcome } from "@/components/outcome-split";
-import { Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
+import { Buddy, Ci, LineBadge, RangeRow, Screen, Typing, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { satText } from "@/lib/format";
 import { durationLabel, monthLabel } from "@/lib/calendar";
@@ -441,8 +441,7 @@ export default function ReportPage() {
     >
       {!report ? (
         <div className="mt-16 flex flex-col items-center gap-3 text-muted">
-          <Typing label="리포트를 만드는 중" />
-          <p>살아본 길들을 비교하는 중…</p>
+          <Buddy text="살아본 길들을 비교하는 중…" />
         </div>
       ) : (
         <div className="flex flex-col gap-6 pb-4 pt-4 sm:gap-8 sm:pt-7 [&>*]:min-w-0">

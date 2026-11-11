@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import norms from "@/data/norms.json";
-import { MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui";
+import { Buddy, MockNotice, RouteProgress, Screen, Typing, won } from "@/components/ui";
 import { ChoiceItem, ScaleEnds, ScaleRow } from "@/components/scale";
 import { Ai, Me } from "@/components/chat";
 import { canDeepen, depthOrder, DEPTHS, remainingSteps, stepsFor, type Step, type TextKey } from "@/lib/assessment";
@@ -623,6 +623,7 @@ export default function InterviewPage() {
     <Screen
       title={done ? "AI가 이해한 나" : "나 만들기"}
       back="/"
+      homeConfirm={done ? undefined : "처음 화면으로 갈까요? 끝내지 않은 검사 답은 저장되지 않아요."}
       right={done ? null : <span className="num pr-2 text-sm font-semibold text-muted">{`${Math.min(index + 1, steps.length)}/${steps.length}`}</span>}
       footer={
         done ? (
@@ -1099,10 +1100,7 @@ export default function InterviewPage() {
           ) : null}
           {loading ? (
             <Ai>
-              <span className="flex items-center gap-3">
-                <Typing label="답변을 바탕으로 나를 만드는 중" />
-                <span className="text-muted">답변을 바탕으로 나를 만드는 중…</span>
-              </span>
+              <Buddy size={52} text="답변을 바탕으로 나를 만드는 중…" />
             </Ai>
           ) : null}
           <div ref={endRef} />

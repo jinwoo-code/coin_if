@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { textColor } from "@/lib/color";
 import { showsOutcome } from "@/components/outcome-split";
-import { Ci, freqWord, LineBadge, MockNotice, Narration, Odds, repeatedInYear, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
+import { Buddy, Ci, freqWord, LineBadge, MockNotice, Narration, Odds, repeatedInYear, RouteProgress, Screen, STATE_META, won } from "@/components/ui";
 import { times } from "@/lib/ci";
 import { durationLabel, monthLabel } from "@/lib/calendar";
 import { CorrectChoice } from "@/components/correct";
@@ -555,6 +555,7 @@ export default function SimulatePage() {
 
       {judging ? (
         <div className="mt-5" aria-live="polite">
+          <Buddy size={56} />
           <RouteProgress total={Math.max(1, judging.total)} current={judging.done} label="분신 판단 진행" />
           <p className="num mt-2 text-cap text-muted">
             분신이 큰 갈림길에서 나라면 어떻게 할지 판단하는 중이에요 ({judging.done}/{judging.total})
@@ -653,7 +654,7 @@ export default function SimulatePage() {
       <div ref={endRef} />
       {done ? <CompareAll worlds={worlds} mvs={mvs} onPick={pickWorld} /> : null}
 
-      {rows.length === 0 && !error ? <p className="mt-10 text-center text-sm text-muted">1,000번 살아보고 첫 번째 역으로 출발하는 중…<br />보통 1분 안팎 걸려요.</p> : null}
+      {rows.length === 0 && !error ? <div className="mt-8"><Buddy text="1,000번 살아보고 첫 번째 역으로 출발하는 중…" sub="보통 1분 안팎 걸려요." /></div> : null}
       {error ? (
         <p role="alert" className="mt-4 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
           {error}

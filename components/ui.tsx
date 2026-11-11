@@ -1,7 +1,7 @@
 "use client";
 // 여러 화면에서 같이 쓰는 부품. 색은 '노선' 색만 쓰고 나머지는 무채색이다.
 import { wilson } from "@/lib/ci";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, Home, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { won } from "@/lib/format";
@@ -18,9 +18,13 @@ export function Screen({
   wide = false,
   children,
   footer,
+  home = true,
+  homeConfirm,
 }: {
   title?: string;
   back?: string;
+  home?: boolean; // 머리글 '처음으로' 버튼(한 번에 첫 화면으로)
+  homeConfirm?: string; // 있으면 나가기 전에 확인 창(저장 안 된 진행이 있을 때)
   right?: React.ReactNode;
   wide?: boolean; // 데스크톱에서 넓게 쓰는 화면(타임라인, 리포트)
   children: React.ReactNode;
@@ -39,6 +43,19 @@ export function Screen({
           {title ? <h1 className="flex-1 truncate text-lg font-bold tracking-tight">{title}</h1> : <span className="flex-1" />}
           <TokenChip />
           {right}
+          {home ? (
+            <Link
+              href="/"
+              aria-label="처음으로"
+              title="처음으로"
+              onClick={(e) => {
+                if (homeConfirm && !window.confirm(homeConfirm)) e.preventDefault();
+              }}
+              className="flex h-11 w-11 flex-none items-center justify-center rounded-full hover:bg-black/5"
+            >
+              <Home aria-hidden="true" size={21} strokeWidth={2} />
+            </Link>
+          ) : null}
         </div>
       </header>
       <main id="main" className={`mx-auto flex w-full ${width} flex-1 flex-col px-5 ${footer ? "pb-28" : "pb-8"} sm:px-6`}>
@@ -137,6 +154,34 @@ export function Typing({ label }: { label: string }) {
         <span key={i} aria-hidden="true" className="h-1.5 w-1.5 animate-blink rounded-full bg-current" style={{ animationDelay: `${i * 0.18}s` }} />
       ))}
     </span>
+  );
+}
+
+// ---------- 기다리는 동안 보이는 작은 친구 ----------
+// 동그란 캐릭터가 노선 위를 통통 뛰며 간다. '동작 줄이기'면 멈춘 그림만(globals.css).
+export function Buddy({ text, sub, size = 72 }: { text?: React.ReactNode; sub?: React.ReactNode; size?: number }) {
+  return (
+    <div role="status" className="flex flex-col items-center gap-2 py-4 text-center">
+      <svg aria-hidden="true" width={size * 2} height={size} viewBox="0 0 144 72" className="overflow-visible">
+        <line x1="6" y1="64" x2="138" y2="64" stroke="#E3E6EB" strokeWidth="4" strokeLinecap="round" />
+        <line x1="6" y1="64" x2="138" y2="64" stroke="#14171F" strokeWidth="4" strokeLinecap="round" strokeDasharray="2 14" className="buddy-track" />
+        <g className="buddy-walk">
+          <g className="buddy-hop">
+            <ellipse cx="72" cy="44" rx="17" ry="16" fill="#FFD25E" stroke="#14171F" strokeWidth="2.5" />
+            <g className="buddy-blink">
+              <circle cx="66" cy="42" r="2.4" fill="#14171F" />
+              <circle cx="78" cy="42" r="2.4" fill="#14171F" />
+            </g>
+            <circle cx="61" cy="48" r="2.6" fill="#FF9B9B" opacity=".7" />
+            <circle cx="83" cy="48" r="2.6" fill="#FF9B9B" opacity=".7" />
+            <path d="M68 49 q4 3.5 8 0" fill="none" stroke="#14171F" strokeWidth="2" strokeLinecap="round" />
+            <path d="M72 28 q2 -7 7 -8" fill="none" stroke="#14171F" strokeWidth="2" strokeLinecap="round" />
+          </g>
+        </g>
+      </svg>
+      {text ? <p className="text-sm font-semibold">{text}</p> : null}
+      {sub ? <p className="text-cap text-muted">{sub}</p> : null}
+    </div>
   );
 }
 

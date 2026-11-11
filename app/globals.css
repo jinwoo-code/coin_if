@@ -39,3 +39,13 @@ p { text-wrap: pretty; }
   .draw-path { stroke-dashoffset: 0; }
   .pop { opacity: 1; }
 }
+
+/* 기다리는 친구(Buddy) */
+@keyframes buddyhop { 0%,100% { transform: translateY(0) scale(1,1); } 15% { transform: translateY(0) scale(1.08,.92); } 50% { transform: translateY(-12px) scale(.96,1.04); } 85% { transform: translateY(0) scale(1.06,.94); } }
+@keyframes buddywalk { 0% { transform: translateX(-46px); } 50% { transform: translateX(46px) scaleX(1); } 50.01% { transform: translateX(46px) scaleX(-1); } 100% { transform: translateX(-46px) scaleX(-1); } }
+@keyframes buddyblink { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes buddytrack { to { stroke-dashoffset: -16; } }
+.buddy-walk { transform-box: fill-box; transform-origin: center; animation: buddywalk 4.4s linear infinite; }
+.buddy-hop { transform-box: fill-box; transform-origin: 50% 100%; animation: buddyhop .55s ease-in-out infinite; }
+.buddy-blink { transform-box: fill-box; transform-origin: center; animation: buddyblink 3.2s infinite; }
+.buddy-track { animation: buddytrack .6s linear infinite; }

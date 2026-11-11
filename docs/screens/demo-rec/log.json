@@ -1,0 +1,119 @@
+{
+  "recordedAt": "2026-11-09",
+  "base": "https://coinif.vercel.app",
+  "viewport": "390x844 DPR2, 780x1688 webm(vp9 30fps)",
+  "scenes": [
+    {
+      "scene": "01_검사",
+      "file": "01_검사.webm",
+      "seconds": 8.78,
+      "retakes": 3,
+      "retakeReason": "끝 정지 화면 잘림 1번, 12초 넘음 1번, 스크롤·손가락 표시 고쳐 다시 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033,
+      "taps": [
+        1.56,
+        3.38,
+        6.05
+      ]
+    },
+    {
+      "scene": "02_결과요약",
+      "file": "02_결과요약.webm",
+      "seconds": 6.6,
+      "keyNumbersVisibleAt": 1.59,
+      "retakes": 2,
+      "retakeReason": "6초 미만 1번, 끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    },
+    {
+      "scene": "03_갈림길",
+      "file": "03_갈림길.webm",
+      "seconds": 9.87,
+      "keyNumbersVisibleAt": 6.87,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    },
+    {
+      "scene": "04_지도",
+      "file": "04_지도.webm",
+      "seconds": 6.6,
+      "keyNumbersVisibleAt": 1.05,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0
+    },
+    {
+      "scene": "05_Top3",
+      "file": "05_Top3.webm",
+      "seconds": 9.4,
+      "keyNumbersVisibleAt": 6.4,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    },
+    {
+      "scene": "06_비교",
+      "file": "06_비교.webm",
+      "seconds": 6.6,
+      "keyNumbersVisibleAt": 2.01,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    },
+    {
+      "scene": "07_리포트",
+      "file": "07_리포트.webm",
+      "seconds": 7.73,
+      "keyNumbersVisibleAt": 3.02,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    },
+    {
+      "scene": "08_계획",
+      "file": "08_계획.webm",
+      "seconds": 7.66,
+      "keyNumbersVisibleAt": 4.65,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    },
+    {
+      "scene": "09_체크인",
+      "file": "09_체크인.webm",
+      "seconds": 6.6,
+      "keyNumbersVisibleAt": 1.74,
+      "retakes": 1,
+      "retakeReason": "끝 정지 화면 잘림 1번",
+      "aiRequests": 0,
+      "aiJudgeFailShown": 0,
+      "defaultTextShown": 0,
+      "scrollMaxFrameGapSec": 0.033
+    }
+  ]
+}
