@@ -2,12 +2,17 @@
 // 기능 설명: 갈래가 기능마다 한마디로 소개하고, 펼치면 자세한 설명과 근거·한계를 보여 준다.
 // 숫자·근거는 CLAUDE.md·docs와 같은 값만 쓴다(새로 지어내지 않음).
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { DEMOS, demoSelection, demoStart, isDemoPerson } from "@/lib/demo";
+import { store } from "@/lib/store";
 import { Screen } from "@/components/ui";
 import { Mascot, MascotFace, type Mood } from "@/components/mascot";
 import { T } from "@/lib/copy";
 
-type Feature = { id: string; mood: Mood; title: string; say: string; points: string[]; href?: string; go?: string };
+// see: 예시 인물로 직접 볼 화면(결과가 없으면 그 화면이 시뮬레이션으로 보낸다)
+type Feature = { id: string; mood: Mood; title: string; say: string; points: string[]; href?: string; go?: string; see?: string };
 
 const FEATURES: Feature[] = [
   {
@@ -26,6 +31,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "simulate",
+    see: "/simulate",
     mood: "happy",
     title: "2. 1,000번 살아 보기",
     say: "고른 진로마다 한 달씩, 1,000번 살아 보고 올게요!",
@@ -37,6 +43,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "odds",
+    see: "/simulate",
     mood: "surprise",
     title: "3. 갈림길: 보통은 N%, 나는 M%",
     say: "갈림길마다 보통 사람과 나를 나란히 보여 드려요.",
@@ -48,6 +55,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "map",
+    see: "/multiverse",
     mood: "cheer",
     title: `4. ${T.lineMap}`,
     say: "1,000번 다녀온 길을 나무처럼 그려 왔어요!",
@@ -60,6 +68,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "talk",
+    see: "/multiverse",
     mood: "happy",
     title: "5. 그 길의 나와 대화",
     say: "몇 년 뒤의 나한테 직접 물어볼 수 있어요.",
@@ -82,6 +91,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "report",
+    see: "/report",
     mood: "cheer",
     title: "7. 리포트와 실행 계획",
     say: "다녀온 걸 정리해서, 이번 주에 할 일까지 드려요!",
@@ -95,6 +105,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "ongoing",
+    see: "/checkin",
     mood: "sleepy",
     title: "8. 계속 닮아 가기",
     say: "한 달 뒤에 또 만나요. 그때 더 닮아 있을게요.",
@@ -106,6 +117,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "honest",
+    see: "/multiverse",
     mood: "base",
     title: "9. 솔직하게 말할게요",
     say: "모르는 건 모른다고 적어 뒀어요.",
@@ -116,15 +128,107 @@ const FEATURES: Feature[] = [
       "공유본에는 이름·전공·결과·계획만 담고, 이야기 원문은 담지 않아요.",
     ],
   },
+  {
+    id: "data",
+    mood: "think",
+    title: "10. 어떤 데이터를 쓰나요",
+    say: "공식 데이터를 받아 와서 써요. 출처도 같이 적어요.",
+    points: [
+      "고용24 Open API 6종(직업정보·학과·직무·훈련과정·공채속보 등): 직업 만족도, 재직자 임금 분위, 훈련과정.",
+      "KOSIS 직종별 평균 근속, NCS 능력단위·수행준거, 커리어넷 직업가치관검사, 국가자격 응시자격(시행령).",
+      "9급 합격자 통계(평균 준비 1년 8개월, 2년 안 73.3%), 청년 첫 취업 평균 11.2개월(통계청).",
+      "출처가 없는 값은 '우리가 정한 값'으로 따로 표시하고, 근거 자료 칸에서 개수까지 공개해요.",
+    ],
+    see: "/multiverse",
+  },
+  {
+    id: "major",
+    mood: "happy",
+    title: "11. 전공과 상관없이",
+    say: "개발자만이 아니에요. 간호사도, 교사도, 창업도요!",
+    points: [
+      "진로 53개: 손으로 쓴 상세판 4개 + 진로 유형 틀 8개(공채·시험·면허·포트폴리오·기술·대학원·창업 등)로 만든 49개.",
+      "직무별 차이는 준비도 질문 15종(코딩, 면허, 실습, 체력, 교원 자격 …)과 자격 데이터로 표현해요.",
+      "전공이 안 맞는 면허·교원 진로는 학과를 먼저 다니는 기간과 등록금까지 넣어 살아 봐요.",
+    ],
+  },
+  {
+    id: "business",
+    mood: "cheer",
+    title: "12. 어떻게 운영하나요",
+    say: "대학과 함께 학생들에게 닿는 게 목표예요.",
+    points: [
+      "대학 이용권: 기본료 연 500만 원 + 학생 1인당 연 4,000원, AI가 직접 살아 보는 모드는 한 달 1회 포함.",
+      "개인: 기본 시뮬레이션·대화는 무료, 프리미엄 리포트 5토큰, AI 직접 살아 보기 3토큰(5개 4,950원 · 12개 9,900원).",
+      "상담사 공유(PDF·읽기 전용 링크)로 학교 진로 상담과 이어지고, 대학에는 5명 미만은 숨긴 집계만 보여 줘요.",
+    ],
+  },
+  {
+    id: "privacy",
+    mood: "base",
+    title: "13. 내 이야기는 안전한가요",
+    say: "당신 이야기는 이 기기에 두고 와요.",
+    points: [
+      "인생 이야기 원문과 인용은 이 기기에만 저장하고, 계정에 올리지 않아요.",
+      "검사 전에 무엇을 받고 어디에 저장하는지 먼저 보여 주고, 언제든 지울 수 있어요.",
+      "상담사 공유본에는 이름·전공·결과·계획만 담고 맨 위에 AI 표시를 둬요.",
+    ],
+  },
+];
+
+const WHY = [
+  { mood: "happy" as Mood, t: "내 성향 그대로 1,000번", d: "검사 결과로 만든 분신이 고민 중인 진로를 한 달씩 1,000번 살아 봐요." },
+  { mood: "surprise" as Mood, t: "갈림길마다 근거 공개", d: "보통 사람은 N%, 나는 M%. 출처와 '우리가 정한 값'을 숨기지 않아요." },
+  { mood: "cheer" as Mood, t: "이번 주 할 일까지", d: "필요한 것과 내 격차, 월별 일정, 계획 넣고 다시 살아 보기까지 이어져요." },
 ];
 
 export default function GuidePage() {
+  const router = useRouter();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [target, setTarget] = useState("/simulate");
+  const [own, setOwn] = useState(false);
+
+  // 예시 인물로 직접 보기: 이미 예시 인물이면 바로, 아니면 인물을 고르게 한다(내 기록이 있으면 바뀐다고 알림).
+  function see(path: string) {
+    const p = store.getProfile();
+    if (p && isDemoPerson(p)) return router.push(path);
+    setTarget(path);
+    setOwn(!!p);
+    dialog.current?.showModal();
+  }
+  function start(kind: keyof typeof DEMOS) {
+    dialog.current?.close();
+    store.reset();
+    store.setLocalOnly(true); // 예시 인물은 계정에 올리지 않는다
+    store.setProfile(demoStart(kind));
+    store.setSelection(demoSelection(kind));
+    // 결과가 아직 없으니 먼저 살아 보고, 끝나면 이 화면으로 갈 수 있다(결과 화면들은 결과가 없으면 시뮬레이션으로 보낸다).
+    router.push(target);
+  }
+
   return (
     <Screen title="기능 둘러보기" back="/">
       <div className="mt-4 flex flex-col items-center rounded-card bg-sunSoft px-5 py-6 text-center">
         <Mascot place="legend" mood="cheer" firstLine="제가 하나씩 소개해 드릴게요! 궁금한 걸 눌러 보세요." />
-        <p className="mt-3 text-sm text-muted">진로 리허설이 하는 일 {FEATURES.length}가지예요. 처음이라면 예시 인물로 직접 둘러보는 게 제일 빨라요.</p>
+        <p className="mt-3 text-sm text-muted">진로 리허설을 {FEATURES.length}가지로 소개해요. 처음이라면 예시 인물로 직접 둘러보는 게 제일 빨라요.</p>
       </div>
+
+      <section aria-labelledby="why" className="mt-5">
+        <h2 id="why" className="text-lg font-bold">
+          무엇이 다른가요?
+        </h2>
+        <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+          {WHY.map((w) => (
+            <li key={w.t} className="card flex items-start gap-3 p-4 sm:flex-col">
+              <MascotFace mood={w.mood} size={44} className="flex-none" />
+              <span>
+                <span className="block font-bold">{w.t}</span>
+                <span className="mt-1 block text-sm text-muted">{w.d}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <nav aria-label="기능 목록" className="mt-5 flex flex-wrap gap-2">
         {FEATURES.map((f) => (
@@ -152,8 +256,13 @@ export default function GuidePage() {
                     <li key={p}>{p}</li>
                   ))}
                 </ul>
+                {f.see ? (
+                  <button type="button" onClick={() => see(f.see!)} className="btn-primary mt-4 w-full">
+                    예시로 직접 보기
+                  </button>
+                ) : null}
                 {f.href ? (
-                  <Link href={f.href} className="btn-ghost mt-4 w-full">
+                  <Link href={f.href} className="btn-ghost mt-3 w-full">
                     {f.go}
                   </Link>
                 ) : null}
@@ -171,6 +280,30 @@ export default function GuidePage() {
           처음 화면에서 시작하기
         </Link>
       </div>
+      <dialog ref={dialog} aria-labelledby="guide-pick" className="w-[calc(100%-40px)] max-w-md rounded-[24px] border border-hair bg-surface p-6 text-ink shadow-xl backdrop:bg-ink/40">
+        <h2 id="guide-pick" className="text-xl font-bold">
+          누구의 리허설로 볼까요?
+        </h2>
+        <p className="mt-2 text-sm text-muted">
+          가상 인물이에요. 로그인 없이 끝까지 볼 수 있어요. 결과가 아직 없으면 먼저 살아 보는 화면부터 열려요(1~3분).
+          {own ? " 이 기기에 저장된 내 기록은 예시 인물 기록으로 바뀌어요." : ""}
+        </p>
+        <ul className="mt-5 flex flex-col gap-3">
+          {(Object.keys(DEMOS) as (keyof typeof DEMOS)[]).map((k) => (
+            <li key={k}>
+              <button type="button" onClick={() => start(k)} className="flex min-h-[64px] w-full flex-col items-start justify-center rounded-2xl border border-hair bg-surface px-4 py-3 text-left hover:border-ink">
+                <span className="text-base font-bold">
+                  {DEMOS[k].profile.major} {DEMOS[k].profile.name}
+                </span>
+                <span className="mt-0.5 text-sm text-muted">{DEMOS[k].profile.dilemma}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button type="button" autoFocus onClick={() => dialog.current?.close()} className="btn-ghost mt-4 w-full">
+          닫기
+        </button>
+      </dialog>
     </Screen>
   );
 }
