@@ -206,7 +206,14 @@ export function Mascot({
   }
 
   return (
-    <div className={`relative flex flex-col ${align === "center" ? "items-center" : "items-start"}`}>
+    // 말풍선도 갈래와 같이 움직이게 감싼 칸 전체를 옮긴다. 기울기는 갈래만.
+    <div
+      className={`relative z-30 flex flex-col ${align === "center" ? "items-center" : "items-start"}`}
+      style={{
+        transform: drag ? `translate(${drag.x}px, ${drag.y}px)` : undefined,
+        transition: drag ? "none" : "transform 420ms cubic-bezier(.3,1.6,.5,1)",
+      }}
+    >
       {line ? (
         <p role="status" aria-live="polite" className="mascot-bubble relative mb-2 max-w-[17rem] rounded-2xl border-2 border-ink bg-surface px-3 py-2 text-sm font-semibold" key={line} style={align === "left" ? ({ ["--tail" as string]: `${size / 2}px` } as React.CSSProperties) : undefined}>
           {line}
@@ -229,13 +236,11 @@ export function Mascot({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         className={`mascot-btn relative z-30 flex min-h-11 min-w-11 touch-none select-none items-center justify-center rounded-full ${drag ? "cursor-grabbing" : "cursor-grab"}`}
-        style={{
-          transform: drag ? `translate(${drag.x}px, ${drag.y}px) rotate(${Math.max(-25, Math.min(25, drag.x / 6))}deg)` : undefined,
-          transition: drag ? "none" : "transform 420ms cubic-bezier(.3,1.6,.5,1)",
-        }}
       >
+        <span className="inline-block" style={{ transform: drag ? `rotate(${Math.max(-25, Math.min(25, drag.x / 6))}deg)` : undefined }}>
         <span key={hop} className={hop ? "mascot-jump inline-block" : "mascot-idle inline-block"}>
           <MascotFace mood={mood} size={size} />
+        </span>
         </span>
       </button>
     </div>
