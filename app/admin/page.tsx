@@ -1,5 +1,6 @@
 "use client";
 // 대학 관리자 대시보드. 숫자는 전부 DB 함수 org_stats가 엔진 결과를 센 값이고, 학생 5명 미만 항목은 함수 안에서 이미 빠져 있다.
+import { AiSwitch } from "@/components/ai-switch";
 import { useEffect, useState } from "react";
 import { Screen } from "@/components/ui";
 import { getWorld } from "@/lib/worlds";
@@ -42,6 +43,7 @@ export default function Admin() {
     return (
       <Screen title="대학 대시보드" back="/">
         <p className="card mt-4 p-5">{err}</p>
+        <AiSwitch />
       </Screen>
     );
   if (!s)
@@ -54,6 +56,7 @@ export default function Admin() {
   const empty = <p className="p-4 text-sm text-muted">{s.k}명 이상 모인 항목이 아직 없어요.</p>;
   return (
     <Screen title="대학 대시보드" back="/" wide>
+      <AiSwitch />
       <p className="label mt-2">
         {s.org.name} · {s.org.status === "trial" ? "시범" : "계약"} · {s.org.until}까지
       </p>

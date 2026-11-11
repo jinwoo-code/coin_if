@@ -52,6 +52,17 @@ export function hasLLM(): boolean {
   return clients.length > 0;
 }
 
+// 키가 있고 전체 목업 스위치(lib/ai-switch.ts)가 꺼져 있을 때만 AI를 부른다.
+export async function llmOn(): Promise<boolean> {
+  if (!clients.length) return false;
+  try {
+    const { aiOff } = await import("./ai-switch");
+    return !(await aiOff());
+  } catch {
+    return true;
+  }
+}
+
 type Usage = { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number };
 
 // 누가(로그인했으면) 어느 대학 소속으로 불렀는지. AI 호출과 동시에 찾는다.
@@ -134,7 +145,7 @@ export async function generateJSON<T>(opts: {
   prompt: string;
   fallback: () => T;
 }): Promise<T> {
-  if (!clients.length) return opts.fallback();
+  if (!(await llmOn())) return opts.fallback();
   const who = caller();
   if (geminiTier() === "free") return generatePaced(opts, who);
   // 지금 키부터. 쉬는 모델은 건너뛰고, 키 하나에서 한도로 다 실패하면 다음 키(유료는 키가 하나라 예전과 같다).

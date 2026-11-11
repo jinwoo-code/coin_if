@@ -1,7 +1,7 @@
 // '그때의 나'와 대화. 시뮬레이션 기억을 근거로, 사용자의 말투로 답한다.
 import { NextResponse } from "next/server";
 import { hasCrisis } from "@/lib/crisis";
-import { generateJSON, hasLLM } from "@/lib/llm";
+import { generateJSON, llmOn } from "@/lib/llm";
 import { getWorld } from "@/lib/worlds";
 import { memoriesOf } from "@/lib/sim";
 import { won } from "@/lib/format";
@@ -78,6 +78,7 @@ export async function POST(req: Request) {
     };
   };
 
+  const on = await llmOn();
   const result = await generateJSON<{ reply: string; memory: string | null }>({
     tag: "talk",
     model: "smart",
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
       `과거의 나: ${message}\n\n` +
       `JSON으로 답해라: {"reply": 답변, "memory": 답변에서 언급한 기억을 "시점: 사건" 형태로, 없으면 null}`,
     fallback: () => {
-      usedFallback = hasLLM(); // 키가 있는데 기본 답으로 갔으면 실패(목업 모드는 표시 안 함)
+      usedFallback = on; // 키가 있는데 기본 답으로 갔으면 실패(목업 모드는 표시 안 함)
       return fallback();
     },
   });

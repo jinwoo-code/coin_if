@@ -1,5 +1,6 @@
 "use client";
 // 3. 체험: 진로마다 1,000번 살아 보고, AI가 먼저 간 '본선'을 노선도 타임라인으로 보여 준다.
+import { DemoGuide } from "@/components/demo-guide";
 import { MascotFace } from "@/components/mascot";
 import { SpecNotice, specMissing } from "@/components/spec-notice";
 import { BarChart3, ChevronDown, CornerDownRight, GitBranch, RotateCcw } from "lucide-react";
@@ -516,6 +517,7 @@ export default function SimulatePage() {
       }
     >
       <MockNotice />
+      <DemoGuide />
       {Object.keys(mvs).length > 0 && selection ? (
         <div className="mt-3 rounded-2xl bg-surface px-4 py-3 text-sm shadow-[0_0_0_1px_#E3E6EB]">
           <p>

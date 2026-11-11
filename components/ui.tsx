@@ -207,7 +207,7 @@ export function MockNotice() {
       alive = false;
     };
   }, []);
-  return mock ? <p className="mt-2 rounded-2xl bg-[#FFF4E5] px-4 py-2.5 text-cap text-[#7A4300]">목업 모드로 보고 있어요. AI 키를 넣으면 매번 새로운 이야기가 만들어져요.</p> : null;
+  return mock ? <p className="mt-2 rounded-2xl bg-[#FFF4E5] px-4 py-2.5 text-cap text-[#7A4300]">지금은 AI 대신 미리 정해 둔 문장으로 보여 드려요(목업 모드). 숫자는 엔진이 계산해요.</p> : null;
 }
 
 // ---------- 아래에서 올라오는 시트(기억 보기 등) ----------

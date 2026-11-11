@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AiSwitch } from "@/components/ai-switch";
 import { MyData } from "@/components/my-data";
 import { Screen } from "@/components/ui";
 import { canDeepen } from "@/lib/assessment";
@@ -35,12 +36,22 @@ function checkinNote(p: Profile) {
 export default function MePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [checked, setChecked] = useState(false);
   useEffect(() => {
     const p = store.getProfile();
-    if (!p) router.replace("/interview");
+    if (!p) setProfile(null);
     else setProfile(p);
+    setChecked(true);
   }, [router]);
-  if (!profile) return null;
+  // 프로필이 없어도 관리자 스위치는 보여야 해서(발표 기기) 검사로 보내지 않고 안내만 한다.
+  if (!checked) return null;
+  if (!profile)
+    return (
+      <Screen title="내 정보" back="/">
+        <p className="card mt-3 p-5 text-sm text-muted">아직 검사를 안 했어요. 첫 화면에서 시작해 주세요.</p>
+        <AiSwitch />
+      </Screen>
+    );
   return (
     <Screen title="내 정보" back="/choose">
       <nav aria-label="내 정보 메뉴" className="mt-3 flex flex-col gap-3">
@@ -49,6 +60,7 @@ export default function MePage() {
         {profile.depthMode !== "quick" ? <Item href="/story" title="인생 이야기" note={`${chaptersDone(profile)}/6장, 정밀 단계`} /> : null}
         {canDeepen(profile) ? <Item href="/interview?more=1" title="더 정확하게 하기" note="성격 50문항, 흥미 검사(약 20~30분)" /> : null}
       </nav>
+      <AiSwitch />
       <MyData />
     </Screen>
   );

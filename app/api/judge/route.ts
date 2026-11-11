@@ -8,7 +8,7 @@ import { ruleJudge, withFamilyPull } from "@/lib/engine";
 import type { JudgeEntry } from "@/lib/judge";
 import { askJudge } from "@/lib/judge-ask";
 import { personText } from "@/lib/judge-person";
-import { generateJSON, hasLLM } from "@/lib/llm";
+import { generateJSON, llmOn } from "@/lib/llm";
 import { normalizeProfile } from "@/lib/profile";
 import type { BaseShare, Choice, LifeState, Profile, WorldTemplate } from "@/lib/types";
 import { getWorld } from "@/lib/worlds";
@@ -85,9 +85,10 @@ export async function POST(req: Request) {
     "shift는 보통 사람과 비교해 이 사람이 어느 쪽으로 기우는지 40자 안팎 한 문장으로, 네가 준 확률과 같은 방향으로 쓴다. 이유와 shift에 숫자·점수는 쓰지 마라.";
 
   const t0 = Date.now();
-  let src: JudgeEntry["src"] = hasLLM() ? "ai" : "mock";
+  const on = await llmOn();
+  let src: JudgeEntry["src"] = on ? "ai" : "mock";
   let got: { probs: Record<string, number[]>; reasons: string[]; shift: string } = { probs: {}, reasons: ids.map(() => ""), shift: "" };
-  if (hasLLM()) {
+  if (on) {
     got = await askJudge(() => generateJSON<unknown>({ tag: live ? "judge_live" : "judge", model: "fast", system, prompt, fallback: () => null }), ids, buckets);
     if (!Object.keys(got.probs).length) src = "fallback";
   }
