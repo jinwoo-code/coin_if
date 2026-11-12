@@ -230,9 +230,9 @@ export default function GuidePage() {
         </ul>
       </section>
 
-      <nav aria-label="기능 목록" className="mt-5 flex flex-wrap gap-2">
+      <nav aria-label="기능 목록" className="-mx-5 mt-5 flex snap-x gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         {FEATURES.map((f) => (
-          <a key={f.id} href={`#${f.id}`} className="inline-flex min-h-11 items-center rounded-full border border-hair bg-surface px-3 text-sm font-semibold hover:border-ink">
+          <a key={f.id} href={`#${f.id}`} className="inline-flex min-h-11 flex-none snap-start items-center whitespace-nowrap rounded-full border border-hair bg-surface px-3 text-sm font-semibold hover:border-ink">
             {f.title.replace(/^\d+\. /, "")}
           </a>
         ))}
@@ -242,15 +242,15 @@ export default function GuidePage() {
         {FEATURES.map((f) => (
           <li key={f.id} id={f.id} className="scroll-mt-20">
             <details className="card group overflow-hidden">
-              <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
-                <MascotFace mood={f.mood} size={52} className="flex-none" />
+              <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 [&::-webkit-details-marker]:hidden">
+                <MascotFace mood={f.mood} size={40} className="flex-none self-start" />
                 <span className="min-w-0 flex-1">
                   <span className="block text-base font-bold">{f.title}</span>
-                  <span className="mt-1 inline-block rounded-2xl border-2 border-ink bg-surface px-3 py-1 text-sm">{f.say}</span>
+                  <span className="mt-1 block rounded-2xl border border-hair bg-sunSoft px-3 py-1.5 text-sm text-muted">{f.say}</span>
                 </span>
                 <ChevronDown aria-hidden="true" size={20} className="flex-none transition-transform group-open:rotate-180" />
               </summary>
-              <div className="border-t border-hair px-5 pb-5 pt-3">
+              <div className="border-t border-hair px-4 pb-5 pt-3">
                 <ul className="flex list-disc flex-col gap-2 pl-5 text-sm">
                   {f.points.map((p) => (
                     <li key={p}>{p}</li>
