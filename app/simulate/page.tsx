@@ -492,7 +492,7 @@ export default function SimulatePage() {
       right={
         <span aria-live="polite" className="num pr-2 text-sm font-bold">
           {/* 진행 표시: 살아보는 중에만. 끝난 뒤 마지막 칸(예: 2029년 9~11월)이 남으면 보고 있는 장면의 날짜처럼 보인다 */}
-          {stopped || done ? "" : current ? current.label : "출발 준비 중…"}
+          {stopped || done ? "" : current ? current.label : ""}
         </span>
       }
       footer={
@@ -684,7 +684,7 @@ export default function SimulatePage() {
       <div ref={endRef} />
       {done ? <CompareAll worlds={worlds} mvs={mvs} onPick={pickWorld} /> : null}
 
-      {rows.length === 0 && !error ? <div className="mt-8"><Buddy text="1,000번 살아보고 첫 번째 역으로 출발하는 중…" sub="보통 1분 안팎 걸려요." chatter={["한 삶, 또 한 삶… 영차!", "갈림길을 하나씩 지나는 중…", "지금 열심히 살아 보는 중이에요!"]} /></div> : null}
+      {rows.length === 0 && !error && !judging ? <div className="mt-8"><Buddy text="1,000번 살아보고 첫 번째 역으로 출발하는 중…" sub="보통 1분 안팎 걸려요." chatter={["한 삶, 또 한 삶… 영차!", "갈림길을 하나씩 지나는 중…", "지금 열심히 살아 보는 중이에요!"]} /></div> : null}
       {error ? (
         <div role="alert" className="mt-4 flex items-center gap-3 rounded-2xl bg-[#FDECE7] px-4 py-3 text-sm text-[#A3311A]">
           <MascotFace mood="dizzy" size={44} />
