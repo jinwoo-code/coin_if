@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { DEMOS, demoSelection, demoStart, isDemoPerson } from "@/lib/demo";
+import { DEMOS, isDemoPerson, startDemoStore } from "@/lib/demo";
 import { store } from "@/lib/store";
 import { Screen } from "@/components/ui";
 import { Mascot, MascotFace, type Mood } from "@/components/mascot";
@@ -198,10 +198,7 @@ export default function GuidePage() {
   }
   function start(kind: keyof typeof DEMOS) {
     dialog.current?.close();
-    store.reset();
-    store.setLocalOnly(true); // 예시 인물은 계정에 올리지 않는다
-    store.setProfile(demoStart(kind));
-    store.setSelection(demoSelection(kind));
+    startDemoStore(kind);
     // 결과가 아직 없으니 먼저 살아 보고, 끝나면 이 화면으로 갈 수 있다(결과 화면들은 결과가 없으면 시뮬레이션으로 보낸다).
     router.push(target);
   }

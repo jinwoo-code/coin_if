@@ -40,6 +40,8 @@ const KEYS = {
   pilotInvite: `cr:${VERSION}:pilotInvite`, // /interview?pilot=1로 들어온 기기 // true면 계정에 올리지 않는다(예시 인물, 또는 '옮기지 않기'를 고른 결과)
 } as const;
 
+const SNAP = ["profile", "selection", "multiverses", "lines", "active", "report", "premium"] as const;
+
 export interface ShareLink {
   token: string;
   ownerKey: string;
@@ -188,6 +190,11 @@ export const store = {
     write(KEYS.report, null);
     write(KEYS.premium, null);
     write(KEYS.liveResults, null);
+  },
+  // 미리 살아 둔 예시 결과(data/demo/snapshot-*.json). 결과 칸만 통째로 넣고 뺀다.
+  snapshot: () => Object.fromEntries(SNAP.map((k) => [k, read<unknown>(KEYS[k])])),
+  restore: (snap: Partial<Record<(typeof SNAP)[number], unknown>>) => {
+    for (const k of SNAP) if (snap[k] != null) write(KEYS[k], snap[k]);
   },
   reset: () => {
     try {

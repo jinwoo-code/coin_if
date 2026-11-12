@@ -1,0 +1,2851 @@
+{
+ "profile": {
+  "major": "간호학과 3학년",
+  "dilemma": "졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요",
+  "experiences": "기본간호학 실습과 내과 병동 실습을 마쳤고, 카페 알바를 1년 했어요",
+  "constraints": "집이 경기도라 수도권 병원이면 좋겠고, 3교대를 오래 버틸 수 있을지 걱정돼요",
+  "values": [
+   "보람",
+   "안정",
+   "돈",
+   "성장"
+  ],
+  "bigFive": {
+   "O": 3.5,
+   "C": 4,
+   "E": 3,
+   "A": 4,
+   "N": 3.5
+  },
+  "speechStyle": "차분하게 말하고, 걱정되는 건 먼저 꺼내는 편",
+  "summary": "사람을 돕는 데서 보람을 느끼지만, 교대 근무와 체력이 걱정이에요.",
+  "interests": null,
+  "depthMode": "quick",
+  "holdout": {
+   "seed": "demo-nurse",
+   "ids": [
+    "s17",
+    "s11",
+    "s16",
+    "s14",
+    "s7",
+    "s10"
+   ]
+  },
+  "holdoutPicks": {
+   "s17": 1,
+   "s11": 1,
+   "s16": 2
+  },
+  "story": null,
+  "since": "2026-11-12T03:10:27.185Z",
+  "corrections": [],
+  "pilot": null,
+  "name": "이서연",
+  "spec": {
+   "school": "4년제",
+   "status": "재학",
+   "gpa": 3.7,
+   "certs": [],
+   "toeic": null,
+   "projects": 0,
+   "gradIn": 15,
+   "workMonths": 12,
+   "internMonths": 0,
+   "awards": 0,
+   "github": null
+  },
+  "readiness": {
+   "license": 1,
+   "practice": 1
+  },
+  "life": {
+   "savings": 300,
+   "support": 40,
+   "livingCost": 90,
+   "military": "해당없음",
+   "enlistIn": null,
+   "region": "경기·인천",
+   "studyHours": 3,
+   "partTimeHours": 8
+  },
+  "wants": {
+   "salary": 3800,
+   "hates": [
+    "야근"
+   ]
+  },
+  "behavior": {
+   "persistence": 4,
+   "risk": 2.5,
+   "coping": 3,
+   "social": 3.5
+  },
+  "depth": {
+   "behaviorItems": 6,
+   "interestItems": 0,
+   "resume": false,
+   "github": false,
+   "spec": true,
+   "life": true,
+   "bigFiveItems": 20
+  },
+  "checkins": [],
+  "storyRaw": {},
+  "answers": {},
+  "judges": {
+   "4|v3zaz0|nurse|long-hunt|stress:low|money:low": {
+    "probs": [
+     0.55,
+     0.15,
+     0.3
+    ],
+    "reasons": [
+     "모은 돈이 적어서",
+     "사람을 돕는 보람을 포기할 수 없어서",
+     "성실하게 끈기 있게 도전해 왔어서"
+    ],
+    "shift": "보통 사람보다 위험을 덜 감수하고 끈기가 강해 작은 곳에 지원하거나던 길을 계속 가는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|long-hunt|stress:low|money:ok": {
+    "probs": [
+     0.5,
+     0.15,
+     0.35
+    ],
+    "reasons": [
+     "모은 돈이 적어서",
+     "사람을 돕는 보람을 포기할 수 없어서",
+     "성실하게 끈기 있게 도전해 왔어서"
+    ],
+    "shift": "보통 사람보다 위험을 덜 감수하고 끈기가 강해 작은 곳에 지원하거나던 길을 계속 가는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|long-hunt|stress:mid|money:low": {
+    "probs": [
+     0.5,
+     0.18,
+     0.32
+    ],
+    "reasons": [
+     "모은 돈이 적어서",
+     "사람을 돕는 보람을 포기할 수 없어서",
+     "성실하게 끈기 있게 도전해 왔어서"
+    ],
+    "shift": "보통 사람보다 위험을 덜 감수하고 끈기가 강해 작은 곳에 지원하거나던 길을 계속 가는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|long-hunt|stress:mid|money:ok": {
+    "probs": [
+     0.45,
+     0.18,
+     0.37
+    ],
+    "reasons": [
+     "모은 돈이 적어서",
+     "사람을 돕는 보람을 포기할 수 없어서",
+     "성실하게 끈기 있게 도전해 왔어서"
+    ],
+    "shift": "보통 사람보다 위험을 덜 감수하고 끈기가 강해 작은 곳에 지원하거나던 길을 계속 가는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|long-hunt|stress:high|money:low": {
+    "probs": [
+     0.4,
+     0.2,
+     0.4
+    ],
+    "reasons": [
+     "모은 돈이 적어서",
+     "사람을 돕는 보람을 포기할 수 없어서",
+     "성실하게 끈기 있게 도전해 왔어서"
+    ],
+    "shift": "보통 사람보다 위험을 덜 감수하고 끈기가 강해 작은 곳에 지원하거나던 길을 계속 가는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|long-hunt|stress:high|money:ok": {
+    "probs": [
+     0.35,
+     0.2,
+     0.45
+    ],
+    "reasons": [
+     "모은 돈이 적어서",
+     "사람을 돕는 보람을 포기할 수 없어서",
+     "성실하게 끈기 있게 도전해 왔어서"
+    ],
+    "shift": "보통 사람보다 위험을 덜 감수하고 끈기가 강해 작은 곳에 지원하거나던 길을 계속 가는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|offer|stress:low|tenure:new": {
+    "probs": [
+     0.52,
+     0.48
+    ],
+    "reasons": [
+     "조건을 더 준다고 해서",
+     "지금 사람들과 정이 들어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 신경성이 높아 기존의 안정적인 관계와 자리를 더 지키려 한다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|offer|stress:low|tenure:settled": {
+    "probs": [
+     0.52,
+     0.48
+    ],
+    "reasons": [
+     "조건을 더 준다고 해서",
+     "지금 사람들과 정이 들어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 신경성이 높아 기존의 안정적인 관계와 자리를 더 지키려 한다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|offer|stress:mid|tenure:new": {
+    "probs": [
+     0.51,
+     0.49
+    ],
+    "reasons": [
+     "조건을 더 준다고 해서",
+     "지금 사람들과 정이 들어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 신경성이 높아 기존의 안정적인 관계와 자리를 더 지키려 한다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|offer|stress:mid|tenure:settled": {
+    "probs": [
+     0.5,
+     0.5
+    ],
+    "reasons": [
+     "조건을 더 준다고 해서",
+     "지금 사람들과 정이 들어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 신경성이 높아 기존의 안정적인 관계와 자리를 더 지키려 한다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|offer|stress:high|tenure:new": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "조건을 더 준다고 해서",
+     "지금 사람들과 정이 들어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 신경성이 높아 기존의 안정적인 관계와 자리를 더 지키려 한다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|offer|stress:high|tenure:settled": {
+    "probs": [
+     0.44,
+     0.56
+    ],
+    "reasons": [
+     "조건을 더 준다고 해서",
+     "지금 사람들과 정이 들어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 신경성이 높아 기존의 안정적인 관계와 자리를 더 지키려 한다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|burnout|stress:low|tenure:new": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "체력이 걱정이라서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮아 퇴사보다는 조절과 휴식을 더 선호하는 편이다",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|burnout|stress:low|tenure:settled": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "체력이 걱정이라서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮아 퇴사보다는 조절과 휴식을 더 선호하는 편이다",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|burnout|stress:mid|tenure:new": {
+    "probs": [
+     0.45,
+     0.25,
+     0.3
+    ],
+    "reasons": [
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "체력이 걱정이라서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮아 퇴사보다는 조절과 휴식을 더 선호하는 편이다",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|burnout|stress:mid|tenure:settled": {
+    "probs": [
+     0.45,
+     0.25,
+     0.3
+    ],
+    "reasons": [
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "체력이 걱정이라서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮아 퇴사보다는 조절과 휴식을 더 선호하는 편이다",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|burnout|stress:high|tenure:new": {
+    "probs": [
+     0.3,
+     0.25,
+     0.45
+    ],
+    "reasons": [
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "체력이 걱정이라서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮아 퇴사보다는 조절과 휴식을 더 선호하는 편이다",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|burnout|stress:high|tenure:settled": {
+    "probs": [
+     0.3,
+     0.25,
+     0.45
+    ],
+    "reasons": [
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "체력이 걱정이라서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮아 퇴사보다는 조절과 휴식을 더 선호하는 편이다",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|nurse-first-year|stress:low": {
+    "probs": [
+     0.35,
+     0.45,
+     0.2
+    ],
+    "reasons": [
+     "성실하게 버티는 성향이라서",
+     "야근과 교대 근무가 싫어서",
+     "체력과 스트레스를 견디기 힘들어서"
+    ],
+    "shift": "보통 사람보다 야근을 싫어하고 신경성이 높아 이직이나 퇴사 쪽으로 더 크게 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|nurse-first-year|stress:mid": {
+    "probs": [
+     0.25,
+     0.45,
+     0.3
+    ],
+    "reasons": [
+     "성실하게 버티는 성향이라서",
+     "야근과 교대 근무가 싫어서",
+     "체력과 스트레스를 견디기 힘들어서"
+    ],
+    "shift": "보통 사람보다 야근을 싫어하고 신경성이 높아 이직이나 퇴사 쪽으로 더 크게 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|nurse|nurse-first-year|stress:high": {
+    "probs": [
+     0.1,
+     0.4,
+     0.5
+    ],
+    "reasons": [
+     "성실하게 버티는 성향이라서",
+     "야근과 교대 근무가 싫어서",
+     "체력과 스트레스를 견디기 힘들어서"
+    ],
+    "shift": "보통 사람보다 야근을 싫어하고 신경성이 높아 이직이나 퇴사 쪽으로 더 크게 기운다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going|stress:low|prep:short": {
+    "probs": [
+     0.5,
+     0.25,
+     0.25
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "끈기가 강해서"
+    ],
+    "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going|stress:low|prep:long": {
+    "probs": [
+     0.45,
+     0.27,
+     0.28
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "끈기가 강해서"
+    ],
+    "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going|stress:mid|prep:short": {
+    "probs": [
+     0.4,
+     0.3,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "끈기가 강해서"
+    ],
+    "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going|stress:mid|prep:long": {
+    "probs": [
+     0.35,
+     0.32,
+     0.33
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "끈기가 강해서"
+    ],
+    "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going|stress:high|prep:short": {
+    "probs": [
+     0.3,
+     0.3,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "끈기가 강해서"
+    ],
+    "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going|stress:high|prep:long": {
+    "probs": [
+     0.25,
+     0.3,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적어서",
+     "끈기가 강해서"
+    ],
+    "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-2|stress:low|prep:short": {
+    "probs": [
+     0.45,
+     0.27,
+     0.28
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 생활비가 필요해서",
+     "끈기가 높고 위험을 감수하기 싫어서"
+    ],
+    "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-2|stress:low|prep:long": {
+    "probs": [
+     0.45,
+     0.27,
+     0.28
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 생활비가 필요해서",
+     "끈기가 높고 위험을 감수하기 싫어서"
+    ],
+    "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-2|stress:mid|prep:short": {
+    "probs": [
+     0.38,
+     0.3,
+     0.32
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 생활비가 필요해서",
+     "끈기가 높고 위험을 감수하기 싫어서"
+    ],
+    "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-2|stress:mid|prep:long": {
+    "probs": [
+     0.38,
+     0.3,
+     0.32
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 생활비가 필요해서",
+     "끈기가 높고 위험을 감수하기 싫어서"
+    ],
+    "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-2|stress:high|prep:short": {
+    "probs": [
+     0.29,
+     0.3,
+     0.41
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 생활비가 필요해서",
+     "끈기가 높고 위험을 감수하기 싫어서"
+    ],
+    "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-2|stress:high|prep:long": {
+    "probs": [
+     0.27,
+     0.29,
+     0.44
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 생활비가 필요해서",
+     "끈기가 높고 위험을 감수하기 싫어서"
+    ],
+    "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-3|stress:low|prep:short": {
+    "probs": [
+     0.45,
+     0.27,
+     0.28
+    ],
+    "reasons": [
+     "끈기가 높아서",
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "평균보다 끈기가 높아 보통 사람에 비해 도전을 더 오래 이어가는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-3|stress:low|prep:long": {
+    "probs": [
+     0.45,
+     0.27,
+     0.28
+    ],
+    "reasons": [
+     "끈기가 높아서",
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "평균보다 끈기가 높아 보통 사람에 비해 도전을 더 오래 이어가는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-3|stress:mid|prep:short": {
+    "probs": [
+     0.38,
+     0.3,
+     0.32
+    ],
+    "reasons": [
+     "끈기가 높아서",
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "평균보다 끈기가 높아 보통 사람에 비해 도전을 더 오래 이어가는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-3|stress:mid|prep:long": {
+    "probs": [
+     0.38,
+     0.3,
+     0.32
+    ],
+    "reasons": [
+     "끈기가 높아서",
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "평균보다 끈기가 높아 보통 사람에 비해 도전을 더 오래 이어가는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-3|stress:high|prep:short": {
+    "probs": [
+     0.29,
+     0.3,
+     0.41
+    ],
+    "reasons": [
+     "끈기가 높아서",
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "평균보다 끈기가 높아 보통 사람에 비해 도전을 더 오래 이어가는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|keep-going-3|stress:high|prep:long": {
+    "probs": [
+     0.29,
+     0.3,
+     0.41
+    ],
+    "reasons": [
+     "끈기가 높아서",
+     "안정을 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "평균보다 끈기가 높아 보통 사람에 비해 도전을 더 오래 이어가는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|quit-thought|stress:low|tenure:new": {
+    "probs": [
+     0.65,
+     0.35
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 어려워서"
+    ],
+    "shift": "보통 사람과 비교해 위험 감수 성향이 낮아 공무원 신분을 쉽게 포기하지 못하고 전보를 택하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|quit-thought|stress:low|tenure:settled": {
+    "probs": [
+     0.65,
+     0.35
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 어려워서"
+    ],
+    "shift": "보통 사람과 비교해 위험 감수 성향이 낮아 공무원 신분을 쉽게 포기하지 못하고 전보를 택하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|quit-thought|stress:mid|tenure:new": {
+    "probs": [
+     0.55,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 어려워서"
+    ],
+    "shift": "보통 사람과 비교해 위험 감수 성향이 낮아 공무원 신분을 쉽게 포기하지 못하고 전보를 택하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|quit-thought|stress:mid|tenure:settled": {
+    "probs": [
+     0.55,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 어려워서"
+    ],
+    "shift": "보통 사람과 비교해 위험 감수 성향이 낮아 공무원 신분을 쉽게 포기하지 못하고 전보를 택하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|quit-thought|stress:high|tenure:new": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 어려워서"
+    ],
+    "shift": "보통 사람과 비교해 위험 감수 성향이 낮아 공무원 신분을 쉽게 포기하지 못하고 전보를 택하는 편이다.",
+    "src": "ai"
+   },
+   "4|v3zaz0|civil-servant|quit-thought|stress:high|tenure:settled": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 어려워서"
+    ],
+    "shift": "보통 사람과 비교해 위험 감수 성향이 낮아 공무원 신분을 쉽게 포기하지 못하고 전보를 택하는 편이다.",
+    "src": "ai"
+   }
+  }
+ },
+ "selection": {
+  "worldIds": [
+   "nurse",
+   "civil-servant"
+  ],
+  "months": 36,
+  "startYm": "2026-12"
+ },
+ "multiverses": {
+  "nurse": {
+   "worldId": "nurse",
+   "months": 36,
+   "startYm": "2026-12",
+   "stats": {
+    "runs": 1000,
+    "events": {
+     "lic-study": {
+      "count": 993,
+      "typicalMonth": 2
+     },
+     "clinical": {
+      "count": 969,
+      "typicalMonth": 2
+     },
+     "broke": {
+      "count": 1000,
+      "typicalMonth": 11
+     },
+     "lic-pass": {
+      "count": 863,
+      "typicalMonth": 14
+     },
+     "got-job": {
+      "count": 843,
+      "typicalMonth": 18
+     },
+     "first-mistake": {
+      "count": 256,
+      "typicalMonth": 23
+     },
+     "daily": {
+      "count": 490,
+      "typicalMonth": 26
+     },
+     "nurse-first-year": {
+      "count": 786,
+      "typicalMonth": 22
+     },
+     "complaint": {
+      "count": 362,
+      "typicalMonth": 28
+     },
+     "peer-leave": {
+      "count": 165,
+      "typicalMonth": 30
+     },
+     "night-shift": {
+      "count": 441,
+      "typicalMonth": 27
+     },
+     "interview": {
+      "count": 455,
+      "typicalMonth": 17
+     },
+     "senior-pressure": {
+      "count": 372,
+      "typicalMonth": 28
+     },
+     "crunch": {
+      "count": 362,
+      "typicalMonth": 27
+     },
+     "lic-fail": {
+      "count": 269,
+      "typicalMonth": 14
+     },
+     "praise": {
+      "count": 262,
+      "typicalMonth": 29
+     },
+     "apply": {
+      "count": 462,
+      "typicalMonth": 17
+     },
+     "long-hunt": {
+      "count": 40,
+      "typicalMonth": 26
+     },
+     "got-job-small": {
+      "count": 9,
+      "typicalMonth": 26
+     },
+     "mentor": {
+      "count": 267,
+      "typicalMonth": 27
+     },
+     "thanks": {
+      "count": 273,
+      "typicalMonth": 28
+     },
+     "burnout": {
+      "count": 143,
+      "typicalMonth": 31
+     },
+     "offer": {
+      "count": 75,
+      "typicalMonth": 33
+     },
+     "raise": {
+      "count": 7,
+      "typicalMonth": 26
+     }
+    },
+    "final": {
+     "skill": {
+      "p10": 47,
+      "p50": 67,
+      "p90": 90
+     },
+     "stress": {
+      "p10": 48,
+      "p50": 67,
+      "p90": 89
+     },
+     "satisfaction": {
+      "p10": 41,
+      "p50": 57,
+      "p90": 71
+     },
+     "relation": {
+      "p10": 42,
+      "p50": 48,
+      "p90": 56
+     },
+     "money": {
+      "p10": 1152,
+      "p50": 2799,
+      "p90": 4645
+     }
+    },
+    "medianState": {
+     "skill": 67,
+     "stress": 67,
+     "satisfaction": 57,
+     "relation": 48,
+     "money": 2799
+    },
+    "satisfiedShare": 40,
+    "stressedShare": 59,
+    "outcome": {
+     "gate": {
+      "share": 85,
+      "satisfied": 47,
+      "left": 9,
+      "stayedSatisfied": 51
+     },
+     "preparing": {
+      "share": 2
+     },
+     "switched": {
+      "share": 13,
+      "satisfied": 2,
+      "working": 86
+     }
+    },
+    "gate": {
+     "label": "면허 따고 취업",
+     "share": 85,
+     "typicalMonth": 18
+    },
+    "salary": {
+     "p10": 3070,
+     "p50": 3595,
+     "p90": 5001
+    },
+    "factors": [
+     {
+      "key": "jobReady",
+      "label": "직무 준비도",
+      "mult": 0.81,
+      "why": "면허·필수 자격: 공부 중, 현장·임상 실습: 1번 해 봄, 끝까지 해 본 프로젝트·작품 없음"
+     },
+     {
+      "key": "region",
+      "label": "사는 곳",
+      "mult": 0.95,
+      "why": "경기·인천(일자리가 수도권에 몰려 있음)"
+     },
+     {
+      "key": "school",
+      "label": "학력",
+      "mult": 1,
+      "why": "4년제"
+     }
+    ]
+   },
+   "tree": {
+    "id": "",
+    "key": "start",
+    "label": "출발",
+    "cause": "start",
+    "count": 1000,
+    "typicalMonth": 0,
+    "children": [
+     {
+      "id": "lic-pass",
+      "key": "lic-pass",
+      "label": "면허 합격",
+      "cause": "luck",
+      "count": 863,
+      "typicalMonth": 14,
+      "children": [
+       {
+        "id": "lic-pass>got-job@big",
+        "key": "got-job@big",
+        "label": "합격(30인 이상 병원)",
+        "cause": "luck",
+        "count": 646,
+        "typicalMonth": 18,
+        "children": [
+         {
+          "id": "lic-pass>got-job@big>nurse-first-year:1",
+          "key": "nurse-first-year:1",
+          "label": "다른 병원으로",
+          "cause": "choice",
+          "count": 298,
+          "typicalMonth": 21,
+          "children": [
+           {
+            "id": "lic-pass>got-job@big>nurse-first-year:1>got-job@big",
+            "key": "got-job@big",
+            "label": "합격(30인 이상 병원)",
+            "cause": "luck",
+            "count": 197,
+            "typicalMonth": 24,
+            "children": [],
+            "other": 16
+           },
+           {
+            "id": "lic-pass>got-job@big>nurse-first-year:1>got-job@small",
+            "key": "got-job@small",
+            "label": "합격(30인 미만 병원)",
+            "cause": "luck",
+            "count": 73,
+            "typicalMonth": 26,
+            "children": [],
+            "other": 6
+           }
+          ],
+          "other": 2
+         },
+         {
+          "id": "lic-pass>got-job@big>nurse-first-year:2",
+          "key": "nurse-first-year:2",
+          "label": "간호를 떠남",
+          "cause": "choice",
+          "count": 63,
+          "typicalMonth": 21,
+          "children": [],
+          "other": 0
+         }
+        ],
+        "other": 36
+       },
+       {
+        "id": "lic-pass>got-job@small",
+        "key": "got-job@small",
+        "label": "합격(30인 미만 병원)",
+        "cause": "luck",
+        "count": 192,
+        "typicalMonth": 18,
+        "children": [
+         {
+          "id": "lic-pass>got-job@small>nurse-first-year:1",
+          "key": "nurse-first-year:1",
+          "label": "다른 병원으로",
+          "cause": "choice",
+          "count": 87,
+          "typicalMonth": 22,
+          "children": [
+           {
+            "id": "lic-pass>got-job@small>nurse-first-year:1>got-job@big",
+            "key": "got-job@big",
+            "label": "합격(30인 이상 병원)",
+            "cause": "luck",
+            "count": 58,
+            "typicalMonth": 25,
+            "children": [],
+            "other": 3
+           }
+          ],
+          "other": 17
+         }
+        ],
+        "other": 19
+       }
+      ],
+      "other": 15
+     }
+    ],
+    "other": 0
+   },
+   "lines": [
+    {
+     "id": "lic-pass>got-job@big",
+     "title": "면허 합격 → 합격(30인 이상 병원), 그 뒤로는 큰 변화 없이",
+     "path": [
+      "",
+      "lic-pass",
+      "lic-pass>got-job@big"
+     ],
+     "count": 285,
+     "isMain": true,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|4",
+     "satisfiedShare": 42,
+     "stressedShare": 80,
+     "final": {
+      "skill": {
+       "p10": 52,
+       "p50": 68,
+       "p90": 92
+      },
+      "stress": {
+       "p10": 58,
+       "p50": 78,
+       "p90": 94
+      },
+      "satisfaction": {
+       "p10": 43,
+       "p50": 57,
+       "p90": 71
+      },
+      "relation": {
+       "p10": 40,
+       "p50": 48,
+       "p90": 58
+      },
+      "money": {
+       "p10": 1750,
+       "p50": 3436,
+       "p90": 5363
+      }
+     },
+     "salary": 4026,
+     "switched": false
+    },
+    {
+     "id": "lic-pass>got-job@big>nurse-first-year:1>got-job@big",
+     "title": "다른 병원으로 → 합격(30인 이상 병원) (3년차)",
+     "path": [
+      "",
+      "lic-pass",
+      "lic-pass>got-job@big",
+      "lic-pass>got-job@big>nurse-first-year:1",
+      "lic-pass>got-job@big>nurse-first-year:1>got-job@big"
+     ],
+     "count": 197,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|111",
+     "satisfiedShare": 68,
+     "stressedShare": 61,
+     "final": {
+      "skill": {
+       "p10": 54,
+       "p50": 71,
+       "p90": 88
+      },
+      "stress": {
+       "p10": 49,
+       "p50": 67,
+       "p90": 85
+      },
+      "satisfaction": {
+       "p10": 49,
+       "p50": 63,
+       "p90": 76
+      },
+      "relation": {
+       "p10": 42,
+       "p50": 48,
+       "p90": 58
+      },
+      "money": {
+       "p10": 2180,
+       "p50": 3301,
+       "p90": 4710
+      }
+     },
+     "salary": 3595,
+     "switched": false
+    },
+    {
+     "id": "",
+     "title": "기간 안에 자리 잡지 못한 길",
+     "path": [
+      ""
+     ],
+     "count": 137,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|3",
+     "satisfiedShare": 0,
+     "stressedShare": 37,
+     "final": {
+      "skill": {
+       "p10": 36,
+       "p50": 49,
+       "p90": 73
+      },
+      "stress": {
+       "p10": 49,
+       "p50": 60,
+       "p90": 76
+      },
+      "satisfaction": {
+       "p10": 34,
+       "p50": 45,
+       "p90": 51
+      },
+      "relation": {
+       "p10": 46,
+       "p50": 50,
+       "p90": 50
+      },
+      "money": {
+       "p10": 376,
+       "p50": 2546,
+       "p90": 3674
+      }
+     },
+     "salary": 0,
+     "switched": false
+    },
+    {
+     "id": "lic-pass>got-job@small",
+     "title": "면허 합격 → 합격(30인 미만 병원), 그 뒤로는 큰 변화 없이",
+     "path": [
+      "",
+      "lic-pass",
+      "lic-pass>got-job@small"
+     ],
+     "count": 105,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|168",
+     "satisfiedShare": 37,
+     "stressedShare": 71,
+     "final": {
+      "skill": {
+       "p10": 50,
+       "p50": 68,
+       "p90": 88
+      },
+      "stress": {
+       "p10": 53,
+       "p50": 75,
+       "p90": 91
+      },
+      "satisfaction": {
+       "p10": 43,
+       "p50": 57,
+       "p90": 68
+      },
+      "relation": {
+       "p10": 42,
+       "p50": 48,
+       "p90": 54
+      },
+      "money": {
+       "p10": 810,
+       "p50": 2178,
+       "p90": 2760
+      }
+     },
+     "salary": 3070,
+     "switched": false
+    },
+    {
+     "id": "lic-pass>got-job@big>nurse-first-year:1>got-job@small",
+     "title": "다른 병원으로 → 합격(30인 미만 병원)",
+     "path": [
+      "",
+      "lic-pass",
+      "lic-pass>got-job@big",
+      "lic-pass>got-job@big>nurse-first-year:1",
+      "lic-pass>got-job@big>nurse-first-year:1>got-job@small"
+     ],
+     "count": 73,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|621",
+     "satisfiedShare": 66,
+     "stressedShare": 52,
+     "final": {
+      "skill": {
+       "p10": 55,
+       "p50": 71,
+       "p90": 91
+      },
+      "stress": {
+       "p10": 44,
+       "p50": 65,
+       "p90": 86
+      },
+      "satisfaction": {
+       "p10": 47,
+       "p50": 64,
+       "p90": 78
+      },
+      "relation": {
+       "p10": 42,
+       "p50": 48,
+       "p90": 56
+      },
+      "money": {
+       "p10": 1087,
+       "p50": 2358,
+       "p90": 3465
+      }
+     },
+     "salary": 3070,
+     "switched": false
+    },
+    {
+     "id": "lic-pass>got-job@big>nurse-first-year:2",
+     "title": "합격(30인 이상 병원) → 간호를 떠남",
+     "path": [
+      "",
+      "lic-pass",
+      "lic-pass>got-job@big",
+      "lic-pass>got-job@big>nurse-first-year:2"
+     ],
+     "count": 63,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|639",
+     "satisfiedShare": 0,
+     "stressedShare": 6,
+     "final": {
+      "skill": {
+       "p10": 46,
+       "p50": 61,
+       "p90": 79
+      },
+      "stress": {
+       "p10": 39,
+       "p50": 47,
+       "p90": 61
+      },
+      "satisfaction": {
+       "p10": 50,
+       "p50": 55,
+       "p90": 64
+      },
+      "relation": {
+       "p10": 46,
+       "p50": 48,
+       "p90": 52
+      },
+      "money": {
+       "p10": 375,
+       "p50": 2122,
+       "p90": 3499
+      }
+     },
+     "salary": 0,
+     "switched": true
+    },
+    {
+     "id": "lic-pass>got-job@small>nurse-first-year:1>got-job@big",
+     "title": "다른 병원으로 → 합격(30인 이상 병원) (3년차)",
+     "path": [
+      "",
+      "lic-pass",
+      "lic-pass>got-job@small",
+      "lic-pass>got-job@small>nurse-first-year:1",
+      "lic-pass>got-job@small>nurse-first-year:1>got-job@big"
+     ],
+     "count": 58,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|nurse|395",
+     "satisfiedShare": 67,
+     "stressedShare": 55,
+     "final": {
+      "skill": {
+       "p10": 57,
+       "p50": 74,
+       "p90": 88
+      },
+      "stress": {
+       "p10": 52,
+       "p50": 67,
+       "p90": 82
+      },
+      "satisfaction": {
+       "p10": 49,
+       "p50": 65,
+       "p90": 75
+      },
+      "relation": {
+       "p10": 42,
+       "p50": 48,
+       "p90": 54
+      },
+      "money": {
+       "p10": 1333,
+       "p50": 2700,
+       "p90": 4173
+      }
+     },
+     "salary": 5001,
+     "switched": false
+    }
+   ]
+  },
+  "civil-servant": {
+   "worldId": "civil-servant",
+   "months": 36,
+   "startYm": "2026-12",
+   "stats": {
+    "runs": 1000,
+    "events": {
+     "study-start": {
+      "count": 1000,
+      "typicalMonth": 0
+     },
+     "study-grind": {
+      "count": 971,
+      "typicalMonth": 2
+     },
+     "exam-fail": {
+      "count": 992,
+      "typicalMonth": 5
+     },
+     "friend-hired": {
+      "count": 797,
+      "typicalMonth": 8
+     },
+     "broke": {
+      "count": 975,
+      "typicalMonth": 9
+     },
+     "exam-pass-national": {
+      "count": 31,
+      "typicalMonth": 17
+     },
+     "first-post": {
+      "count": 167,
+      "typicalMonth": 20
+     },
+     "first-pay": {
+      "count": 126,
+      "typicalMonth": 22
+     },
+     "on-time": {
+      "count": 99,
+      "typicalMonth": 24
+     },
+     "complaint": {
+      "count": 110,
+      "typicalMonth": 24
+     },
+     "routine-work": {
+      "count": 126,
+      "typicalMonth": 25
+     },
+     "event-duty": {
+      "count": 107,
+      "typicalMonth": 25
+     },
+     "quit-thought": {
+      "count": 90,
+      "typicalMonth": 27
+     },
+     "keep-going": {
+      "count": 882,
+      "typicalMonth": 15
+     },
+     "mock-exam": {
+      "count": 731,
+      "typicalMonth": 10
+     },
+     "family-pressure": {
+      "count": 455,
+      "typicalMonth": 21
+     },
+     "keep-going-2": {
+      "count": 483,
+      "typicalMonth": 27
+     },
+     "exam-pass-local": {
+      "count": 147,
+      "typicalMonth": 19
+     },
+     "transfer": {
+      "count": 28,
+      "typicalMonth": 30
+     }
+    },
+    "final": {
+     "skill": {
+      "p10": 29,
+      "p50": 47,
+      "p90": 68
+     },
+     "stress": {
+      "p10": 50,
+      "p50": 67,
+      "p90": 86
+     },
+     "satisfaction": {
+      "p10": 6,
+      "p50": 24,
+      "p90": 54
+     },
+     "relation": {
+      "p10": 45,
+      "p50": 49,
+      "p90": 53
+     },
+     "money": {
+      "p10": -376,
+      "p50": 1506,
+      "p90": 3212
+     }
+    },
+    "medianState": {
+     "skill": 47,
+     "stress": 67,
+     "satisfaction": 24,
+     "relation": 49,
+     "money": 1506
+    },
+    "satisfiedShare": 6,
+    "stressedShare": 58,
+    "outcome": {
+     "gate": {
+      "share": 17,
+      "satisfied": 34,
+      "left": 20,
+      "stayedSatisfied": 43
+     },
+     "preparing": {
+      "share": 47
+     },
+     "switched": {
+      "share": 36,
+      "satisfied": 1,
+      "working": 70
+     }
+    },
+    "gate": {
+     "label": "합격해서 첫 근무까지",
+     "share": 17,
+     "typicalMonth": 20
+    },
+    "salary": {
+     "p10": 3428,
+     "p50": 3428,
+     "p90": 3428
+    },
+    "factors": [
+     {
+      "key": "examPower",
+      "label": "시험 공부량",
+      "mult": 0.26,
+      "why": "하루 실제 공부 2.1시간(알바로 0.9시간 줄어듦), 성실성 4점"
+     },
+     {
+      "key": "persistence",
+      "label": "끈기",
+      "mult": 1.1,
+      "why": "상황 질문 끈기 4점"
+     }
+    ]
+   },
+   "tree": {
+    "id": "",
+    "key": "start",
+    "label": "출발",
+    "cause": "start",
+    "count": 1000,
+    "typicalMonth": 0,
+    "children": [
+     {
+      "id": "keep-going:1",
+      "key": "keep-going:1",
+      "label": "취업으로 전향",
+      "cause": "choice",
+      "count": 238,
+      "typicalMonth": 16,
+      "children": [],
+      "other": 0
+     },
+     {
+      "id": "exam-pass-local",
+      "key": "exam-pass-local",
+      "label": "지방직 합격",
+      "cause": "luck",
+      "count": 147,
+      "typicalMonth": 19,
+      "children": [],
+      "other": 29
+     },
+     {
+      "id": "keep-going-2:1",
+      "key": "keep-going-2:1",
+      "label": "취업으로 전향",
+      "cause": "choice",
+      "count": 123,
+      "typicalMonth": 26,
+      "children": [],
+      "other": 0
+     }
+    ],
+    "other": 31
+   },
+   "lines": [
+    {
+     "id": "",
+     "title": "기간 안에 합격하지 못한 길",
+     "path": [
+      ""
+     ],
+     "count": 492,
+     "isMain": true,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|civil-servant|1",
+     "satisfiedShare": 3,
+     "stressedShare": 85,
+     "final": {
+      "skill": {
+       "p10": 36,
+       "p50": 53,
+       "p90": 71
+      },
+      "stress": {
+       "p10": 62,
+       "p50": 76,
+       "p90": 90
+      },
+      "satisfaction": {
+       "p10": 4,
+       "p50": 8,
+       "p90": 15
+      },
+      "relation": {
+       "p10": 45,
+       "p50": 49,
+       "p90": 53
+      },
+      "money": {
+       "p10": -504,
+       "p50": 1506,
+       "p90": 1506
+      }
+     },
+     "salary": 0,
+     "switched": false
+    },
+    {
+     "id": "keep-going:1",
+     "title": "취업으로 전향 (2년차)",
+     "path": [
+      "",
+      "keep-going:1"
+     ],
+     "count": 238,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|civil-servant|23",
+     "satisfiedShare": 0,
+     "stressedShare": 32,
+     "final": {
+      "skill": {
+       "p10": 23,
+       "p50": 35,
+       "p90": 49
+      },
+      "stress": {
+       "p10": 49,
+       "p50": 58,
+       "p90": 76
+      },
+      "satisfaction": {
+       "p10": 30,
+       "p50": 42,
+       "p90": 49
+      },
+      "relation": {
+       "p10": 46,
+       "p50": 49,
+       "p90": 53
+      },
+      "money": {
+       "p10": -774,
+       "p50": 2160,
+       "p90": 3468
+      }
+     },
+     "salary": 0,
+     "switched": true
+    },
+    {
+     "id": "exam-pass-local",
+     "title": "지방직 합격",
+     "path": [
+      "",
+      "exam-pass-local"
+     ],
+     "count": 147,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|civil-servant|502",
+     "satisfiedShare": 29,
+     "stressedShare": 18,
+     "final": {
+      "skill": {
+       "p10": 32,
+       "p50": 49,
+       "p90": 69
+      },
+      "stress": {
+       "p10": 42,
+       "p50": 55,
+       "p90": 69
+      },
+      "satisfaction": {
+       "p10": 42,
+       "p50": 54,
+       "p90": 65
+      },
+      "relation": {
+       "p10": 45,
+       "p50": 50,
+       "p90": 56
+      },
+      "money": {
+       "p10": 1277,
+       "p50": 2422,
+       "p90": 4272
+      }
+     },
+     "salary": 3428,
+     "switched": false
+    },
+    {
+     "id": "keep-going-2:1",
+     "title": "취업으로 전향 (3년차)",
+     "path": [
+      "",
+      "keep-going-2:1"
+     ],
+     "count": 123,
+     "isMain": false,
+     "repSeed": "이서연|졸업하고 병원 간호사로 바로 갈지, 공무원 시험을 준비할지 모르겠어요|civil-servant|86",
+     "satisfiedShare": 0,
+     "stressedShare": 47,
+     "final": {
+      "skill": {
+       "p10": 29,
+       "p50": 44,
+       "p90": 62
+      },
+      "stress": {
+       "p10": 56,
+       "p50": 64,
+       "p90": 80
+      },
+      "satisfaction": {
+       "p10": 9,
+       "p50": 28,
+       "p90": 34
+      },
+      "relation": {
+       "p10": 45,
+       "p50": 49,
+       "p90": 53
+      },
+      "money": {
+       "p10": -376,
+       "p50": 1506,
+       "p90": 2378
+      }
+     },
+     "salary": 0,
+     "switched": true
+    }
+   ]
+  }
+ },
+ "lines": {
+  "nurse": {
+   "lic-pass>got-job@big": [
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 0,
+     "month": 2,
+     "label": "2026년 12월~27년 2월",
+     "eventId": "lic-study",
+     "title": "간호사 국가시험 공부",
+     "kind": "neutral",
+     "narration": "국가시험을 앞두고 두꺼운 문제집을 펴서 헷갈리는 이론들을 다시 정리했다.",
+     "choice": "모의고사를 매주 본다",
+     "choiceIndex": 0,
+     "reason": "",
+     "odds": {
+      "base": 60,
+      "mine": 59,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 42,
+      "situation": "아직 여유가 있어서"
+     },
+     "delta": {
+      "money": -87,
+      "skill": 8,
+      "stress": 8
+     },
+     "state": {
+      "skill": 36,
+      "stress": 50,
+      "satisfaction": 51,
+      "relation": 50,
+      "money": 213
+     },
+     "status": "졸업 앞두고 국가시험 준비",
+     "eventStatus": "졸업 앞두고 국가시험 준비",
+     "salary": 0,
+     "freq": 993,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 1,
+     "month": 5,
+     "label": "2027년 3~5월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "졸업 앞두고 국가시험 준비. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": -87
+     },
+     "state": {
+      "skill": 36,
+      "stress": 50,
+      "satisfaction": 49,
+      "relation": 50,
+      "money": 126
+     },
+     "status": "졸업 앞두고 국가시험 준비",
+     "salary": 0,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 2,
+     "month": 6,
+     "label": "2027년 6~8월",
+     "eventId": "clinical",
+     "title": "실습에서 혼났다",
+     "kind": "bad",
+     "narration": "병동 실습 중에 긴장한 탓에 작은 실수를 저질러 당황스러웠다.",
+     "choice": "남은 실습만 조용히 버틴다",
+     "choiceIndex": 1,
+     "reason": "안정이 꽤 중요해서",
+     "odds": {
+      "base": 47,
+      "mine": 47,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 50
+     },
+     "delta": {
+      "stress": 5,
+      "satisfaction": -5,
+      "skill": 1,
+      "money": -87
+     },
+     "state": {
+      "skill": 37,
+      "stress": 54,
+      "satisfaction": 46,
+      "relation": 50,
+      "money": 39
+     },
+     "status": "졸업 앞두고 국가시험 준비",
+     "eventStatus": "졸업 앞두고 국가시험 준비",
+     "salary": 0,
+     "freq": 969,
+     "routine": false,
+     "minor": [
+      "간호사 국가시험 공부"
+     ]
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 3,
+     "month": 11,
+     "label": "2027년 9~11월",
+     "eventId": "broke",
+     "title": "모아 둔 돈이 바닥났다",
+     "kind": "bad",
+     "narration": "한 달 생활비 90만 원을 쓰다 보니 통장 잔고가 비어버려 당장 다음 달 지출이 막막해졌다.",
+     "choice": "알바를 늘려 생활비를 직접 번다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 53,
+      "mine": 50,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 53
+     },
+     "delta": {
+      "skill": 4,
+      "stress": 20,
+      "money": 3,
+      "satisfaction": -6
+     },
+     "state": {
+      "skill": 41,
+      "stress": 74,
+      "satisfaction": 40,
+      "relation": 50,
+      "money": 42
+     },
+     "status": "졸업 앞두고 국가시험 준비",
+     "eventStatus": "졸업 앞두고 국가시험 준비",
+     "salary": 0,
+     "freq": 1000,
+     "routine": true,
+     "branch": "choice",
+     "minor": [
+      "간호사 국가시험 공부"
+     ]
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 4,
+     "month": 14,
+     "label": "2027년 12월~28년 2월",
+     "eventId": "lic-pass",
+     "title": "간호사 국가시험에 합격했다",
+     "kind": "good",
+     "narration": "국가시험을 앞두고 긴장 속에서 모의고사를 반복하며 준비 기간을 보냈다. 마침내 마주한 결과 화면에서 합격 사실을 확인하고 안도의 한숨을 쉬었다.",
+     "choice": "바로 원하는 곳에 지원한다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 39,
+      "mine": 37,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 77
+     },
+     "delta": {
+      "skill": 10,
+      "stress": -3,
+      "money": 183,
+      "satisfaction": 18
+     },
+     "state": {
+      "skill": 51,
+      "stress": 64,
+      "satisfaction": 61,
+      "relation": 50,
+      "money": 225
+     },
+     "status": "졸업 앞두고 국가시험 준비",
+     "eventStatus": "졸업 앞두고 국가시험 준비",
+     "salary": 0,
+     "freq": 863,
+     "routine": true,
+     "branch": "luck",
+     "minor": [
+      "간호사 국가시험 공부"
+     ]
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 5,
+     "month": 15,
+     "label": "2028년 3~5월",
+     "eventId": "got-job",
+     "title": "간호사로 일하게 됐다 · 30~299인 병원",
+     "kind": "good",
+     "narration": "수도권 병원 최종 합격 통보를 받고 마침내 첫 출근을 앞두게 되었다. 입사 동기 이수아에게 떨리는 마음을 카톡으로 털어놓으며 긴장감을 달랬다.",
+     "choice": "첫 출근 전에 미리 공부해 둔다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 55,
+      "mine": 54,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 64
+     },
+     "tierLabel": "30~299인 병원",
+     "delta": {
+      "satisfaction": 10,
+      "stress": 10,
+      "skill": 7,
+      "money": 495
+     },
+     "state": {
+      "skill": 58,
+      "stress": 71,
+      "satisfaction": 70,
+      "relation": 50,
+      "money": 720
+     },
+     "status": "30~299인 병원 3개월차",
+     "eventStatus": "30~299인 병원 1개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "evidence": {
+      "label": "신입 초임(전 업종): 300인 이상 5,001만원, 30~299인 3,595만원",
+      "source": "한국경영자총협회(2023)",
+      "url": "https://www.inews24.com/view/1803165"
+     },
+     "freq": 843,
+     "routine": true,
+     "branch": "luck",
+     "minor": [
+      "신규 1년, 그만둘지 고민된다"
+     ]
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 6,
+     "month": 20,
+     "label": "2028년 6~8월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "30~299인 병원 6개월차. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": 495,
+      "stress": 3
+     },
+     "state": {
+      "skill": 58,
+      "stress": 68,
+      "satisfaction": 68,
+      "relation": 50,
+      "money": 1215
+     },
+     "status": "30~299인 병원 6개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 7,
+     "month": 21,
+     "label": "2028년 9~11월",
+     "eventId": "praise",
+     "title": "박 수간호사에게 인정받았다",
+     "kind": "good",
+     "narration": "병동 업무에 조금씩 적응해 가던 중, 박 수간호사가 회의 자리에서 내 업무 처리 방식을 칭찬했다. 한 선배가 옆에서 잘했다고 고개를 끄덕여 주었다.",
+     "choice": "이번엔 조용히 기뻐한다",
+     "choiceIndex": 1,
+     "reason": "안정도 크게 따져서",
+     "odds": {
+      "base": 59,
+      "mine": 60,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 68,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "satisfaction": 12,
+      "skill": 2,
+      "stress": 0,
+      "money": 495
+     },
+     "state": {
+      "skill": 60,
+      "stress": 64,
+      "satisfaction": 78,
+      "relation": 50,
+      "money": 1710
+     },
+     "status": "30~299인 병원 9개월차",
+     "eventStatus": "30~299인 병원 7개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "freq": 262,
+     "routine": false,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 8,
+     "month": 26,
+     "label": "2028년 12월~29년 2월",
+     "eventId": "night-shift",
+     "title": "밤 근무가 이어졌다",
+     "kind": "bad",
+     "narration": "밤낮이 바뀌는 3교대 근무 속에서 병동을 지키느라 체력적 한계에 부딪혔다. 입사 동기 이수아 역시 지친 기색을 감추지 못했다.",
+     "choice": "근무 조정을 요청한다",
+     "choiceIndex": 1,
+     "reason": "안정도 크게 따져서",
+     "odds": {
+      "base": 47,
+      "mine": 49,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 64,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "money": 495,
+      "stress": 15,
+      "satisfaction": -9,
+      "relation": -2,
+      "skill": -1
+     },
+     "state": {
+      "skill": 59,
+      "stress": 76,
+      "satisfaction": 66,
+      "relation": 48,
+      "money": 2205
+     },
+     "status": "30~299인 병원 12개월차",
+     "eventStatus": "30~299인 병원 12개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "freq": 441,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 9,
+     "month": 28,
+     "label": "2029년 3~5월",
+     "eventId": "complaint",
+     "title": "보호자의 강한 항의를 받았다",
+     "kind": "bad",
+     "narration": "환자와 보호자들의 거친 항의가 이어지는 현장에서 마음을 추스르기 바빴다. 박 수간호사는 묵묵히 버텨내는 내 모습을 눈여겨보았다.",
+     "choice": "속으로 삭인다",
+     "choiceIndex": 1,
+     "reason": "안정도 크게 따져서",
+     "odds": {
+      "base": 62,
+      "mine": 63,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 75,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "money": 495,
+      "stress": 15,
+      "satisfaction": -6,
+      "skill": -1
+     },
+     "state": {
+      "skill": 58,
+      "stress": 84,
+      "satisfaction": 63,
+      "relation": 48,
+      "money": 2700
+     },
+     "status": "30~299인 병원 15개월차",
+     "eventStatus": "30~299인 병원 14개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "freq": 362,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 10,
+     "month": 32,
+     "label": "2029년 6~8월",
+     "eventId": "complaint",
+     "title": "보호자의 강한 항의를 받았다",
+     "kind": "bad",
+     "narration": "환자의 예민한 민원과 불만이 터져 나오는 상황을 겪으며 매 순간 긴장했다. 한 선배는 이런 일이 비일비재하다며 차분하게 대처하는 법을 일러주었다.",
+     "choice": "상황을 정리해 선배와 공유한다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 38,
+      "mine": 37,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 80
+     },
+     "delta": {
+      "money": 495,
+      "stress": 17,
+      "satisfaction": -5,
+      "skill": 4,
+      "relation": 2
+     },
+     "state": {
+      "skill": 62,
+      "stress": 92,
+      "satisfaction": 61,
+      "relation": 50,
+      "money": 3195
+     },
+     "status": "30~299인 병원 18개월차",
+     "eventStatus": "30~299인 병원 18개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "freq": 362,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "nurse",
+     "lineId": "lic-pass>got-job@big",
+     "station": 11,
+     "month": 35,
+     "label": "2029년 9~11월",
+     "eventId": "senior-pressure",
+     "title": "선배의 압박이 심했다",
+     "kind": "bad",
+     "narration": "엄격한 연차의 압박 속에서 환자 처치와 기록을 해내느라 긴장감이 가득했다. 입사 동기 이수아와 함께 고충을 털어놓으며 겨우 마음을 달랬다.",
+     "choice": "배울 건 배우고 할 말은 한다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 41,
+      "mine": 40,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 87
+     },
+     "delta": {
+      "money": 495,
+      "stress": 21,
+      "satisfaction": -8,
+      "relation": -4,
+      "skill": 5
+     },
+     "state": {
+      "skill": 67,
+      "stress": 100,
+      "satisfaction": 56,
+      "relation": 46,
+      "money": 3690
+     },
+     "status": "30~299인 병원 21개월차",
+     "eventStatus": "30~299인 병원 21개월차",
+     "jobSince": 15,
+     "salary": 3595,
+     "evidence": {
+      "label": "신규 간호사 1년 내 사직률 57.4%(2022)",
+      "source": "병원간호사회 자료, 대한간호협회 분석",
+      "url": "https://www.newsis.com/view/NISX20240319_0002666727"
+     },
+     "freq": 372,
+     "routine": false,
+     "minor": []
+    }
+   ]
+  },
+  "civil-servant": {
+   "": [
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 0,
+     "month": 0,
+     "label": "2026년 12월~27년 2월",
+     "eventId": "study-start",
+     "title": "수험 생활을 시작했다",
+     "kind": "neutral",
+     "narration": "강의를 신청하고 독서실 등록을 마친 뒤 책상에 앉아 9급 시험 일정을 확인했다.",
+     "choice": "스터디를 만들어 서로 관리한다",
+     "choiceIndex": 0,
+     "reason": "",
+     "odds": {
+      "base": 60,
+      "mine": 59,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 40,
+      "situation": "아직 여유가 있어서"
+     },
+     "delta": {
+      "stress": 11,
+      "skill": 8,
+      "relation": 3,
+      "money": -102
+     },
+     "state": {
+      "skill": 18,
+      "stress": 52,
+      "satisfaction": 51,
+      "relation": 53,
+      "money": 198
+     },
+     "status": "학교 다니며 시험 준비",
+     "eventStatus": "학교 다니며 시험 준비",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 평균 준비 기간 1년 8개월",
+      "source": "이대중 외(2016 조사, 2025 보도)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 1000,
+     "routine": false,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 1,
+     "month": 3,
+     "label": "2027년 3~5월",
+     "eventId": "friend-hired",
+     "title": "친구가 대기업에 합격했다",
+     "kind": "bad",
+     "narration": "정하린이 보낸 합격 메시지를 읽고 축하 인사를 건넸지만 마음 한쪽이 헛헛해졌다.",
+     "choice": "오늘은 공부를 쉰다",
+     "choiceIndex": 1,
+     "reason": "안정이 꽤 중요해서",
+     "odds": {
+      "base": 45,
+      "mine": 46,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 52,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "stress": 6,
+      "satisfaction": -18,
+      "skill": -2,
+      "money": -102
+     },
+     "state": {
+      "skill": 16,
+      "stress": 57,
+      "satisfaction": 35,
+      "relation": 53,
+      "money": 96
+     },
+     "status": "학교 다니며 시험 준비",
+     "eventStatus": "학교 다니며 시험 준비",
+     "salary": 0,
+     "freq": 797,
+     "routine": false,
+     "minor": [
+      "시험에 떨어졌다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 2,
+     "month": 7,
+     "label": "2027년 6~8월",
+     "eventId": "exam-fail",
+     "title": "시험에 떨어졌다",
+     "kind": "bad",
+     "narration": "성적표를 확인해 보니 합격선에서 아쉽게 떨어졌고, 정하린은 최종 명단에 이름을 올렸다.",
+     "choice": "한 달은 쉬면서 마음을 추스른다",
+     "choiceIndex": 1,
+     "reason": "안정이 꽤 중요해서",
+     "odds": {
+      "base": 47,
+      "mine": 49,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 56,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "money": -102,
+      "stress": 3,
+      "satisfaction": -10,
+      "skill": -1
+     },
+     "state": {
+      "skill": 15,
+      "stress": 57,
+      "satisfaction": 28,
+      "relation": 53,
+      "money": -6
+     },
+     "status": "학교 다니며 시험 준비",
+     "eventStatus": "학교 다니며 시험 준비",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 992,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 3,
+     "month": 9,
+     "label": "2027년 9~11월",
+     "eventId": "broke",
+     "title": "모아 둔 돈이 바닥났다",
+     "kind": "bad",
+     "narration": "수험 생활이 길어지며 한 달 생활비를 겨우 충당하던 통장 잔고가 완전히 바닥났다.",
+     "choice": "알바를 늘려 생활비를 직접 번다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 53,
+      "mine": 50,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 57
+     },
+     "delta": {
+      "stress": 21,
+      "satisfaction": -6,
+      "skill": 2,
+      "money": 168
+     },
+     "state": {
+      "skill": 17,
+      "stress": 73,
+      "satisfaction": 25,
+      "relation": 53,
+      "money": 162
+     },
+     "status": "학교 다니며 시험 준비",
+     "eventStatus": "학교 다니며 시험 준비",
+     "salary": 0,
+     "freq": 975,
+     "routine": true,
+     "branch": "choice",
+     "minor": [],
+     "reactions": [
+      {
+       "name": "스터디원 정하린",
+       "role": "수험 동료",
+       "line": "알바까지 하면 공부 시간이 모자랄 텐데 걱정이네. 우리 힘내자."
+      }
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 4,
+     "month": 14,
+     "label": "2027년 12월~28년 2월",
+     "eventId": "study-grind",
+     "title": "다시 책상 앞에 앉았다",
+     "kind": "neutral",
+     "narration": "학교 수업과 수험 생활을 병행하며 매일 독서실 자리를 지켰다. 스터디원 정하린과 아침마다 출석 인증 메시지를 주고받으며 흐트러진 마음을 다잡았다.",
+     "choice": "컨디션 관리를 우선한다",
+     "choiceIndex": 1,
+     "reason": "안정도 크게 따져서",
+     "odds": {
+      "base": 62,
+      "mine": 64,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 69,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "money": 168,
+      "skill": 1,
+      "stress": -4
+     },
+     "state": {
+      "skill": 18,
+      "stress": 63,
+      "satisfaction": 28,
+      "relation": 53,
+      "money": 330
+     },
+     "status": "학교 다니며 시험 준비",
+     "eventStatus": "학교 다니며 시험 준비",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 971,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 5,
+     "month": 17,
+     "label": "2028년 3~5월",
+     "eventId": "exam-fail",
+     "title": "시험에 떨어졌다",
+     "kind": "bad",
+     "narration": "채점 결과 합격선에서 아쉽게 밀려나며 또 한 번 고배를 마셨다. 먼저 합격한 스터디원 정하린의 축하 연락을 받으며 복잡한 심정으로 가채점표를 다시 확인했다.",
+     "choice": "오답을 분석해서 다음 시험을 준비한다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 53,
+      "mine": 50,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 61
+     },
+     "delta": {
+      "money": 168,
+      "stress": 15,
+      "satisfaction": -10,
+      "skill": 5
+     },
+     "state": {
+      "skill": 23,
+      "stress": 75,
+      "satisfaction": 21,
+      "relation": 53,
+      "money": 498
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 992,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 6,
+     "month": 20,
+     "label": "2028년 6~8월",
+     "eventId": "keep-going",
+     "title": "1년이 넘었는데 아직이다",
+     "kind": "bad",
+     "narration": "길어진 수험 기간에 바닥난 통장 잔고를 보며 깊은 한숨을 쉬었다. 스터디원 정하린과 앞으로의 생활비 마련에 대해 현실적인 이야기를 나눴다.",
+     "choice": "알바를 하면서 천천히 계속한다",
+     "choiceIndex": 2,
+     "reason": "끈기가 강해서",
+     "odds": {
+      "base": 45,
+      "mine": 47,
+      "grade": "assumed",
+      "byAi": true,
+      "stress": 74,
+      "situation": "스트레스가 많이 쌓여 있어서",
+      "shift": "보통 사람보다 안정을 더 중시하여 공무원 준비를 조금 더 고수하는 편이다."
+     },
+     "delta": {
+      "money": 168,
+      "stress": 10,
+      "satisfaction": -18,
+      "skill": -2
+     },
+     "state": {
+      "skill": 21,
+      "stress": 79,
+      "satisfaction": 7,
+      "relation": 53,
+      "money": 666
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 73.3%가 2년 안에 합격",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 882,
+     "routine": false,
+     "branch": "choice",
+     "minor": [
+      "시험에 떨어졌다"
+     ],
+     "reactions": [
+      {
+       "name": "스터디원 정하린",
+       "role": "수험 동료",
+       "line": "알바랑 병행하면 체력적으로 너무 힘들 텐데 걱정이네. 그래도 우리 힘내자."
+      }
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 7,
+     "month": 21,
+     "label": "2028년 9~11월",
+     "eventId": "mock-exam",
+     "title": "모의고사 점수가 처음으로 커트라인을 넘었다",
+     "kind": "good",
+     "narration": "오랜 공부 끝에 본 모의고사에서 처음으로 안정적인 점수대를 기록했다. 스터디원 정하린이 내 일처럼 기뻐하며 다음 시험은 정말 붙을 거라고 격려해 주었다.",
+     "choice": "이 기세로 공부량을 늘린다",
+     "choiceIndex": 0,
+     "reason": "앞에서도 이쪽으로 골라서",
+     "odds": {
+      "base": 39,
+      "mine": 37,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 79
+     },
+     "delta": {
+      "satisfaction": 4,
+      "skill": 17,
+      "stress": 31,
+      "money": 168
+     },
+     "state": {
+      "skill": 38,
+      "stress": 100,
+      "satisfaction": 15,
+      "relation": 53,
+      "money": 834
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "freq": 731,
+     "routine": false,
+     "minor": [
+      "명절에 친척들이 물었다",
+      "다시 책상 앞에 앉았다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 8,
+     "month": 24,
+     "label": "2028년 12월~29년 2월",
+     "eventId": "study-grind",
+     "title": "다시 책상 앞에 앉았다",
+     "kind": "neutral",
+     "narration": "지방직 시험을 앞두고 매일 독서실에 틀어박혀 기본서와 기출문제만 반복했다. 스터디원 정하린과 모의고사 점수를 공유하며 서로 긴장의 고비를 당겼다.",
+     "choice": "컨디션 관리를 우선한다",
+     "choiceIndex": 1,
+     "reason": "안정도 크게 따져서",
+     "odds": {
+      "base": 62,
+      "mine": 64,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 100,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "skill": 1,
+      "stress": -4,
+      "money": 168
+     },
+     "state": {
+      "skill": 39,
+      "stress": 85,
+      "satisfaction": 18,
+      "relation": 53,
+      "money": 1002
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 971,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 9,
+     "month": 28,
+     "label": "2029년 3~5월",
+     "eventId": "keep-going-2",
+     "title": "2년이 넘었는데 아직이다",
+     "kind": "bad",
+     "narration": "길어지는 수험 생활에 합격 소식은 들리지 않고 불안감만 눈덩이처럼 불어났다. 스터디원 정하린마저 먼저 자리를 잡고 떠날까 봐 마음이 조급해졌다.",
+     "choice": "딱 1년만 더 한다",
+     "choiceIndex": 0,
+     "reason": "안정을 가장 중요하게 여겨서",
+     "odds": {
+      "base": 27,
+      "mine": 28,
+      "grade": "assumed",
+      "byAi": true,
+      "stress": 78,
+      "shift": "보통 사람보다 안정성을 크게 중요시하여 공무원 도전을 쉽게 포기하지 않는 편입니다."
+     },
+     "delta": {
+      "skill": 2,
+      "stress": 16,
+      "money": 168,
+      "satisfaction": -18
+     },
+     "state": {
+      "skill": 41,
+      "stress": 92,
+      "satisfaction": 3,
+      "relation": 53,
+      "money": 1170
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 73.3%가 2년 안에 합격",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 483,
+     "routine": false,
+     "branch": "choice",
+     "minor": [
+      "다시 책상 앞에 앉았다",
+      "시험에 떨어졌다"
+     ],
+     "reactions": [
+      {
+       "name": "스터디원 정하린",
+       "role": "수험 동료",
+       "line": "일년이라니…. 나도 마음이 급하지만 같이 끝까지 힘내보자 서연아."
+      }
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 10,
+     "month": 30,
+     "label": "2029년 6~8월",
+     "eventId": "study-grind",
+     "title": "다시 책상 앞에 앉았다",
+     "kind": "neutral",
+     "narration": "무더위 속에서도 하루 종일 책상 앞에 앉아 암기 과목 노트를 손에서 놓지 않았다. 스터디원 정하린과 매일 아침 출석을 인증하며 지친 마음을 다잡았다.",
+     "choice": "컨디션 관리를 우선한다",
+     "choiceIndex": 1,
+     "reason": "안정을 2순위로 꼽아서",
+     "odds": {
+      "base": 62,
+      "mine": 64,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 92,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "skill": 7,
+      "stress": 7,
+      "money": 168,
+      "satisfaction": -10
+     },
+     "state": {
+      "skill": 48,
+      "stress": 89,
+      "satisfaction": 2,
+      "relation": 53,
+      "money": 1338
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 971,
+     "routine": true,
+     "minor": [
+      "시험에 떨어졌다",
+      "다시 책상 앞에 앉았다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 11,
+     "month": 35,
+     "label": "2029년 9~11월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "수험생. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": 168
+     },
+     "state": {
+      "skill": 48,
+      "stress": 80,
+      "satisfaction": 8,
+      "relation": 53,
+      "money": 1506
+     },
+     "status": "수험생",
+     "salary": 0,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    }
+   ]
+  }
+ },
+ "active": {
+  "nurse": "lic-pass>got-job@big",
+  "civil-servant": ""
+ },
+ "report": {
+  "worlds": [
+   {
+    "worldId": "nurse",
+    "fit": 64,
+    "good": "간호사 국가시험에 합격했다, 간호사로 일하게 됐다 · 30~299인 병원",
+    "hard": "실습에서 혼났다, 모아 둔 돈이 바닥났다"
+   },
+   {
+    "worldId": "civil-servant",
+    "fit": 49,
+    "good": "모의고사 점수가 처음으로 커트라인을 넘었다",
+    "hard": "친구가 대기업에 합격했다, 시험에 떨어졌다"
+   }
+  ],
+  "woop": {
+   "wish": "체력 부담을 줄이면서 사람을 돕는 보람을 느끼는 안정적인 직업 갖기",
+   "outcome": "나의 가치인 보람과 안정을 모두 지키며 번아웃 없이 일하는 모습",
+   "obstacle": "'계속할지 고민', '신규 1년 고민' 같은 갈림길이 오면 마음이 흔들려 하던 일을 미루게 됨",
+   "plan": "만약 병원 실습 중 체력 한계를 느끼면, 즉시 선배에게 루틴 조정을 조언받는다."
+  },
+  "todos": [
+   "대학병원 선배 면담 신청하기",
+   "공무원 기출문제 1회분 풀어보기",
+   "수면 패턴 기록하고 점검하기"
+  ],
+  "example": {
+   "when": "이번 주 수요일 저녁",
+   "where": "학교 도서관 휴게실",
+   "what": "대학병원 선배 면담 신청하기"
+  },
+  "woopForks": [
+   {
+    "worldId": "civil-servant",
+    "worldName": "공무원",
+    "label": "계속할지 고민",
+    "share": 88
+   },
+   {
+    "worldId": "nurse",
+    "worldName": "간호사",
+    "label": "신규 1년 고민",
+    "share": 79
+   }
+  ],
+  "stamp": "v3zaz0:88:civil-servant-179p9m0|nurse-kr3fwz"
+ },
+ "premium": [
+  {
+   "worldId": "nurse",
+   "lineId": "",
+   "line": "기간 안에 자리 잡지 못한 길",
+   "share": 14,
+   "satisfied": 0,
+   "steps": [
+    "실습 일지를 쓰며 부족한 점을 차분히 보완하세요.",
+    "비상 예비비를 미리 계산하고 지출을 줄이세요.",
+    "수면 패턴을 유지하고 가벼운 산책으로 체력을 지키세요."
+   ],
+   "ai": true
+  },
+  {
+   "worldId": "nurse",
+   "lineId": "lic-pass>got-job@small",
+   "line": "면허 합격 → 합격(30인 미만 병원), 그 뒤로는 큰 변화 없이",
+   "share": 11,
+   "satisfied": 37,
+   "steps": [
+    "밤 근무 후에는 반드시 충분한 수면을 취하세요.",
+    "보호자 민원은 혼자 참지 말고 선배에게 도움을 청하세요.",
+    "스트레스 해소용 취미를 찾아 감정을 환기하세요."
+   ],
+   "ai": true
+  },
+  {
+   "worldId": "civil-servant",
+   "lineId": "",
+   "line": "기간 안에 합격하지 못한 길",
+   "share": 49,
+   "satisfied": 3,
+   "steps": [
+    "주변 친구의 소식보다 본인의 수험 루틴에 집중하세요.",
+    "모의고사 오답을 분석하며 취약한 과목을 보완하세요.",
+    "단기 아르바이트로 생활비를 벌며 경제적 숨통을 트세요."
+   ],
+   "ai": true
+  },
+  {
+   "worldId": "civil-servant",
+   "lineId": "exam-pass-local",
+   "line": "지방직 합격",
+   "share": 15,
+   "satisfied": 29,
+   "steps": [
+    "공직 생활 선배를 찾아가 현실적인 조언을 구하세요.",
+    "체력 관리를 위해 주 2회 이상 가벼운 운동을 하세요.",
+    "업무 매뉴얼을 미리 숙지해 적응 기간을 줄이세요."
+   ],
+   "ai": true
+  }
+ ]
+}

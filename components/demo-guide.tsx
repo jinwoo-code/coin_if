@@ -2,15 +2,17 @@
 // 예시 인물로 둘러보는 사람(심사위원 등)에게만 보이는 둘러보기 순서. 예시 인물은 로그인 없이 프리미엄까지 다 열린다.
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { isDemoPerson } from "@/lib/demo";
+import { hasDemoSnapshot, isDemoPerson } from "@/lib/demo";
 import { store } from "@/lib/store";
 import { T } from "@/lib/copy";
 
 export function DemoGuide() {
   const [show, setShow] = useState(false);
+  const [pre, setPre] = useState(false);
   useEffect(() => {
     const p = store.getProfile();
     setShow(!!p && isDemoPerson(p));
+    setPre(hasDemoSnapshot(p));
   }, []);
   if (!show) return null;
   const steps: { title: string; note: string; href?: string }[] = [
@@ -26,6 +28,7 @@ export function DemoGuide() {
       <summary className="flex min-h-11 cursor-pointer flex-col justify-center">
         <span className="font-bold">예시로 둘러볼 곳 {steps.length}곳</span>
         <span className="text-cap text-muted">예시 인물 결과로 이 서비스의 기능을 차례로 볼 수 있는 곳이에요.</span>
+        {pre ? <span className="text-cap text-muted">기다리지 않게 미리 살아 둔 결과예요. 같은 입력이면 다시 돌려도 숫자는 같아요.</span> : null}
       </summary>
       <ol className="mt-2 flex flex-col gap-2 pb-1">
         {steps.map((s, i) => (

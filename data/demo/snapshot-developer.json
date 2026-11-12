@@ -1,0 +1,2946 @@
+{
+ "profile": {
+  "major": "컴퓨터모바일융합과 2학년",
+  "dilemma": "개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요",
+  "experiences": "동아리에서 친구들과 학교 공지 알림 앱을 만들어 봤고, 편의점 알바를 1년 했어요",
+  "constraints": "집이 경기도라 수도권에서 일하고 싶고, 졸업하면 빨리 돈을 벌어야 해요",
+  "values": [
+   "안정",
+   "성장",
+   "돈",
+   "여유"
+  ],
+  "bigFive": {
+   "O": 4,
+   "C": 3.5,
+   "E": 2.5,
+   "A": 3.5,
+   "N": 3.5
+  },
+  "speechStyle": "짧게 끊어 말하고, 솔직한 속마음을 말할 때는 '솔직히'로 시작하는 편",
+  "summary": "안정을 가장 중요하게 여기지만 제자리에 머무는 건 싫어해요. 만들어 보는 경험에서 재미를 느낀 적이 있어요.",
+  "interests": null,
+  "depthMode": "quick",
+  "holdout": {
+   "seed": "demo-developer",
+   "ids": [
+    "s12",
+    "s14",
+    "s8",
+    "s17",
+    "s9",
+    "s10"
+   ]
+  },
+  "holdoutPicks": {
+   "s12": 2,
+   "s14": 2,
+   "s8": 1
+  },
+  "story": null,
+  "since": "2026-11-12T03:05:40.522Z",
+  "corrections": [],
+  "pilot": null,
+  "name": "김민준",
+  "spec": {
+   "school": "전문대",
+   "status": "졸업예정",
+   "gpa": 3.6,
+   "certs": [
+    "정보처리산업기사"
+   ],
+   "toeic": null,
+   "projects": 2,
+   "gradIn": 3,
+   "workMonths": 12,
+   "internMonths": 0,
+   "awards": 0,
+   "github": null
+  },
+  "readiness": {
+   "coding": 2
+  },
+  "life": {
+   "savings": 400,
+   "support": 30,
+   "livingCost": 90,
+   "military": "군필",
+   "enlistIn": null,
+   "region": "경기·인천",
+   "studyHours": 7,
+   "partTimeHours": 12
+  },
+  "wants": {
+   "salary": 3600,
+   "hates": [
+    "주말근무",
+    "민원"
+   ]
+  },
+  "behavior": {
+   "persistence": 3.5,
+   "risk": 2.5,
+   "coping": 3,
+   "social": 3
+  },
+  "depth": {
+   "behaviorItems": 6,
+   "interestItems": 0,
+   "resume": false,
+   "github": false,
+   "spec": true,
+   "life": true,
+   "bigFiveItems": 20
+  },
+  "checkins": [],
+  "storyRaw": {},
+  "answers": {},
+  "judges": {
+   "4|1c1k98p|developer|bootcamp|stress:low|money:low": {
+    "probs": [
+     0.52,
+     0.48
+    ],
+    "reasons": [
+     "성장을 가장 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 모은 돈이 적어 혼자 공부하는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|bootcamp|stress:low|money:ok": {
+    "probs": [
+     0.52,
+     0.48
+    ],
+    "reasons": [
+     "성장을 가장 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 모은 돈이 적어 혼자 공부하는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|bootcamp|stress:mid|money:low": {
+    "probs": [
+     0.44,
+     0.56
+    ],
+    "reasons": [
+     "성장을 가장 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 모은 돈이 적어 혼자 공부하는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|bootcamp|stress:mid|money:ok": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "성장을 가장 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 모은 돈이 적어 혼자 공부하는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|bootcamp|stress:high|money:low": {
+    "probs": [
+     0.31,
+     0.69
+    ],
+    "reasons": [
+     "성장을 가장 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 모은 돈이 적어 혼자 공부하는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|bootcamp|stress:high|money:ok": {
+    "probs": [
+     0.31,
+     0.69
+    ],
+    "reasons": [
+     "성장을 가장 중요하게 여겨서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "보통 사람보다 위험 감수 성향이 낮고 모은 돈이 적어 혼자 공부하는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|long-hunt|stress:low|money:low": {
+    "probs": [
+     0.4,
+     0.4,
+     0.2
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험에서 재미를 느껴서"
+    ],
+    "shift": "보통 사람보다 안정을 가장 중요하게 여겨서 공무원과 작은 회사 쪽으로 더 기울어요",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|long-hunt|stress:low|money:ok": {
+    "probs": [
+     0.4,
+     0.4,
+     0.2
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험에서 재미를 느껴서"
+    ],
+    "shift": "보통 사람보다 안정을 가장 중요하게 여겨서 공무원과 작은 회사 쪽으로 더 기울어요",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|long-hunt|stress:mid|money:low": {
+    "probs": [
+     0.4,
+     0.4,
+     0.2
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험에서 재미를 느껴서"
+    ],
+    "shift": "보통 사람보다 안정을 가장 중요하게 여겨서 공무원과 작은 회사 쪽으로 더 기울어요",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|long-hunt|stress:mid|money:ok": {
+    "probs": [
+     0.4,
+     0.4,
+     0.2
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험에서 재미를 느껴서"
+    ],
+    "shift": "보통 사람보다 안정을 가장 중요하게 여겨서 공무원과 작은 회사 쪽으로 더 기울어요",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|long-hunt|stress:high|money:low": {
+    "probs": [
+     0.3,
+     0.5,
+     0.2
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험에서 재미를 느껴서"
+    ],
+    "shift": "보통 사람보다 안정을 가장 중요하게 여겨서 공무원과 작은 회사 쪽으로 더 기울어요",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|long-hunt|stress:high|money:ok": {
+    "probs": [
+     0.3,
+     0.5,
+     0.2
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험에서 재미를 느껴서"
+    ],
+    "shift": "보통 사람보다 안정을 가장 중요하게 여겨서 공무원과 작은 회사 쪽으로 더 기울어요",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-offer|stress:low|tenure:new": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "연봉을 더 많이 주어서",
+     "안정을 가장 중요하게 여겨서"
+    ],
+    "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-offer|stress:low|tenure:settled": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "연봉을 더 많이 주어서",
+     "안정을 가장 중요하게 여겨서"
+    ],
+    "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-offer|stress:mid|tenure:new": {
+    "probs": [
+     0.43,
+     0.57
+    ],
+    "reasons": [
+     "연봉을 더 많이 주어서",
+     "안정을 가장 중요하게 여겨서"
+    ],
+    "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-offer|stress:mid|tenure:settled": {
+    "probs": [
+     0.42,
+     0.58
+    ],
+    "reasons": [
+     "연봉을 더 많이 주어서",
+     "안정을 가장 중요하게 여겨서"
+    ],
+    "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-offer|stress:high|tenure:new": {
+    "probs": [
+     0.38,
+     0.62
+    ],
+    "reasons": [
+     "연봉을 더 많이 주어서",
+     "안정을 가장 중요하게 여겨서"
+    ],
+    "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-offer|stress:high|tenure:settled": {
+    "probs": [
+     0.39,
+     0.61
+    ],
+    "reasons": [
+     "연봉을 더 많이 주어서",
+     "안정을 가장 중요하게 여겨서"
+    ],
+    "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-burnout|stress:low|tenure:new": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 싫어서",
+     "신경성이 높고 안정을 추구해서"
+    ],
+    "shift": "안정을 가장 우선시하는 성향 때문에 보통 사람보다 무작정 퇴사하는 대신 업무 조율이나 휴가를 택하는 경향이 더 뚜렷합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-burnout|stress:low|tenure:settled": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 싫어서",
+     "신경성이 높고 안정을 추구해서"
+    ],
+    "shift": "안정을 가장 우선시하는 성향 때문에 보통 사람보다 무작정 퇴사하는 대신 업무 조율이나 휴가를 택하는 경향이 더 뚜렷합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-burnout|stress:mid|tenure:new": {
+    "probs": [
+     0.45,
+     0.22,
+     0.33
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 싫어서",
+     "신경성이 높고 안정을 추구해서"
+    ],
+    "shift": "안정을 가장 우선시하는 성향 때문에 보통 사람보다 무작정 퇴사하는 대신 업무 조율이나 휴가를 택하는 경향이 더 뚜렷합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-burnout|stress:mid|tenure:settled": {
+    "probs": [
+     0.45,
+     0.22,
+     0.33
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 싫어서",
+     "신경성이 높고 안정을 추구해서"
+    ],
+    "shift": "안정을 가장 우선시하는 성향 때문에 보통 사람보다 무작정 퇴사하는 대신 업무 조율이나 휴가를 택하는 경향이 더 뚜렷합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-burnout|stress:high|tenure:new": {
+    "probs": [
+     0.3,
+     0.25,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 싫어서",
+     "신경성이 높고 안정을 추구해서"
+    ],
+    "shift": "안정을 가장 우선시하는 성향 때문에 보통 사람보다 무작정 퇴사하는 대신 업무 조율이나 휴가를 택하는 경향이 더 뚜렷합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-burnout|stress:high|tenure:settled": {
+    "probs": [
+     0.3,
+     0.25,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 위험을 감수하기 싫어서",
+     "신경성이 높고 안정을 추구해서"
+    ],
+    "shift": "안정을 가장 우선시하는 성향 때문에 보통 사람보다 무작정 퇴사하는 대신 업무 조율이나 휴가를 택하는 경향이 더 뚜렷합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-first-year|stress:low": {
+    "probs": [
+     0.65,
+     0.25,
+     0.1
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "안정을 가장 중요하게 여기고 모은 돈이 적어 보통 사람보다 현재 자리를 지키려는 경향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-first-year|stress:mid": {
+    "probs": [
+     0.55,
+     0.35,
+     0.1
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "안정을 가장 중요하게 여기고 모은 돈이 적어 보통 사람보다 현재 자리를 지키려는 경향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|developer|dev-first-year|stress:high": {
+    "probs": [
+     0.45,
+     0.4,
+     0.15
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적어서"
+    ],
+    "shift": "안정을 가장 중요하게 여기고 모은 돈이 적어 보통 사람보다 현재 자리를 지키려는 경향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going|stress:low|prep:short": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 불안해서",
+     "제자리에 머무는 건 싫어해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going|stress:low|prep:long": {
+    "probs": [
+     0.45,
+     0.25,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 불안해서",
+     "제자리에 머무는 건 싫어해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going|stress:mid|prep:short": {
+    "probs": [
+     0.4,
+     0.25,
+     0.35
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 불안해서",
+     "제자리에 머무는 건 싫어해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going|stress:mid|prep:long": {
+    "probs": [
+     0.35000000000000003,
+     0.30000000000000004,
+     0.35000000000000003
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 불안해서",
+     "제자리에 머무는 건 싫어해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going|stress:high|prep:short": {
+    "probs": [
+     0.3,
+     0.3,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 불안해서",
+     "제자리에 머무는 건 싫어해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going|stress:high|prep:long": {
+    "probs": [
+     0.25,
+     0.3,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 불안해서",
+     "제자리에 머무는 건 싫어해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-2|stress:low|prep:short": {
+    "probs": [
+     0.55,
+     0.2,
+     0.25
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험을 좋아해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-2|stress:low|prep:long": {
+    "probs": [
+     0.55,
+     0.2,
+     0.25
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험을 좋아해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-2|stress:mid|prep:short": {
+    "probs": [
+     0.48,
+     0.22,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험을 좋아해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-2|stress:mid|prep:long": {
+    "probs": [
+     0.48,
+     0.22,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험을 좋아해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-2|stress:high|prep:short": {
+    "probs": [
+     0.35,
+     0.25,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험을 좋아해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-2|stress:high|prep:long": {
+    "probs": [
+     0.32,
+     0.25,
+     0.43
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "만들어 보는 경험을 좋아해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-3|stress:low|prep:short": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 생각하여 공무원 도전을 조금 더 연장하려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-3|stress:low|prep:long": {
+    "probs": [
+     0.5,
+     0.2,
+     0.3
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 생각하여 공무원 도전을 조금 더 연장하려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-3|stress:mid|prep:short": {
+    "probs": [
+     0.4,
+     0.25,
+     0.35
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 생각하여 공무원 도전을 조금 더 연장하려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-3|stress:mid|prep:long": {
+    "probs": [
+     0.4,
+     0.25,
+     0.35
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 생각하여 공무원 도전을 조금 더 연장하려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-3|stress:high|prep:short": {
+    "probs": [
+     0.3,
+     0.3,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 생각하여 공무원 도전을 조금 더 연장하려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|keep-going-3|stress:high|prep:long": {
+    "probs": [
+     0.3,
+     0.3,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "제자리에 머무는 건 싫어해서",
+     "모은 돈이 적고 생활비가 필요해서"
+    ],
+    "shift": "보통 사람보다 안정을 최우선으로 생각하여 공무원 도전을 조금 더 연장하려는 성향이 강합니다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|quit-thought|stress:low|tenure:new": {
+    "probs": [
+     0.65,
+     0.35
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 민원을 싫어해서"
+    ],
+    "shift": "이 사람은 보통 사람보다 안정을 더 중시하지만 민원을 매우 싫어해 스트레스가 높을 때 퇴사 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|quit-thought|stress:low|tenure:settled": {
+    "probs": [
+     0.6,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 민원을 싫어해서"
+    ],
+    "shift": "이 사람은 보통 사람보다 안정을 더 중시하지만 민원을 매우 싫어해 스트레스가 높을 때 퇴사 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|quit-thought|stress:mid|tenure:new": {
+    "probs": [
+     0.6,
+     0.4
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 민원을 싫어해서"
+    ],
+    "shift": "이 사람은 보통 사람보다 안정을 더 중시하지만 민원을 매우 싫어해 스트레스가 높을 때 퇴사 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|quit-thought|stress:mid|tenure:settled": {
+    "probs": [
+     0.55,
+     0.45
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 민원을 싫어해서"
+    ],
+    "shift": "이 사람은 보통 사람보다 안정을 더 중시하지만 민원을 매우 싫어해 스트레스가 높을 때 퇴사 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|quit-thought|stress:high|tenure:new": {
+    "probs": [
+     0.45,
+     0.55
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 민원을 싫어해서"
+    ],
+    "shift": "이 사람은 보통 사람보다 안정을 더 중시하지만 민원을 매우 싫어해 스트레스가 높을 때 퇴사 쪽으로 더 기운다.",
+    "src": "ai"
+   },
+   "4|1c1k98p|civil-servant|quit-thought|stress:high|tenure:settled": {
+    "probs": [
+     0.4,
+     0.6
+    ],
+    "reasons": [
+     "안정을 가장 중요하게 여겨서",
+     "모은 돈이 적고 민원을 싫어해서"
+    ],
+    "shift": "이 사람은 보통 사람보다 안정을 더 중시하지만 민원을 매우 싫어해 스트레스가 높을 때 퇴사 쪽으로 더 기운다.",
+    "src": "ai"
+   }
+  }
+ },
+ "selection": {
+  "worldIds": [
+   "developer",
+   "civil-servant"
+  ],
+  "months": 36,
+  "startYm": "2026-12"
+ },
+ "multiverses": {
+  "developer": {
+   "worldId": "developer",
+   "months": 36,
+   "startYm": "2026-12",
+   "stats": {
+    "runs": 1000,
+    "events": {
+     "coding-test": {
+      "count": 729,
+      "typicalMonth": 4
+     },
+     "bootcamp": {
+      "count": 606,
+      "typicalMonth": 7
+     },
+     "job-hunt": {
+      "count": 871,
+      "typicalMonth": 2
+     },
+     "got-job": {
+      "count": 815,
+      "typicalMonth": 9
+     },
+     "weekend-outage": {
+      "count": 498,
+      "typicalMonth": 22
+     },
+     "spec-change": {
+      "count": 475,
+      "typicalMonth": 21
+     },
+     "dev-first-year": {
+      "count": 844,
+      "typicalMonth": 13
+     },
+     "sprint": {
+      "count": 757,
+      "typicalMonth": 16
+     },
+     "first-review": {
+      "count": 543,
+      "typicalMonth": 21
+     },
+     "dev-burnout": {
+      "count": 325,
+      "typicalMonth": 27
+     },
+     "portfolio": {
+      "count": 779,
+      "typicalMonth": 3
+     },
+     "dev-mentor": {
+      "count": 393,
+      "typicalMonth": 24
+     },
+     "first-ship": {
+      "count": 473,
+      "typicalMonth": 21
+     },
+     "long-hunt": {
+      "count": 373,
+      "typicalMonth": 15
+     },
+     "dev-offer": {
+      "count": 265,
+      "typicalMonth": 29
+     },
+     "side-project": {
+      "count": 292,
+      "typicalMonth": 24
+     },
+     "layoff": {
+      "count": 72,
+      "typicalMonth": 28
+     },
+     "got-job-small": {
+      "count": 92,
+      "typicalMonth": 20
+     },
+     "dev-raise": {
+      "count": 38,
+      "typicalMonth": 25
+     },
+     "broke": {
+      "count": 82,
+      "typicalMonth": 26
+     }
+    },
+    "final": {
+     "skill": {
+      "p10": 58,
+      "p50": 80,
+      "p90": 98
+     },
+     "stress": {
+      "p10": 48,
+      "p50": 63,
+      "p90": 79
+     },
+     "satisfaction": {
+      "p10": 43,
+      "p50": 60,
+      "p90": 70
+     },
+     "relation": {
+      "p10": 48,
+      "p50": 51,
+      "p90": 63
+     },
+     "money": {
+      "p10": 990,
+      "p50": 3256,
+      "p90": 5511
+     }
+    },
+    "medianState": {
+     "skill": 80,
+     "stress": 63,
+     "satisfaction": 60,
+     "relation": 51,
+     "money": 3256
+    },
+    "satisfiedShare": 49,
+    "stressedShare": 46,
+    "outcome": {
+     "gate": {
+      "share": 87,
+      "satisfied": 56,
+      "left": 14,
+      "stayedSatisfied": 65
+     },
+     "preparing": {
+      "share": 2
+     },
+     "switched": {
+      "share": 11,
+      "satisfied": 5,
+      "working": 86
+     }
+    },
+    "gate": {
+     "label": "취업",
+     "share": 87,
+     "typicalMonth": 9
+    },
+    "salary": {
+     "p10": 3070,
+     "p50": 3595,
+     "p90": 5001
+    },
+    "factors": [
+     {
+      "key": "jobReady",
+      "label": "직무 준비도",
+      "mult": 1.23,
+      "why": "코딩 실력: 코딩테스트 쉬운 문제, 정보처리산업기사, 프로젝트·작품 2개"
+     },
+     {
+      "key": "region",
+      "label": "사는 곳",
+      "mult": 0.95,
+      "why": "경기·인천(일자리가 수도권에 몰려 있음)"
+     },
+     {
+      "key": "school",
+      "label": "학력",
+      "mult": 0.85,
+      "why": "전문대"
+     }
+    ]
+   },
+   "tree": {
+    "id": "",
+    "key": "start",
+    "label": "출발",
+    "cause": "start",
+    "count": 1000,
+    "typicalMonth": 0,
+    "children": [
+     {
+      "id": "got-job@big",
+      "key": "got-job@big",
+      "label": "합격(30인 이상 회사)",
+      "cause": "luck",
+      "count": 339,
+      "typicalMonth": 7,
+      "children": [
+       {
+        "id": "got-job@big>dev-first-year:1",
+        "key": "dev-first-year:1",
+        "label": "다른 곳으로",
+        "cause": "choice",
+        "count": 101,
+        "typicalMonth": 12,
+        "children": [],
+        "other": 96
+       }
+      ],
+      "other": 93
+     },
+     {
+      "id": "got-job@small",
+      "key": "got-job@small",
+      "label": "합격(30인 미만 회사)",
+      "cause": "luck",
+      "count": 266,
+      "typicalMonth": 7,
+      "children": [],
+      "other": 203
+     },
+     {
+      "id": "bootcamp:0",
+      "key": "bootcamp:0",
+      "label": "국비 교육 등록",
+      "cause": "choice",
+      "count": 253,
+      "typicalMonth": 6,
+      "children": [
+       {
+        "id": "bootcamp:0>got-job@big",
+        "key": "got-job@big",
+        "label": "합격(30인 이상 회사)",
+        "cause": "luck",
+        "count": 91,
+        "typicalMonth": 12,
+        "children": [],
+        "other": 51
+       }
+      ],
+      "other": 154
+     }
+    ],
+    "other": 134
+   },
+   "lines": [
+    {
+     "id": "got-job@big",
+     "title": "합격(30인 이상 회사), 그 뒤로는 큰 변화 없이",
+     "path": [
+      "",
+      "got-job@big"
+     ],
+     "count": 238,
+     "isMain": true,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|developer|11",
+     "satisfiedShare": 66,
+     "stressedShare": 51,
+     "final": {
+      "skill": {
+       "p10": 56,
+       "p50": 79,
+       "p90": 97
+      },
+      "stress": {
+       "p10": 50,
+       "p50": 65,
+       "p90": 77
+      },
+      "satisfaction": {
+       "p10": 50,
+       "p50": 66,
+       "p90": 71
+      },
+      "relation": {
+       "p10": 50,
+       "p50": 56,
+       "p90": 65
+      },
+      "money": {
+       "p10": 3082,
+       "p50": 5073,
+       "p90": 6557
+      }
+     },
+     "salary": 3595,
+     "switched": false
+    },
+    {
+     "id": "got-job@small",
+     "title": "합격(30인 미만 회사), 그 뒤 여러 갈래",
+     "path": [
+      "",
+      "got-job@small"
+     ],
+     "count": 266,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|developer|287",
+     "satisfiedShare": 54,
+     "stressedShare": 44,
+     "final": {
+      "skill": {
+       "p10": 59,
+       "p50": 78,
+       "p90": 96
+      },
+      "stress": {
+       "p10": 48,
+       "p50": 63,
+       "p90": 80
+      },
+      "satisfaction": {
+       "p10": 43,
+       "p50": 63,
+       "p90": 71
+      },
+      "relation": {
+       "p10": 50,
+       "p50": 53,
+       "p90": 65
+      },
+      "money": {
+       "p10": 1371,
+       "p50": 3349,
+       "p90": 4565
+      }
+     },
+     "salary": 3070,
+     "switched": false
+    },
+    {
+     "id": "bootcamp:0",
+     "title": "국비 교육 등록, 그 뒤 여러 갈래",
+     "path": [
+      "",
+      "bootcamp:0"
+     ],
+     "count": 162,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|developer|728",
+     "satisfiedShare": 35,
+     "stressedShare": 48,
+     "final": {
+      "skill": {
+       "p10": 69,
+       "p50": 84,
+       "p90": 100
+      },
+      "stress": {
+       "p10": 51,
+       "p50": 64,
+       "p90": 81
+      },
+      "satisfaction": {
+       "p10": 37,
+       "p50": 54,
+       "p90": 67
+      },
+      "relation": {
+       "p10": 46,
+       "p50": 50,
+       "p90": 62
+      },
+      "money": {
+       "p10": 714,
+       "p50": 2358,
+       "p90": 3921
+      }
+     },
+     "salary": 3070,
+     "switched": false
+    },
+    {
+     "id": "",
+     "title": "여러 갈래로 드물게 갈라진 길",
+     "path": [
+      ""
+     ],
+     "count": 142,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|developer|185",
+     "satisfiedShare": 15,
+     "stressedShare": 41,
+     "final": {
+      "skill": {
+       "p10": 49,
+       "p50": 62,
+       "p90": 83
+      },
+      "stress": {
+       "p10": 47,
+       "p50": 61,
+       "p90": 78
+      },
+      "satisfaction": {
+       "p10": 36,
+       "p50": 51,
+       "p90": 67
+      },
+      "relation": {
+       "p10": 48,
+       "p50": 50,
+       "p90": 56
+      },
+      "money": {
+       "p10": 714,
+       "p50": 2177,
+       "p90": 3444
+      }
+     },
+     "salary": 0,
+     "switched": true
+    },
+    {
+     "id": "got-job@big>dev-first-year:1",
+     "title": "합격(30인 이상 회사) → 다른 곳으로, 그 뒤 여러 갈래",
+     "path": [
+      "",
+      "got-job@big",
+      "got-job@big>dev-first-year:1"
+     ],
+     "count": 101,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|developer|508",
+     "satisfiedShare": 57,
+     "stressedShare": 40,
+     "final": {
+      "skill": {
+       "p10": 63,
+       "p50": 82,
+       "p90": 94
+      },
+      "stress": {
+       "p10": 50,
+       "p50": 61,
+       "p90": 74
+      },
+      "satisfaction": {
+       "p10": 41,
+       "p50": 61,
+       "p90": 69
+      },
+      "relation": {
+       "p10": 48,
+       "p50": 51,
+       "p90": 63
+      },
+      "money": {
+       "p10": 1322,
+       "p50": 2991,
+       "p90": 4968
+      }
+     },
+     "salary": 3595,
+     "switched": false
+    },
+    {
+     "id": "bootcamp:0>got-job@big",
+     "title": "국비 교육 등록 → 합격(30인 이상 회사), 그 뒤 여러 갈래",
+     "path": [
+      "",
+      "bootcamp:0",
+      "bootcamp:0>got-job@big"
+     ],
+     "count": 91,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|developer|84",
+     "satisfiedShare": 62,
+     "stressedShare": 55,
+     "final": {
+      "skill": {
+       "p10": 77,
+       "p50": 92,
+       "p90": 100
+      },
+      "stress": {
+       "p10": 49,
+       "p50": 66,
+       "p90": 79
+      },
+      "satisfaction": {
+       "p10": 50,
+       "p50": 63,
+       "p90": 70
+      },
+      "relation": {
+       "p10": 50,
+       "p50": 53,
+       "p90": 63
+      },
+      "money": {
+       "p10": 1241,
+       "p50": 3876,
+       "p90": 5617
+      }
+     },
+     "salary": 3595,
+     "switched": false
+    }
+   ]
+  },
+  "civil-servant": {
+   "worldId": "civil-servant",
+   "months": 36,
+   "startYm": "2026-12",
+   "stats": {
+    "runs": 1000,
+    "events": {
+     "study-start": {
+      "count": 1000,
+      "typicalMonth": 0
+     },
+     "study-grind": {
+      "count": 968,
+      "typicalMonth": 2
+     },
+     "exam-fail": {
+      "count": 966,
+      "typicalMonth": 5
+     },
+     "friend-hired": {
+      "count": 751,
+      "typicalMonth": 6
+     },
+     "keep-going": {
+      "count": 721,
+      "typicalMonth": 14
+     },
+     "family-pressure": {
+      "count": 434,
+      "typicalMonth": 13
+     },
+     "broke": {
+      "count": 613,
+      "typicalMonth": 16
+     },
+     "mock-exam": {
+      "count": 681,
+      "typicalMonth": 8
+     },
+     "keep-going-2": {
+      "count": 376,
+      "typicalMonth": 26
+     },
+     "exam-pass-local": {
+      "count": 341,
+      "typicalMonth": 19
+     },
+     "first-post": {
+      "count": 412,
+      "typicalMonth": 20
+     },
+     "routine-work": {
+      "count": 319,
+      "typicalMonth": 23
+     },
+     "event-duty": {
+      "count": 273,
+      "typicalMonth": 23
+     },
+     "on-time": {
+      "count": 253,
+      "typicalMonth": 24
+     },
+     "first-pay": {
+      "count": 318,
+      "typicalMonth": 22
+     },
+     "quit-thought": {
+      "count": 236,
+      "typicalMonth": 26
+     },
+     "complaint": {
+      "count": 279,
+      "typicalMonth": 24
+     },
+     "exam-pass-national": {
+      "count": 93,
+      "typicalMonth": 17
+     },
+     "transfer": {
+      "count": 73,
+      "typicalMonth": 30
+     }
+    },
+    "final": {
+     "skill": {
+      "p10": 44,
+      "p50": 60,
+      "p90": 78
+     },
+     "stress": {
+      "p10": 45,
+      "p50": 63,
+      "p90": 83
+     },
+     "satisfaction": {
+      "p10": 8,
+      "p50": 41,
+      "p90": 61
+     },
+     "relation": {
+      "p10": 45,
+      "p50": 49,
+      "p90": 54
+     },
+     "money": {
+      "p10": 330,
+      "p50": 1676,
+      "p90": 3989
+     }
+    },
+    "medianState": {
+     "skill": 60,
+     "stress": 63,
+     "satisfaction": 41,
+     "relation": 49,
+     "money": 1676
+    },
+    "satisfiedShare": 10,
+    "stressedShare": 47,
+    "outcome": {
+     "gate": {
+      "share": 41,
+      "satisfied": 23,
+      "left": 21,
+      "stayedSatisfied": 29
+     },
+     "preparing": {
+      "share": 30
+     },
+     "switched": {
+      "share": 29,
+      "satisfied": 4,
+      "working": 74
+     }
+    },
+    "gate": {
+     "label": "합격해서 첫 근무까지",
+     "share": 41,
+     "typicalMonth": 20
+    },
+    "salary": {
+     "p10": 3428,
+     "p50": 3428,
+     "p90": 3428
+    },
+    "factors": [
+     {
+      "key": "examPower",
+      "label": "시험 공부량",
+      "mult": 0.67,
+      "why": "하루 실제 공부 5.6시간(알바로 1.4시간 줄어듦), 성실성 3.5점"
+     },
+     {
+      "key": "persistence",
+      "label": "끈기",
+      "mult": 1.05,
+      "why": "상황 질문 끈기 3.5점"
+     }
+    ]
+   },
+   "tree": {
+    "id": "",
+    "key": "start",
+    "label": "출발",
+    "cause": "start",
+    "count": 1000,
+    "typicalMonth": 0,
+    "children": [
+     {
+      "id": "exam-pass-local",
+      "key": "exam-pass-local",
+      "label": "지방직 합격",
+      "cause": "luck",
+      "count": 341,
+      "typicalMonth": 19,
+      "children": [
+       {
+        "id": "exam-pass-local>quit-thought:1",
+        "key": "quit-thought:1",
+        "label": "퇴직",
+        "cause": "choice",
+        "count": 68,
+        "typicalMonth": 27,
+        "children": [],
+        "other": 0
+       }
+      ],
+      "other": 0
+     },
+     {
+      "id": "keep-going:1",
+      "key": "keep-going:1",
+      "label": "취업으로 전향",
+      "cause": "choice",
+      "count": 190,
+      "typicalMonth": 14,
+      "children": [],
+      "other": 0
+     },
+     {
+      "id": "keep-going-2:1",
+      "key": "keep-going-2:1",
+      "label": "취업으로 전향",
+      "cause": "choice",
+      "count": 98,
+      "typicalMonth": 26,
+      "children": [],
+      "other": 0
+     },
+     {
+      "id": "exam-pass-national",
+      "key": "exam-pass-national",
+      "label": "국가직 합격",
+      "cause": "luck",
+      "count": 93,
+      "typicalMonth": 17,
+      "children": [],
+      "other": 17
+     }
+    ],
+    "other": 0
+   },
+   "lines": [
+    {
+     "id": "",
+     "title": "기간 안에 합격하지 못한 길",
+     "path": [
+      ""
+     ],
+     "count": 278,
+     "isMain": true,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|civil-servant|15",
+     "satisfiedShare": 0,
+     "stressedShare": 89,
+     "final": {
+      "skill": {
+       "p10": 51,
+       "p50": 67,
+       "p90": 82
+      },
+      "stress": {
+       "p10": 64,
+       "p50": 76,
+       "p90": 89
+      },
+      "satisfaction": {
+       "p10": 4,
+       "p50": 8,
+       "p90": 13
+      },
+      "relation": {
+       "p10": 45,
+       "p50": 49,
+       "p90": 53
+      },
+      "money": {
+       "p10": -30,
+       "p50": 1244,
+       "p90": 1600
+      }
+     },
+     "salary": 0,
+     "switched": false
+    },
+    {
+     "id": "exam-pass-local",
+     "title": "지방직 합격, 그 뒤로는 큰 변화 없이",
+     "path": [
+      "",
+      "exam-pass-local"
+     ],
+     "count": 273,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|civil-servant|288",
+     "satisfiedShare": 28,
+     "stressedShare": 26,
+     "final": {
+      "skill": {
+       "p10": 49,
+       "p50": 62,
+       "p90": 77
+      },
+      "stress": {
+       "p10": 42,
+       "p50": 57,
+       "p90": 76
+      },
+      "satisfaction": {
+       "p10": 36,
+       "p50": 52,
+       "p90": 66
+      },
+      "relation": {
+       "p10": 44,
+       "p50": 50,
+       "p90": 56
+      },
+      "money": {
+       "p10": 1092,
+       "p50": 2528,
+       "p90": 4347
+      }
+     },
+     "salary": 3428,
+     "switched": false
+    },
+    {
+     "id": "keep-going:1",
+     "title": "취업으로 전향 (2년차)",
+     "path": [
+      "",
+      "keep-going:1"
+     ],
+     "count": 190,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|civil-servant|42",
+     "satisfiedShare": 0,
+     "stressedShare": 37,
+     "final": {
+      "skill": {
+       "p10": 37,
+       "p50": 48,
+       "p90": 63
+      },
+      "stress": {
+       "p10": 50,
+       "p50": 59,
+       "p90": 78
+      },
+      "satisfaction": {
+       "p10": 30,
+       "p50": 43,
+       "p90": 51
+      },
+      "relation": {
+       "p10": 46,
+       "p50": 49,
+       "p90": 53
+      },
+      "money": {
+       "p10": 187,
+       "p50": 2162,
+       "p90": 3475
+      }
+     },
+     "salary": 0,
+     "switched": true
+    },
+    {
+     "id": "keep-going-2:1",
+     "title": "취업으로 전향 (3년차)",
+     "path": [
+      "",
+      "keep-going-2:1"
+     ],
+     "count": 98,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|civil-servant|17",
+     "satisfiedShare": 0,
+     "stressedShare": 50,
+     "final": {
+      "skill": {
+       "p10": 47,
+       "p50": 59,
+       "p90": 74
+      },
+      "stress": {
+       "p10": 56,
+       "p50": 65,
+       "p90": 79
+      },
+      "satisfaction": {
+       "p10": 12,
+       "p50": 27,
+       "p90": 32
+      },
+      "relation": {
+       "p10": 46,
+       "p50": 49,
+       "p90": 53
+      },
+      "money": {
+       "p10": -386,
+       "p50": 1422,
+       "p90": 2162
+      }
+     },
+     "salary": 0,
+     "switched": true
+    },
+    {
+     "id": "exam-pass-national",
+     "title": "국가직 합격",
+     "path": [
+      "",
+      "exam-pass-national"
+     ],
+     "count": 93,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|civil-servant|54",
+     "satisfiedShare": 22,
+     "stressedShare": 23,
+     "final": {
+      "skill": {
+       "p10": 44,
+       "p50": 61,
+       "p90": 81
+      },
+      "stress": {
+       "p10": 39,
+       "p50": 51,
+       "p90": 73
+      },
+      "satisfaction": {
+       "p10": 42,
+       "p50": 52,
+       "p90": 63
+      },
+      "relation": {
+       "p10": 44,
+       "p50": 51,
+       "p90": 57
+      },
+      "money": {
+       "p10": 1178,
+       "p50": 2553,
+       "p90": 4615
+      }
+     },
+     "salary": 3428,
+     "switched": false
+    },
+    {
+     "id": "exam-pass-local>quit-thought:1",
+     "title": "지방직 합격 → 퇴직",
+     "path": [
+      "",
+      "exam-pass-local",
+      "exam-pass-local>quit-thought:1"
+     ],
+     "count": 68,
+     "isMain": false,
+     "repSeed": "김민준|개발자로 바로 취업할지, 공무원 시험을 준비할지 모르겠어요|civil-servant|6",
+     "satisfiedShare": 0,
+     "stressedShare": 9,
+     "final": {
+      "skill": {
+       "p10": 46,
+       "p50": 59,
+       "p90": 73
+      },
+      "stress": {
+       "p10": 40,
+       "p50": 51,
+       "p90": 62
+      },
+      "satisfaction": {
+       "p10": 42,
+       "p50": 50,
+       "p90": 59
+      },
+      "relation": {
+       "p10": 47,
+       "p50": 53,
+       "p90": 58
+      },
+      "money": {
+       "p10": 1656,
+       "p50": 2654,
+       "p90": 3982
+      }
+     },
+     "salary": 0,
+     "switched": true
+    }
+   ]
+  }
+ },
+ "lines": {
+  "developer": {
+   "got-job@big": [
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 0,
+     "month": 0,
+     "label": "2026년 12월~27년 2월",
+     "eventId": "portfolio",
+     "title": "포트폴리오 프로젝트를 새로 시작했다",
+     "kind": "neutral",
+     "narration": "졸업을 앞두고 실제 사용자가 쓰는 서비스를 하나 완성해 보기로 마음먹었다. 배포까지 마무리하는 것을 목표로 잡았다.",
+     "choice": "매일 커밋하며 끝까지 만든다",
+     "choiceIndex": 0,
+     "reason": "성장을 2순위로 꼽아서",
+     "odds": {
+      "base": 60,
+      "mine": 58,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 40,
+      "situation": "아직 여유가 있어서"
+     },
+     "delta": {
+      "skill": 15,
+      "stress": 15,
+      "money": -48,
+      "satisfaction": -4
+     },
+     "state": {
+      "skill": 58,
+      "stress": 56,
+      "satisfaction": 47,
+      "relation": 50,
+      "money": 352
+     },
+     "status": "학교 다니며 취업 준비",
+     "eventStatus": "학교 다니며 취업 준비",
+     "salary": 0,
+     "freq": 779,
+     "routine": false,
+     "minor": [
+      "코딩테스트에서 한 문제를 못 풀었다"
+     ]
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 1,
+     "month": 4,
+     "label": "2027년 3~5월",
+     "eventId": "got-job",
+     "title": "개발자로 합격했다 · 30~299인 회사",
+     "kind": "good",
+     "narration": "수도권에 있는 30~299인 회사로부터 최종 합격 연락을 받았다. 다음 달 첫 출근을 앞두고 긴장이 풀렸다.",
+     "choice": "남은 기간은 푹 쉰다",
+     "choiceIndex": 1,
+     "reason": "안정이 가장 중요해서",
+     "odds": {
+      "base": 46,
+      "mine": 48,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 57,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "tierLabel": "30~299인 회사",
+     "delta": {
+      "stress": 5,
+      "satisfaction": 6,
+      "skill": 5,
+      "money": 314
+     },
+     "state": {
+      "skill": 63,
+      "stress": 60,
+      "satisfaction": 56,
+      "relation": 50,
+      "money": 666
+     },
+     "status": "30~299인 회사 2개월차",
+     "eventStatus": "30~299인 회사 1개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "evidence": {
+      "label": "신입 초임: 300인 이상 5,001만원, 30~299인 3,595만원",
+      "source": "한국경영자총협회(2023)",
+      "url": "https://www.inews24.com/view/1803165"
+     },
+     "freq": 815,
+     "routine": true,
+     "branch": "luck",
+     "minor": [
+      "서류 탈락 문자가 이어졌다",
+      "주말 새벽에 서버가 멈췄다"
+     ]
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 2,
+     "month": 8,
+     "label": "2027년 6~8월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "30~299인 회사 5개월차. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": 495,
+      "stress": 3
+     },
+     "state": {
+      "skill": 63,
+      "stress": 60,
+      "satisfaction": 59,
+      "relation": 50,
+      "money": 1161
+     },
+     "status": "30~299인 회사 5개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 3,
+     "month": 11,
+     "label": "2027년 9~11월",
+     "eventId": "dev-first-year",
+     "title": "신규 1년, 그만둘지 고민된다",
+     "kind": "bad",
+     "narration": "생각했던 업무와 달라 고민이 깊어졌다. 동기 한 명이 그만뒀다는 소식을 전해 들었다.",
+     "choice": "버티며 1년을 채운다",
+     "choiceIndex": 0,
+     "reason": "안정을 가장 중요하게 여겨서",
+     "odds": {
+      "base": 56,
+      "mine": 58,
+      "grade": "calibrated",
+      "ref": "byJob.tenureRatio·common.firstJobTenure: 고용노동부(2025) 고용형태별근로실태조사 직종별 평균근속(KOSIS 118/DT_118N_PAYM41) ÷ 전직종 7.1년 × 국회예산정책처(2026) 첫 직장을 그만둔 청년의 첫 직장 평균 근속 18.4개월, 헤럴드경제 2026-05-04 보도, https://www.heraldk.com/article/2026050404000057847. 진로마다 따로가 아니라 묶음 평균으로 맞춘 값(묶음 진로 1개 목표 평균 16.1개월, 그만둠 0.435). 그만둠 안 옮김:진로 바꿈 3:1은 가정값.",
+      "byAi": true,
+      "stress": 60,
+      "shift": "안정을 가장 중요하게 여기고 모은 돈이 적어 보통 사람보다 현재 자리를 지키려는 경향이 강합니다."
+     },
+     "delta": {
+      "money": 495,
+      "stress": 17,
+      "satisfaction": -6,
+      "skill": 2
+     },
+     "state": {
+      "skill": 65,
+      "stress": 74,
+      "satisfaction": 56,
+      "relation": 50,
+      "money": 1656
+     },
+     "status": "30~299인 회사 8개월차",
+     "eventStatus": "30~299인 회사 8개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "evidence": {
+      "label": "청년 첫 일자리 평균 근속 1년 6.8개월",
+      "source": "통계청 청년층 부가조사(2026)",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+     },
+     "freq": 844,
+     "routine": false,
+     "branch": "choice",
+     "minor": [],
+     "reactions": [
+      {
+       "name": "이 선배",
+       "role": "동료",
+       "line": "일 년 채우는 게 쉽지 않지. 나도 바빠서 이따 얘기하자."
+      }
+     ]
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 4,
+     "month": 12,
+     "label": "2027년 12월~28년 2월",
+     "eventId": "spec-change",
+     "title": "기획이 또 바뀌었다",
+     "kind": "bad",
+     "narration": "출시를 코앞에 두고 기획자 박지훈이 화면 흐름을 통째로 바꾸자고 요구했다. 김 팀장의 눈치를 보며 일정을 맞추기 위해 서둘러 코드를 수정했다.",
+     "choice": "이번 주 야근해서 맞춘다",
+     "choiceIndex": 0,
+     "reason": "성장도 크게 따져서",
+     "odds": {
+      "base": 44,
+      "mine": 43,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 74
+     },
+     "delta": {
+      "stress": 19,
+      "satisfaction": -4,
+      "skill": 2,
+      "money": 495
+     },
+     "state": {
+      "skill": 67,
+      "stress": 85,
+      "satisfaction": 55,
+      "relation": 50,
+      "money": 2151
+     },
+     "status": "30~299인 회사 11개월차",
+     "eventStatus": "30~299인 회사 9개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "freq": 475,
+     "routine": false,
+     "minor": []
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 5,
+     "month": 17,
+     "label": "2028년 3~5월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "30~299인 회사 14개월차. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": 495,
+      "stress": 3
+     },
+     "state": {
+      "skill": 67,
+      "stress": 79,
+      "satisfaction": 58,
+      "relation": 50,
+      "money": 2646
+     },
+     "status": "30~299인 회사 14개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 6,
+     "month": 20,
+     "label": "2028년 6~8월",
+     "eventId": "sprint",
+     "title": "평범하게 지나간 스프린트",
+     "kind": "neutral",
+     "narration": "이번 스프린트는 큰 사고 없이 무난하게 흘러갔다. 이 선배가 자리를 비운 사이에 새로 공부할 만한 기술 서적을 펼쳤다.",
+     "choice": "새로 쓰는 기술을 하나 골라 공부한다",
+     "choiceIndex": 0,
+     "reason": "성장을 2순위로 꼽아서",
+     "odds": {
+      "base": 45,
+      "mine": 44,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 76
+     },
+     "delta": {
+      "money": 495,
+      "stress": 6,
+      "skill": 5
+     },
+     "state": {
+      "skill": 72,
+      "stress": 78,
+      "satisfaction": 61,
+      "relation": 50,
+      "money": 3141
+     },
+     "status": "30~299인 회사 17개월차",
+     "eventStatus": "30~299인 회사 17개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "freq": 757,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 7,
+     "month": 23,
+     "label": "2028년 9~11월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "30~299인 회사 20개월차. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": 495,
+      "stress": 3
+     },
+     "state": {
+      "skill": 72,
+      "stress": 75,
+      "satisfaction": 64,
+      "relation": 50,
+      "money": 3636
+     },
+     "status": "30~299인 회사 20개월차",
+     "jobSince": 4,
+     "salary": 3595,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 8,
+     "month": 25,
+     "label": "2028년 12월~29년 2월",
+     "eventId": "dev-mentor",
+     "title": "이 선배가 밥을 사 줬다",
+     "kind": "good",
+     "narration": "퇴근길에 이 선배가 밥을 사 주며 자기 신입 때 겪었던 어려움과 조언을 건네주었다. 묵묵히 들으며 마음을 다잡았다.",
+     "choice": "고민을 솔직하게 털어놓는다",
+     "choiceIndex": 0,
+     "reason": "성장이 꽤 중요해서",
+     "odds": {
+      "base": 43,
+      "mine": 42,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 74
+     },
+     "delta": {
+      "money": 502,
+      "stress": -3,
+      "relation": 12,
+      "skill": 1,
+      "satisfaction": 2
+     },
+     "state": {
+      "skill": 73,
+      "stress": 66,
+      "satisfaction": 69,
+      "relation": 62,
+      "money": 4138
+     },
+     "status": "30~299인 회사 23개월차",
+     "eventStatus": "30~299인 회사 22개월차",
+     "jobSince": 4,
+     "salary": 3703,
+     "freq": 393,
+     "routine": false,
+     "minor": [
+      "연봉 협상 시즌"
+     ]
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 9,
+     "month": 29,
+     "label": "2029년 3~5월",
+     "eventId": "dev-offer",
+     "title": "다른 회사에서 연락이 왔다",
+     "kind": "neutral",
+     "narration": "헤드헌터로부터 더 나은 조건의 이직 제안을 받았지만, 그간 함께 고생하며 정이 든 팀원들과 프로젝트가 눈에 밟혔다.",
+     "choice": "지금 회사에 남는다",
+     "choiceIndex": 1,
+     "reason": "안정을 가장 중요하게 여겨서",
+     "odds": {
+      "base": 57,
+      "mine": 61,
+      "grade": "assumed",
+      "byAi": true,
+      "stress": 65,
+      "situation": "스트레스가 많이 쌓여 있어서",
+      "shift": "이 사람은 안정을 가장 중요하게 여기고 위험을 꺼려 보통 사람보다 지금 회사에 남는 쪽으로 더 기운다."
+     },
+     "delta": {
+      "money": 516,
+      "stress": 0,
+      "relation": 3,
+      "skill": -1
+     },
+     "state": {
+      "skill": 72,
+      "stress": 62,
+      "satisfaction": 67,
+      "relation": 65,
+      "money": 4654
+     },
+     "status": "30~299인 회사 26개월차",
+     "eventStatus": "30~299인 회사 26개월차",
+     "jobSince": 4,
+     "salary": 3703,
+     "evidence": {
+      "label": "청년 첫 일자리 평균 근속 1년 6.8개월",
+      "source": "통계청 청년층 부가조사(2026)",
+      "url": "https://mobile.newsis.com/view/NISX20260723_0003720080"
+     },
+     "freq": 265,
+     "routine": false,
+     "branch": "choice",
+     "minor": [],
+     "reactions": [
+      {
+       "name": "김 팀장",
+       "role": "상사",
+       "line": "의리는 좋지만 뼈는 남지 않아. 다음엔 실속도 챙겨."
+      },
+      {
+       "name": "이 선배",
+       "role": "동료",
+       "line": "의리는 멋지지만, 바쁜데 나중에 후회하지 마요."
+      }
+     ]
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 10,
+     "month": 32,
+     "label": "2029년 6~8월",
+     "eventId": "quiet",
+     "title": "조용히 지나간 시간",
+     "kind": "neutral",
+     "narration": "30~299인 회사 29개월차. 큰일 없이 하루하루가 지나갔다.",
+     "choice": "",
+     "choiceIndex": 0,
+     "reason": "",
+     "delta": {
+      "money": 516,
+      "stress": 3
+     },
+     "state": {
+      "skill": 72,
+      "stress": 62,
+      "satisfaction": 67,
+      "relation": 65,
+      "money": 5170
+     },
+     "status": "30~299인 회사 29개월차",
+     "jobSince": 4,
+     "salary": 3703,
+     "freq": 0,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "developer",
+     "lineId": "got-job@big",
+     "station": 11,
+     "month": 35,
+     "label": "2029년 9~11월",
+     "eventId": "first-review",
+     "title": "첫 코드 리뷰에 지적이 20개 달렸다",
+     "kind": "bad",
+     "narration": "이 선배가 꼼꼼하게 남겨둔 첫 코드 리뷰 지적 사항들을 하나씩 확인했다. 뼈와 살이 되는 조언임을 깨달았다.",
+     "choice": "조용히 고치고 넘어간다",
+     "choiceIndex": 1,
+     "reason": "안정을 제일 먼저 꼽아서",
+     "odds": {
+      "base": 56,
+      "mine": 59,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 65,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "skill": 8,
+      "stress": 9,
+      "money": 516
+     },
+     "state": {
+      "skill": 80,
+      "stress": 68,
+      "satisfaction": 67,
+      "relation": 65,
+      "money": 5686
+     },
+     "status": "30~299인 회사 32개월차",
+     "eventStatus": "30~299인 회사 32개월차",
+     "jobSince": 4,
+     "salary": 3703,
+     "freq": 543,
+     "routine": false,
+     "minor": [
+      "평범하게 지나간 스프린트"
+     ]
+    }
+   ]
+  },
+  "civil-servant": {
+   "": [
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 0,
+     "month": 0,
+     "label": "2026년 12월~27년 2월",
+     "eventId": "study-start",
+     "title": "수험 생활을 시작했다",
+     "kind": "neutral",
+     "narration": "본격적으로 수험 생활에 돌입하기로 했다. 인강을 결제하고 매일 공부할 독서실 자리를 골랐다.",
+     "choice": "혼자 인강으로 버틴다",
+     "choiceIndex": 1,
+     "reason": "안정 쪽을 가장 크게 봐서",
+     "odds": {
+      "base": 40,
+      "mine": 42,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 40
+     },
+     "delta": {
+      "stress": 5,
+      "skill": 2,
+      "money": -78
+     },
+     "state": {
+      "skill": 26,
+      "stress": 46,
+      "satisfaction": 51,
+      "relation": 50,
+      "money": 322
+     },
+     "status": "학교 다니며 시험 준비",
+     "eventStatus": "학교 다니며 시험 준비",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 평균 준비 기간 1년 8개월",
+      "source": "이대중 외(2016 조사, 2025 보도)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 1000,
+     "routine": false,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 1,
+     "month": 3,
+     "label": "2027년 3~5월",
+     "eventId": "study-grind",
+     "title": "다시 책상 앞에 앉았다",
+     "kind": "neutral",
+     "narration": "집과 독서실을 오가는 단조로운 날들이 반복됐다. 스터디원 정하린과 매일 아침 공부 인증을 주고받으며 하루를 시작했다.",
+     "choice": "모의고사 점수를 기록하며 약한 과목을 판다",
+     "choiceIndex": 0,
+     "reason": "성장도 크게 따져서",
+     "odds": {
+      "base": 55,
+      "mine": 52,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 46,
+      "situation": "아직 여유가 있어서"
+     },
+     "delta": {
+      "skill": 19,
+      "stress": 31,
+      "money": -78,
+      "satisfaction": -10
+     },
+     "state": {
+      "skill": 45,
+      "stress": 76,
+      "satisfaction": 39,
+      "relation": 50,
+      "money": 244
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 968,
+     "routine": true,
+     "minor": [
+      "다시 책상 앞에 앉았다",
+      "시험에 떨어졌다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 2,
+     "month": 6,
+     "label": "2027년 6~8월",
+     "eventId": "friend-hired",
+     "title": "친구가 대기업에 합격했다",
+     "kind": "bad",
+     "narration": "단톡방에 올라온 친구의 합격 인증을 보았다. 축하 메시지를 남기고도 한참 동안 스마트폰 화면을 내려다보았다.",
+     "choice": "오늘은 공부를 쉰다",
+     "choiceIndex": 1,
+     "reason": "안정을 제일 먼저 꼽아서",
+     "odds": {
+      "base": 61,
+      "mine": 62,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 76,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "stress": 3,
+      "satisfaction": -8,
+      "skill": 0,
+      "money": -78
+     },
+     "state": {
+      "skill": 45,
+      "stress": 73,
+      "satisfaction": 34,
+      "relation": 50,
+      "money": 166
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "freq": 751,
+     "routine": false,
+     "minor": [
+      "시험에 떨어졌다",
+      "모의고사 점수가 처음으로 커트라인을 넘었다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 3,
+     "month": 9,
+     "label": "2027년 9~11월",
+     "eventId": "study-grind",
+     "title": "다시 책상 앞에 앉았다",
+     "kind": "neutral",
+     "narration": "마음을 다잡고 다시 책상 앞에 앉았다. 스터디원 정하린과 아침 인증을 계속하며 페이스를 유지하려 애썼다.",
+     "choice": "컨디션 관리를 우선한다",
+     "choiceIndex": 1,
+     "reason": "안정을 제일 먼저 꼽아서",
+     "odds": {
+      "base": 62,
+      "mine": 65,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 73,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "skill": 1,
+      "stress": -4,
+      "money": -78
+     },
+     "state": {
+      "skill": 46,
+      "stress": 64,
+      "satisfaction": 37,
+      "relation": 50,
+      "money": 88
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 968,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 4,
+     "month": 12,
+     "label": "2027년 12월~28년 2월",
+     "eventId": "keep-going",
+     "title": "1년이 넘었는데 아직이다",
+     "kind": "bad",
+     "narration": "처음 공무원 시험을 준비하겠다고 마음먹었던 기간이 훌쩍 지나갔다. 통장 잔고와 나이를 함께 확인하며 마음을 다잡았다.",
+     "choice": "딱 1년만 더 한다",
+     "choiceIndex": 0,
+     "reason": "안정을 가장 중요하게 여겨서",
+     "odds": {
+      "base": 38,
+      "mine": 37,
+      "grade": "assumed",
+      "byAi": true,
+      "stress": 64,
+      "shift": "보통 사람보다 안정을 최우선으로 여겨서 공무원 시험에 조금 더 무게를 둡니다."
+     },
+     "delta": {
+      "stress": 25,
+      "satisfaction": -8,
+      "skill": 9,
+      "money": -78
+     },
+     "state": {
+      "skill": 55,
+      "stress": 82,
+      "satisfaction": 32,
+      "relation": 50,
+      "money": 10
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 73.3%가 2년 안에 합격",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 721,
+     "routine": false,
+     "branch": "choice",
+     "minor": [
+      "다시 책상 앞에 앉았다"
+     ],
+     "reactions": [
+      {
+       "name": "스터디원 정하린",
+       "role": "수험 동료",
+       "line": "나도 버티는 중이지만 벌써 일 년이라니 마음이 무거워지네. 같이 힘내자."
+      }
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 5,
+     "month": 16,
+     "label": "2028년 3~5월",
+     "eventId": "broke",
+     "title": "모아 둔 돈이 바닥났다",
+     "kind": "bad",
+     "narration": "수험 생활이 길어지면서 모아 둔 돈이 완전히 바닥났다. 스터디원 정하린에게 조언을 구하며 당장 다음 달 생활비를 해결할 방법을 찾았다.",
+     "choice": "알바를 늘려 생활비를 직접 번다",
+     "choiceIndex": 0,
+     "reason": "성장도 크게 따져서",
+     "odds": {
+      "base": 43,
+      "mine": 41,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 79
+     },
+     "delta": {
+      "money": 100,
+      "stress": 36,
+      "satisfaction": -16,
+      "skill": 7
+     },
+     "state": {
+      "skill": 62,
+      "stress": 100,
+      "satisfaction": 19,
+      "relation": 50,
+      "money": 110
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "freq": 613,
+     "routine": true,
+     "branch": "choice",
+     "minor": [
+      "시험에 떨어졌다"
+     ],
+     "reactions": [
+      {
+       "name": "스터디원 정하린",
+       "role": "수험 동료",
+       "line": "알바랑 공부를 병행하면 체력적으로 너무 힘들 텐데 걱정이야. 그래도 힘내자."
+      }
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 6,
+     "month": 19,
+     "label": "2028년 6~8월",
+     "eventId": "exam-fail",
+     "title": "시험에 떨어졌다",
+     "kind": "bad",
+     "narration": "합격자 발표 날 확인한 점수는 커트라인에 몇 점 모자라 있었다. 스터디원 정하린이 합격한 것을 축하해주며 가라앉는 마음을 추스렸다.",
+     "choice": "오답을 분석해서 다음 시험을 준비한다",
+     "choiceIndex": 0,
+     "reason": "성장도 크게 따져서",
+     "odds": {
+      "base": 40,
+      "mine": 37,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 96
+     },
+     "delta": {
+      "money": 189,
+      "stress": 15,
+      "satisfaction": -10,
+      "skill": 5
+     },
+     "state": {
+      "skill": 67,
+      "stress": 96,
+      "satisfaction": 13,
+      "relation": 50,
+      "money": 299
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 966,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 7,
+     "month": 21,
+     "label": "2028년 9~11월",
+     "eventId": "family-pressure",
+     "title": "명절에 친척들이 물었다",
+     "kind": "bad",
+     "narration": "명절에 모인 친척들이 아직도 공부하냐며 물어왔다. 스터디원 정하린처럼 합격 소식을 전하지 못한 채 무거운 마음으로 집으로 돌아왔다.",
+     "choice": "다음 명절엔 안 간다",
+     "choiceIndex": 1,
+     "reason": "안정을 제일 먼저 꼽아서",
+     "odds": {
+      "base": 62,
+      "mine": 65,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 96,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "stress": 3,
+      "satisfaction": -6,
+      "relation": -4,
+      "skill": 0,
+      "money": 189
+     },
+     "state": {
+      "skill": 67,
+      "stress": 88,
+      "satisfaction": 13,
+      "relation": 46,
+      "money": 488
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "freq": 434,
+     "routine": false,
+     "minor": [
+      "다시 책상 앞에 앉았다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 8,
+     "month": 26,
+     "label": "2028년 12월~29년 2월",
+     "eventId": "keep-going-2",
+     "title": "2년이 넘었는데 아직이다",
+     "kind": "bad",
+     "narration": "어느덧 수험 생활이 길어지면서 함께 시작했던 주변 사람들도 하나둘씩 떠나갔다. 지친 마음을 겨우 추스르며 책상에 앉았다.",
+     "choice": "알바를 하면서 천천히 계속한다",
+     "choiceIndex": 2,
+     "reason": "모은 돈이 적고 생활비가 필요해서",
+     "odds": {
+      "base": 44,
+      "mine": 45,
+      "grade": "assumed",
+      "byAi": true,
+      "stress": 82,
+      "situation": "스트레스가 많이 쌓여 있어서",
+      "shift": "보통 사람보다 안정을 최우선으로 여겨 공무원 도전을 더 오래 이어가려는 성향이 강합니다."
+     },
+     "delta": {
+      "money": 189,
+      "stress": 7,
+      "satisfaction": -8,
+      "skill": -1
+     },
+     "state": {
+      "skill": 66,
+      "stress": 86,
+      "satisfaction": 8,
+      "relation": 46,
+      "money": 677
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 73.3%가 2년 안에 합격",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 376,
+     "routine": false,
+     "branch": "choice",
+     "minor": [],
+     "reactions": [
+      {
+       "name": "스터디원 정하린",
+       "role": "수험 동료",
+       "line": "알바랑 병행하면 더 벅찰 텐데… 그래도 끝까지 버텨보자."
+      }
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 9,
+     "month": 29,
+     "label": "2029년 3~5월",
+     "eventId": "exam-fail",
+     "title": "시험에 떨어졌다",
+     "kind": "bad",
+     "narration": "합격자 발표 날 아쉽게 커트라인을 넘지 못해 좌절했다. 스터디원 정하린이 축하를 건네왔지만 마음이 복잡했다.",
+     "choice": "한 달은 쉬면서 마음을 추스른다",
+     "choiceIndex": 1,
+     "reason": "안정을 제일 먼저 꼽아서",
+     "odds": {
+      "base": 60,
+      "mine": 62,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 80,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "money": 189,
+      "stress": 3,
+      "satisfaction": -10,
+      "skill": -1
+     },
+     "state": {
+      "skill": 65,
+      "stress": 80,
+      "satisfaction": 3,
+      "relation": 46,
+      "money": 866
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 966,
+     "routine": true,
+     "minor": []
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 10,
+     "month": 31,
+     "label": "2029년 6~8월",
+     "eventId": "exam-fail",
+     "title": "시험에 떨어졌다",
+     "kind": "bad",
+     "narration": "또다시 마주한 불합격 통지서에 허탈감이 밀려왔다. 스터디원 정하린은 최종 합격하여 떠난 빈자리가 크게 느껴졌다.",
+     "choice": "한 달은 쉬면서 마음을 추스른다",
+     "choiceIndex": 1,
+     "reason": "안정이 가장 중요해서",
+     "odds": {
+      "base": 60,
+      "mine": 62,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 77,
+      "situation": "스트레스가 많이 쌓여 있어서"
+     },
+     "delta": {
+      "money": 189,
+      "stress": -1,
+      "satisfaction": -10,
+      "skill": 0
+     },
+     "state": {
+      "skill": 65,
+      "stress": 72,
+      "satisfaction": 2,
+      "relation": 46,
+      "money": 1055
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 966,
+     "routine": true,
+     "minor": [
+      "다시 책상 앞에 앉았다"
+     ]
+    },
+    {
+     "worldId": "civil-servant",
+     "lineId": "",
+     "station": 11,
+     "month": 33,
+     "label": "2029년 9~11월",
+     "eventId": "study-grind",
+     "title": "다시 책상 앞에 앉았다",
+     "kind": "neutral",
+     "narration": "스터디원 정하린과 매일 아침 공부 인증을 주고받으며 다시 마음을 다잡았다. 독서실과 집을 오가는 단조로운 하루가 시작되었다.",
+     "choice": "모의고사 점수를 기록하며 약한 과목을 판다",
+     "choiceIndex": 0,
+     "reason": "성장도 크게 따져서",
+     "odds": {
+      "base": 38,
+      "mine": 35,
+      "grade": "assumed",
+      "byAi": false,
+      "stress": 72
+     },
+     "delta": {
+      "skill": 7,
+      "stress": 8,
+      "money": 189
+     },
+     "state": {
+      "skill": 72,
+      "stress": 74,
+      "satisfaction": 8,
+      "relation": 46,
+      "money": 1244
+     },
+     "status": "수험생",
+     "eventStatus": "수험생",
+     "salary": 0,
+     "evidence": {
+      "label": "합격자 하루 평균 10.2시간 공부",
+      "source": "이대중 외(2016 조사)",
+      "url": "https://v.daum.net/v/738XCOSgCW"
+     },
+     "freq": 968,
+     "routine": true,
+     "minor": []
+    }
+   ]
+  }
+ },
+ "active": {
+  "developer": "got-job@big",
+  "civil-servant": ""
+ },
+ "report": {
+  "worlds": [
+   {
+    "worldId": "developer",
+    "fit": 63,
+    "good": "개발자로 합격했다 · 30~299인 회사, 이 선배가 밥을 사 줬다",
+    "hard": "신규 1년, 그만둘지 고민된다, 기획이 또 바뀌었다"
+   },
+   {
+    "worldId": "civil-servant",
+    "fit": 53,
+    "good": "큰 굴곡 없이 적응했다",
+    "hard": "친구가 대기업에 합격했다, 1년이 넘었는데 아직이다"
+   }
+  ],
+  "woop": {
+   "wish": "제자리에 머물지 않고 성장하면서도 안정적인 삶을 살고 싶다.",
+   "outcome": "내가 만든 결과물을 통해 성취감을 느끼고 빠르게 자립할 수 있다.",
+   "obstacle": "'신규 1년 고민', '계속할지 고민' 같은 갈림길이 오면 마음이 흔들려 하던 일을 미루게 됨",
+   "plan": "만약 개발 공부 중 막히면, 오늘 하루 30분만 더 집중하고 기록한다."
+  },
+  "todos": [
+   "개발 포트폴리오 코드 한 줄 수정하기",
+   "공무원 기출문제 1회분 풀어보기",
+   "한 달 생활비 예산안 다시 짜보기"
+  ],
+  "example": {
+   "when": "오늘 저녁 8시",
+   "where": "집 책상 앞에서",
+   "what": "개발 포트폴리오 코드 한 줄 수정하기"
+  },
+  "woopForks": [
+   {
+    "worldId": "developer",
+    "worldName": "개발자",
+    "label": "신규 1년 고민",
+    "share": 84
+   },
+   {
+    "worldId": "civil-servant",
+    "worldName": "공무원",
+    "label": "계속할지 고민",
+    "share": 72
+   }
+  ],
+  "stamp": "1c1k98p:78:civil-servant-vq2dsx|developer-4d9u2w"
+ },
+ "premium": [
+  {
+   "worldId": "developer",
+   "lineId": "bootcamp:0",
+   "line": "국비 교육 등록, 그 뒤 여러 갈래",
+   "share": 16,
+   "satisfied": 35,
+   "steps": [
+    "매일 아침 오늘의 목표 코드 작성하기",
+    "막힌 부분을 멘토에게 바로 질문하기",
+    "동기들과 스터디하며 불안감 나누기"
+   ],
+   "ai": true
+  },
+  {
+   "worldId": "developer",
+   "lineId": "got-job@small",
+   "line": "합격(30인 미만 회사), 그 뒤 여러 갈래",
+   "share": 27,
+   "satisfied": 54,
+   "steps": [
+    "사수가 없으면 외부 커뮤니티 활용하기",
+    "작은 업무라도 문서화하여 기록하기",
+    "퇴근 후 개인 프로젝트로 흥미 유지"
+   ],
+   "ai": true
+  },
+  {
+   "worldId": "civil-servant",
+   "lineId": "",
+   "line": "기간 안에 합격하지 못한 길",
+   "share": 28,
+   "satisfied": 0,
+   "steps": [
+    "모의고사 성적에 일희일비하지 않기",
+    "오답 노트를 만들며 약점 보완하기",
+    "주 1회 가벼운 산책으로 체력 관리"
+   ],
+   "ai": true
+  },
+  {
+   "worldId": "civil-servant",
+   "lineId": "exam-pass-national",
+   "line": "국가직 합격",
+   "share": 9,
+   "satisfied": 22,
+   "steps": [
+    "부서 배치 후 선배에게 업무 매뉴얼 요청",
+    "수도권 출퇴근 동선 미리 시뮬레이션하기",
+    "공직트레이닝 센터에서 실무 교육 듣기"
+   ],
+   "ai": true
+  }
+ ]
+}

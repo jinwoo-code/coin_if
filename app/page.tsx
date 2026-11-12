@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, BookmarkCheck, Clock3, Route } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/components/account";
-import { DEMOS, demoSelection, demoStart, isDemoPerson } from "@/lib/demo";
+import { DEMOS, isDemoPerson, startDemoStore } from "@/lib/demo";
 import { store } from "@/lib/store";
 import { Mascot, MascotFace } from "@/components/mascot";
 
@@ -99,10 +99,7 @@ export default function Home() {
   }
 
   function startDemo(kind: keyof typeof DEMOS) {
-    store.reset();
-    store.setLocalOnly(true); // 예시 인물은 계정에 올리지 않는다
-    store.setProfile(demoStart(kind));
-    store.setSelection(demoSelection(kind));
+    startDemoStore(kind);
     router.push("/simulate");
   }
 
